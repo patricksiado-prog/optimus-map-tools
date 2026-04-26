@@ -38,6 +38,8 @@ from collections import Counter
 import requests, gspread
 from google.oauth2.service_account import Credentials
 
+VERSION    = "9.4"
+
 # ── AUTO UPDATE ───────────────────────────────────────────────────────
 GITHUB_USER   = "patricksiado-prog"
 GITHUB_REPO   = "optimus-map-tools"
@@ -70,9 +72,6 @@ def check_update():
 
 check_update()
 
-
-
-VERSION    = "9.4"
 CREDS_FILE = "google_creds.json"
 SHEET_ID   = "15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA"
 TAB_ROWS   = 5000
