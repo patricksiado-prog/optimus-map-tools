@@ -51,17 +51,15 @@ GITHUB_RAW    = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (
 def check_update():
     print("  Checking for updates...")
     try:
-        import hashlib
         r = requests.get(GITHUB_RAW, timeout=10)
         if r.status_code != 200:
             print("  GitHub unreachable — running v%s" % VERSION); return
         latest = r.text
-        with open(os.path.abspath(__file__), "r", encoding="utf-8") as f:
-            current = f.read()
-        if hashlib.md5(latest.encode()).hexdigest() == hashlib.md5(current.encode()).hexdigest():
+        # Compare VERSION strings only — not MD5 (avoids infinite loop)
+        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']'''  , latest, re.MULTILINE)
+        new_ver = m.group(1) if m else None
+        if not new_ver or new_ver == VERSION:
             print("  Up to date (v%s)" % VERSION); return
-        m = re.search(r'''^\s*VERSION\s*=\s*["\\'](.*?)["\']''', latest, re.MULTILINE)
-        new_ver = m.group(1) if m else "?"
         print("  Updating to v%s..." % new_ver)
         with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
             f.write(latest)
