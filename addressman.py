@@ -65,7 +65,7 @@ ANCHOR_FILE   = "map_anchor.json"
 PROGRESS_FILE = "addressman_progress.json"
 
 OUTPUT_TAB  = "Address Man"
-TAB_ROWS    = 50000
+TAB_ROWS    = 1000
 SOURCE_TABS = ["All Leads","Maps Scrape","Enriched Leads",
                "ATT Verified","Map Man Leads"]
 
