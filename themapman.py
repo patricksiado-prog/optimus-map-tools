@@ -38,7 +38,41 @@ from collections import Counter
 import requests, gspread
 from google.oauth2.service_account import Credentials
 
-VERSION    = "9.3"
+# ── AUTO UPDATE ───────────────────────────────────────────────────────
+GITHUB_USER   = "patricksiado-prog"
+GITHUB_REPO   = "optimus-map-tools"
+GITHUB_BRANCH = "main"
+THIS_FILE     = "themapman.py"
+GITHUB_RAW    = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (
+    GITHUB_USER, GITHUB_REPO, GITHUB_BRANCH, THIS_FILE)
+
+def check_update():
+    print("  Checking for updates...")
+    try:
+        import hashlib
+        r = requests.get(GITHUB_RAW, timeout=10)
+        if r.status_code != 200:
+            print("  GitHub unreachable — running v%s" % VERSION); return
+        latest = r.text
+        with open(os.path.abspath(__file__), "r", encoding="utf-8") as f:
+            current = f.read()
+        if hashlib.md5(latest.encode()).hexdigest() == hashlib.md5(current.encode()).hexdigest():
+            print("  Up to date (v%s)" % VERSION); return
+        m = re.search(r'''^\s*VERSION\s*=\s*["\\'](.*?)["\']''', latest, re.MULTILINE)
+        new_ver = m.group(1) if m else "?"
+        print("  Updating to v%s..." % new_ver)
+        with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
+            f.write(latest)
+        print("  Updated! Restarting...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    except Exception as e:
+        print("  Update check failed: %s" % e)
+
+check_update()
+
+
+
+VERSION    = "9.4"
 CREDS_FILE = "google_creds.json"
 SHEET_ID   = "15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA"
 TAB_ROWS   = 5000
@@ -185,6 +219,9 @@ EXCLUDE = [
     "two men and a truck","college hunks","1-800-got-junk",
     "terminix","orkin","rollins ","truly nolen","aptive",
     "tru green","lawn doctor","scotts lawn","brightview",
+    # Office space / coworking chains
+    "regus ","regus-","iwg ","wework","spaces coworking","industrious","hq network",
+    "united states postal","the ubc","virtual office",
     # Storage
     "public storage","extra space","life storage","cubesmart","u-haul",
     "simply self storage","storage mart","iron mountain",
