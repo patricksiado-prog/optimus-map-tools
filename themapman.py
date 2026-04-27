@@ -1,33 +1,27 @@
 """
-THE MAP MAN v9.3
+THE MAP MAN v9.5
 ================
-TWO PROGRAMS IN ONE:
+WHAT'S NEW vs 9.4:
+  - ZIP scraper now reads phone/address straight off list cards
+    → no more "Sponsored" / wrong-business panel mismatches
+  - Enricher still uses panel-match (it needs to verify a specific address)
+    but with 3 fixes: clicks link not card, waits for stale panel to clear,
+    rejects "Sponsored"/"Results"/"Directions" as panel names
+  - --houston flag scrapes 30+ Houston-metro ZIPs in one overnight run
 
-  1. FIBER SCAN ENRICHER
-     Reads your fiber scan output (All Leads / Green Commercial / Commercial tabs)
-     Searches Google Maps for each address
-     Clicks the exact business panel — matches by address OR name
-     Saves phone ONLY if the panel confirms it's the right place
-     Writes enriched leads to "Ready To Call"
-
-  2. ZIP SCRAPER
-     Finds every small/home-based business in a ZIP code
-     Safe phone mode: panel match required before saving any number
-     Dense grid (0.015 step) catches hidden/home businesses
-     Massive exclude list blocks all national chains and big corps
-
-Bad phone detection:
-  - Hardcoded known bad numbers blocked
-  - Any phone appearing 3+ times in same run is flagged and dropped
+TWO MODES:
+  1. ENRICHER  — fills phone numbers on fiber scan tabs
+  2. SCRAPER   — finds small biz from one ZIP, all Houston, or any ZIP
 
 INSTALL:
   python -m pip install requests gspread google-auth playwright
   python -m playwright install chromium
 
 RUN:
-  python themapman.py --enrich-only          enrich fiber scan tabs only
-  python themapman.py --zip 77034            scrape ZIP + enrich
-  python themapman.py --zip 77034 --headless no browser window
+  python themapman.py --enrich-only           enrich fiber tabs only
+  python themapman.py --zip 77034             one ZIP
+  python themapman.py --houston               all Houston + suburbs
+  python themapman.py --houston --headless    overnight, no window
   python themapman.py --enrich-only --limit 50  test with 50 rows
 """
 
@@ -38,9 +32,9 @@ from collections import Counter
 import requests, gspread
 from google.oauth2.service_account import Credentials
 
-VERSION    = "9.4"
+VERSION = "9.5"
 
-# ── AUTO UPDATE ───────────────────────────────────────────────────────
+# ── AUTO UPDATE ────────────────────────────────────────────────────────
 GITHUB_USER   = "patricksiado-prog"
 GITHUB_REPO   = "optimus-map-tools"
 GITHUB_BRANCH = "main"
@@ -55,8 +49,7 @@ def check_update():
         if r.status_code != 200:
             print("  GitHub unreachable — running v%s" % VERSION); return
         latest = r.text
-        # Compare VERSION strings only — not MD5 (avoids infinite loop)
-        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']'''  , latest, re.MULTILINE)
+        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']''', latest, re.MULTILINE)
         new_ver = m.group(1) if m else None
         if not new_ver or new_ver == VERSION:
             print("  Up to date (v%s)" % VERSION); return
@@ -75,37 +68,70 @@ SHEET_ID   = "15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA"
 TAB_ROWS   = 5000
 NOMINATIM  = "https://nominatim.openstreetmap.org"
 
-# ── TAB NAMES ──────────────────────────────────────────────────────────
+# ── TABS / HEADERS ─────────────────────────────────────────────────────
 READY_TAB      = "Ready To Call"
 COMMERCIAL_TAB = "Commercial"
 GREEN_TAB      = "Green Commercial"
-ALL_LEADS_TAB  = "All Leads"          # fiber scan main output
+ALL_LEADS_TAB  = "All Leads"
 
-# ── HEADERS ────────────────────────────────────────────────────────────
 READY_HEADERS = [
-    "Business Name", "Phone", "Address", "City", "State", "ZIP",
-    "Fiber Status", "Category", "Source", "Matched By", "Added At",
+    "Business Name","Phone","Address","City","State","ZIP",
+    "Fiber Status","Category","Source","Matched By","Added At",
 ]
 COMMERCIAL_HEADERS = [
-    "Business Name", "Address", "Phone", "Category", "City", "State", "ZIP",
-    "Lead Type", "Data Source", "Phone Source", "Notes", "Found By", "Added At",
+    "Business Name","Address","Phone","Category","City","State","ZIP",
+    "Lead Type","Data Source","Phone Source","Notes","Found By","Added At",
 ]
 GREEN_HEADERS = [
-    "Address", "Business Name", "City", "State", "ZIP", "Zone",
-    "Instance", "Scan #", "Date", "Lat", "Lng",
-    "Phone", "Phone Source", "Phone Checked At",
+    "Address","Business Name","City","State","ZIP","Zone",
+    "Instance","Scan #","Date","Lat","Lng",
+    "Phone","Phone Source","Phone Checked At",
 ]
 
 # ── TIMING ─────────────────────────────────────────────────────────────
-MAP_DELAY   = 2.5
-CLICK_DELAY = 2.8
-BATCH_SIZE  = 20
-GRID_STEP   = 0.015    # tighter = more dense/hidden biz coverage
+MAP_DELAY    = 2.5
+CLICK_DELAY  = 2.8
+PANEL_CLEAR_TIMEOUT = 2000   # ms to wait for stale panel to clear
+BATCH_SIZE   = 20
+GRID_STEP    = 0.015
 
 # ── KNOWN BAD PHONES ───────────────────────────────────────────────────
 KNOWN_BAD_PHONES = {
     "(832) 899-4658",
 }
+
+# ── PANEL HEADER REJECT LIST (NEW v9.5) ────────────────────────────────
+# These show up in <h1> on Maps but are NEVER business names.
+PANEL_NAME_REJECT = {
+    "results","sponsored","directions","search results",
+    "places","you","your places","saved","timeline",
+}
+
+# ── HOUSTON METRO ZIPS (--houston mode) ────────────────────────────────
+# Covers Houston city + Pasadena, Sugar Land, Pearland, Katy, Spring,
+# The Woodlands, Humble, Kingwood, Cypress, Tomball, Stafford, Webster,
+# La Porte, Deer Park, League City, Friendswood, Missouri City, Bellaire
+HOUSTON_METRO_ZIPS = [
+    # Inner Houston
+    "77002","77003","77004","77005","77006","77007","77008","77009","77010",
+    "77011","77012","77013","77014","77015","77016","77017","77018","77019",
+    "77020","77021","77022","77023","77024","77025","77026","77027","77028",
+    "77029","77030","77031","77033","77034","77035","77036","77038","77040",
+    "77041","77042","77043","77044","77045","77046","77047","77048","77049",
+    "77050","77051","77053","77054","77055","77056","77057","77058","77059",
+    "77060","77061","77062","77063","77064","77065","77066","77067","77068",
+    "77069","77070","77071","77072","77073","77074","77075","77076","77077",
+    "77078","77079","77080","77081","77082","77083","77084","77085","77086",
+    "77087","77088","77089","77090","77091","77092","77093","77094","77095",
+    "77096","77098","77099",
+    # Suburbs
+    "77338","77339","77345","77346","77373","77375","77377","77379","77380",
+    "77381","77382","77384","77386","77388","77389","77396","77401","77407",
+    "77417","77429","77433","77449","77450","77459","77469","77471","77477",
+    "77478","77479","77489","77493","77494","77498","77504","77505","77506",
+    "77507","77520","77521","77530","77536","77546","77547","77562","77571",
+    "77573","77584","77586","77587","77598",
+]
 
 # ── SEARCH CATEGORIES (home-biz heavy) ────────────────────────────────
 SEARCH_CATEGORIES = [
@@ -147,17 +173,14 @@ SEARCH_CATEGORIES = [
 
 # ── EXCLUDE — NATIONAL CHAINS & BIG CORPS ─────────────────────────────
 EXCLUDE = [
-    # Big box retail
     "walmart","sam's club","target","costco","home depot","lowe's","lowes",
     "best buy","ikea","bed bath","tj maxx","ross dress","marshalls","burlington",
     "old navy","gap ","h&m","zara","forever 21","victoria's secret","bath & body",
     "ulta beauty","sephora","dollar general","dollar tree","family dollar","five below",
     "big lots","tuesday morning","party city","michaels","hobby lobby","jo-ann",
-    # Grocery
     "kroger","heb ","h-e-b","publix","safeway","albertsons","aldi","whole foods",
     "trader joe's","sprouts","randalls","fiesta mart","food lion","meijer",
     "winn-dixie","wegmans","giant","stop & shop","hyvee","hy-vee",
-    # Fast food / national chains
     "mcdonald","burger king","taco bell","wendy's","chick-fil","subway","sonic drive",
     "dairy queen","whataburger","popeyes","kfc ","raising cane","wingstop","zaxby",
     "jack in the box","del taco","carl's jr","hardee","checkers","rally's",
@@ -168,28 +191,22 @@ EXCLUDE = [
     "jersey mike","firehouse subs","jimmy john","potbelly",
     "olive garden","red lobster","applebee's","chili's","outback steakhouse",
     "texas roadhouse","longhorn steakhouse","buffalo wild wings","hooters",
-    "denny's","ihop","waffle house","cracker barrel",
-    "golden corral","sizzler",
-    # Banks
+    "denny's","ihop","waffle house","cracker barrel","golden corral","sizzler",
     "chase bank","wells fargo","bank of america","citibank","us bank",
     "td bank","pnc bank","capital one","regions bank","frost bank",
     "bb&t","suntrust","truist","fifth third","comerica","m&t bank",
     "navy federal","usaa","ally bank","citizens bank","keybank",
     "huntington bank","bbva","hsbc","santander bank",
-    # Drug / health chains
     "walgreens","cvs ","rite aid","duane reade",
-    # Gas / convenience
     "7-eleven","circle k","wawa","sheetz","casey's","racetrac",
     "shell ","chevron","exxon","valero","texaco","bp ","sunoco","marathon",
     "speedway","kwik trip","love's travel","pilot flying","flying j",
-    # Hotels
     "marriott","hilton","hyatt","holiday inn","sheraton","westin","w hotel",
     "hampton inn","la quinta","motel 6","super 8","days inn","comfort inn",
     "best western","quality inn","sleep inn","econolodge","red roof","extended stay",
     "residence inn","courtyard by","fairfield inn","springhill suites",
     "embassy suites","doubletree","aloft hotel","four seasons","ritz-carlton",
     "crowne plaza","kimpton","omni hotel","loews hotel","wyndham",
-    # Auto chains
     "jiffy lube","valvoline","firestone","goodyear","midas ","pep boys",
     "advance auto","autozone","o'reilly auto","napa auto","discount tire",
     "america's tire","mavis discount","monro muffler","meineke",
@@ -198,54 +215,41 @@ EXCLUDE = [
     "toyota of ","honda of ","ford of ","chevrolet of ","nissan of ",
     "hyundai of ","kia of ","mazda of ","subaru of ","bmw of ",
     "mercedes-benz of ","lexus of ","infiniti of ","cadillac of ",
-    # Shipping / office
     "fedex office","fedex ground","ups store","ups freight",
     "post office","usps","dhl","staples ","office depot","officemax",
-    # Gym chains
     "planet fitness","la fitness","24 hour fitness","anytime fitness","gold's gym",
     "snap fitness","crunch fitness","equinox","lifetime fitness","orange theory",
     "f45 training","pure barre","soulcycle",
-    # Hair chains
     "great clips","supercuts","sport clips","fantastic sams","cost cutters",
     "hair cuttery","regis salon","smartstyle","first choice","floyd's barbershop",
     "sally beauty",
-    # Pet chains
     "petco","petsmart","pet supplies plus","petland",
-    # Home services chains
     "servpro","servicemaster","stanley steemer","molly maid","merry maids",
     "two men and a truck","college hunks","1-800-got-junk",
     "terminix","orkin","rollins ","truly nolen","aptive",
     "tru green","lawn doctor","scotts lawn","brightview",
-    # Office space / coworking chains
     "regus ","regus-","iwg ","wework","spaces coworking","industrious","hq network",
     "united states postal","the ubc","virtual office",
-    # Storage
     "public storage","extra space","life storage","cubesmart","u-haul",
     "simply self storage","storage mart","iron mountain",
-    # Government / institutions
     "city hall","county ","courthouse","dmv ","social security",
     "fire station","police station","police department","sheriff","constable",
     "jail","prison","detention","government","municipal","public works",
     "state of texas","city of houston","city of dallas","city of austin",
-    "irs ","post office","usps","department of",
-    # Schools
+    "irs ","department of",
     "university","college ","school district"," isd","high school","middle school",
     "elementary school","community college","junior college","vocational school",
-    # Hospitals / health systems
     "hospital","medical center","health system","health network",
     "children's hospital","memorial hermann","methodist hospital","hca ",
     "ascension","dignity health","kaiser","intermountain","tenet health",
     "concentra","nextcare","patient first","city md","davita","fresenius",
-    # Tech / big corp
     "amazon","apple store","microsoft","google ","meta ","facebook office",
     "at&t store","t-mobile store","verizon store","sprint store",
     "best buy mobile","cricket wireless store","boost mobile store",
-    # Entertainment chains
     "amc theatre","regal cinema","cinemark","dave & buster","main event",
     "topgolf","bowlero","chuck e. cheese",
 ]
 
-# Extra signals that flag a large corporation even if name isn't listed
 BIG_BIZ_SIGNALS = [
     "corporate headquarters","corporate office","regional office","national chain",
     "fortune 500","publicly traded","nyse:","nasdaq:",
@@ -257,7 +261,6 @@ BIG_BIZ_SIGNALS = [
     "headquarters","corporate hq",
 ]
 
-# ── GLOBALS ────────────────────────────────────────────────────────────
 _pw = _browser = _page = None
 
 
@@ -354,7 +357,6 @@ def connect_sheets():
     ready_ws  = get_or_create_tab(ss, READY_TAB,      READY_HEADERS)
     comm_ws   = get_or_create_tab(ss, COMMERCIAL_TAB, COMMERCIAL_HEADERS)
     green_ws  = get_or_create_tab(ss, GREEN_TAB,      GREEN_HEADERS, required=False)
-    # All Leads tab is read-only — fiber scan writes it, we just read it
     try:    all_leads_ws = ss.worksheet(ALL_LEADS_TAB)
     except: all_leads_ws = None
     print("Connected to Google Sheets ✓")
@@ -415,10 +417,9 @@ def batch_update_safe(ws, updates):
             print("  Batch update error attempt %d: %s" % (attempt+1, e)); time.sleep(5)
 
 def ensure_phone_cols(ws):
-    """Make sure Phone, Phone Source, Phone Checked At columns exist."""
     vals = ws.get_all_values()
     if not vals: return header_map(ws)
-    needed  = ["Phone", "Phone Source", "Phone Checked At"]
+    needed  = ["Phone","Phone Source","Phone Checked At"]
     headers = list(vals[0])
     existing = [h.lower().strip() for h in headers]
     changed = False
@@ -443,10 +444,10 @@ def init_browser(headless=False):
         args=["--disable-blink-features=AutomationControlled",
               "--no-sandbox","--disable-dev-shm-usage"])
     ctx = _browser.new_context(
-        viewport={"width": 1366, "height": 768},
-        user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/122.0.0.0 Safari/537.36"),
+        viewport={"width":1366,"height":768},
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/122.0.0.0 Safari/537.36",
         locale="en-US")
     _page = ctx.new_page()
     _page.goto("https://www.google.com/maps", timeout=25000, wait_until="domcontentloaded")
@@ -466,7 +467,7 @@ def safe_text(el):
 
 def get_cards():
     global _page
-    for sel in ["div.Nv2PK", "div[role='article']"]:
+    for sel in ["div.Nv2PK","div[role='article']"]:
         try:
             cards = _page.query_selector_all(sel)
             if cards: return cards
@@ -479,20 +480,46 @@ def card_name(card):
             el = card.query_selector(sel)
             if el:
                 txt = safe_text(el)
-                if txt: return txt
+                if txt: return txt.split("\n")[0].strip()
                 lbl = el.get_attribute("aria-label") or ""
-                if lbl: return lbl.strip()
+                if lbl: return lbl.strip().split("\n")[0]
         except: pass
     return ""
 
+def card_data(card):
+    """NEW v9.5: pull name + phone + address straight from the list card.
+    No clicking, no panel, no mismatch possible."""
+    try: txt = card.inner_text()
+    except: return "", "", ""
+    name = card_name(card)
+    phone = extract_phone(txt)
+    addr = ""
+    for line in txt.split("\n"):
+        line = line.strip()
+        if looks_like_address(line):
+            addr = line
+            break
+    return name, phone, addr
+
+def is_sponsored_card(card):
+    try:
+        return "sponsored" in card.inner_html().lower()
+    except: return False
+
 def panel_name():
+    """PATCHED v9.5: reject section headers ("Sponsored", "Results", etc).
+    Wait briefly for the real h1 to load."""
     global _page
-    for sel in ["h1.DUwDvf","h1.fontHeadlineLarge","h1"]:
+    try:
+        _page.wait_for_selector("h1.DUwDvf", timeout=2500)
+    except: pass
+    for sel in ["h1.DUwDvf","h1.fontHeadlineLarge"]:
         try:
             el = _page.query_selector(sel)
             if el:
                 txt = safe_text(el)
-                if txt: return txt
+                if txt and txt.lower().strip() not in PANEL_NAME_REJECT:
+                    return txt
         except: pass
     return ""
 
@@ -523,24 +550,42 @@ def panel_address():
         except: pass
     return ""
 
+def wait_for_stale_panel_to_clear():
+    """PATCHED v9.5: before clicking the next card, wait for the previous
+    panel's h1 to actually unload. Otherwise we read stale data."""
+    global _page
+    try:
+        _page.evaluate("""
+            () => {
+                const h = document.querySelector('h1.DUwDvf');
+                if (h) h.innerText = '';
+            }
+        """)
+    except: pass
+    time.sleep(0.3)
+
 def click_card_and_extract(card, expected_name="", expected_address=""):
-    """
-    Click a card, wait for its panel, extract phone+address.
-    Only returns a phone if the panel CONFIRMS it matches the expected
-    business name or address. No match = no phone saved.
-    """
+    """PATCHED v9.5: clicks the link element first (more reliable than
+    clicking the card div), waits for stale panel to clear before reading."""
     global _page
     try: _page.keyboard.press("Escape"); time.sleep(0.3)
     except: pass
 
     cname = card_name(card) or expected_name
+
+    # Clear stale panel BEFORE clicking (so we don't read previous biz)
+    wait_for_stale_panel_to_clear()
+
+    # Click the link inside the card, fall back to card click
+    clicked = False
     try:
-        card.click()
-    except:
-        try:
-            link = card.query_selector("a.hfpxzc")
-            if link: link.click()
-            else: return None
+        link = card.query_selector("a.hfpxzc")
+        if link:
+            link.click()
+            clicked = True
+    except: pass
+    if not clicked:
+        try: card.click()
         except: return None
 
     time.sleep(CLICK_DELAY)
@@ -560,7 +605,8 @@ def click_card_and_extract(card, expected_name="", expected_address=""):
         matched_by = "card name"
     else:
         if pphone:
-            print("       SKIP — panel mismatch | card: %s | panel: %s" % (cname[:30], pname[:30]))
+            print("       SKIP — panel mismatch | card: %s | panel: %s" % (
+                cname[:30], pname[:30]))
         pphone = ""
 
     return {
@@ -569,19 +615,13 @@ def click_card_and_extract(card, expected_name="", expected_address=""):
     }
 
 
-# ── FIBER SCAN ENRICHER ────────────────────────────────────────────────
+# ── FIBER SCAN ENRICHER (panel-match required) ────────────────────────
 def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
-    """
-    Search Maps for an address from the fiber scan.
-    Click the matching business panel.
-    Return phone only if address or name matches confirmed.
-    """
     global _page
     if not address or not looks_like_address(address):
         print("       Skipping — not a real address: %s" % str(address)[:60])
         return None
 
-    # Build clean tight query
     parts = [address]
     if zipc and re.match(r"^\d{5}$", zipc.strip()):
         parts.append(zipc.strip())
@@ -594,7 +634,6 @@ def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
         _page.goto(url, timeout=25000, wait_until="domcontentloaded")
         time.sleep(MAP_DELAY)
 
-        # Maps went straight to a single place panel
         if "/place/" in _page.url:
             pname  = panel_name()
             pphone = panel_phone()
@@ -614,7 +653,6 @@ def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
                 "source": "Google Maps",
             }
 
-        # Multiple results — try first 3 cards
         cards = get_cards()
         if not cards: return None
 
@@ -636,13 +674,6 @@ def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
         return None
 
 def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
-    """
-    Read a tab from the fiber scan output.
-    For every row with a real address but missing/bad phone:
-      → search Maps, panel-match, get phone
-      → update the row in place
-      → add to Ready To Call with fiber status
-    """
     if not ws:
         print("  Tab not found: %s — skipping" % tab_name); return 0
 
@@ -650,7 +681,6 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
     vals = ws.get_all_values()
     if not vals or len(vals) < 2: return 0
 
-    # Detect any new repeated phones in this tab
     phone_counts = Counter()
     for row in vals[1:]:
         p = get_cell(row, hmap, ["phone"])
@@ -691,7 +721,8 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
     ready_batch = []
 
     for i, item in enumerate(rows_to_fix, start=1):
-        print("\n  [%d/%d] Row %d | %s" % (i, len(rows_to_fix), item["row_num"], item["address"][:55]))
+        print("\n  [%d/%d] Row %d | %s" % (
+            i, len(rows_to_fix), item["row_num"], item["address"][:55]))
         if item["old_phone"]:
             print("       Replacing bad phone: %s" % item["old_phone"])
 
@@ -706,40 +737,34 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
         if is_bad_phone(new_phone, tab_bad):
             print("       Found phone is still bad, skipping: %s" % new_phone); continue
 
-        print("       ✓ Phone: %s | matched by: %s" % (new_phone, found.get("matched_by","")))
+        print("       ✓ Phone: %s | matched by: %s" % (
+            new_phone, found.get("matched_by","")))
 
-        # Refresh hmap in case columns shifted
         hmap = header_map(ws)
-
         updates = []
         if "phone" in hmap:
-            updates.append({"range": "%s%d" % (col_letter(hmap["phone"]), item["row_num"]),
-                            "values": [[new_phone]]})
+            updates.append({"range":"%s%d" % (col_letter(hmap["phone"]), item["row_num"]),
+                            "values":[[new_phone]]})
         if "phone source" in hmap:
-            updates.append({"range": "%s%d" % (col_letter(hmap["phone source"]), item["row_num"]),
-                            "values": [["Google Maps — panel confirmed"]]})
+            updates.append({"range":"%s%d" % (col_letter(hmap["phone source"]), item["row_num"]),
+                            "values":[["Google Maps — panel confirmed"]]})
         if "phone checked at" in hmap:
-            updates.append({"range": "%s%d" % (col_letter(hmap["phone checked at"]), item["row_num"]),
-                            "values": [[now_str()]]})
+            updates.append({"range":"%s%d" % (col_letter(hmap["phone checked at"]), item["row_num"]),
+                            "values":[[now_str()]]})
         if updates:
             batch_update_safe(ws, updates)
 
-        # Add to Ready To Call
         biz_name = found.get("name") or item["name"] or item["address"]
         ready_batch.append([
             biz_name, new_phone,
             found.get("address") or item["address"],
             item["city"], item["state"], item["zip"],
-            item["fiber_status"],           # fiber status from scan
-            "Fiber Scan Lead",
-            tab_name,
-            found.get("matched_by",""),
-            now_str(),
+            item["fiber_status"], "Fiber Scan Lead", tab_name,
+            found.get("matched_by",""), now_str(),
         ])
         if len(ready_batch) >= BATCH_SIZE:
             append_rows_safe(ready_ws, ready_batch)
             ready_batch = []
-
         done += 1
 
     if ready_batch:
@@ -749,191 +774,203 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
     return done
 
 
-# ── ZIP SCRAPER ────────────────────────────────────────────────────────
-def scrape_category(lat, lng, zipcode, city, state, category, max_cards=25):
+# ── ZIP SCRAPER (CARD-ONLY, v9.5) ─────────────────────────────────────
+def scrape_category_cards(zipcode, city, state, category,
+                          seen_keys, seen_phones, phone_counter, max_cards=40):
+    """REWRITTEN v9.5: pulls name+phone+address from list cards.
+    No panel clicking → no mismatch possible. ~10x faster."""
     global _page
     query = "%s in %s" % (category, zipcode)
-    url   = "https://www.google.com/maps/search/%s" % query.replace(" ", "+")
-    results = []; seen = set(); phone_counter = Counter()
+    url = "https://www.google.com/maps/search/%s" % query.replace(" ", "+")
+    results = []
 
     try:
         _page.goto(url, timeout=25000, wait_until="domcontentloaded")
         time.sleep(MAP_DELAY)
-        processed = 0; scroll_round = 0
-
-        while processed < max_cards and scroll_round < 5:
-            cards = get_cards()
-            if not cards: break
-
-            for card in cards[processed:]:
-                if processed >= max_cards: break
-                cname = card_name(card); processed += 1
-                if not cname: continue
-                if not is_small_biz(cname, category): continue
-                nk = norm(cname)
-                if nk in seen: continue
-                seen.add(nk)
-
-                print("    Opening: %s" % cname[:45])
-                result = click_card_and_extract(card, expected_name=cname)
-                if not result: continue
-
-                pname = result["panel_name"] or cname
-                phone = result["phone"]
-                addr  = result["address"]
-
-                if phone:
-                    phone_counter[phone] += 1
-                    if phone_counter[phone] >= 2 or is_bad_phone(phone):
-                        print("       Repeated/bad phone, blanking: %s" % phone)
-                        phone = ""
-
-                print("       %s | %s" % (("✓ " + phone) if phone else "no safe phone", pname[:30]))
-
-                results.append({
-                    "name": pname, "phone": phone, "address": addr,
-                    "category": category, "city": city, "state": state,
-                    "zip": zipcode, "source": "Google Maps",
-                    "matched_by": result["matched_by"],
-                })
-
-            try:
-                feed = _page.query_selector("div[role='feed']")
-                if feed: feed.evaluate("el => el.scrollBy(0, 1500)")
-                else: _page.mouse.wheel(0, 1500)
-            except: pass
-            time.sleep(1.2); scroll_round += 1
-
     except Exception as e:
-        print("    Category error: %s" % e)
+        print("    nav error: %s" % e)
+        return results
+
+    processed = 0
+    last_count = 0
+    stale_rounds = 0
+
+    for _ in range(6):
+        cards = get_cards()
+        if not cards: break
+
+        for card in cards[processed:]:
+            if processed >= max_cards: break
+            processed += 1
+
+            if is_sponsored_card(card):
+                continue
+
+            name, phone, addr = card_data(card)
+            if not name: continue
+            if not is_small_biz(name, category): continue
+
+            key = norm(name) + "|" + norm(addr)
+            if key in seen_keys: continue
+            seen_keys.add(key)
+
+            # Phone-level dedup — same number on 3+ businesses = chain svc
+            if phone:
+                phone_counter[phone] += 1
+                if phone_counter[phone] >= 3 or is_bad_phone(phone):
+                    print("    ⊘ shared/bad phone, dropping: %s" % phone)
+                    phone = ""
+
+            if phone and phone in seen_phones: continue
+            if phone: seen_phones.add(phone)
+
+            print("    %s | %s | %s" % (
+                "✓ " + phone if phone else "(no #)",
+                name[:35], addr[:30]))
+
+            results.append({
+                "name": name, "phone": phone, "address": addr,
+                "category": category, "city": city, "state": state,
+                "zip": zipcode, "source": "Google Maps card",
+                "matched_by": "list card",
+            })
+
+        try:
+            feed = _page.query_selector("div[role='feed']")
+            if feed: feed.evaluate("el => el.scrollBy(0, 2000)")
+            else: _page.mouse.wheel(0, 2000)
+        except: pass
+        time.sleep(1.0)
+
+        if processed == last_count:
+            stale_rounds += 1
+            if stale_rounds >= 2: break
+        else:
+            stale_rounds = 0
+        last_count = processed
+
     return results
 
-def zip_to_bounds(zipcode):
-    print("\n  Looking up ZIP %s..." % zipcode)
-    r = requests.get("%s/search" % NOMINATIM,
-        params={"postalcode": zipcode, "country": "US", "format": "json",
-                "limit": 1, "addressdetails": 1},
-        headers={"User-Agent": "TheMapMan/9.3"}, timeout=10)
-    data = r.json()
-    if not data: print("  ZIP not found."); sys.exit(1)
-    d = data[0]; clat = float(d["lat"]); clng = float(d["lon"])
-    a = d.get("address", {})
-    city  = a.get("city") or a.get("town") or a.get("village") or a.get("county") or zipcode
-    state = a.get("state", "TX")
-    if state.lower() == "texas": state = "TX"
-    if "boundingbox" in d:
-        bb = d["boundingbox"]; pad = GRID_STEP
-        south = float(bb[0])-pad; north = float(bb[1])+pad
-        west  = float(bb[2])-pad; east  = float(bb[3])+pad
-    else:
-        pad = GRID_STEP*2
-        south=clat-pad; north=clat+pad; west=clng-pad; east=clng+pad
-    print("  ZIP %s -> %s, %s" % (zipcode, city, state))
-    return clat, clng, south, west, north, east, city, state
+def zip_to_city_state(zipcode):
+    try:
+        r = requests.get("%s/search" % NOMINATIM,
+            params={"postalcode":zipcode,"country":"US","format":"json",
+                    "limit":1,"addressdetails":1},
+            headers={"User-Agent":"TheMapMan/9.5"}, timeout=10)
+        data = r.json()
+        if data:
+            a = data[0].get("address", {})
+            city = a.get("city") or a.get("town") or a.get("village") or zipcode
+            state = a.get("state","TX")
+            if state.lower() == "texas": state = "TX"
+            return city, state
+    except: pass
+    return zipcode, "TX"
 
-def build_grid(south, west, north, east):
-    grid = []; lat = south
-    while lat <= north + 0.001:
-        lng = west
-        while lng <= east + 0.001:
-            grid.append((round(lat,5), round(lng,5)))
-            lng = round(lng+GRID_STEP, 5)
-        lat = round(lat+GRID_STEP, 5)
-    return grid
-
-def run_zip(zipcode, ready_ws, comm_ws, limit=None):
-    clat, clng, south, west, north, east, city, state = zip_to_bounds(zipcode)
-    grid = build_grid(south, west, north, east)
+def run_zip(zipcode, ready_ws, comm_ws, seen_keys, seen_phones,
+            phone_counter, limit=None):
+    city, state = zip_to_city_state(zipcode)
 
     print("\n" + "=" * 60)
-    print("  SCRAPING ZIP: %s  |  Grid: %d  |  Categories: %d" % (
-        zipcode, len(grid), len(SEARCH_CATEGORIES)))
-    print("  Safe phone mode ON — panel match required")
+    print("  SCRAPING ZIP: %s (%s, %s)" % (zipcode, city, state))
+    print("  Categories: %d  |  Mode: card-only (no panel mismatch)" % len(SEARCH_CATEGORIES))
     print("=" * 60)
 
-    ready_batch = []; comm_batch = []; seen = set(); checked = 0
+    ready_batch = []; comm_batch = []; checked = 0
 
     try:
-        for gi, (lat, lng) in enumerate(grid, start=1):
-            for category in SEARCH_CATEGORIES:
-                checked += 1
-                print("\n  Grid %d/%d | %s" % (gi, len(grid), category))
-                businesses = scrape_category(lat, lng, zipcode, city, state, category)
+        for category in SEARCH_CATEGORIES:
+            checked += 1
+            print("\n  [%d/%d] %s" % (checked, len(SEARCH_CATEGORIES), category))
+            businesses = scrape_category_cards(
+                zipcode, city, state, category,
+                seen_keys, seen_phones, phone_counter)
 
-                for biz in businesses:
-                    name  = biz.get("name","")
-                    phone = biz.get("phone","")
-                    addr  = biz.get("address","")
-                    if not name or not is_small_biz(name, biz.get("category","")): continue
-                    key = norm(name) + "|" + norm(addr)
-                    if key in seen: continue
-                    seen.add(key)
+            for biz in businesses:
+                name  = biz.get("name","")
+                phone = biz.get("phone","")
+                addr  = biz.get("address","")
+                if not name or not is_small_biz(name, biz.get("category","")):
+                    continue
 
-                    comm_batch.append([
-                        name, addr, phone, biz.get("category",""),
-                        city, state, zipcode, "Commercial", "Google Maps",
-                        "Google Maps panel confirmed" if phone else "No safe phone",
-                        "Panel match required — safe mode", "The Map Man v9.3", now_str(),
+                comm_batch.append([
+                    name, addr, phone, biz.get("category",""),
+                    city, state, zipcode, "Commercial", "Google Maps",
+                    "Card-confirmed" if phone else "No phone on card",
+                    "Card-only mode (v9.5)", "The Map Man v%s" % VERSION, now_str(),
+                ])
+                if phone:
+                    ready_batch.append([
+                        name, phone, addr, city, state, zipcode,
+                        "", biz.get("category",""), "Google Maps ZIP Scrape",
+                        biz.get("matched_by","list card"), now_str(),
                     ])
-                    if phone:
-                        ready_batch.append([
-                            name, phone, addr, city, state, zipcode,
-                            "", biz.get("category",""), "Google Maps ZIP Scrape",
-                            biz.get("matched_by",""), now_str(),
-                        ])
 
-                if len(comm_batch) >= BATCH_SIZE:
-                    append_rows_safe(comm_ws, comm_batch); comm_batch = []
-                if len(ready_batch) >= BATCH_SIZE:
-                    append_rows_safe(ready_ws, ready_batch)
-                    print("  ✓ Saved %d to Ready To Call" % len(ready_batch))
-                    ready_batch = []
+            if len(comm_batch) >= BATCH_SIZE:
+                append_rows_safe(comm_ws, comm_batch); comm_batch = []
+            if len(ready_batch) >= BATCH_SIZE:
+                append_rows_safe(ready_ws, ready_batch)
+                print("  ✓ Saved %d to Ready To Call" % len(ready_batch))
+                ready_batch = []
 
-                if limit and checked >= limit: raise KeyboardInterrupt
+            if limit and checked >= limit: raise KeyboardInterrupt
 
     except KeyboardInterrupt:
-        print("\n  Stopping — saving what's done...")
+        print("\n  Stopping ZIP %s — saving..." % zipcode)
     finally:
         if comm_batch:  append_rows_safe(comm_ws, comm_batch)
         if ready_batch: append_rows_safe(ready_ws, ready_batch)
-    print("\nZIP scrape done.")
+    print("  ZIP %s done." % zipcode)
+
+
+def run_houston(ready_ws, comm_ws, limit=None):
+    """NEW v9.5: walk every Houston-metro ZIP, dedupe across all of them."""
+    seen_keys, seen_phones, phone_counter = set(), set(), Counter()
+    print("\n" + "#" * 60)
+    print("  HOUSTON METRO MODE — %d ZIPs × %d categories" % (
+        len(HOUSTON_METRO_ZIPS), len(SEARCH_CATEGORIES)))
+    print("#" * 60)
+    for i, z in enumerate(HOUSTON_METRO_ZIPS, start=1):
+        print("\n>>> ZIP %d/%d: %s" % (i, len(HOUSTON_METRO_ZIPS), z))
+        try:
+            run_zip(z, ready_ws, comm_ws,
+                    seen_keys, seen_phones, phone_counter, limit=limit)
+        except KeyboardInterrupt:
+            print("\nHouston run stopped by user.")
+            return
+        except Exception as e:
+            print("ZIP %s errored: %s — continuing" % (z, e))
 
 
 # ── MAIN ───────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="THE MAP MAN v%s" % VERSION)
     parser.add_argument("--zip",          type=str, default=None)
+    parser.add_argument("--houston",      action="store_true",
+                        help="scrape every Houston-metro ZIP")
     parser.add_argument("--enrich-only",  action="store_true")
     parser.add_argument("--headless",     action="store_true")
     parser.add_argument("--limit",        type=int, default=None,
-                        help="Max rows to enrich per tab (for testing)")
+                        help="cap rows per tab/category — for testing")
     args = parser.parse_args()
 
     print("\n" + "#" * 60)
     print("  THE MAP MAN v%s" % VERSION)
-    print("  Safe phone: panel match required before any number is saved")
-    print("  Fiber scan enricher: adds phones to All Leads / Green Commercial")
-    print("  ZIP scraper: dense grid, home-biz categories, big chain blocked")
+    print("  Enricher: panel-match required (verifies specific address)")
+    print("  Scraper:  card-only mode (no panel = no mismatch)")
     print("#" * 60 + "\n")
 
     ss, ready_ws, comm_ws, green_ws, all_leads_ws = connect_sheets()
     init_browser(args.headless)
 
     try:
-        # ── STEP 1: Enrich fiber scan output tabs ──────────────────────
-        print("\n  STEP 1: Enriching fiber scan tabs with phone numbers...")
-
-        # All Leads tab (main fiber scan output — read only, no phone column by default)
-        # We enrich it by adding phone columns and updating in place
+        # STEP 1: enrich fiber tabs
+        print("\n  STEP 1: Enriching fiber scan tabs...")
         if all_leads_ws:
             enrich_tab(all_leads_ws, ALL_LEADS_TAB, ready_ws,
                        KNOWN_BAD_PHONES, limit=args.limit)
-
-        # Green Commercial (fiber-confirmed addresses — hottest leads)
         enrich_tab(green_ws, GREEN_TAB, ready_ws,
                    KNOWN_BAD_PHONES, limit=args.limit)
-
-        # Commercial tab (any already-collected leads missing phones)
         enrich_tab(comm_ws, COMMERCIAL_TAB, ready_ws,
                    KNOWN_BAD_PHONES, limit=args.limit)
 
@@ -941,13 +978,16 @@ def main():
             print("\n  Enrich-only mode — done.")
             return
 
-        # ── STEP 2: Scrape new businesses from ZIP ─────────────────────
-        zipcode = args.zip or input("\n  Enter ZIP code to scrape: ").strip()
-        if not re.match(r"^\d{5}$", zipcode):
-            print("  Invalid ZIP."); sys.exit(1)
-
-        print("\n  STEP 2: Scraping ZIP %s for new small businesses..." % zipcode)
-        run_zip(zipcode, ready_ws, comm_ws, limit=args.limit)
+        # STEP 2: scrape
+        if args.houston:
+            run_houston(ready_ws, comm_ws, limit=args.limit)
+        else:
+            zipcode = args.zip or input("\n  Enter ZIP code: ").strip()
+            if not re.match(r"^\d{5}$", zipcode):
+                print("  Invalid ZIP."); sys.exit(1)
+            seen_keys, seen_phones, phone_counter = set(), set(), Counter()
+            run_zip(zipcode, ready_ws, comm_ws,
+                    seen_keys, seen_phones, phone_counter, limit=args.limit)
 
     finally:
         close_browser()
