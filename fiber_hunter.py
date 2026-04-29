@@ -40,15 +40,16 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.0"
+VERSION = "5.2"
 
-# ── AUTO-UPDATER (Windows-safe — exits cleanly, no os.execv) ─────
+# ── AUTO-UPDATER (same pattern as fiber_scan v10.0) ────────────────
 AUTO_UPDATE = True
 GITHUB_REPO = "patricksiado-prog/optimus-map-tools"
 GITHUB_FILE = "fiber_hunter.py"
 GITHUB_BRANCH = "main"
 
 def check_update():
+    """Pull latest fiber_hunter.py from GitHub and self-update."""
     if not AUTO_UPDATE:
         return
     try:
@@ -77,11 +78,8 @@ def check_update():
         print("  Updating to v%s..." % remote_version)
         with open(__file__, "w", encoding="utf-8") as f:
             f.write(remote_code)
-        print("\n" + "=" * 60)
-        print("  Updated to v%s!" % remote_version)
-        print("  Please run the script again to use the new version.")
-        print("=" * 60 + "\n")
-        sys.exit(0)
+        print("  Updated! Restarting...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
         print("  Update err (continuing): %s" % str(e)[:100])
 
@@ -832,10 +830,9 @@ def main():
     check_update()
     print("\n" + "#" * 60)
     print("  FIBER HUNTER v%s" % VERSION)
-    print("  fiber_scan engine + no Houston preset + spiral forever")
+    print("  Same engine as fiber_scan — runs in any city")
     print("#" * 60)
-    print("\nFor out-of-town hunting:")
-    print("  Ask ChatGPT for a hot AT&T fiber ZIP, then enter it below.")
+
     lat, lng, city_name = get_city()
     btn_x, btn_y = calibrate_search_button()
     tabs = connect_sheets()
@@ -858,10 +855,10 @@ def main():
             save_progress({"zone_seq": 0, "row": 0, "col": 0,
                            "scan_num": scan_num})
     print("\n" + "=" * 60)
-    print("READY  |  Location: %s" % city_name)
+    print("READY  |  Spiraling from current map position")
     print("Pan: %d px  |  Zone: %dx%d" % (
         PAN_PIXELS, COLS_PER_ZONE, ROWS_PER_ZONE))
-    print("\nMake sure youachieve.att.com is showing %s." % city_name)
+    print("\n⚠ Make sure youachieve.att.com is OPEN and showing your area.")
     print("\nStarting in %d sec." % START_DELAY)
     print("Ctrl+C to stop.  Picks up next time.")
     print("=" * 60)
@@ -897,3 +894,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+fc
