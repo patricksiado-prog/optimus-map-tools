@@ -40,7 +40,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.2"
+VERSION = "5.3"
 
 # ── AUTO-UPDATER (same pattern as fiber_scan v10.0) ────────────────
 AUTO_UPDATE = True
@@ -294,7 +294,7 @@ def _nominatim_reverse(lat, lng):
             "https://nominatim.openstreetmap.org/reverse",
             params={"lat": lat, "lon": lng, "format": "json",
                     "addressdetails": 1, "extratags": 1, "zoom": 18},
-            headers={"User-Agent": "FiberHunter/5.0"},
+            headers={"User-Agent": "FiberScan/1.0"},
             timeout=GEOCODE_TIMEOUT,
         )
         d = r.json()
@@ -427,7 +427,7 @@ def lookup_city(name):
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
             params={"q": name + " USA", "format": "json", "limit": 1},
-            headers={"User-Agent": "FiberHunter/5.0"}, timeout=6,
+            headers={"User-Agent": "FiberScan/1.0"}, timeout=6,
         )
         d = r.json()
         if d:
@@ -441,7 +441,7 @@ def lookup_zip(z):
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
             params={"postalcode": z, "country": "US", "format": "json", "limit": 1},
-            headers={"User-Agent": "FiberHunter/5.0"}, timeout=6,
+            headers={"User-Agent": "FiberScan/1.0"}, timeout=6,
         )
         d = r.json()
         if d:
@@ -894,4 +894,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-fc
