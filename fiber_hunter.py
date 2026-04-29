@@ -40,15 +40,16 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.0"
+VERSION = "5.5"
 
-# ── AUTO-UPDATER (Windows-safe — exits cleanly, no os.execv) ─────
+# ── AUTO-UPDATER (same pattern as fiber_scan v10.0) ────────────────
 AUTO_UPDATE = True
 GITHUB_REPO = "patricksiado-prog/optimus-map-tools"
 GITHUB_FILE = "fiber_hunter.py"
 GITHUB_BRANCH = "main"
 
 def check_update():
+    """Pull latest fiber_hunter.py from GitHub and self-update."""
     if not AUTO_UPDATE:
         return
     try:
@@ -77,11 +78,8 @@ def check_update():
         print("  Updating to v%s..." % remote_version)
         with open(__file__, "w", encoding="utf-8") as f:
             f.write(remote_code)
-        print("\n" + "=" * 60)
-        print("  Updated to v%s!" % remote_version)
-        print("  Please run the script again to use the new version.")
-        print("=" * 60 + "\n")
-        sys.exit(0)
+        print("  Updated! Restarting...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
         print("  Update err (continuing): %s" % str(e)[:100])
 
@@ -296,7 +294,7 @@ def _nominatim_reverse(lat, lng):
             "https://nominatim.openstreetmap.org/reverse",
             params={"lat": lat, "lon": lng, "format": "json",
                     "addressdetails": 1, "extratags": 1, "zoom": 18},
-            headers={"User-Agent": "FiberHunter/5.0"},
+            headers={"User-Agent": "FiberScan/1.0"},
             timeout=GEOCODE_TIMEOUT,
         )
         d = r.json()
@@ -423,33 +421,136 @@ def smart_classify(full, street, ptype, zipcode):
         return "COMMERCIAL"
     return ptype if ptype != "UNKNOWN" else "RESIDENTIAL"
 
+# Built-in city fallback (lat, lng) for when Nominatim is rate-limited/down.
+# Covers most AT&T fiber footprint cities.
+BUILTIN_CITIES = {
+    "houston":(29.7604,-95.3698),"austin":(30.2672,-97.7431),
+    "dallas":(32.7767,-96.7970),"san antonio":(29.4241,-98.4936),
+    "fort worth":(32.7555,-97.3308),"el paso":(31.7619,-106.4850),
+    "atlanta":(33.7490,-84.3880),"savannah":(32.0809,-81.0912),
+    "tampa":(27.9506,-82.4572),"miami":(25.7617,-80.1918),
+    "orlando":(28.5383,-81.3792),"jacksonville":(30.3322,-81.6557),
+    "nashville":(36.1627,-86.7816),"memphis":(35.1495,-90.0490),
+    "knoxville":(35.9606,-83.9207),"chattanooga":(35.0456,-85.3097),
+    "birmingham":(33.5186,-86.8104),"huntsville":(34.7304,-86.5861),
+    "mobile":(30.6954,-88.0399),"montgomery":(32.3668,-86.3000),
+    "new orleans":(29.9511,-90.0715),"baton rouge":(30.4515,-91.1871),
+    "shreveport":(32.5252,-93.7502),"jackson":(32.2988,-90.1848),
+    "charlotte":(35.2271,-80.8431),"raleigh":(35.7796,-78.6382),
+    "greensboro":(36.0726,-79.7920),"columbia":(34.0007,-81.0348),
+    "charleston":(32.7765,-79.9311),"louisville":(38.2527,-85.7585),
+    "lexington":(38.0406,-84.5037),"indianapolis":(39.7684,-86.1581),
+    "chicago":(41.8781,-87.6298),"milwaukee":(43.0389,-87.9065),
+    "detroit":(42.3314,-83.0458),"grand rapids":(42.9634,-85.6681),
+    "cleveland":(41.4993,-81.6944),"columbus":(39.9612,-82.9988),
+    "cincinnati":(39.1031,-84.5120),"st louis":(38.6270,-90.1994),
+    "kansas city":(39.0997,-94.5786),"oklahoma city":(35.4676,-97.5164),
+    "tulsa":(36.1540,-95.9928),"little rock":(34.7465,-92.2896),
+    "des moines":(41.5868,-93.6250),"omaha":(41.2565,-95.9345),
+    "wichita":(37.6872,-97.3301),"phoenix":(33.4484,-112.0740),
+    "tucson":(32.2226,-110.9747),"las vegas":(36.1699,-115.1398),
+    "albuquerque":(35.0844,-106.6504),"salt lake city":(40.7608,-111.8910),
+    "denver":(39.7392,-104.9903),"boise":(43.6150,-116.2023),
+    "los angeles":(34.0522,-118.2437),"san francisco":(37.7749,-122.4194),
+    "san diego":(32.7157,-117.1611),"san jose":(37.3382,-121.8863),
+    "sacramento":(38.5816,-121.4944),"fresno":(36.7378,-119.7871),
+    "seattle":(47.6062,-122.3321),"portland":(45.5152,-122.6784),
+    "round rock":(30.5083,-97.6789),"kyle":(29.9893,-97.8772),
+    "buda":(30.0855,-97.8403),"georgetown":(30.6333,-97.6779),
+    "pflugerville":(30.4394,-97.6200),"cedar park":(30.5052,-97.8203),
+}
+# ZIP prefix → city for fallback when Nominatim ZIP lookup fails
+ZIP_PREFIXES = {
+    "770":"houston","771":"houston","772":"houston","773":"houston",
+    "774":"houston","775":"houston","779":"houston",
+    "787":"austin","786":"austin","780":"san antonio","782":"san antonio",
+    "750":"dallas","751":"dallas","752":"dallas","753":"dallas",
+    "761":"fort worth","762":"fort worth","339":"tampa","336":"tampa",
+    "337":"tampa","330":"miami","331":"miami","332":"miami",
+    "327":"orlando","328":"orlando","322":"jacksonville",
+    "303":"atlanta","301":"atlanta","372":"nashville","370":"nashville",
+    "381":"memphis","350":"birmingham","352":"birmingham","358":"huntsville",
+    "366":"mobile","701":"new orleans","708":"baton rouge",
+    "282":"charlotte","281":"charlotte","276":"raleigh","275":"raleigh",
+    "292":"columbia","294":"charleston","402":"louisville","404":"louisville",
+    "405":"lexington","462":"indianapolis","606":"chicago","532":"milwaukee",
+    "482":"detroit","441":"cleveland","432":"columbus","452":"cincinnati",
+    "631":"st louis","640":"kansas city","641":"kansas city",
+    "731":"oklahoma city","741":"tulsa","720":"little rock",
+    "850":"phoenix","851":"phoenix","857":"tucson","891":"las vegas",
+    "871":"albuquerque","841":"salt lake city","802":"denver","803":"denver",
+    "900":"los angeles","901":"los angeles","940":"san francisco",
+    "941":"san francisco","921":"san diego","951":"san jose",
+    "958":"sacramento","981":"seattle","972":"portland",
+}
+
 def lookup_city(name):
-    """No preset list — straight to Nominatim every time."""
+    """Try Nominatim → Photon → built-in fallback dict."""
+    n = name.strip().lower()
+    # Try Nominatim
     try:
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
             params={"q": name + " USA", "format": "json", "limit": 1},
-            headers={"User-Agent": "FiberHunter/5.0"}, timeout=6,
+            headers={"User-Agent": "FiberScan/1.0"}, timeout=6,
         )
         d = r.json()
         if d:
             return float(d[0]["lat"]), float(d[0]["lon"]), d[0].get("display_name", name)
     except:
         pass
+    # Try Photon
+    try:
+        r = requests.get(
+            "https://photon.komoot.io/api",
+            params={"q": name + " USA", "limit": 1}, timeout=6,
+        )
+        d = r.json()
+        feats = d.get("features", [])
+        if feats:
+            coords = feats[0]["geometry"]["coordinates"]
+            return float(coords[1]), float(coords[0]), feats[0].get("properties", {}).get("name", name)
+    except:
+        pass
+    # Built-in fallback
+    if n in BUILTIN_CITIES:
+        lat, lng = BUILTIN_CITIES[n]
+        return lat, lng, name.title() + " (built-in)"
     return None, None, None
 
 def lookup_zip(z):
+    """Try Nominatim → Photon → ZIP prefix fallback."""
     try:
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
             params={"postalcode": z, "country": "US", "format": "json", "limit": 1},
-            headers={"User-Agent": "FiberHunter/5.0"}, timeout=6,
+            headers={"User-Agent": "FiberScan/1.0"}, timeout=6,
         )
         d = r.json()
         if d:
             return float(d[0]["lat"]), float(d[0]["lon"]), d[0].get("display_name", z)
     except:
         pass
+    # Try Photon
+    try:
+        r = requests.get(
+            "https://photon.komoot.io/api",
+            params={"q": z + " USA", "limit": 1}, timeout=6,
+        )
+        d = r.json()
+        feats = d.get("features", [])
+        if feats:
+            coords = feats[0]["geometry"]["coordinates"]
+            return float(coords[1]), float(coords[0]), z
+    except:
+        pass
+    # ZIP prefix fallback
+    prefix = z[:3]
+    if prefix in ZIP_PREFIXES:
+        city = ZIP_PREFIXES[prefix]
+        if city in BUILTIN_CITIES:
+            lat, lng = BUILTIN_CITIES[city]
+            return lat, lng, f"{z} ({city.title()}, built-in)"
     return None, None, None
 
 def get_city():
@@ -504,7 +605,7 @@ def connect_sheets():
         }
         for tname, headers in configs.items():
             if tname not in existing:
-                ws = ss.add_worksheet(title=tname, rows=100000, cols=20)
+                ws = ss.add_worksheet(title=tname, rows=1000, cols=20)
                 ws.append_row(headers)
             else:
                 ws = ss.worksheet(tname)
@@ -832,10 +933,9 @@ def main():
     check_update()
     print("\n" + "#" * 60)
     print("  FIBER HUNTER v%s" % VERSION)
-    print("  fiber_scan engine + no Houston preset + spiral forever")
+    print("  Same engine as fiber_scan — runs in any city")
     print("#" * 60)
-    print("\nFor out-of-town hunting:")
-    print("  Ask ChatGPT for a hot AT&T fiber ZIP, then enter it below.")
+
     lat, lng, city_name = get_city()
     btn_x, btn_y = calibrate_search_button()
     tabs = connect_sheets()
@@ -858,10 +958,10 @@ def main():
             save_progress({"zone_seq": 0, "row": 0, "col": 0,
                            "scan_num": scan_num})
     print("\n" + "=" * 60)
-    print("READY  |  Location: %s" % city_name)
+    print("READY  |  Spiraling from current map position")
     print("Pan: %d px  |  Zone: %dx%d" % (
         PAN_PIXELS, COLS_PER_ZONE, ROWS_PER_ZONE))
-    print("\nMake sure youachieve.att.com is showing %s." % city_name)
+    print("\n⚠ Make sure youachieve.att.com is OPEN and showing your area.")
     print("\nStarting in %d sec." % START_DELAY)
     print("Ctrl+C to stop.  Picks up next time.")
     print("=" * 60)
