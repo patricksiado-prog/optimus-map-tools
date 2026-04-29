@@ -40,7 +40,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.5"
+VERSION = "5.6"
 
 # ── AUTO-UPDATER (same pattern as fiber_scan v10.0) ────────────────
 AUTO_UPDATE = True
@@ -459,30 +459,16 @@ BUILTIN_CITIES = {
     "buda":(30.0855,-97.8403),"georgetown":(30.6333,-97.6779),
     "pflugerville":(30.4394,-97.6200),"cedar park":(30.5052,-97.8203),
 }
-# ZIP prefix → city for fallback when Nominatim ZIP lookup fails
-ZIP_PREFIXES = {
-    "770":"houston","771":"houston","772":"houston","773":"houston",
-    "774":"houston","775":"houston","779":"houston",
-    "787":"austin","786":"austin","780":"san antonio","782":"san antonio",
-    "750":"dallas","751":"dallas","752":"dallas","753":"dallas",
-    "761":"fort worth","762":"fort worth","339":"tampa","336":"tampa",
-    "337":"tampa","330":"miami","331":"miami","332":"miami",
-    "327":"orlando","328":"orlando","322":"jacksonville",
-    "303":"atlanta","301":"atlanta","372":"nashville","370":"nashville",
-    "381":"memphis","350":"birmingham","352":"birmingham","358":"huntsville",
-    "366":"mobile","701":"new orleans","708":"baton rouge",
-    "282":"charlotte","281":"charlotte","276":"raleigh","275":"raleigh",
-    "292":"columbia","294":"charleston","402":"louisville","404":"louisville",
-    "405":"lexington","462":"indianapolis","606":"chicago","532":"milwaukee",
-    "482":"detroit","441":"cleveland","432":"columbus","452":"cincinnati",
-    "631":"st louis","640":"kansas city","641":"kansas city",
-    "731":"oklahoma city","741":"tulsa","720":"little rock",
-    "850":"phoenix","851":"phoenix","857":"tucson","891":"las vegas",
-    "871":"albuquerque","841":"salt lake city","802":"denver","803":"denver",
-    "900":"los angeles","901":"los angeles","940":"san francisco",
-    "941":"san francisco","921":"san diego","951":"san jose",
-    "958":"sacramento","981":"seattle","972":"portland",
-}
+# Offline ZIP lookup via pgeocode — covers EVERY US ZIP, no API needed.
+# pip install pgeocode (one-time, then it's offline + instant)
+try:
+    import pgeocode
+    _ZIP_DB = pgeocode.Nominatim('us')
+    PGEOCODE_OK = True
+except Exception:
+    _ZIP_DB = None
+    PGEOCODE_OK = False
+
 
 def lookup_city(name):
     """Try Nominatim → Photon → built-in fallback dict."""
@@ -518,8 +504,23 @@ def lookup_city(name):
         return lat, lng, name.title() + " (built-in)"
     return None, None, None
 
+
 def lookup_zip(z):
-    """Try Nominatim → Photon → ZIP prefix fallback."""
+    """pgeocode (offline, every US ZIP) → Nominatim → Photon."""
+    # Primary: pgeocode offline DB — fastest, most reliable, covers every US ZIP
+    if PGEOCODE_OK:
+        try:
+            row = _ZIP_DB.query_postal_code(z)
+            lat = float(row.latitude)
+            lng = float(row.longitude)
+            place = str(row.place_name) if row.place_name else z
+            state = str(row.state_code) if row.state_code else ""
+            # pgeocode returns NaN floats for invalid ZIPs
+            if lat == lat and lng == lng:  # NaN check
+                return lat, lng, f"{place}, {state}".strip(", ")
+        except:
+            pass
+    # Fallback 1: Nominatim
     try:
         r = requests.get(
             "https://nominatim.openstreetmap.org/search",
@@ -531,7 +532,7 @@ def lookup_zip(z):
             return float(d[0]["lat"]), float(d[0]["lon"]), d[0].get("display_name", z)
     except:
         pass
-    # Try Photon
+    # Fallback 2: Photon
     try:
         r = requests.get(
             "https://photon.komoot.io/api",
@@ -544,13 +545,6 @@ def lookup_zip(z):
             return float(coords[1]), float(coords[0]), z
     except:
         pass
-    # ZIP prefix fallback
-    prefix = z[:3]
-    if prefix in ZIP_PREFIXES:
-        city = ZIP_PREFIXES[prefix]
-        if city in BUILTIN_CITIES:
-            lat, lng = BUILTIN_CITIES[city]
-            return lat, lng, f"{z} ({city.title()}, built-in)"
     return None, None, None
 
 def get_city():
@@ -935,6 +929,11 @@ def main():
     print("  FIBER HUNTER v%s" % VERSION)
     print("  Same engine as fiber_scan — runs in any city")
     print("#" * 60)
+    if PGEOCODE_OK:
+        print("  ZIP lookup: pgeocode (offline, every US ZIP) ✓")
+    else:
+        print("  ZIP lookup: API only (install pgeocode for offline:")
+        print("              pip install pgeocode)")
 
     lat, lng, city_name = get_city()
     btn_x, btn_y = calibrate_search_button()
