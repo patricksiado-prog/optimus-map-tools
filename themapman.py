@@ -1,28 +1,29 @@
 """
-THE MAP MAN v9.5
-================
-WHAT'S NEW vs 9.4:
-  - ZIP scraper now reads phone/address straight off list cards
-    → no more "Sponsored" / wrong-business panel mismatches
-  - Enricher still uses panel-match (it needs to verify a specific address)
-    but with 3 fixes: clicks link not card, waits for stale panel to clear,
-    rejects "Sponsored"/"Results"/"Directions" as panel names
-  - --houston flag scrapes 30+ Houston-metro ZIPs in one overnight run
+THE MAP MAN v9.7
+=================
+WHAT'S NEW vs 9.5:
+  - 3-COLUMN CLEAN OUTPUT — every new lead writes Business Name, Address,
+    and Phone as separate columns (not jammed into one). Address is no
+    longer dropped silently when the card layout is unusual.
+  - FIBER VERIFICATION CROSS-CHECK — before each new lead is written, its
+    address is compared against the Green Commercial tab's known
+    fiber-green addresses. If it matches:
+        * Fiber Status column shows "VERIFIED FIBER" (instead of blank)
+        * Lead also gets written to a new "Verified Fiber" tab so you
+          can work just the hot ones
+  - More aggressive address extraction (multiple selectors + line-by-line
+    fallback for the formats Google's been using lately)
 
-TWO MODES:
-  1. ENRICHER  — fills phone numbers on fiber scan tabs
-  2. SCRAPER   — finds small biz from one ZIP, all Houston, or any ZIP
+SAME AS v9.5:
+  - Two modes: ENRICHER (fills missing phones on fiber tabs) and
+    SCRAPER (pulls leads from a ZIP)
+  - Auto-update from GitHub
+  - --houston, --zip, --enrich-only, --headless, --limit flags
 
-INSTALL:
-  python -m pip install requests gspread google-auth playwright
-  python -m playwright install chromium
-
-RUN:
-  python themapman.py --enrich-only           enrich fiber tabs only
-  python themapman.py --zip 77034             one ZIP
-  python themapman.py --houston               all Houston + suburbs
-  python themapman.py --houston --headless    overnight, no window
-  python themapman.py --enrich-only --limit 50  test with 50 rows
+USAGE:
+  python themapman.py --enrich-only
+  python themapman.py --zip 77017
+  python themapman.py --houston --headless
 """
 
 import os, sys, re, time, argparse
@@ -32,9 +33,9 @@ from collections import Counter
 import requests, gspread
 from google.oauth2.service_account import Credentials
 
-VERSION = "9.5"
+VERSION = "9.7"
 
-# ── AUTO UPDATE ────────────────────────────────────────────────────────
+# ── AUTO UPDATE ───────────────────────────────────────────────────────
 GITHUB_USER   = "patricksiado-prog"
 GITHUB_REPO   = "optimus-map-tools"
 GITHUB_BRANCH = "main"
@@ -49,7 +50,8 @@ def check_update():
         if r.status_code != 200:
             print("  GitHub unreachable — running v%s" % VERSION); return
         latest = r.text
-        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']''', latest, re.MULTILINE)
+        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']''',
+                      latest, re.MULTILINE)
         new_ver = m.group(1) if m else None
         if not new_ver or new_ver == VERSION:
             print("  Up to date (v%s)" % VERSION); return
@@ -68,11 +70,12 @@ SHEET_ID   = "15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA"
 TAB_ROWS   = 5000
 NOMINATIM  = "https://nominatim.openstreetmap.org"
 
-# ── TABS / HEADERS ─────────────────────────────────────────────────────
+# ── TABS / HEADERS ────────────────────────────────────────────────────
 READY_TAB      = "Ready To Call"
 COMMERCIAL_TAB = "Commercial"
 GREEN_TAB      = "Green Commercial"
 ALL_LEADS_TAB  = "All Leads"
+VERIFIED_TAB   = "Verified Fiber"   # NEW v9.7
 
 READY_HEADERS = [
     "Business Name","Phone","Address","City","State","ZIP",
@@ -87,32 +90,31 @@ GREEN_HEADERS = [
     "Instance","Scan #","Date","Lat","Lng",
     "Phone","Phone Source","Phone Checked At",
 ]
+# NEW v9.7 — clean 3-col tab for verified fiber leads
+VERIFIED_HEADERS = [
+    "Business Name","Address","Phone","City","State","ZIP",
+    "Category","Source","Verified By","Captured At",
+]
 
-# ── TIMING ─────────────────────────────────────────────────────────────
+# ── TIMING ────────────────────────────────────────────────────────────
 MAP_DELAY    = 2.5
 CLICK_DELAY  = 2.8
-PANEL_CLEAR_TIMEOUT = 2000   # ms to wait for stale panel to clear
+PANEL_CLEAR_TIMEOUT = 2000
 BATCH_SIZE   = 20
 GRID_STEP    = 0.015
 
-# ── KNOWN BAD PHONES ───────────────────────────────────────────────────
+# ── KNOWN BAD PHONES ──────────────────────────────────────────────────
 KNOWN_BAD_PHONES = {
     "(832) 899-4658",
 }
 
-# ── PANEL HEADER REJECT LIST (NEW v9.5) ────────────────────────────────
-# These show up in <h1> on Maps but are NEVER business names.
 PANEL_NAME_REJECT = {
     "results","sponsored","directions","search results",
     "places","you","your places","saved","timeline",
 }
 
-# ── HOUSTON METRO ZIPS (--houston mode) ────────────────────────────────
-# Covers Houston city + Pasadena, Sugar Land, Pearland, Katy, Spring,
-# The Woodlands, Humble, Kingwood, Cypress, Tomball, Stafford, Webster,
-# La Porte, Deer Park, League City, Friendswood, Missouri City, Bellaire
+# ── HOUSTON METRO ZIPS ────────────────────────────────────────────────
 HOUSTON_METRO_ZIPS = [
-    # Inner Houston
     "77002","77003","77004","77005","77006","77007","77008","77009","77010",
     "77011","77012","77013","77014","77015","77016","77017","77018","77019",
     "77020","77021","77022","77023","77024","77025","77026","77027","77028",
@@ -124,7 +126,6 @@ HOUSTON_METRO_ZIPS = [
     "77078","77079","77080","77081","77082","77083","77084","77085","77086",
     "77087","77088","77089","77090","77091","77092","77093","77094","77095",
     "77096","77098","77099",
-    # Suburbs
     "77338","77339","77345","77346","77373","77375","77377","77379","77380",
     "77381","77382","77384","77386","77388","77389","77396","77401","77407",
     "77417","77429","77433","77449","77450","77459","77469","77471","77477",
@@ -133,11 +134,11 @@ HOUSTON_METRO_ZIPS = [
     "77573","77584","77586","77587","77598",
 ]
 
-# ── SEARCH CATEGORIES (home-biz heavy) ────────────────────────────────
+# ── SEARCH CATEGORIES ─────────────────────────────────────────────────
 SEARCH_CATEGORIES = [
     "home based business","small businesses","mobile notary","notary public",
     "tax preparation","bookkeeping services","accounting services",
-    "insurance agent","real estate agent","mortgage broker","credit repair",
+    "insurance agent","mortgage broker","credit repair",
     "business consultant","marketing consultant","web design","graphic designer",
     "photographer","videographer","event planner","party rentals",
     "balloon decorator","catering","meal prep service","home bakery",
@@ -150,43 +151,42 @@ SEARCH_CATEGORIES = [
     "moving company","courier service","delivery service","home daycare",
     "child care","private tutor","music lessons","piano teacher",
     "dance instructor","personal trainer","yoga instructor","boxing trainer",
-    "barber","hair stylist","braids","lash tech","lash studio",
-    "nail tech","nail salon","makeup artist","esthetician","waxing",
-    "massage therapist","med spa","tattoo artist","pet groomer",
-    "dog walker","pet sitter","dog trainer","seamstress","alterations",
-    "tailor","custom t shirts","embroidery","screen printing","sign shop",
-    "computer repair","phone repair","appliance repair","locksmith",
-    "bail bonds","immigration services","translation services",
-    "process server","security company","staffing agency",
-    "restaurants","auto repair shops","hair salons","nail salons",
-    "dentists","insurance offices","real estate offices","gyms","retail stores",
-    "law offices","accounting tax offices","daycare centers","pharmacies",
-    "veterinary clinics","massage spa","printing shops","florists","dry cleaners",
-    "mechanics","body shops","tire shops","barber shops","beauty salons",
+    "tattoo artist","pet groomer","dog walker","pet sitter","dog trainer",
+    "seamstress","alterations","tailor","custom t shirts","embroidery",
+    "screen printing","sign shop","computer repair","phone repair",
+    "appliance repair","locksmith","bail bonds","immigration services",
+    "translation services","process server","security company",
+    "staffing agency",
+    "restaurants","auto repair shops","dentists",
+    "real estate offices","gyms","retail stores","tax offices",
+    "daycare centers","veterinary clinics","printing shops","florists",
+    "dry cleaners","mechanics","body shops","tire shops",
     "medical offices","chiropractors","physical therapy","orthodontists",
     "optometrists","pet groomers","coffee shops","bakeries","bars",
     "food trucks","marketing agencies","IT services","moving companies",
     "cleaning services","landscapers","jewelry stores","clothing boutiques",
-    "shoe stores","gift shops","pawn shops","smoke shops","churches",
-    "nonprofits","funeral homes","tax preparation","tutoring centers",
+    "shoe stores","gift shops","pawn shops","smoke shops",
+    "funeral homes","tutoring centers",
 ]
 
-# ── EXCLUDE — NATIONAL CHAINS & BIG CORPS ─────────────────────────────
+# ── EXCLUDE — chains/big corp ─────────────────────────────────────────
 EXCLUDE = [
     "walmart","sam's club","target","costco","home depot","lowe's","lowes",
     "best buy","ikea","bed bath","tj maxx","ross dress","marshalls","burlington",
     "old navy","gap ","h&m","zara","forever 21","victoria's secret","bath & body",
-    "ulta beauty","sephora","dollar general","dollar tree","family dollar","five below",
-    "big lots","tuesday morning","party city","michaels","hobby lobby","jo-ann",
-    "kroger","heb ","h-e-b","publix","safeway","albertsons","aldi","whole foods",
-    "trader joe's","sprouts","randalls","fiesta mart","food lion","meijer",
-    "winn-dixie","wegmans","giant","stop & shop","hyvee","hy-vee",
-    "mcdonald","burger king","taco bell","wendy's","chick-fil","subway","sonic drive",
-    "dairy queen","whataburger","popeyes","kfc ","raising cane","wingstop","zaxby",
-    "jack in the box","del taco","carl's jr","hardee","checkers","rally's",
-    "five guys","shake shack","in-n-out","smashburger",
-    "panda express","chipotle","qdoba","moe's southwest",
-    "domino's","pizza hut","papa john","little caesar",
+    "ulta beauty","sephora","dollar general","dollar tree","family dollar",
+    "five below","big lots","tuesday morning","party city","michaels",
+    "hobby lobby","jo-ann",
+    "kroger","heb ","h-e-b","publix","safeway","albertsons","aldi",
+    "whole foods","trader joe's","sprouts","randalls","fiesta mart",
+    "food lion","meijer","winn-dixie","wegmans","giant","stop & shop",
+    "hyvee","hy-vee",
+    "mcdonald","burger king","taco bell","wendy's","chick-fil","subway",
+    "sonic drive","dairy queen","whataburger","popeyes","kfc ",
+    "raising cane","wingstop","zaxby","jack in the box","del taco",
+    "carl's jr","hardee","checkers","rally's","five guys","shake shack",
+    "in-n-out","smashburger","panda express","chipotle","qdoba",
+    "moe's southwest","domino's","pizza hut","papa john","little caesar",
     "starbucks","dunkin","tim horton","panera","jason's deli",
     "jersey mike","firehouse subs","jimmy john","potbelly",
     "olive garden","red lobster","applebee's","chili's","outback steakhouse",
@@ -203,10 +203,11 @@ EXCLUDE = [
     "speedway","kwik trip","love's travel","pilot flying","flying j",
     "marriott","hilton","hyatt","holiday inn","sheraton","westin","w hotel",
     "hampton inn","la quinta","motel 6","super 8","days inn","comfort inn",
-    "best western","quality inn","sleep inn","econolodge","red roof","extended stay",
-    "residence inn","courtyard by","fairfield inn","springhill suites",
-    "embassy suites","doubletree","aloft hotel","four seasons","ritz-carlton",
-    "crowne plaza","kimpton","omni hotel","loews hotel","wyndham",
+    "best western","quality inn","sleep inn","econolodge","red roof",
+    "extended stay","residence inn","courtyard by","fairfield inn",
+    "springhill suites","embassy suites","doubletree","aloft hotel",
+    "four seasons","ritz-carlton","crowne plaza","kimpton","omni hotel",
+    "loews hotel","wyndham",
     "jiffy lube","valvoline","firestone","goodyear","midas ","pep boys",
     "advance auto","autozone","o'reilly auto","napa auto","discount tire",
     "america's tire","mavis discount","monro muffler","meineke",
@@ -217,54 +218,60 @@ EXCLUDE = [
     "mercedes-benz of ","lexus of ","infiniti of ","cadillac of ",
     "fedex office","fedex ground","ups store","ups freight",
     "post office","usps","dhl","staples ","office depot","officemax",
-    "planet fitness","la fitness","24 hour fitness","anytime fitness","gold's gym",
-    "snap fitness","crunch fitness","equinox","lifetime fitness","orange theory",
-    "f45 training","pure barre","soulcycle",
+    "planet fitness","la fitness","24 hour fitness","anytime fitness",
+    "gold's gym","snap fitness","crunch fitness","equinox","lifetime fitness",
+    "orange theory","f45 training","pure barre","soulcycle",
     "great clips","supercuts","sport clips","fantastic sams","cost cutters",
-    "hair cuttery","regis salon","smartstyle","first choice","floyd's barbershop",
-    "sally beauty",
+    "hair cuttery","regis salon","smartstyle","first choice",
+    "floyd's barbershop","sally beauty",
     "petco","petsmart","pet supplies plus","petland",
     "servpro","servicemaster","stanley steemer","molly maid","merry maids",
     "two men and a truck","college hunks","1-800-got-junk",
     "terminix","orkin","rollins ","truly nolen","aptive",
     "tru green","lawn doctor","scotts lawn","brightview",
-    "regus ","regus-","iwg ","wework","spaces coworking","industrious","hq network",
-    "united states postal","the ubc","virtual office",
+    "regus ","wework","spaces coworking","industrious",
     "public storage","extra space","life storage","cubesmart","u-haul",
-    "simply self storage","storage mart","iron mountain",
     "city hall","county ","courthouse","dmv ","social security",
-    "fire station","police station","police department","sheriff","constable",
-    "jail","prison","detention","government","municipal","public works",
-    "state of texas","city of houston","city of dallas","city of austin",
-    "irs ","department of",
-    "university","college ","school district"," isd","high school","middle school",
-    "elementary school","community college","junior college","vocational school",
+    "fire station","police station","police department","sheriff",
+    "constable","jail","prison","detention","government","municipal",
+    "public works","state of texas","city of houston","department of",
+    "irs ",
+    "university","community college","junior college","college "," isd ",
+    "high school","middle school","elementary school","school district",
     "hospital","medical center","health system","health network",
     "children's hospital","memorial hermann","methodist hospital","hca ",
-    "ascension","dignity health","kaiser","intermountain","tenet health",
-    "concentra","nextcare","patient first","city md","davita","fresenius",
-    "amazon","apple store","microsoft","google ","meta ","facebook office",
-    "at&t store","t-mobile store","verizon store","sprint store",
-    "best buy mobile","cricket wireless store","boost mobile store",
+    "ascension","dignity health","kaiser","tenet health",
+    "concentra","nextcare","city md","davita","fresenius","md anderson",
+    " law office"," law firm","attorneys at law","personal injury law",
+    " llp ","p.l.l.c","pllc ",
+    "re/max ","remax ","century 21","keller williams","coldwell banker",
+    "berkshire hathaway",
+    "amazon","apple store","microsoft","at&t store","t-mobile store",
+    "verizon store","sprint store","cricket wireless store","boost mobile store",
     "amc theatre","regal cinema","cinemark","dave & buster","main event",
     "topgolf","bowlero","chuck e. cheese",
+    "h&r block","hr block","liberty tax","jackson hewitt",
+    "state farm","allstate","geico","progressive insurance","farmers insurance",
 ]
 
 BIG_BIZ_SIGNALS = [
-    "corporate headquarters","corporate office","regional office","national chain",
-    "fortune 500","publicly traded","nyse:","nasdaq:",
-    "holdings llc","holdings inc","properties llc","properties inc",
-    "management corp","solutions corp","services corp","group inc",
-    "enterprises inc","international inc","international corp",
-    "nationwide ","corporate campus","distribution center",
+    "corporate headquarters","corporate office","regional office",
+    "national chain","fortune 500","publicly traded","nyse:","nasdaq:",
+    "holdings llc","holdings inc","management corp","solutions corp",
+    "services corp","group inc","enterprises inc","international inc",
+    "international corp","corporate campus","distribution center",
     "fulfillment center","manufacturing facility","processing plant",
     "headquarters","corporate hq",
 ]
 
 _pw = _browser = _page = None
 
+# ── NEW v9.7 — fiber address index built once at startup ──────────────
+FIBER_ADDR_KEYS    = set()   # exact key: "1611|lamar st"
+FIBER_STREET_INDEX = {}      # street_name -> [verified street numbers]
 
-# ── HELPERS ────────────────────────────────────────────────────────────
+
+# ── HELPERS ───────────────────────────────────────────────────────────
 def now_str():
     return datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
@@ -313,6 +320,64 @@ def street_number(text):
     m = re.search(r"\b(\d{2,6})\b", str(text or ""))
     return m.group(1) if m else ""
 
+# NEW v9.7 — address normalization for cross-tab matching
+STREET_SUFFIX_MAP = {
+    "street": "st","st.": "st","road": "rd","rd.": "rd",
+    "avenue": "ave","ave.": "ave","drive": "dr","dr.": "dr",
+    "boulevard": "blvd","blvd.": "blvd","lane": "ln","ln.": "ln",
+    "court": "ct","ct.": "ct","circle": "cir","cir.": "cir",
+    "highway": "hwy","hwy.": "hwy","parkway": "pkwy","pkwy.": "pkwy",
+    "freeway": "fwy","fwy.": "fwy","place": "pl","pl.": "pl",
+}
+
+def address_norm(addr):
+    if not addr: return ""
+    s = norm(addr)
+    return " ".join(STREET_SUFFIX_MAP.get(t, t) for t in s.split())
+
+def street_name_only(addr):
+    if not addr: return ""
+    n = address_norm(addr)
+    num = street_number(addr)
+    if num:
+        n = re.sub(r"\b" + re.escape(num) + r"\b", "", n).strip()
+    toks = [t for t in n.split() if t][:3]
+    return " ".join(toks)
+
+def addr_key(addr):
+    """e.g. '1611 Lamar Street' → '1611|lamar st'"""
+    num = street_number(addr)
+    if not num: return ""
+    sname = street_name_only(addr)
+    if not sname: return ""
+    return num + "|" + sname
+
+def fiber_status_for(addr):
+    """NEW v9.7 — checks if an address is fiber-verified.
+    Returns (status_string, match_method) tuple.
+    Match: EXACT (same #+street), SAME BLOCK (within 50 #s), SAME STREET, or '' """
+    if not addr: return "", ""
+    k = addr_key(addr)
+    sname = street_name_only(addr)
+    num   = street_number(addr)
+
+    if k and k in FIBER_ADDR_KEYS:
+        return "VERIFIED FIBER", "exact-address match"
+
+    if sname and sname in FIBER_STREET_INDEX:
+        verified = FIBER_STREET_INDEX[sname]
+        if num and verified:
+            try:
+                ni = int(num)
+                close = [v for v in verified if abs(v - ni) <= 50]
+                if close:
+                    return "LIKELY FIBER", "same-block match (~%d)" % min(
+                        abs(v - ni) for v in close)
+            except: pass
+        return "MAYBE FIBER", "same-street match"
+
+    return "", ""
+
 def address_match(a, b):
     if not a or not b: return False
     a_num = street_number(a); b_num = street_number(b)
@@ -345,7 +410,7 @@ def is_bad_phone(phone, extra_bad=set()):
     return phone in KNOWN_BAD_PHONES or phone in extra_bad
 
 
-# ── SHEETS ─────────────────────────────────────────────────────────────
+# ── SHEETS ────────────────────────────────────────────────────────────
 def connect_sheets():
     if not os.path.exists(CREDS_FILE):
         print("\nERROR: google_creds.json not found."); sys.exit(1)
@@ -354,20 +419,22 @@ def connect_sheets():
     creds  = Credentials.from_service_account_file(CREDS_FILE, scopes=scopes)
     client = gspread.authorize(creds)
     ss     = client.open_by_key(SHEET_ID)
-    ready_ws  = get_or_create_tab(ss, READY_TAB,      READY_HEADERS)
-    comm_ws   = get_or_create_tab(ss, COMMERCIAL_TAB, COMMERCIAL_HEADERS)
-    green_ws  = get_or_create_tab(ss, GREEN_TAB,      GREEN_HEADERS, required=False)
+    ready_ws    = get_or_create_tab(ss, READY_TAB,      READY_HEADERS)
+    comm_ws     = get_or_create_tab(ss, COMMERCIAL_TAB, COMMERCIAL_HEADERS)
+    green_ws    = get_or_create_tab(ss, GREEN_TAB,      GREEN_HEADERS, required=False)
+    verified_ws = get_or_create_tab(ss, VERIFIED_TAB,   VERIFIED_HEADERS)
     try:    all_leads_ws = ss.worksheet(ALL_LEADS_TAB)
     except: all_leads_ws = None
     print("Connected to Google Sheets ✓")
-    return ss, ready_ws, comm_ws, green_ws, all_leads_ws
+    return ss, ready_ws, comm_ws, green_ws, all_leads_ws, verified_ws
 
 def get_or_create_tab(ss, title, headers, required=True):
     try:
         ws = ss.worksheet(title)
     except gspread.exceptions.WorksheetNotFound:
         if not required: return None
-        ws = ss.add_worksheet(title=title, rows=TAB_ROWS, cols=max(len(headers), 20))
+        ws = ss.add_worksheet(title=title, rows=TAB_ROWS,
+                              cols=max(len(headers), 20))
         ws.update(range_name="A1", values=[headers])
         print("  Created tab: %s" % title); return ws
     vals = ws.get_all_values()
@@ -379,9 +446,11 @@ def get_or_create_tab(ss, title, headers, required=True):
         if h.lower() not in existing:
             new_hdrs.append(h); existing.append(h.lower()); changed = True
     if changed:
-        try: ws.resize(rows=max(len(vals)+2000, TAB_ROWS), cols=max(len(new_hdrs), 20))
+        try: ws.resize(rows=max(len(vals)+2000, TAB_ROWS),
+                       cols=max(len(new_hdrs), 20))
         except: pass
-        ws.update(range_name="A1:%s1" % col_letter(len(new_hdrs)), values=[new_hdrs])
+        ws.update(range_name="A1:%s1" % col_letter(len(new_hdrs)),
+                  values=[new_hdrs])
         print("  Updated columns: %s" % title)
     return ws
 
@@ -399,13 +468,13 @@ def get_cell(row, hmap, names):
     return ""
 
 def append_rows_safe(ws, rows):
-    if not rows: return
+    if not ws or not rows: return
     for attempt in range(3):
         try:
             ws.append_rows(rows, value_input_option="USER_ENTERED")
             time.sleep(0.5); return
         except Exception as e:
-            print("  Append error attempt %d: %s" % (attempt+1, e)); time.sleep(5)
+            print("  Append err %d: %s" % (attempt+1, e)); time.sleep(5)
 
 def batch_update_safe(ws, updates):
     if not updates: return
@@ -414,12 +483,12 @@ def batch_update_safe(ws, updates):
             ws.batch_update(updates, value_input_option="USER_ENTERED")
             time.sleep(0.5); return
         except Exception as e:
-            print("  Batch update error attempt %d: %s" % (attempt+1, e)); time.sleep(5)
+            print("  Batch update err %d: %s" % (attempt+1, e)); time.sleep(5)
 
 def ensure_phone_cols(ws):
     vals = ws.get_all_values()
     if not vals: return header_map(ws)
-    needed  = ["Phone","Phone Source","Phone Checked At"]
+    needed = ["Phone","Phone Source","Phone Checked At"]
     headers = list(vals[0])
     existing = [h.lower().strip() for h in headers]
     changed = False
@@ -427,14 +496,83 @@ def ensure_phone_cols(ws):
         if col.lower() not in existing:
             headers.append(col); existing.append(col.lower()); changed = True
     if changed:
-        try: ws.resize(rows=max(len(vals)+2000, TAB_ROWS), cols=max(len(headers), 20))
+        try: ws.resize(rows=max(len(vals)+2000, TAB_ROWS),
+                       cols=max(len(headers), 20))
         except: pass
-        ws.update(range_name="A1:%s1" % col_letter(len(headers)), values=[headers])
+        ws.update(range_name="A1:%s1" % col_letter(len(headers)),
+                  values=[headers])
         print("  Added phone columns to tab.")
     return header_map(ws)
 
 
-# ── BROWSER ────────────────────────────────────────────────────────────
+# ── NEW v9.7 — build the fiber address index from Green Commercial ────
+def build_fiber_index(green_ws, all_leads_ws):
+    """Reads every address from Green Commercial (and FIBER ELIGIBLE rows
+    from All Leads) into FIBER_ADDR_KEYS (exact match) and
+    FIBER_STREET_INDEX (street-level). Called once at startup."""
+    global FIBER_ADDR_KEYS, FIBER_STREET_INDEX
+    FIBER_ADDR_KEYS = set()
+    FIBER_STREET_INDEX = {}
+
+    sources = []
+
+    # Source A: Green Commercial
+    if green_ws:
+        try:
+            vals = green_ws.get_all_values()
+            if vals and len(vals) > 1:
+                hmap = {h.lower().strip(): i for i, h in enumerate(vals[0])}
+                idx = hmap.get("address", -1)
+                if idx >= 0:
+                    for row in vals[1:]:
+                        if len(row) > idx:
+                            addr = row[idx].strip()
+                            if addr:
+                                sources.append(addr)
+        except Exception as e:
+            print("  Green index read err: %s" % e)
+
+    # Source B: All Leads where Type/Status mentions FIBER ELIGIBLE
+    if all_leads_ws:
+        try:
+            vals = all_leads_ws.get_all_values()
+            if vals and len(vals) > 1:
+                hmap = {h.lower().strip(): i for i, h in enumerate(vals[0])}
+                addr_idx = hmap.get("address", -1)
+                # find the type/status column
+                type_idx = -1
+                for k in ["type","fiber status","status"]:
+                    if k in hmap:
+                        type_idx = hmap[k]; break
+                if addr_idx >= 0 and type_idx >= 0:
+                    for row in vals[1:]:
+                        if len(row) > max(addr_idx, type_idx):
+                            t = row[type_idx].lower()
+                            if "fiber" in t and "eligible" in t:
+                                addr = row[addr_idx].strip()
+                                if addr:
+                                    sources.append(addr)
+        except Exception as e:
+            print("  All Leads index read err: %s" % e)
+
+    # Build the indexes
+    for a in sources:
+        sname = street_name_only(a)
+        num   = street_number(a)
+        if sname:
+            if num:
+                FIBER_ADDR_KEYS.add(num + "|" + sname)
+                try:
+                    FIBER_STREET_INDEX.setdefault(sname, []).append(int(num))
+                except: pass
+            else:
+                FIBER_STREET_INDEX.setdefault(sname, [])
+
+    print("  Fiber index: %d exact addresses, %d distinct streets" % (
+        len(FIBER_ADDR_KEYS), len(FIBER_STREET_INDEX)))
+
+
+# ── BROWSER ───────────────────────────────────────────────────────────
 def init_browser(headless=False):
     global _pw, _browser, _page
     from playwright.sync_api import sync_playwright
@@ -450,7 +588,8 @@ def init_browser(headless=False):
                    "Chrome/122.0.0.0 Safari/537.36",
         locale="en-US")
     _page = ctx.new_page()
-    _page.goto("https://www.google.com/maps", timeout=25000, wait_until="domcontentloaded")
+    _page.goto("https://www.google.com/maps", timeout=25000,
+               wait_until="domcontentloaded")
     time.sleep(2)
     print("  Browser ready ✓")
 
@@ -486,32 +625,67 @@ def card_name(card):
         except: pass
     return ""
 
+
+# ── PATCHED v9.7 — better address extraction ─────────────────────────
 def card_data(card):
-    """NEW v9.5: pull name + phone + address straight from the list card.
-    No clicking, no panel, no mismatch possible."""
+    """v9.7: Pulls name + phone + address from card text. Tries multiple
+    selectors AND falls back to scanning every line for an address pattern.
+    Drops category prefixes like 'Plumber · '."""
     try: txt = card.inner_text()
     except: return "", "", ""
+
     name = card_name(card)
     phone = extract_phone(txt)
+
     addr = ""
-    for line in txt.split("\n"):
-        line = line.strip()
-        if looks_like_address(line):
-            addr = line
-            break
+
+    # 1. Dedicated selectors
+    for sel in [
+        "div.W4Efsd:has-text(',')",
+        "div.W4Efsd > div.W4Efsd",
+        "span[aria-label*='Address']",
+        "div[aria-label*='Address']",
+    ]:
+        try:
+            el = card.query_selector(sel)
+            if el:
+                t = el.inner_text().strip().split("\n")[0]
+                if t and looks_like_address(t):
+                    addr = t
+                    break
+        except: pass
+
+    # 2. Line-by-line scan for an address pattern
+    if not addr:
+        for line in txt.split("\n"):
+            line = line.strip()
+            if line and looks_like_address(line):
+                addr = line
+                break
+
+    # 3. Number-prefix line (Google sometimes drops the suffix)
+    if not addr:
+        for line in txt.split("\n"):
+            line = line.strip()
+            if re.match(r"^\d{2,6}\s+[A-Z]", line):
+                addr = line
+                break
+
+    # Strip "Plumber · " category prefix and "·" leftovers
+    if addr:
+        addr = re.sub(r"^[\w\s]+·\s*·?\s*", "", addr).strip()
+        addr = re.sub(r"^·\s+", "", addr).strip()
+
     return name, phone, addr
 
+
 def is_sponsored_card(card):
-    try:
-        return "sponsored" in card.inner_html().lower()
+    try: return "sponsored" in card.inner_html().lower()
     except: return False
 
 def panel_name():
-    """PATCHED v9.5: reject section headers ("Sponsored", "Results", etc).
-    Wait briefly for the real h1 to load."""
     global _page
-    try:
-        _page.wait_for_selector("h1.DUwDvf", timeout=2500)
+    try: _page.wait_for_selector("h1.DUwDvf", timeout=2500)
     except: pass
     for sel in ["h1.DUwDvf","h1.fontHeadlineLarge"]:
         try:
@@ -539,7 +713,8 @@ def panel_phone():
 
 def panel_address():
     global _page
-    for sel in ["button[data-item-id='address']","button[aria-label^='Address:']",
+    for sel in ["button[data-item-id='address']",
+                "button[aria-label^='Address:']",
                 "button[aria-label*='Address:']"]:
         try:
             for el in _page.query_selector_all(sel):
@@ -551,8 +726,6 @@ def panel_address():
     return ""
 
 def wait_for_stale_panel_to_clear():
-    """PATCHED v9.5: before clicking the next card, wait for the previous
-    panel's h1 to actually unload. Otherwise we read stale data."""
     global _page
     try:
         _page.evaluate("""
@@ -565,24 +738,18 @@ def wait_for_stale_panel_to_clear():
     time.sleep(0.3)
 
 def click_card_and_extract(card, expected_name="", expected_address=""):
-    """PATCHED v9.5: clicks the link element first (more reliable than
-    clicking the card div), waits for stale panel to clear before reading."""
     global _page
     try: _page.keyboard.press("Escape"); time.sleep(0.3)
     except: pass
 
     cname = card_name(card) or expected_name
-
-    # Clear stale panel BEFORE clicking (so we don't read previous biz)
     wait_for_stale_panel_to_clear()
 
-    # Click the link inside the card, fall back to card click
     clicked = False
     try:
         link = card.query_selector("a.hfpxzc")
         if link:
-            link.click()
-            clicked = True
+            link.click(); clicked = True
     except: pass
     if not clicked:
         try: card.click()
@@ -615,7 +782,7 @@ def click_card_and_extract(card, expected_name="", expected_address=""):
     }
 
 
-# ── FIBER SCAN ENRICHER (panel-match required) ────────────────────────
+# ── ENRICHER ──────────────────────────────────────────────────────────
 def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
     global _page
     if not address or not looks_like_address(address):
@@ -646,10 +813,8 @@ def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
                 matched_by = "name"
             if not matched_by: pphone = ""
             return {
-                "name": pname or business_name,
-                "phone": pphone,
-                "address": paddr or address,
-                "matched_by": matched_by,
+                "name": pname or business_name, "phone": pphone,
+                "address": paddr or address, "matched_by": matched_by,
                 "source": "Google Maps",
             }
 
@@ -672,6 +837,7 @@ def lookup_by_address(address, business_name="", city="", state="TX", zipc=""):
     except Exception as e:
         print("       Lookup error: %s" % e)
         return None
+
 
 def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
     if not ws:
@@ -699,7 +865,6 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
         fstat = get_cell(row, hmap, ["type","fiber status","status"])
 
         if not addr or not looks_like_address(addr): continue
-
         needs_fix = (not phone) or is_bad_phone(phone, tab_bad)
         if not needs_fix: continue
 
@@ -712,9 +877,7 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
 
     print("\n" + "=" * 60)
     print("  ENRICHING: %s" % tab_name)
-    print("  Rows to fix: %d (missing or bad phone)" % len(rows_to_fix))
-    if tab_bad - all_bad_phones:
-        print("  Detected bad repeated phones: %s" % ", ".join(tab_bad - all_bad_phones))
+    print("  Rows to fix: %d" % len(rows_to_fix))
     print("=" * 60)
 
     done = 0
@@ -735,7 +898,7 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
 
         new_phone = found["phone"]
         if is_bad_phone(new_phone, tab_bad):
-            print("       Found phone is still bad, skipping: %s" % new_phone); continue
+            print("       Phone still bad, skipping: %s" % new_phone); continue
 
         print("       ✓ Phone: %s | matched by: %s" % (
             new_phone, found.get("matched_by","")))
@@ -755,11 +918,14 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
             batch_update_safe(ws, updates)
 
         biz_name = found.get("name") or item["name"] or item["address"]
+        addr_out = found.get("address") or item["address"]
+        # NEW v9.7 — fiber check
+        fiber_stat, fiber_match = fiber_status_for(addr_out)
         ready_batch.append([
-            biz_name, new_phone,
-            found.get("address") or item["address"],
+            biz_name, new_phone, addr_out,
             item["city"], item["state"], item["zip"],
-            item["fiber_status"], "Fiber Scan Lead", tab_name,
+            fiber_stat or item["fiber_status"],
+            "Fiber Scan Lead", tab_name,
             found.get("matched_by",""), now_str(),
         ])
         if len(ready_batch) >= BATCH_SIZE:
@@ -774,11 +940,10 @@ def enrich_tab(ws, tab_name, ready_ws, all_bad_phones, limit=None):
     return done
 
 
-# ── ZIP SCRAPER (CARD-ONLY, v9.5) ─────────────────────────────────────
+# ── ZIP SCRAPER ───────────────────────────────────────────────────────
 def scrape_category_cards(zipcode, city, state, category,
-                          seen_keys, seen_phones, phone_counter, max_cards=40):
-    """REWRITTEN v9.5: pulls name+phone+address from list cards.
-    No panel clicking → no mismatch possible. ~10x faster."""
+                          seen_keys, seen_phones, phone_counter,
+                          max_cards=40):
     global _page
     query = "%s in %s" % (category, zipcode)
     url = "https://www.google.com/maps/search/%s" % query.replace(" ", "+")
@@ -788,8 +953,7 @@ def scrape_category_cards(zipcode, city, state, category,
         _page.goto(url, timeout=25000, wait_until="domcontentloaded")
         time.sleep(MAP_DELAY)
     except Exception as e:
-        print("    nav error: %s" % e)
-        return results
+        print("    nav error: %s" % e); return results
 
     processed = 0
     last_count = 0
@@ -814,25 +978,36 @@ def scrape_category_cards(zipcode, city, state, category,
             if key in seen_keys: continue
             seen_keys.add(key)
 
-            # Phone-level dedup — same number on 3+ businesses = chain svc
             if phone:
                 phone_counter[phone] += 1
                 if phone_counter[phone] >= 3 or is_bad_phone(phone):
-                    print("    ⊘ shared/bad phone, dropping: %s" % phone)
+                    print("    ⊘ shared/bad phone: %s" % phone)
                     phone = ""
 
             if phone and phone in seen_phones: continue
             if phone: seen_phones.add(phone)
 
-            print("    %s | %s | %s" % (
-                "✓ " + phone if phone else "(no #)",
-                name[:35], addr[:30]))
+            # NEW v9.7 — fiber check on every captured biz
+            fiber_stat, fiber_match = fiber_status_for(addr)
+            tag = ""
+            if fiber_stat == "VERIFIED FIBER":
+                tag = " 🔥 VERIFIED FIBER"
+            elif fiber_stat == "LIKELY FIBER":
+                tag = " 🟢 likely fiber"
+            elif fiber_stat == "MAYBE FIBER":
+                tag = " · same street"
+
+            phone_disp = phone if phone else "(no #)"
+            addr_disp  = addr  if addr  else "(no addr)"
+            print("    %-15s | %-40s | %s%s" % (
+                phone_disp, name[:40], addr_disp[:40], tag))
 
             results.append({
                 "name": name, "phone": phone, "address": addr,
                 "category": category, "city": city, "state": state,
                 "zip": zipcode, "source": "Google Maps card",
                 "matched_by": "list card",
+                "fiber_status": fiber_stat, "fiber_match": fiber_match,
             })
 
         try:
@@ -851,12 +1026,13 @@ def scrape_category_cards(zipcode, city, state, category,
 
     return results
 
+
 def zip_to_city_state(zipcode):
     try:
         r = requests.get("%s/search" % NOMINATIM,
             params={"postalcode":zipcode,"country":"US","format":"json",
                     "limit":1,"addressdetails":1},
-            headers={"User-Agent":"TheMapMan/9.5"}, timeout=10)
+            headers={"User-Agent":"TheMapMan/%s" % VERSION}, timeout=10)
         data = r.json()
         if data:
             a = data[0].get("address", {})
@@ -867,16 +1043,20 @@ def zip_to_city_state(zipcode):
     except: pass
     return zipcode, "TX"
 
-def run_zip(zipcode, ready_ws, comm_ws, seen_keys, seen_phones,
-            phone_counter, limit=None):
+
+def run_zip(zipcode, ready_ws, comm_ws, verified_ws,
+            seen_keys, seen_phones, phone_counter, limit=None):
     city, state = zip_to_city_state(zipcode)
 
     print("\n" + "=" * 60)
     print("  SCRAPING ZIP: %s (%s, %s)" % (zipcode, city, state))
-    print("  Categories: %d  |  Mode: card-only (no panel mismatch)" % len(SEARCH_CATEGORIES))
+    print("  Categories: %d" % len(SEARCH_CATEGORIES))
     print("=" * 60)
 
-    ready_batch = []; comm_batch = []; checked = 0
+    ready_batch    = []
+    comm_batch     = []
+    verified_batch = []   # NEW v9.7
+    checked = 0
 
     try:
         for category in SEARCH_CATEGORIES:
@@ -890,20 +1070,31 @@ def run_zip(zipcode, ready_ws, comm_ws, seen_keys, seen_phones,
                 name  = biz.get("name","")
                 phone = biz.get("phone","")
                 addr  = biz.get("address","")
+                fstat = biz.get("fiber_status","")
                 if not name or not is_small_biz(name, biz.get("category","")):
                     continue
 
+                # 3-COL clean output to Commercial tab
                 comm_batch.append([
                     name, addr, phone, biz.get("category",""),
                     city, state, zipcode, "Commercial", "Google Maps",
                     "Card-confirmed" if phone else "No phone on card",
-                    "Card-only mode (v9.5)", "The Map Man v%s" % VERSION, now_str(),
+                    "v%s — %s" % (VERSION, fstat) if fstat else "v%s card-only" % VERSION,
+                    "The Map Man v%s" % VERSION, now_str(),
                 ])
+                # Ready To Call (only if phone present)
                 if phone:
                     ready_batch.append([
                         name, phone, addr, city, state, zipcode,
-                        "", biz.get("category",""), "Google Maps ZIP Scrape",
+                        fstat, biz.get("category",""), "Google Maps ZIP Scrape",
                         biz.get("matched_by","list card"), now_str(),
+                    ])
+                # NEW v9.7 — Verified Fiber tab gets just the hot ones
+                if fstat == "VERIFIED FIBER" and phone and addr:
+                    verified_batch.append([
+                        name, addr, phone, city, state, zipcode,
+                        biz.get("category",""), "Google Maps ZIP Scrape",
+                        biz.get("fiber_match",""), now_str(),
                     ])
 
             if len(comm_batch) >= BATCH_SIZE:
@@ -912,19 +1103,23 @@ def run_zip(zipcode, ready_ws, comm_ws, seen_keys, seen_phones,
                 append_rows_safe(ready_ws, ready_batch)
                 print("  ✓ Saved %d to Ready To Call" % len(ready_batch))
                 ready_batch = []
+            if len(verified_batch) >= 5:
+                append_rows_safe(verified_ws, verified_batch)
+                print("  🔥 Saved %d to Verified Fiber" % len(verified_batch))
+                verified_batch = []
 
             if limit and checked >= limit: raise KeyboardInterrupt
 
     except KeyboardInterrupt:
         print("\n  Stopping ZIP %s — saving..." % zipcode)
     finally:
-        if comm_batch:  append_rows_safe(comm_ws, comm_batch)
-        if ready_batch: append_rows_safe(ready_ws, ready_batch)
+        if comm_batch:     append_rows_safe(comm_ws,     comm_batch)
+        if ready_batch:    append_rows_safe(ready_ws,    ready_batch)
+        if verified_batch: append_rows_safe(verified_ws, verified_batch)
     print("  ZIP %s done." % zipcode)
 
 
-def run_houston(ready_ws, comm_ws, limit=None):
-    """NEW v9.5: walk every Houston-metro ZIP, dedupe across all of them."""
+def run_houston(ready_ws, comm_ws, verified_ws, limit=None):
     seen_keys, seen_phones, phone_counter = set(), set(), Counter()
     print("\n" + "#" * 60)
     print("  HOUSTON METRO MODE — %d ZIPs × %d categories" % (
@@ -933,7 +1128,7 @@ def run_houston(ready_ws, comm_ws, limit=None):
     for i, z in enumerate(HOUSTON_METRO_ZIPS, start=1):
         print("\n>>> ZIP %d/%d: %s" % (i, len(HOUSTON_METRO_ZIPS), z))
         try:
-            run_zip(z, ready_ws, comm_ws,
+            run_zip(z, ready_ws, comm_ws, verified_ws,
                     seen_keys, seen_phones, phone_counter, limit=limit)
         except KeyboardInterrupt:
             print("\nHouston run stopped by user.")
@@ -942,25 +1137,27 @@ def run_houston(ready_ws, comm_ws, limit=None):
             print("ZIP %s errored: %s — continuing" % (z, e))
 
 
-# ── MAIN ───────────────────────────────────────────────────────────────
+# ── MAIN ──────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="THE MAP MAN v%s" % VERSION)
-    parser.add_argument("--zip",          type=str, default=None)
-    parser.add_argument("--houston",      action="store_true",
-                        help="scrape every Houston-metro ZIP")
-    parser.add_argument("--enrich-only",  action="store_true")
-    parser.add_argument("--headless",     action="store_true")
-    parser.add_argument("--limit",        type=int, default=None,
-                        help="cap rows per tab/category — for testing")
+    parser.add_argument("--zip",         type=str, default=None)
+    parser.add_argument("--houston",     action="store_true")
+    parser.add_argument("--enrich-only", action="store_true")
+    parser.add_argument("--headless",    action="store_true")
+    parser.add_argument("--limit",       type=int, default=None)
     args = parser.parse_args()
 
     print("\n" + "#" * 60)
     print("  THE MAP MAN v%s" % VERSION)
-    print("  Enricher: panel-match required (verifies specific address)")
-    print("  Scraper:  card-only mode (no panel = no mismatch)")
+    print("  3-col clean output | fiber-verified cross-check")
     print("#" * 60 + "\n")
 
-    ss, ready_ws, comm_ws, green_ws, all_leads_ws = connect_sheets()
+    ss, ready_ws, comm_ws, green_ws, all_leads_ws, verified_ws = connect_sheets()
+
+    # NEW v9.7 — build fiber index BEFORE doing anything else
+    print("\nBuilding fiber-verified address index...")
+    build_fiber_index(green_ws, all_leads_ws)
+
     init_browser(args.headless)
 
     try:
@@ -980,13 +1177,13 @@ def main():
 
         # STEP 2: scrape
         if args.houston:
-            run_houston(ready_ws, comm_ws, limit=args.limit)
+            run_houston(ready_ws, comm_ws, verified_ws, limit=args.limit)
         else:
             zipcode = args.zip or input("\n  Enter ZIP code: ").strip()
             if not re.match(r"^\d{5}$", zipcode):
                 print("  Invalid ZIP."); sys.exit(1)
             seen_keys, seen_phones, phone_counter = set(), set(), Counter()
-            run_zip(zipcode, ready_ws, comm_ws,
+            run_zip(zipcode, ready_ws, comm_ws, verified_ws,
                     seen_keys, seen_phones, phone_counter, limit=args.limit)
 
     finally:
