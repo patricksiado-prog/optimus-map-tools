@@ -429,3 +429,69 @@ Claude pulls latest, fully synced, picks up at next BUILD QUEUE item.
 ---
 
 End of BRAIN.
+
+---
+
+## CABLE WEAKNESS MAP — HOUSTON (added 2026-04-30)
+
+### Dominant Cable in Houston = Xfinity/Comcast
+Spectrum is more San Antonio / Austin / Corpus / RGV.
+Houston metro = mostly Xfinity, which means our outage angle here is Xfinity-flavored.
+
+### Active Hate ZIPs (Xfinity dropouts, public complaints)
+| ZIP | Area | Signal |
+|-----|------|--------|
+| 77018 | Oak Forest | Xfinity drops all day long, work-from-home complaints |
+| 77044 | NE Houston | Week-long outages, residents threatening to switch |
+| 77008 | Heights / Garden Oaks | Customer publicly switched to AT&T after week-long outage |
+| 77388 | Spring | Spectrum drop confirmed |
+| Cypress | NW | Biweekly Xfinity outage pattern |
+
+### THE EZEE FIBER WEDGE 🔥 (NEW ANGLE - HOUSTON SPECIFIC)
+Ezee Fiber is a Houston-based fiber competitor actively destroying neighborhoods.
+Their BBB accreditation was revoked June 2025. They are being sued.
+This is the SHARPEST wedge we have in Houston right now.
+
+**Confirmed Ezee damage zones:**
+- **Briarhills subdivision** (Energy Corridor, near Addicks-Howell) — April 2026 — property damage, residents furious, KPRC news coverage
+- **Katy / Fort Bend MUD No. 2** (Williamsburg Colony, Williams Chase) — sued for $70,000, broke water mains, 1,150 homes lost water, boil water notice
+- **Oak Cliff Place** (NW Houston / Jersey Village) — water pipe breaks, up to 3 leaks per day at peak
+- **General Houston** — BBB complaints stacking, 7+ month unresolved damage tickets, sprinkler/irrigation breaks pattern
+
+**The pitch flip:** Ezee dug up their yard. AT&T fiber is already lit. No digging needed.
+
+### STRIKE LIST (priority order for fiber_hunter runs)
+1. 🔥🔥🔥 **Briarhills 77077 / 77079** (Energy Corridor) — Ezee just hit them
+2. 🔥🔥🔥 **Katy MUD 77449 / 77450 / 77494** — Ezee water main lawsuit fresh news
+3. 🔥🔥 **77018 Oak Forest** — Xfinity hate
+4. 🔥🔥 **77044** — week-long Xfinity outage history
+5. 🔥🔥 **77008** — neighbors already switching to AT&T
+6. 🔥 **Jersey Village / Oak Cliff Place NW** — Ezee damage history
+7. 🔥 **77388 Spring** — Spectrum drop
+
+### SMS VARIANTS
+
+**Ezee wedge (Briarhills, Katy MUD areas):**
+> Hi neighbor - saw Ezee Fiber tore up your block last week. AT&T fiber's already lit at your address - no digging, no torn-up yard, install tomorrow. Want speeds + price? Reply Y.
+
+**Xfinity outage (77018, 77044, 77008):**
+> [Address] - saw Xfinity dropped your block again. AT&T fiber lit at you, 99.9% uptime SLA. 1Gig $80, free install, 30-day parallel run. Reply YES to lock it.
+
+**Ezee water main (Katy):**
+> Hi - your MUD is suing Ezee for breaking water mains. AT&T fiber doesn't dig in your neighborhood - it's already there. Want me to check your address? Reply Y.
+
+### NEW BUILD CHATTER (Houston growth zones)
+- The Woodlands 77382
+- Sugar Land 77479
+- Cypress 77433 / 77429
+- Katy 77449 / 77494
+- Energy Corridor 77077 / 77079
+- Stone Oak SA 78258 (TX core, not Houston)
+
+### OPEN ITEMS
+- Confirm exact Briarhills street range (target by-block, not by-ZIP)
+- Pull Williamsburg Colony / Williams Chase address lists
+- Run fiber_hunter on top 3 strike ZIPs and compare hit rate
+- Build Ezee-specific landing page or SMS opt-in flow
+
+---
