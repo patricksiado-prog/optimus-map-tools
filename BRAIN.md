@@ -1,15 +1,218 @@
-# OPTIMUS HOUSTON - SESSION SUMMARY
+# OPTIMUS HOUSTON - BRAIN
 
-Date: 2026-04-30 (overnight session)
-For: Patrick + tech partners + future Claude context
+Last updated: 2026-04-30
+Patrick Siado, AT&T fiber sales rep + small team
+Full institutional memory — read this first when resuming any session
 
 ---
 
 ## NORTH STAR
-
 500 fiber sales/week from 20K+ AT&T fiber-eligible addresses.
 Phase 2: 1000/week. Phase 3: 2000/week.
-Mobile-first ops.
+Mobile-first ops. Phone-based admin.
+
+---
+
+## TEAM WORKING AGREEMENT
+- Patrick: sales side - calling, texting, customer-facing
+- Tech partners (India, ~$200/wk): run scripts, push code, set up cloud, NO PYTHON expected
+- Claude: ALL coding, all debugging, all architecture
+- When stuff breaks: describe error or screenshot, Claude rewrites/fixes
+- Patrick is 45, makes own decisions
+- DON'T mention sleep, time, battery, call him boss/CEO
+- DON'T reference past success ($10M, 104K accounts 2016-2019) externally - drives up contractor costs
+- Treat like robot working with a robot
+
+---
+
+## CORE INFRASTRUCTURE
+
+### GitHub
+- Repo: github.com/patricksiado-prog/optimus-map-tools
+- Token: /storage/emulated/0/Download/github_token.txt
+- Auto-update URL for fiber_hunter:
+  raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/fiber_hunter.py
+
+### Google Cloud
+- Project: fiberscanner-493900
+- Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
+- Creds: /storage/emulated/0/Download/google_creds.json
+- KNOWN LIMIT: service accounts have ZERO Drive storage quota
+  - Can READ/UPDATE existing files, NOT CREATE new ones
+  - Workaround: GitHub for files, Drive for pic backup only
+
+### Sheets
+- Active: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+- Original: 15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA "ATT FIBER LEADS"
+- 15 tabs, 41,000+ rows total
+- Hard limit: 10M cells per workbook (~9M used currently, ~6-7M trimmable)
+
+### GHL (GoHighLevel)
+- Account: Optimus Houston
+- Location ID: TXw28sw0Z2rl6tcCDhJY
+- 41,325 contacts loaded
+- A2P 10DLC fully approved (Brand, Campaign, SHAKEN/STIR, CNAM all green)
+- Twilio number active
+- Daily SMS limit: 100/day (need increase to 1000)
+- 244 hot leads queued for tomorrow's dialing
+- 592 unread inbound replies in inbox
+- URL: app.gohighlevel.com/v2/location/TXw28sw0Z2rl6tcCDhJY/
+
+### Drive
+- Folder: "Fiber Map Snap Shots" id 1whewiysliFB4rs1TqZYZk5NA43Es08Ad
+- 326+ map pics backed up
+- Service account can list/read but NOT create
+
+### Working Directory (laptop)
+- C:\\Users\\patri\\Desktop\\
+- C:\\Users\\patri\\OneDrive\\Desktop\\
+
+---
+
+## SHEET TABS (CRITICAL - know what each is)
+
+### Lead tabs
+- All Leads - 14,523 rows (master log)
+- Commercial - businesses (Map Man writes phones here)
+- Residential - 23,100 rows
+- Green Commercial - 728 verified fiber-eligible biz
+- Green Residential - 5,981 verified fiber-eligible homes
+- $ LEADS - 5,301 validated with phones
+- Ready To Call - 10,000 (filtered/clean call list)
+- All Biz Phones - 2,743 (phone enrichment dump)
+
+### Intelligence tabs
+- HOT ZONES - 88 hot zone alerts
+- GOLD ALERTS - 98 recent gold dot surges
+- Gold Clusters - 100K rows but only 3 with data
+- ZONES, Changes - tracking tabs
+- Validator Man, Address Man - tool output tabs
+
+### Sheet column conventions
+
+**Commercial tab:**
+A=Business Name, B=Address, C=Phone, D=Category, E=City, F=State, G=ZIP
+
+**Ready To Call:**
+A=Name, B=Phone, C=Address, D=City, E=State, F=ZIP
+
+**All Biz Phones:**
+A=Name, B=Address, C=Phone, D=Category, E=City, F=State, G=ZIP
+
+---
+
+## DOT COLOR CODES (CONFIRMED from real AT&T map legend)
+
+- GREEN = Fiber eligible / NON-customer (PRIME COLD-PITCH TARGET)
+  - Pitch: "Fiber is lit at your address, $80/mo, free install"
+- ORANGE/RED = Fiber eligible / COPPER customer (FORCED upgrade target)
+  - Pitch: "Your copper line is being retired, fiber is the upgrade"
+  - FCC approved copper retirement in 30%+ wire centers by 2026
+- GREY = Existing fiber customer
+  - Pitch: "Want to upgrade to Gigapower symmetric?"
+  - Use for SOCIAL PROOF: "Your neighbor at 1230 Main has had AT&T fiber 2 years"
+- BLUE = Fiber upgrade available (less common)
+
+### Calibrated colors (proven on 4 real tiles)
+- GREEN target: RGB(65, 166, 0)
+- GREY target: RGB(137, 137, 137)
+- ORANGE target: RGB(255, 0, 0)
+- Detection: saturation-based, NOT exact RGB match
+- Filter: aspect ratio <= 2.0 (round dots only)
+- Size: 25-600 pixels per dot
+
+---
+
+## DOT DETECTION RESULTS (PROVEN)
+Tested on 4 real fiber map tiles tonight:
+- tile_r2_c3_refine_6_debug.png at high zoom = 47 GREEN + 5 ORANGE + 97 GREY = 149 dots
+- Scanner's "count=N" filename labels are UNRELIABLE (one labeled count=10 actually had 149)
+- Total est: 326 pics x 50-150 dots each = 15K-50K real addresses
+
+---
+
+## GEOCODING LESSONS LEARNED THE HARD WAY
+
+### Nominatim (free, OpenStreetMap)
+- 1 req/sec rate limit (HARD)
+- Going faster = empty results / "NEEDS REVIEW" rows
+- 60-70% of fast-fired calls return coord-only junk
+- Fix: time.sleep(1.1) between calls
+- Fallback: Photon (free, no rate limit)
+
+### v1 fiber_scan failure mode
+- Old fiber_scan rushed Nominatim, got back coordinates dumped as "addresses"
+- Sheet rows like: "29.84659,-95.27686 UPGRADE ELIG RESIDENTIAL Houston TX"
+- Useless for door-knocking, calls, validation
+- Fix in v2: rate-limit + retry + Photon fallback + skip if both fail
+
+### Vision API (Google Cloud, paid)
+- Free tier: 1,000 calls/month
+- Patrick rejected for daily 1000-pic scale ($45+/mo)
+- Use: Tesseract on laptop instead (free, unlimited)
+
+---
+
+## TOOLS BUILT (with where they run)
+
+### Phone-based (Pydroid 3)
+- brain.py v2 - Read/write BRAIN.md to GitHub via menu
+- backup_drive.py - Pull repo files, archive to Drive
+- process_drive_pics.py - Detect dots + Vision OCR (Vision API needed)
+- sheet_cleaner.py - Trim wasted sheet cells
+- push_to_repo.py - Push any file from Downloads to GitHub
+- push_brain_complete.py - This file (push BRAIN updates)
+
+### Laptop-based
+- fiber_hunter.py v5.7 - PRIMARY scanner, news-driven, RES/COMM tag, spiral mode
+- fiber_scan.py v10.0 - Backup scanner, Houston-only
+- themapman.py v9.4 - Playwright biz scraper
+- validatorman.py - AT&T API validator
+- addressman.py - Address standardizer
+- ready_to_call.py - Merger that joins fiber + phone data into Ready To Call list
+- dot_extractor.py - Tesseract OCR + dot detection (Windows)
+- rename_pics.py - Bulk rename pics by content
+- geo_extractor.py - FREE pipeline: Tesseract + Nominatim -> addresses
+
+### Pydroid Python toolkit (ALL INSTALLED)
+numpy, gspread, google-auth, google-api-python-client, requests,
+phonenumbers, beautifulsoup4, pillow, google-cloud-vision
+
+---
+
+## SCANNER DEEP KNOWLEDGE
+
+### Motion (proven, don't change)
+- PAN_PIXELS = 300 (v1 default, sometimes 150 for tighter overlap)
+- Drag from MAP_CX/CY (mouse drag pan)
+- Click "Search this area" button after pan (REQUIRED, no keyboard shortcut)
+- WAIT_AFTER_PAN = 1.5-2.5s
+- WAIT_DARK_RETRY = 3.0s if map dark
+- Search button position calibrated once, saved to search_button_pos.json
+
+### Calibration files (laptop)
+- search_button_pos.json - "Search this area" pixel position
+- scan_progress.json / scan_progress_N.json - resume state
+- zone_history.json - past scan history
+- spiral_state.json - spiral pattern state
+- geocode_cache_v2.json - geocoded results cache
+- gold_cluster_log.json - gold dot tracking
+
+### Color detection (calibrated for AT&T map)
+- ORANGE: RGB (200,120,0) to (255,200,90) - copper customers
+- GREEN:  RGB (30,130,30) to (100,210,80) - fiber eligible
+- BLUE:   RGB (50,80,180) to (120,160,255) - existing customers/gray
+- MIN_DOT_PIXELS = 3
+- CLUSTER_THRESHOLD = 15
+
+### Map calibration (Houston anchor)
+- LAT_PER_PIXEL = -0.000015
+- LNG_PER_PIXEL = +0.000020
+
+### Known classification bias
+COMMERCIAL keywords: pkwy, parkway, blvd, plaza, business, industrial, etc.
+RESIDENTIAL keywords: court, ln, lane, way, trail, place, etc.
+Numbers/no_number heuristic: 5-signal reclassification
 
 ---
 
@@ -17,17 +220,18 @@ Mobile-first ops.
 
 ### Sales Channel Reality
 - AT&T fiber and Verizon Fios DO NOT OVERLAP geographically
-- Real Texas competitors: Spectrum (primary), Xfinity (secondary), Google Fiber (Austin only)
+- STOP saying "AT&T vs Verizon" - never compete head-to-head
+- Real Texas competitors: Spectrum (PRIMARY target), Xfinity (secondary), Google Fiber (Austin only)
 - Real Lumen-state competitors: Ziply, Comcast in some metros
 
-### Pitch By Competitor
+### Pitch By Competitor (Locked In)
 - SPECTRUM: outage stats + neighbor proof + free trial parallel
-- XFINITY: no data cap + bundle savings + price stability
+- XFINITY: no data cap + bundle savings + price stability (NOT speed)
 - DSL (Lumen/CenturyLink/Frontier): "your service is being retired" + 10x speed
 
 ### Three Strike Strategies
 1. CABLE OUTAGE STRIKE
-   - LIVE STRIKE (0-4hr): text blast residential + biz
+   - LIVE STRIKE (0-4hr): text blast residential + biz with cells
    - AFTERMATH STRIKE (4-48hr): phone calls
    - PATTERN STRIKE (2+ outages in 30 days): premium commercial
 
@@ -36,110 +240,83 @@ Mobile-first ops.
    - Auto SMS with: nearby AT&T customers, Spectrum outages, pricing
 
 3. GREY DOT SOCIAL PROOF
-   - "Your neighbor at 1230 Main has had AT&T fiber for 2 years"
+   - "Your neighbor at 1230 Main has had AT&T fiber 2 years"
+   - Existing customer intel = social proof on every cold call
 
-### Field Wisdom
+### Field Wisdom (Patrick's experience)
 - Old residential fiber lists = LOW conversion
 - Google Maps filtered for CELL phones + texting = winning channel
 - AT&T cell service $10-20 = strong bundle hook
-- Lead with cell deal, fiber follows
-
-### Dot Color Codes (Confirmed from real AT&T map)
-- GREEN = Fiber eligible / non-customer (PRIME COLD-PITCH TARGET)
-- ORANGE/RED = Fiber eligible / copper customer (FORCED UPGRADE - FCC retirement)
-- GREY = Existing fiber customer (upgrade/referral target)
+- Lead with cell deal, fiber follows naturally
+- Mortgage brokers, credit repair shops, business consultants = PRIME fiber targets
+  (run on phones + internet, easy pitch)
 
 ### TAM Reality
 - 37.5M fiber locations passed Q1 2026, 12.5M subscribed = 25M UNSOLD
 - Legacy AT&T penetration 40% (60% unsold)
 - Lumen-acquired (Feb 2026) 25% (75% unsold = PRIORITY)
-- 8M new fiber locations going live 2026
+- 8M new fiber locations going live 2026 (~150K/wk nationwide)
 - D2D channel = 20-25% of fiber adds = our lane
 
 ---
 
-## TOOLS BUILT
+## TEXAS HOT ZIPS (Tier S)
+- 77024 Houston Memorial - mature, premium
+- 77019 Houston River Oaks - dense
+- 77382 The Woodlands - mature + active builds
+- 77479 Sugar Land - commercial heavy
+- 78258 Stone Oak SA - high-income
+- 78023 Helotes - fresh build, low competition
+- 75093 Plano West - DFW core dense biz
+- 76065 Midlothian - recently lit
+- 79932 West El Paso - BEAD virgin builds
 
-| Tool | Where | Purpose |
-|---|---|---|
-| brain.py v2 | Phone | Read/write BRAIN.md to GitHub |
-| backup_drive.py | Phone | Pulls repo files, archives to Drive |
-| process_drive_pics.py | Phone | Detect dots + Vision OCR |
-| sheet_cleaner.py | Phone | Trim wasted sheet cells |
-| dot_extractor.py | Laptop | Tesseract OCR + dot detection |
-| rename_pics.py | Laptop | Bulk rename by content |
-| geo_extractor.py | Laptop | FREE pipeline: Tesseract + Nominatim -> addresses |
-| push_to_repo.py | Phone | Push any file to GitHub |
-| push_brain_now.py | Phone | Push this summary directly |
-
-### Infrastructure
-- Phone Python toolkit: numpy, gspread, google-auth, google-api-python-client, requests, phonenumbers, beautifulsoup4, pillow, google-cloud-vision (all installed)
-- google_creds.json on phone Downloads
-- github_token.txt on phone Downloads
-- Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
-- Active sheet: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
-- 244 hot leads queued in GHL workflow
-- 326+ map pics in Drive folder "Fiber Map Snap Shots"
-
-### Dot Detection - PROVEN WORKING
-- Tested on 4 real fiber map tiles
-- Calibrated colors: GREEN=RGB(65,166,0), GREY=RGB(137,137,137), ORANGE=RGB(255,0,0)
-- Saturation-based detection (not exact RGB match)
-- Filtered by aspect ratio
-- Tile r2_c3_refine_6 = 47 GREEN + 5 ORANGE + 97 GREY = 149 records
+## Cable Outage Activity (2026-04-30)
+- Houston/Spring 77388 - Spectrum drop confirmed
+- Cypress - biweekly outage history
+- Austin Wells Branch - recent fiber-line attack
+- San Antonio/Corpus/RGV - recent mass Spectrum outage
 
 ---
 
-## BUILD QUEUE
+## SMS DELIVERABILITY RULES (LEARNED HARD WAY)
 
-1. Coordinate data source clarified (where lat/lon stored per tile)
-2. battle_card.py - SMS-ready address lookup
-3. outage_hunter.py - DownDetector scrape + cross-ref + STRIKE tabs
-4. Master DB with change detection - track GREY/ORANGE/GREEN transitions
-5. Zoom-aware confidence scoring
-6. Multi-pass scanner (broad first, drill-down)
-7. 10 parallel scanners (cloud or API reverse-engineer)
-8. fiber_hunter Playwright conversion
-9. live_validator.py - 2-sec mobile call-center lookup
-10. Bulk validator for all 41K GHL contacts
+### Why messages get blocked (error 30007)
+- HTML tags in message (br, p, etc) = #1 spam trigger
+- Promising "Free iPhone" or "$$" = #2 spam trigger
+- Signing as "AT&T" = brand impersonation, can REVOKE A2P approval
+- ALL CAPS = spam filter
+- Links without branded shortener = filter
+- Emojis = some carriers flag
 
----
+### What works
+- Plain text only
+- Sign with name only ("- Patri") OR "Patri (AT&T Authorized Rep)"
+- NEVER "AT&T" alone
+- Soft CTA (question)
+- STOP language at end
+- Under 160 characters when possible
 
-## KEY DISCOVERIES
+### Common GHL/Twilio error codes
+- 30007: Carrier filter (spam) - rewrite message
+- 30003: Unreachable - dead number
+- 30005: Unknown - invalid number
+- 30006: Landline - can't text
+- 21610: Recipient opted out (STOP'd)
+- 21611: Number not on A2P campaign
+- 30034: Toll-free unverified
 
-### Sheet Cell Waste (~7M cells freeable)
-- HOT ZONES: 100K rows, 88 with data
-- Gold Clusters: 100K rows, 3 with data
-- GOLD ALERTS: 100K rows, 98 with data
-- Green Residential: 50K rows, 7,914 with data
-
-### Dot Detection Math
-- One high-zoom tile = 50-150 dots
-- 326 pics x ~50-150 dots = 15K-50K real addresses in scan history
-- Scanner's "count=N" labels are unreliable
-
-### Service Account Limits
-- Service accounts have ZERO Drive storage quota
-- Can READ/UPDATE existing files but NOT CREATE new ones
-- Workaround: GitHub for files (this is why BRAIN.md lives there)
-
----
-
-## CONSTRAINTS
-
-- Google Sheets: 10M cells/workbook hard limit
-- pyautogui: laptop only (no Android)
-- Tesseract: laptop only (no Android)
-- gspread/data scripts: phone OK
-- AT&T scanner may get patched
-- GHL: 100 SMS/day limit
-- Nominatim: 1 req/sec free
+### A2P 10DLC compliance
+- Approved for Optimus brand (your business name)
+- DOES NOT cover: signing as AT&T, claiming to be carrier
+- Burn it once = months to get re-approved
+- New campaign = test with self first, never bulk first
 
 ---
 
-## SMS SCRIPTS
+## SMS SCRIPTS (BATTLE-TESTED)
 
-### Cold open
+### Cold open (curiosity hook)
 "Hi u wanna hear who's got it and loves it? Spectrum was out 13x this year, AT&T 0. What's up wanna give me a maybe on a free trial run parallel?"
 
 ### Live outage residential
@@ -157,45 +334,98 @@ Mobile-first ops.
 ### Battle card text-on-request
 "[Address] - fiber confirmed lit. Your block: [neighbors]. Spectrum [ZIP]: [N] outages YTD. AT&T: 0. 1Gig $80/mo, free install today, 30-day trial run parallel. Reply YES."
 
+### Workflow message (CLEAN, replaces old br tag version)
+"Hi - quick heads up, fiber internet just opened up at your business address.
+
+Faster speeds, no contracts, business pricing.
+
+Want me to send you the rates? - Patri
+
+Reply STOP to opt out."
+
 ---
 
-## TEAM WORKING AGREEMENT
+## CONSTRAINTS LOCKED IN
 
-Patrick: sales side - calling, texting, customer-facing.
-Tech partners: run scripts, update scanner, set up cloud infra, maintain Pydroid setups, push code to repo.
-**Claude does ALL the coding. Nobody on team is expected to write code.**
-When something breaks or a new feature is needed: describe it, screenshot the error, Claude rewrites/fixes.
+### Tech
+- Google Sheets: 10M cells/workbook hard limit
+- pyautogui: laptop only (no Android)
+- Tesseract: laptop only (no Android)
+- gspread/data scripts: phone OK
+- Service accounts: ZERO Drive storage write quota
+- Nominatim: 1 req/sec rate limit
+- Vision API: 1000/mo free, $1.50/1000 after
+
+### Business
+- GHL: 100 SMS/day (request increase)
+- Workflow brand impersonation: NEVER sign as AT&T
+- TCPA: residential needs explicit opt-in
+- A2P: Optimus brand approved, AT&T claim NOT covered
+
+### Operational
+- AT&T scanner may get patched - scrape aggressively while it works
+- Houston saturation: older neighborhoods 40% gray
+- Out-of-state markets: scan before calling
 
 ---
 
-## TIER S TEXAS TARGETS
+## BUILD QUEUE (priority order)
 
-- 77024 Houston Memorial - mature, premium
-- 77019 Houston River Oaks - dense
-- 77382 The Woodlands - mature + active builds
-- 77479 Sugar Land - commercial heavy
-- 78258 Stone Oak SA - high-income
-- 78023 Helotes - fresh build, low competition
-- 75093 Plano West - DFW core dense biz
-- 76065 Midlothian - recently lit
-- 79932 West El Paso - BEAD virgin builds
+1. CLARIFY: Where is coordinate metadata stored per tile?
+   (Patrick said "in bottom of screenshot, logic writes to all leads file"
+   but sample tiles don't show visible coords - need to find the actual source)
 
-## Cable Outage Activity 2026-04-30
-- Houston/Spring 77388 - Spectrum drop confirmed
-- Cypress - biweekly outage history
-- Austin Wells Branch - recent fiber-line attack
-- San Antonio/Corpus/RGV - recent mass Spectrum outage
+2. battle_card.py - Agent types address -> fiber status + neighbors + outages + speeds + pricing, SMS-ready
+
+3. outage_hunter.py - Scrape DownDetector + cross-ref Green Commercial -> STRIKE NOW/24H/PATTERN tabs
+
+4. Master DB with change detection (compressed deltas):
+   - 3 tabs: MASTER_DOTS + CHANGE_EVENTS + WEEKLY_AGGREGATES
+   - Track GREY->ORANGE (FCC retirement activating)
+   - NONE->GREEN (new build, be first)
+   - ORANGE->GREY (lost to AT&T direct)
+   - GREY->GREEN (win-back opportunity)
+
+5. Zoom-aware confidence scoring
+   (low-zoom cluster dots != individual addresses)
+   (only count high-confidence toward sales totals)
+
+6. Multi-pass scanner (broad first, drill-down on hotspots)
+
+7. 10 parallel scanners - options:
+   A) Reverse-engineer AT&T API (FREE, fastest, may get blocked)
+   B) Cloud VM 10x headless Playwright (~$150-200/mo)
+   C) Tech partner cloud farm
+   Single scanner zoom 18 = ~96 days serial Houston metro
+   10 parallel = ~10 days
+
+8. fiber_hunter Playwright conversion (4-8 parallel local)
+
+9. live_validator.py - 2-sec mobile call-center lookup
+
+10. Bulk validator for all 41,325 GHL contacts
+
+---
+
+## OPEN QUESTIONS / NEXT SESSION
+
+- Where exactly is coordinate metadata in scanner output?
+  (Bottom strip? Sidecar JSON? In All Leads sheet by filename?)
+- 10-scanner architecture decision (cloud vs API)
+- Tech partner names + roles for BRAIN
+- Vision API billing yes/no for OCR scaling
+- SMS limit increase request status
 
 ---
 
 ## RESUME NEXT SESSION
 
-Tell Claude: "pull BRAIN" or "read BRAIN from github.com/patricksiado-prog/optimus-map-tools"
-Claude reads, syncs, picks up at BUILD QUEUE.
+Tell Claude:
+- "pull BRAIN" or
+- "read BRAIN from github.com/patricksiado-prog/optimus-map-tools"
 
-### Open questions
-- Where exactly is coordinate metadata in scanner output?
-- 10-scanner architecture decision (cloud vs API)
-- Tech partner names + roles for BRAIN
+Claude pulls latest, fully synced, picks up at next BUILD QUEUE item.
 
-End of summary.
+---
+
+End of BRAIN.
