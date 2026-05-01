@@ -1,3 +1,24 @@
+## 2026-05-01 - WORKING AGREEMENT: Fix the bat, don't route around it
+
+**Patrick's rule (logged after a frustrating loop):**
+When the bat file fails, the ONLY acceptable response is to fix the bat itself.
+Do NOT propose:
+- Manual curl commands to substitute for what the bat should do
+- Pydroid scripts as workarounds for PC-side problems
+- Multi-step recoveries that bypass the bat
+- "Just do this one command instead"
+
+The bat is the product. It must work end-to-end on a fresh PC with zero manual steps beyond:
+1. Install Python
+2. Place google_creds.json on Desktop
+3. Double-click the bat
+
+If something breaks: diagnose root cause, push fixed bat to repo, Patrick re-downloads and runs. One artifact, one action.
+
+**Why this matters:** workarounds 10x Patrick's time. Every "try this command" is another paste, another screenshot, another loop. Fixing the bat once costs 5 min and ends the problem.
+
+---
+
 # OPTIMUS HOUSTON - BRAIN
 
 Last updated: 2026-04-30
