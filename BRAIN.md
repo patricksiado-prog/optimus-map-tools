@@ -495,3 +495,114 @@ This is the SHARPEST wedge we have in Houston right now.
 - Build Ezee-specific landing page or SMS opt-in flow
 
 ---
+
+---
+
+## SESSION 2026-04-30
+
+### Numbers
+- 15+ calls dialed in evening session
+- 5 interested + 1 angry-existing recovery = 6 actionable contacts
+- Interested rate jumped from ~0% prior sessions to ~30-40% this session
+- Driver: Patrick personally on the phone vs offshore caller
+
+### Confirmed Leads (also live in GHL)
+- Gelato Constantino | +1 281-798-8504 | INTERESTED
+- Kindred Stories    | +1 713-396-2396 | WANTS-INFO
+- Flavors            | +1 281-819-2494 | WANTS-INFO
+- Quad               | +1 713-857-1800 | INTERESTED-PASTDUE (bill block)
+- The Fade Room      | +1 713-524-2336 | 5221 Almeda Rd, Houston TX 77004
+                                       | EXISTING-ATT-UPGRADE (copper, 2 modems, internet sucks)
+- 1 angry existing AT&T customer | ANGRY-EXISTING (cool-down recovery play)
+
+### Tag Taxonomy (locked in for team)
+- interested            - wants to buy
+- wants-info            - needs follow-up call
+- angry-existing        - cool down then recovery call
+- interested-pastdue    - wants fiber but blocked by past-due bill
+- existing-att-upgrade  - on old copper/U-verse, ripe for fiber upgrade
+- not-interested        - auto from WAVV
+
+Rule: keep total tags 4-6. Smart Lists filter by tag for daily queues.
+
+### Patterns Discovered Today
+
+1. PAST-DUE BLOCK
+   Customers want fiber but past-due AT&T bills block them.
+   Unknown: what credit/rollover/payment-plan authority Patrick has.
+   Action: ask AT&T contact tomorrow.
+
+2. EXISTING AT&T UPGRADE GOLDMINE
+   Customers on old copper/U-verse with multiple modems = ripe upgrade.
+   Way easier conversion than cold - already trust AT&T, already in billing system.
+   Build pipeline: existing-att-upgrade smart list.
+
+3. WANTS-INFO STALLERS LEAK WITHOUT TASK
+   Tag alone is not enough. Must add GHL Task with due date.
+   Tasks tab = daily callback queue.
+
+### Strategic Plays Unlocked
+
+PAST-DUE RESCUE PLAY
+Rebuttal: "Heard you. Real quick - if AT&T could roll the past-due into
+the new service or apply a credit at install, would that change things?"
+Even if no authority yet, surfaces who would say yes if it were possible.
+
+EXISTING-ATT-UPGRADE PLAY
+"Sounds like y'all are on our older copper service with the 2 modems -
+that's why it's been slow. Good news, fiber's lit. Same company, way
+better service, usually same price or less. One fiber gateway replaces
+both modems, way faster, no contract."
+
+BARBERSHOP / SMALL-BIZ ANGLE
+- Square/Toast POS runs on internet (outage = no payments)
+- Streaming music for shop = bandwidth
+- Booking app + customer wifi as perk
+- 6-day/week operation = reliability > price
+Lead with operational pain not speed specs.
+
+### Pitch Iteration
+
+OLD OPENER (buried lead, scam-flavored, escape hatch close):
+  "Hey this is Pat with AT&T. We're running new fiber lines through
+  there next kinda like week or so. Or - I'm sorry I say that. I actually
+  say hey my name is Pat we just got through running new fiber internet
+  lines there last like kinda couple of weeks. It's finally available.
+  If you guys will let us we can connect it for free and give you a
+  couple of months to use it for free. ... Is am I talking to the right
+  person?"
+
+NEW OPENER (test next 10 calls):
+  "Hey - fiber just went live at your address. This is Pat with AT&T.
+  Free install, 30-day money-back, no contract. Quick yes or no - are
+  you the one who handles the internet bill there?"
+
+Why new beats old:
+- Lead in 5 words ("fiber just went live") not buried in 2nd sentence
+- "30-day money-back" replaces "couple months free" (sounds legit not scam)
+- "Yes or no - are you the one who handles the internet bill" replaces
+  "right person?" - same intent, qualifies decision-maker, surfaces
+  billing pain in one move
+
+### Operational Wins
+
+- GHL Tasks added for every wants-info / pastdue / angry lead
+- Smart Lists planned: interested, wants-info, existing-att-upgrade
+- Notes tab in use for context-specific intel
+- Google Places used to verify Fade Room address (5221 Almeda) - improves
+  pitch quality and feeds validation_man.py
+- BRAIN stays strategic; individual leads stay in GHL (don't push every
+  lead one-at-a-time - clogs repo)
+
+### TODO TOMORROW
+
+1. Test NEW OPENER on first 10 calls. Track interested rate vs old opener.
+2. Ask AT&T contact: what payment-plan / credit authority do I have for
+   past-due customers? Even partial rescue authority opens new pipeline.
+3. Build GHL Smart List: tag = existing-att-upgrade. This is the
+   highest-conversion segment.
+4. Run validation_man.py on confirmed addresses to fiber-verify.
+5. Add address 5221 Almeda Rd, Houston TX 77004 to The Fade Room contact
+   in GHL (Edit Contact -> Address1).
+6. Follow up: Quad (30 days for past-due cycle), Flavors + Kindred
+   (2-3 days), angry-existing (3 days cool-down).
