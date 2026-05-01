@@ -606,3 +606,89 @@ Why new beats old:
    in GHL (Edit Contact -> Address1).
 6. Follow up: Quad (30 days for past-due cycle), Flavors + Kindred
    (2-3 days), angry-existing (3 days cool-down).
+
+---
+
+## WEIRD THINKING LOOPS - DO NOT REPEAT
+
+### Loop A: OCR-the-streets to "extract addresses" (2026-04-30)
+SYMPTOM: Claude proposed reading street names off screenshots via OCR
+to approximate addresses near dots.
+WHY WRONG: That problem is already solved by the existing pipeline.
+The pipeline does pixel -> lat/lng -> reverse geocode. No OCR needed.
+Reading streets off the image was a workaround for a problem that
+didn't exist - and a worse workaround than the actual code.
+
+CORRECT PIPELINE (always default to this for "screenshot -> address"):
+  1. Filename       -> ZIP or zone name
+  2. ZIP            -> centroid lat/lng (pgeocode, offline)
+  3. Tile anchor    -> top-left lat/lng using R/T/row/col + pixel math
+  4. Each dot pixel -> exact dot lat/lng (already-built shot_pixel_to_gps)
+  5. Reverse geocode lat/lng -> real street address (Nominatim)
+
+RULE: When asked anything about "screenshot to address", first verify
+the existing pipeline is the answer. Only propose OCR / visual reading
+as QA / sanity-check, never as the primary path.
+
+### Loop B: Treating "no dots" as failure (2026-04-30)
+SYMPTOM: Claude classified empty maps as garbage / unusable.
+WHY WRONG: No-dots is a different lead bucket, not a failure.
+  - Empty map today = baseline for change detection (dots next scan = newly lit fiber)
+  - Empty map = AT&T Internet Air pitch territory (5G fixed wireless)
+  - Empty map = scan history record (proof we covered the area)
+RULE: No-dots is data. Three lead buckets, not one:
+  green/gold dots = fiber pitch
+  no dots         = Internet Air pitch
+  newly lit dots  = "fiber just went live" pitch (highest urgency)
+
+### Loop C: Solving a problem we already solved
+GENERAL RULE: Before proposing a new approach, check the existing
+codebase / past chat for the working solution. If it exists and works,
+use it. If it exists and is broken, fix the bug - don't rebuild.
+
+---
+
+## DOTS-TO-SHEET WORKFLOW (locked in 2026-04-30)
+
+Output: Active Sheet 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+
+### Tab: Pic Salvage
+One row per screenshot ever taken. Refreshed nightly.
+Columns: filename, folder, size_bytes, category, dot_count_est,
+zone_id, row, col, R, T, lat_top..lng_right, last_classified
+Categories: HAS_DOTS / EMPTY_MAP / API_ERROR / DIALOG_BLOCKED /
+DESKTOP / UNKNOWN
+
+### Tab: Fiber Addresses
+One row per fiber dot detected. Deduped by address.
+Columns: address, biz, color (green/gold), lat, lng, zip,
+source_pic, scan_date, last_seen
+green = cold pitch (fiber eligible non-customer)
+gold  = upgrade pitch (existing AT&T copper customer) - PRIORITY
+        these convert easiest
+
+### Pipeline (nightly run on laptop)
+  1. fiber_scan / fiber_hunter generate pics (with the v5.1+ patches)
+  2. salvage.py runs:
+     - Phase 1: classify all pics -> Pic Salvage tab
+     - Phase 2: for HAS_DOTS pics, extract dots, geocode, dedupe
+                -> Fiber Addresses tab
+  3. Map Man scrapes biz from Google Maps -> Ready To Call tab
+  4. Daily dial sheet = JOIN Fiber Addresses + Ready To Call by address
+
+### NOT doing
+- New CSV files daily (sheet refresh only)
+- Local-only logs (everything goes to the sheet)
+- OCR-based street reading (see Loop A)
+
+---
+
+## fiber_hunter LOOKUP BUG (2026-04-30)
+
+SYMPTOM: v5.0 rejected "77036" and "houston" with "Not found. Try again."
+
+FIX: drop-in geo_lookup.py module on Desktop, edit fiber_hunter.py to
+import lookup() from it. Three-layer resolver:
+  1. Hardcoded TX cities + outage ZIPs (instant)
+  2. pgeocode (offline, all US ZIPs)
+  3. Nominatim (online fallback)
