@@ -1190,5 +1190,145 @@ def main():
         close_browser()
 
 
+
+
+# === MAPMAN EXCLUDE + ROW VALIDATOR PATCH (BRAIN rule) ===
+# Auto-applied 2026-04-30. Expands chain excludes + validates Ready To Call
+# rows have both phone and address before writing. Prints KEEP/SKIP per row.
+
+# Chain names that waste call time - exclude in addition to existing list
+_EXTRA_CHAIN_EXCLUDES = [
+    # Chain restaurants
+    "mcdonald", "starbucks", "burger king", "wendy", "subway",
+    "chick-fil-a", "chipotle", "panera", "domino", "pizza hut",
+    "papa john", "kfc", "taco bell", "popeye", "whataburger",
+    "sonic drive", "dairy queen", "in-n-out", "raising cane",
+    "jack in the box", "five guys", "shake shack",
+    # Coffee chains
+    "dunkin", "tim hortons", "peet's coffee",
+    # Banks
+    "chase", "wells fargo", "bank of america", "citibank", "capital one",
+    "us bank", "pnc bank", "td bank", "regions bank", "truist",
+    "frost bank", "comerica", "bbva", "synovus", "navy federal",
+    # Insurance chains
+    "state farm", "geico", "allstate", "progressive", "farmers insurance",
+    "liberty mutual", "nationwide", "usaa", "the general",
+    # Cell carriers (especially competitors)
+    "verizon wireless", "verizon store", "t-mobile", "tmobile",
+    "cricket wireless", "metro pcs", "metropcs", "boost mobile",
+    "sprint store", "consumer cellular", "xfinity store",
+    "spectrum store", "spectrum mobile",
+    # Gas / convenience chains
+    "shell ", "shell-", "exxon", "mobil ", "chevron ", "7-eleven",
+    "7eleven", "circle k", "valero", "buc-ee", "buc ee", "racetrac",
+    "race trac", "speedway", "phillips 66", "stripes ", "qt store",
+    "kwik trip", "wawa", "sheetz",
+    # Auto chains
+    "autozone", "advance auto", "o'reilly auto", "oreilly auto",
+    "napa auto", "pep boys", "jiffy lube", "valvoline instant",
+    "midas ", "firestone complete", "discount tire",
+    "christian brothers", "meineke",
+    # Pharmacy chains
+    "cvs ", "cvs-", "walgreens", "rite aid",
+    # Dollar / discount chains
+    "dollar tree", "dollar general", "family dollar", "five below",
+    "big lots", "ross store", "tj maxx", "marshalls", "burlington",
+    # Shipping / postal chains
+    "fedex office", "fedex print", "ups store", "the ups store",
+    "usps", "u.s. postal", "us postal",
+    # Big box / electronics
+    "best buy", "home depot", "lowe's", "lowes ", "menards",
+    "sam's club", "sams club", "kohl's", "kohls ", "old navy",
+    "gap store", "macy's", "macys",
+    # Auto dealerships (nat'l brands - not local)
+    "carmax", "carvana",
+    # Other large chains
+    "planet fitness", "anytime fitness", "la fitness",
+    "h&r block", "jackson hewitt",
+    "great clips", "supercuts", "fantastic sams",
+    "petsmart", "petco",
+]
+
+
+def _patched_is_small_biz_check(name, category=""):
+    """Returns True if this passes ALL filters (original + chain expansion)."""
+    nlow = (name or "").lower()
+    if not nlow:
+        return False
+    for chain in _EXTRA_CHAIN_EXCLUDES:
+        if chain in nlow:
+            return False
+    return True
+
+
+# Wrap the original is_small_biz function
+try:
+    _original_is_small_biz = is_small_biz
+    def is_small_biz(name, category=""):
+        # Run original filter first (preserves all existing exclusions)
+        try:
+            if not _original_is_small_biz(name, category):
+                return False
+        except TypeError:
+            # Some versions take (name) only
+            try:
+                if not _original_is_small_biz(name):
+                    return False
+            except Exception:
+                pass
+        # Then chain filter
+        return _patched_is_small_biz_check(name, category)
+    print("  mapman: chain excludes patched (BRAIN rule)")
+except NameError:
+    print("  mapman: is_small_biz not at module level - chain filter not applied")
+
+
+# Wrap append_rows_safe to validate Ready To Call rows + print KEEP/SKIP
+try:
+    _original_append_rows_safe = append_rows_safe
+
+    def append_rows_safe(ws, rows, *args, **kwargs):
+        if not rows:
+            return _original_append_rows_safe(ws, rows, *args, **kwargs)
+        try:
+            tab_name = (ws.title or "").lower()
+        except Exception:
+            tab_name = ""
+
+        is_ready = "ready to call" in tab_name
+        if not is_ready:
+            # Don't filter Commercial / All Biz Phones - those are inventory
+            return _original_append_rows_safe(ws, rows, *args, **kwargs)
+
+        # Ready To Call columns (per BRAIN):
+        # 0 Business Name, 1 Phone, 2 Address, 3 City, 4 State, 5 ZIP, ...
+        kept = []
+        for r in rows:
+            try:
+                name = (r[0] if len(r) > 0 else "").strip()
+                phone = (r[1] if len(r) > 1 else "").strip()
+                addr = (r[2] if len(r) > 2 else "").strip()
+            except Exception:
+                kept.append(r); continue
+
+            if not phone:
+                print(f"  SKIP (no phone): {name}")
+                continue
+            if not addr:
+                print(f"  SKIP (no addr) : {name}  {phone}")
+                continue
+            print(f"  KEEP: {name[:30]:30s} | {addr[:30]:30s} | {phone}")
+            kept.append(r)
+
+        if kept:
+            return _original_append_rows_safe(ws, kept, *args, **kwargs)
+        return None
+
+    print("  mapman: row validator patched (Ready To Call requires phone+addr)")
+except NameError:
+    print("  mapman: append_rows_safe not at module level - row validator not applied")
+# === END MAPMAN PATCH ===
+
+
 if __name__ == "__main__":
     main()
