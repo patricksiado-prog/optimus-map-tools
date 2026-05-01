@@ -923,3 +923,378 @@ These three were the hard ones. They are no longer open issues.
 Open: capture quality fix (Search-this-area click, error detection,
 window focus) - documented under SCANNER FAILURE MODES, ready to patch
 when laptop available.
+
+---
+
+## INSTITUTIONAL MEMORY
+
+This section exists because Patrick has been losing 5x time re-explaining
+solved problems each session. Read this BEFORE proposing any new module,
+script, or rebuild. Almost everything you'd want already exists.
+
+### IDENTITY / BUSINESS
+
+- Patrick Siado, AT&T fiber sales rep, runs Optimus Houston operation
+- Goal: Phase 1 = 500 sales/week. Phase 2 = 1,000. Phase 3 = 2,000.
+- Tech team in India runs scripts but does NOT write or read Python.
+  Claude handles all coding. Team only runs and pushes.
+- Mobile-first ops. Patrick works from phone (Pydroid) when away from laptop.
+
+### KEY IDENTIFIERS - DO NOT GUESS, USE THESE
+
+- Active Google Sheet ID: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+- Older "ATT FIBER LEADS" Sheet ID: 15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA
+  (some legacy scripts still use this - check before patching)
+- GHL Optimus Houston Location ID: TXw28sw0Z2rl6tcCDhJY
+  (this sub-account was previously SMS-flagged - be careful with bulk sends)
+- Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
+- GitHub repo: github.com/patricksiado-prog/optimus-map-tools
+- GitHub token path on phone: /storage/emulated/0/Download/github_token.txt
+- google_creds.json paths to check (in order):
+    C:\\Users\\patri\\OneDrive\\Desktop\\google_creds.json (laptop)
+    /storage/emulated/0/Download/google_creds.json (phone)
+    ~/google_creds.json
+- AI dialer in use: WAVV (tags: wavv-interested, wavv-not-interested, wavv-no-answer)
+
+### DRIVE FOLDER STRUCTURE
+
+Root: "Fiber Map Snap Shots" (ID 1whewiysliFB4rs1TqZYZk5NA43Es08Ad)
+  - hunter_screenshots (1HAwnEBJUS7uesUKsDtuNmKUUTotN6pKj) - fiber_hunter ZIP-based
+  - scan_screenshots (1BsImu39jpBRG0IXUpLTgpYZvsFmUfQfs) - fiber_scan ZIP+city
+  - scan_screenshots (1) - older Houston_Center
+  - 6 other subfolders
+
+Service account 403 fix: SA cannot OWN files (no quota). Either:
+  - Pre-create file manually, SA only updates (path used for BRAIN.md)
+  - Use OAuth delegation (file owned by Patrick, his 15GB applies)
+  - Shared Drive (requires Workspace, paid)
+
+### PROGRAMS - INVENTORY
+
+ALL programs auto-update from GitHub on launch via check_update().
+Auto-update compares VERSION strings (NOT MD5 - causes infinite loop).
+Auto-update on Windows can corrupt stdin if os.execv runs mid-input;
+fiber_hunter has it disabled, fiber_scan has it working.
+
+#### fiber_scan.py (master scanner)
+Status: working, source of truth for geo functions
+Latest version known: v10.0+ ("GreenComm-Working" branch was live build)
+What it does: pans AT&T fiber map via pyautogui, detects green/gold/blue
+dots in screenshots, geocodes to addresses, writes to Sheet
+Owns: PRESET_CITIES dict, lookup_zip(), lookup_city(), shot_pixel_to_gps(),
+      geocode() (reverse), all geo constants
+State files: scan_progress.json, zone_history.json, scan_city.json,
+             search_button_pos.json, geocode_cache.json, gold_cluster_log.json
+Output folders: scan_screenshots/, GHL_exports/
+
+#### fiber_hunter.py (spiral-anywhere fork of fiber_scan)
+Status: PATCHED 2026-04-30 (was broken, lookup chain stripped during fork)
+Latest version: v5.0 with monkey-patch appended (imports from fiber_scan)
+What it does: same engine as fiber_scan but no Houston preset, spiral
+forever from any starting ZIP/city
+Used for: out-of-town hunting (ChatGPT recommends hot ZIP -> hunter
+spirals from there)
+State files: hunter_progress.json, hunter_zone_history.json
+Auto-update: DISABLED (Windows stdin corruption issue with os.execv)
+Manual update: pull from GitHub, push back via patch_hunter.py
+
+#### themapman.py / "The Map Man"
+Status: working (v9.4+)
+What it does: Playwright Google Maps scraper. Walks through ZIP codes,
+scrapes every small business with phone, writes to Commercial /
+All Biz Phones / Ready To Call tabs
+Owns: HOUSTON_METRO_ZIPS list (159 ZIPs hardcoded)
+Excludes: Walmart, schools, hospitals, govt, big chains. Also Regus,
+WeWork, IWG, Spaces, US Postal, virtual office chains.
+Skips: Sponsored ad cards in Maps results
+CLI: python themapman.py --zip 77036
+     python themapman.py --houston (full metro walk)
+State file: mapman_progress.json
+Cell limit gotcha: 50K row sheet cap - needs auto-overflow patch (PENDING)
+
+#### validation_man.py / "Validator Man" / validatorman.py
+Status: working
+What it does: takes addresses from Ready To Call / All Biz Phones /
+Commercial, looks up each in fiber_scan's screenshot folder, marks
+green/gold based on whether a dot exists at that address's lat/lng
+Reads: scan_screenshots/, scan_city.json (10 zones)
+Writes: "Ready To Call - Fiber" tab
+
+#### addressman.py / "Address Man"
+Status: working (v1.0)
+What it does: takes GREEN/GOLD addresses from Sheet, expands radius
+0.5 mile, finds neighboring businesses via OSM + Google Maps, hits
+AT&T API to confirm fiber, writes to "Address Man" tab
+CLI: python addressman.py --zip 77379
+     python addressman.py --gold-only
+     python addressman.py --radius 1200
+
+#### fiber_permit_hunter.py
+Status: built but unclear if active
+What it does: tracks AT&T fiber permits across all 21 ATT states,
+pipeline stages (PERMIT FILED -> CONSTRUCTION -> RECENTLY LIT ->
+SATURATED). Catches fiber 6-12 months before green dots show up.
+Output tabs: Fiber Pipeline, Permit Watch, BEAD Awards,
+             Construction Active, Just Lit
+Auto-feeds hot_zips_now.txt for themapman.py
+
+#### gigachecker.py
+Status: built
+What it does: hits AT&T's internal availability API directly (no browser),
+~2 sec/address. Stamps FIBER / COPPER / NONE / ERROR on every address
+in the Sheet. ~30 min for 1000 addresses, ~5 hrs for 10K.
+Output tab: ATT Verified
+
+#### ready_to_call.py
+Status: built
+What it does: joins fiber data tabs + phone data tabs by address+ZIP,
+builds priority-sorted "Ready To Call" tab.
+Priority: HOT (green+phone) > GOOD (gold+phone) > PHONE (no fiber)
+        > LEAD (fiber, no phone)
+
+#### salvage.py (NEW 2026-04-30)
+Status: PENDING test on real data
+What it does: Phase 1 classifies every screenshot (HAS_DOTS, EMPTY_MAP,
+API_ERROR, DIALOG_BLOCKED, DESKTOP, UNKNOWN) -> Pic Salvage tab.
+Phase 2 extracts dots from HAS_DOTS pics, geocodes -> Fiber Addresses tab.
+
+#### Pydroid push scripts (BRAIN updaters)
+Pattern: self-contained Python, embed all content as string, fetch
+BRAIN.md via GitHub API, merge idempotently, push back.
+Token at /storage/emulated/0/Download/github_token.txt.
+NEVER create separate .md files - everything embedded in the .py.
+
+### CALIBRATION CONSTANTS - PROVEN, DO NOT CHANGE
+
+#### Map pixel math (Houston anchor)
+- LAT_PER_PIXEL = -0.000015 (or -0.000004 in newer fiber_scan v10)
+- LNG_PER_PIXEL = +0.000020 (or +0.000005 in newer fiber_scan v10)
+- PAN_PIXELS = 300 (older), 900 (newer fiber_scan v10)
+- SHOT_W = 1900, SHOT_H = 1000
+
+#### Color detection (RGB ranges)
+- ORANGE / GOLD: (200,120,0) to (255,200,90) - copper/upgrade customers
+- GREEN: (30,130,30) to (100,210,80) - fiber eligible
+- BLUE: (50,80,180) to (120,160,255) - existing customers / grey
+- MIN_DOT_PIXELS = 3
+- CLUSTER_THRESHOLD = 15
+
+#### Timing (Windows pyautogui safe)
+- WAIT_AFTER_SEARCH = 2.2 - 2.5s
+- WAIT_AFTER_PAN = 1.0 - 2.0s
+- START_DELAY = 8 - 10s (gives Patrick time to focus Chrome)
+- GEO_RATE = 1.1s between Nominatim calls
+
+#### Search button position
+Calibrated once, saved to search_button_pos.json. Visual finder also
+exists as fallback (no calibration needed). pyautogui.FAILSAFE = True
+(corner park kills the script).
+
+### FILENAME PATTERNS - 5 KNOWN FORMATS
+
+Every screenshot has location encoded in filename. NO OCR needed.
+Parser handles all 5:
+
+1. ZIP-based (newest, fiber_hunter):
+   i1_scan01_77070_Center_r00_c46_023949.png
+2. ZIP+city (fiber_scan v10):
+   i1_scan01_77018,Hous_R1T0_r12_c47_170239.png
+3. Named zone (mid-version):
+   i1_s03_Zone1_r01_c19_203220.png
+4. Tile (old generic):
+   tile_r1_c1_20260419_022412.png
+5. Fine scan (neighborhood mode):
+   fine_scan01_Katy_Fulshear_r10_c11_060046.png
+
+Mask files (..._mask.png) and unparseable garbage are skipped.
+
+Zone-to-ZIP mapping table (29 entries) covers Heights_GardenOaks=77018,
+Katy_Fulshear=77494, Midtown_Downtown=77002, FortWorth_Center=76102,
+Zone1/2/3/4 fallbacks, etc.
+
+### SHEET STRUCTURE - ACTIVE TABS
+
+Sheet 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+
+Existing tabs (legacy, varies by sheet age):
+  All Leads, Commercial, Residential, Changes,
+  Green Commercial, Green Residential,
+  Ready To Call, Ready To Call - Fiber,
+  All Biz Phones, ATT Verified, Address Man, Validator Man
+
+NEW tabs (created 2026-04-30 by salvage.py):
+  Pic Salvage     - inventory of every screenshot, classified
+                    cols: filename, folder, size, category, dot_count_est,
+                    zone_id, row, col, R, T, lat_top..lng_right, last_classified
+  Fiber Addresses - real addresses extracted from HAS_DOTS pics
+                    cols: address, biz, color (green/gold), lat, lng,
+                    zip, source_pic, scan_date, last_seen
+
+Standard READY_HEADERS: Business Name, Phone, Address, City, State,
+ZIP, Fiber Status, Pitch, Category, Source, Added At
+
+### LEAD TAGS / TAXONOMY (locked 2026-04-30)
+
+GHL tags Patrick uses:
+  interested              - Patrick verified live interest
+  wants-info              - asked for more info, send pitch
+  angry-existing          - already AT&T customer, frustrated
+  interested-pastdue      - wants service but past-due block
+  existing-att-upgrade    - on copper/U-verse, multi-modem -> easiest convert
+  not-interested          - WAVV auto-tag from "no" responses
+
+Max 4-6 tags. Don't proliferate.
+
+### SOLVED PROBLEMS - DO NOT RE-SOLVE
+
+| Problem | Fix |
+|---|---|
+| Sheet 404 errors | Verify sheet ID character-by-character (lowercase l vs 1) |
+| Service account can't upload | Pre-create file manually, SA only updates |
+| Auto-update infinite loop | Compare VERSION strings, not MD5 |
+| os.execv corrupts Windows stdin | Disable auto-update on fiber_hunter |
+| google_creds.json wrong location | Script searches multiple paths in order |
+| Themapman pulling Walmart/schools | is_small_biz() filter + exclude list |
+| Themapman scraping Sponsored ads | Skip cards with "Sponsored" text or aria-label |
+| Regus / virtual offices polluting list | Added to exclude: regus, iwg, wework, spaces |
+| ZIP centroids missing | pgeocode (offline US ZIPs) IS the answer for any non-PRESET ZIP |
+| AI dialer 0/164 conversion | Pitch script broken, not technology - rewrite opener |
+| Sheet flagged for SMS spam | Optimus Houston sub-account flagged - use unflagged AI sub-account |
+| Number Intelligence cost | Use phonevalidator.com batch ($0.005/number) before GHL import |
+| 50K row tab cap on Map Man | PENDING auto-overflow patch |
+
+### LOOPS TO AVOID (Claude self-mistakes)
+
+A. OCR-the-streets to extract addresses
+   -> Pixel->latlng->geocode is the right pipeline. OCR is QA only.
+B. Treating "no dots" as failure
+   -> No dots = different lead bucket (Internet Air or future-fiber).
+C. Solving a problem we already solved
+   -> Always conversation_search first.
+D. Fork drift (silent dependency loss)
+   -> When stripping pieces from a fork, audit downstream callers.
+E. Blind-patching every program in repo
+   -> Read each program's current state first.
+F. Adding pgeocode as a "new" dependency
+   -> fiber_scan already has lookup_zip - import it.
+G. Building geo_lookup.py modules
+   -> Single source of truth = fiber_scan.
+
+### COMPETITIVE LANDSCAPE - LOCKED IN
+
+AT&T fiber and Verizon Fios DO NOT geographically overlap.
+NEVER pitch "AT&T vs Verizon" head-to-head.
+
+Real Texas competitors (easy -> hard):
+  1. CenturyLink/Frontier DSL - phased out, easy switch
+  2. Optimum, Cox - bad reputation, vulnerable
+  3. Spectrum (Charter) - PRIMARY TARGET, outage-prone
+  4. Xfinity (Comcast) - secondary, careful pitch
+  5. Google Fiber, Frontier Fiber - AVOID head-to-head
+
+Pitch by competitor:
+  SPECTRUM: outage stats + neighbor proof + free trial parallel
+  XFINITY: no data cap + bundle savings + price stability (NOT speed)
+  DSL: "your service is being retired" + 10x speed pitch
+
+### THREE STRIKE STRATEGIES
+
+1. CABLE OUTAGE STRIKE
+   LIVE (0-4hr): SMS blast residential + biz with cells in affected ZIP
+   AFTERMATH (4-48hr): phone calls
+   PATTERN (2+ outages in 30 days): premium commercial pitch
+
+2. TEXT-ON-REQUEST BATTLE CARD
+   Agent on call: "want me to text you the details?"
+   Auto SMS sends: nearby AT&T customers, Spectrum outages, pricing
+
+3. GREY DOT SOCIAL PROOF
+   "Your neighbor has had AT&T fiber 2 years"
+
+### PITCH SCRIPTS - REFERENCE
+
+Cold open (commercial door knock):
+"Hi, I'm [Name] with AT&T Business. I was actually in this area because
+we just expanded our fiber network to your street - I wanted to make
+sure you knew about it before your neighbors sign up. Do you have
+2 minutes?"
+
+Phone open (post-OCR-loop iteration 2026-04-30):
+"Hey - fiber just went live at your address. This is Pat with AT&T.
+Free install, 30-day money-back, no contract. Quick yes or no - are
+you the one who handles the internet bill there?"
+
+SMS - cold:
+"Hi u wanna hear who's got it and loves it? Spectrum was out 13x this
+year, AT&T 0. What's up wanna give me a maybe on a free trial run
+parallel?"
+
+SMS - live outage:
+"[Name] - saw Spectrum just dropped in [ZIP]. AT&T fiber is live at
+your address. Same-day install? Reply Y."
+
+SMS - aftermath:
+"Your area got hit again yesterday. AT&T fiber is live at you.
+5 min call?"
+
+SMS - pattern commercial:
+"Your ZIP has had 4 Spectrum outages this month. AT&T fiber 99.9%
+uptime SLA."
+
+ETF objection close:
+"AT&T pays up to $750 of your early termination fee. So we cover you
+to leave your current provider, AND you get 3 months of internet free.
+Basically, you get paid to switch."
+
+Wireless upsell (after fiber close):
+"If you add your business wireless lines to AT&T at the same time,
+you save $50/month on your internet bill - that's $600 a year just
+for keeping your phones on the same carrier."
+
+### BUILD QUEUE - WHAT'S NEXT
+
+1. Capture quality fix for fiber_hunter / fiber_scan
+   - Verify Chrome is foreground (or activate before screenshot)
+   - Detect "Invalid JSON" / "Connection Timeout" -> retry
+   - Detect "Page Unresponsive" dialog -> dismiss -> retry
+   - Detect "Search this area" button visible -> click + wait
+   - Verify legend visible at bottom of map (sanity)
+
+2. battle_card.py (revenue maker)
+   Type address -> get back: fiber status, nearby AT&T customers,
+   Spectrum outages in ZIP, speed/pricing. SMS-ready output.
+
+3. outage_hunter.py
+   Scrape DownDetector + istheservicedown.com. Cross-ref Green
+   Commercial + All Biz Phones. Output STRIKE NOW / 24H / PATTERN tabs.
+
+4. fiber_hunter Playwright parallel conversion
+   4-8 headless instances, full Houston metro overnight.
+
+5. live_validator.py
+   Mobile call-center tool. Address -> fiber status in 2 sec.
+
+6. Bulk validator for 41K GHL contacts (one-time pass)
+
+7. Map Man auto-overflow (when 50K row cap hits)
+
+### DEPENDENCIES TO ASSUME ALREADY INSTALLED ON LAPTOP
+
+pyautogui, pillow, numpy, scipy, requests, gspread, google-auth,
+playwright (with chromium), beautifulsoup4, phonenumbers, pgeocode
+
+On Pydroid (phone): some not installed by default. scipy install takes
+2-3 min via Pip tab. Always wrap imports in try/except + auto-install.
+
+### CURRENT OPERATIONAL STATE (as of 2026-04-30)
+
+- Patrick personally outperforming hired caller 5x (~30-40% interested
+  vs offshore 0%). Pitch energy = the variable, not the leads.
+- Capture quality is the upstream bug. ~5 of 5 sample pics had failures
+  (empty maps, desktop screenshots, API errors, dialog blocks).
+- ~12K screenshots from 50+ hours of scans. Validator only saw 510.
+  Most have failures, not garbage - different lead buckets.
+- Houston outage ZIPs (Apr 30, last 2hrs Xfinity):
+  77036, 77007, 77080, 77044, 77056, 77082, 77002, 77042
+- Dallas Spectrum outage ZIPs (last 3 wks):
+  75270, 75230, 75219, 75243, 75214, 75211, 75207, 75234
