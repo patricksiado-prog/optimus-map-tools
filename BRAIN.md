@@ -1298,3 +1298,135 @@ On Pydroid (phone): some not installed by default. scipy install takes
   77036, 77007, 77080, 77044, 77056, 77082, 77002, 77042
 - Dallas Spectrum outage ZIPs (last 3 wks):
   75270, 75230, 75219, 75243, 75214, 75211, 75207, 75234
+
+---
+
+## NEW PC SETUP
+
+Tool: setup_optimus.bat (one file, runs entire bootstrap)
+
+What it does:
+  1. Checks for Python, downloads + installs 3.11.9 silently if missing
+  2. Upgrades pip
+  3. Installs all deps (pyautogui, pillow, numpy, scipy, requests,
+     gspread, google-auth, beautifulsoup4, phonenumbers, pgeocode,
+     lxml, playwright)
+  4. Installs Playwright Chromium (~150 MB)
+  5. Prompts for GitHub token (saves to Desktop\\github_token.txt
+     for future runs - idempotent)
+  6. Downloads via curl + token: fiber_scan.py, fiber_hunter.py,
+     themapman.py, validation_man.py, addressman.py, BRAIN.md
+
+Run procedure:
+  - Drop setup_optimus.bat on Desktop of new PC
+  - RIGHT-CLICK -> Run as administrator (Python install needs admin)
+  - Wait ~5-10 min total
+  - When done, manually copy google_creds.json onto same Desktop
+    (NEVER bundle creds in the bat - service account secret)
+  - Open Chrome -> AT&T fiber map -> python fiber_scan.py
+
+Why bat instead of EXE:
+  - Programs auto-update from GitHub on launch (Loop C compliance)
+  - EXE bundling would break auto-update
+  - bat installs once, programs self-maintain after that
+
+Antivirus / SmartScreen:
+  - Windows may flag the downloaded bat
+  - Click "More info" -> "Run anyway"
+  - Token entry happens locally, never transmitted by the bat
+
+For India tech team onboarding:
+  Send: setup_optimus.bat + google_creds.json + their own GitHub token
+  They run bat, drop creds, done. Per BRAIN team workflow rule.
+
+---
+
+## COMPETITOR BY ZIP - HOUSTON MAPPING
+
+Tonight's correction (2026-04-30): Sharpstown is XFINITY territory,
+NOT Spectrum. Earlier pitch templates were sending Spectrum messaging
+to Comcast customers.
+
+### Houston Inner Loop / West - PRIMARILY XFINITY/COMCAST
+  77036  Sharpstown
+  77081  Gulfton
+  77057  Tanglewood / Galleria
+  77056  Galleria
+  77024  Memorial
+  77072  Alief
+  77007  Heights / Rice Military
+  77006  Montrose
+
+### Houston North / East - PRIMARILY SPECTRUM (Charter)
+  77388  Spring (heavy outage history, biweekly drops)
+  77044  Generation Park
+  77373  Spring
+  77386  Spring/Conroe
+  77068  Champions
+
+### Mixed / Both Compete
+  77002  Downtown
+  77019  River Oaks
+  77024  Memorial (some Spectrum overlap on east side)
+  77043  Spring Branch (mostly Xfinity, some Spectrum)
+  77092  Spring Branch West
+
+### Pitch implication
+Use the right competitor in the SMS / phone open. Sending
+"Spectrum dropped in your area" to a Comcast customer = wasted
+message and lost credibility.
+
+Quick lookup before any outage strike:
+  - 770xx west of 610 / inner loop -> Xfinity pitch
+  - 770xx north of Beltway 8 -> Spectrum pitch
+  - Mixed corridors -> check live outage data for which is hit
+
+---
+
+## APPLIED PATCHES (2026-04-30 session)
+
+All shipped via Pydroid push scripts (token at
+/storage/emulated/0/Download/github_token.txt). All idempotent.
+
+### Patches to programs
+  patch_hunter.py    - Appended import block to fiber_hunter.py.
+                       Now uses fiber_scan's lookup_zip / lookup_city
+                       / PRESET_CITIES via module-level override.
+                       Verified working: 77036 + houston resolve.
+
+  patch_mapman.py    - Appended chain-excludes wrapper + row validator
+                       to themapman.py. Adds ~80 chains (restaurants,
+                       banks, insurance, cell carriers, gas, auto,
+                       pharmacy, dollar/big-box, shipping). Ready To
+                       Call rows now require both phone AND address;
+                       prints KEEP / SKIP per row during scrape.
+
+### BRAIN updates pushed
+  push_brain_loops.py        - Loop A/B/C guards (OCR, no-dots,
+                                solved-problems re-solve)
+  push_brain_geo.py          - Full dots->address pipeline rule
+                                (3 pieces: forward geocode + pixel
+                                math + reverse geocode), all in
+                                fiber_scan
+  push_brain_fork_lesson.py  - Fork-drift lesson + STATUS solved
+                                (city/zip + motion + output)
+  push_brain_memory.py       - Institutional memory dump (~5 pages
+                                covering programs, IDs, calibration,
+                                filename patterns, sheet structure,
+                                lead taxonomy, solved problems,
+                                competitive landscape, pitch scripts,
+                                build queue)
+  push_brain_update.py       - This update (new PC setup +
+                                competitor-by-ZIP + applied patches)
+
+### Tools queued for nightly laptop run
+  salvage.py - classifies all screenshots (Pic Salvage tab) +
+               extracts dots from HAS_DOTS pics, geocodes (Fiber
+               Addresses tab). Run on laptop when capture-quality
+               patch is also done.
+
+### Verified tonight
+  - Sharpstown / 77036 actively in Xfinity outage window
+    (live strike pitch deployed)
+  - fiber_hunter scans starting again after lookup patch
+  - Patrick personally outperforming hired caller 5x
