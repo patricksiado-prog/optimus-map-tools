@@ -692,3 +692,101 @@ import lookup() from it. Three-layer resolver:
   1. Hardcoded TX cities + outage ZIPs (instant)
   2. pgeocode (offline, all US ZIPs)
   3. Nominatim (online fallback)
+
+---
+
+## CITY / ZIP / GEOCODING - SINGLE SOURCE OF TRUTH
+
+Lives in: fiber_scan.py
+Functions: lookup_zip(zip5), lookup_city(name), PRESET_CITIES dict
+
+### Coverage already in PRESET_CITIES
+TX cities (Houston metro + statewide):
+  Houston, Dallas, Austin, San Antonio, Fort Worth, Sugar Land,
+  Pearland, Katy, Spring, The Woodlands, Cypress, Tomball, Conroe,
+  Pasadena, Humble, Sugarland, Helotes, Midlothian
+Other AT&T footprint states:
+  OK: Oklahoma City, Tulsa, Edmond
+  GA: Atlanta
+  TN: Nashville, Memphis
+  NC: Charlotte
+  AL: Birmingham
+  LA: New Orleans, Baton Rouge
+  FL: Miami, Orlando, Tampa, Jacksonville
+  IL: Chicago
+  IN: Indianapolis
+  MO: Kansas City
+  CA: Los Angeles, San Diego
+
+### lookup_zip(zip5) handles ANY US 5-digit ZIP
+Uses persistent cache in geo_cache.json. Census/Nominatim under the hood.
+
+### THE RULE - applies to every program
+
+ALL programs use fiber_scan as the source. No exceptions:
+  fiber_scan       - owns the dict (master)
+  fiber_hunter     - imports from fiber_scan
+  map_man          - imports from fiber_scan
+  validation_man   - imports from fiber_scan
+  addressman       - imports from fiber_scan
+  salvage.py       - imports from fiber_scan
+  any new program  - imports from fiber_scan
+
+Standard import line for every program:
+  from fiber_scan import lookup_zip, lookup_city, PRESET_CITIES
+
+### DO NOT (this list exists because Claude has done all of these)
+
+- Do NOT add pgeocode as a new dependency
+- Do NOT create new geo_lookup.py modules
+- Do NOT hardcode ZIP coordinates in any program except fiber_scan
+- Do NOT propose Nominatim retry logic before checking PRESET_CITIES
+- Do NOT suggest downloading ZIP databases - we already have the lookup
+- Do NOT write OCR-of-streets workarounds when a ZIP+pixel-math
+  geocode will give exact addresses (see Loop A above)
+
+### LOOKUP PRECEDENCE (always this order, every program)
+
+  1. PRESET_CITIES dict (instant, offline)
+  2. lookup_zip if input is 5 digits
+  3. lookup_city for everything else (cached + Nominatim)
+  4. If all return None: print "Not found", do not retry online
+
+### IF a city or ZIP is missing
+
+Add it ONCE to fiber_scan.py PRESET_CITIES, push fiber_scan to GitHub,
+all programs auto-use it on next auto-update.
+
+---
+
+## fiber_hunter v5.0 LOOKUP BUG - FIX
+
+SYMPTOM: rejects valid input ("77036", "houston") with "Not found. Try again."
+CAUSE: when fiber_hunter was forked from fiber_scan, PRESET_CITIES
+was intentionally stripped to allow spiral-anywhere. But the lookup
+chain went with it. fiber_hunter has no resolver.
+
+FIX (one-time edit on laptop):
+
+In fiber_hunter.py, near the top imports, ADD:
+
+    from fiber_scan import lookup_zip, lookup_city, PRESET_CITIES
+
+Find the function/loop that prints "Not found. Try again."
+Replace its lookup body with:
+
+    key = user_input.strip().lower()
+    lat, lng, name = None, None, None
+    if key in PRESET_CITIES:
+        c = PRESET_CITIES[key]
+        lat, lng, name = c["lat"], c["lng"], key
+    elif user_input.isdigit() and len(user_input) == 5:
+        lat, lng, name = lookup_zip(user_input)
+    else:
+        lat, lng, name = lookup_city(user_input)
+    if lat is None:
+        print("  Not found. Try again.")
+        continue
+
+Both files live on Desktop in the same folder, so the import resolves
+automatically. fiber_scan is the source of truth, fiber_hunter just uses it.
