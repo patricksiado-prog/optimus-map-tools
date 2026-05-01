@@ -895,5 +895,34 @@ def main():
         c["o_res"], c["o_comm"], c["g_res"], c["g_comm"]))
     print("=" * 60)
 
+
+
+# === GEO LOOKUP PATCH (BRAIN rule: fiber_scan = single source of truth) ===
+# Auto-applied 2026-04-30. Overrides any local broken lookup with the
+# working versions from fiber_scan.py. Both files live on Desktop in the
+# same folder, so the import resolves automatically.
+try:
+    from fiber_scan import (
+        lookup_zip as _fs_lookup_zip,
+        lookup_city as _fs_lookup_city,
+        PRESET_CITIES as _fs_preset_cities,
+    )
+    # Module-level overrides - last assignment wins, so this replaces
+    # any earlier (broken) definitions
+    lookup_zip = _fs_lookup_zip
+    lookup_city = _fs_lookup_city
+    # Only inherit PRESET_CITIES if local one is empty/missing
+    try:
+        if not PRESET_CITIES:
+            PRESET_CITIES = _fs_preset_cities
+    except NameError:
+        PRESET_CITIES = _fs_preset_cities
+    print("  geo lookup: using fiber_scan.py (BRAIN rule)")
+except Exception as _e:
+    print(f"  geo lookup: fiber_scan import failed - {_e}")
+    print(f"  Make sure fiber_scan.py is in the same folder as fiber_hunter.py")
+# === END GEO LOOKUP PATCH ===
+
+
 if __name__ == "__main__":
     main()
