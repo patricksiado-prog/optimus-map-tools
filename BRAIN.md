@@ -841,3 +841,85 @@ Both files live on Desktop in same folder, import resolves automatically.
 Before assuming map_man / validation_man / addressman need patches,
 read their current source. They may already import correctly from
 fiber_scan. Patching blind = Loop C.
+
+---
+
+## FORK DRIFT - check what got stripped
+
+### What happened (2026-04-30)
+fiber_hunter was forked from fiber_scan v10.0 with the goal of "spiral
+anywhere, no Houston preset." We intentionally stripped:
+  - PRESET_CITIES (the Houston-heavy dict)
+  - CITY_FILE memory (so it never remembers last city)
+
+What we DIDN'T realize got stripped along with PRESET_CITIES:
+  - lookup_zip
+  - lookup_city
+  - The whole resolver chain that geocoded user input to lat/lng
+
+Result: fiber_hunter prompted for input, then rejected every valid
+input ("77036", "houston") with "Not found. Try again." Couldn't scan.
+
+fiber_scan kept working perfectly the whole time. So nothing tripped
+an alarm. The fork drifted silently.
+
+### The pattern (this is the rule)
+
+When forking a working program:
+  1. List EVERY function/dict/constant you're stripping
+  2. For each one, list every OTHER thing in the program that depends on it
+  3. If a dependency is downstream of the stripped piece, you have to:
+     - Either keep the stripped piece (defeats the fork)
+     - Or import the equivalent from the source-of-truth program
+     - Or rebuild it inline (worst option, creates duplication)
+
+### What we did NOT do that we should have
+
+- We didn't check what called PRESET_CITIES before deleting it
+- We didn't notice lookup_zip / lookup_city referenced PRESET_CITIES
+  internally
+- We didn't run a fresh "input resolution" test on the fork before
+  shipping it
+
+### What we did right
+
+- We fixed the bug WITHOUT rebuilding fiber_hunter from scratch
+- We patched it to import from fiber_scan (single source of truth rule
+  from the geocoding section)
+- We did NOT touch fiber_scan, map_man, validation_man, addressman
+  because those were never broken - we built something new and the
+  bug was contained to that new thing
+- The fix was applied via GitHub API patcher (patch_hunter.py from
+  Pydroid), no laptop work needed, fiber_hunter auto-updated itself
+  on next run
+
+### The general rule for any fork
+
+  Fork = strip + replace, not strip + hope.
+  Every stripped piece either gets re-imported from the source program
+  or replaced inline. No silent drift.
+
+### Verification checklist before declaring a fork "done"
+
+  [ ] Run the fork end-to-end with realistic input
+  [ ] Compare output to the parent program for the same input
+  [ ] If the fork added new state files / tabs / outputs, write a 
+      sentence in BRAIN about which is which
+  [ ] If the fork removed something, write a sentence about what
+      replaced it (or that nothing did, intentionally)
+
+---
+
+## STATUS - SOLVED 2026-04-30
+
+  CITY/ZIP RESOLUTION  -  fiber_scan owns it, all programs import
+  MOTION (panning)     -  fiber_scan engine works, fiber_hunter inherits
+                          via auto-update from patched GitHub version
+  OUTPUT (sheet tabs)  -  Pic Salvage + Fiber Addresses tabs ready,
+                          salvage.py fills both nightly
+
+These three were the hard ones. They are no longer open issues.
+
+Open: capture quality fix (Search-this-area click, error detection,
+window focus) - documented under SCANNER FAILURE MODES, ready to patch
+when laptop available.
