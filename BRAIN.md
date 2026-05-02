@@ -1493,3 +1493,21 @@ All shipped via Pydroid push scripts (token at
     (live strike pitch deployed)
   - fiber_hunter scans starting again after lookup patch
   - Patrick personally outperforming hired caller 5x
+
+<!-- FULL_CONTEXT_POINTER_START -->
+## FULL CONTEXT IMPORT
+
+Last updated: 2026-05-02 01:49:00
+
+Big context file:
+
+- `BRAIN_FULL_CONTEXT.md`
+
+Raw link:
+`https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/BRAIN_FULL_CONTEXT.md`
+
+Rule:
+- `BRAIN.md` = short operating brain
+- `BRAIN_FULL_CONTEXT.md` = huge project context dump
+
+<!-- FULL_CONTEXT_POINTER_END -->
