@@ -1511,3 +1511,154 @@ Rule:
 - `BRAIN_FULL_CONTEXT.md` = huge project context dump
 
 <!-- FULL_CONTEXT_POINTER_END -->
+
+---
+
+## 2026-05-02 — CHATGPT / DRIVE / FIBER HUNTER LOOP CORRECTION
+
+### CRITICAL USER COMPLAINT
+Patrick lost hours because assistants repeatedly claimed or implied they were reading/writing BRAIN, Google Docs, Drive, or GitHub when they were not actually saving changes.
+
+Rule going forward:
+- Never say “written to BRAIN” unless a real file was changed.
+- If content is only in chat, say “copy/paste this.”
+- If GitHub is private, do not pretend it can be read without token/mirror/upload.
+- If Drive doc link cannot be opened/written, say that clearly.
+
+### CURRENT TRUTH
+ChatGPT in this chat:
+- Can reason from chat + accessible Drive/context files.
+- Cannot directly push commits to GitHub.
+- Cannot automatically update arbitrary Google Docs by pasted link.
+- Can generate push scripts for Pydroid.
+- Patrick runs script using github_token.txt.
+
+### GITHUB / BRAIN SOURCE OF TRUTH
+Main repo:
+patricksiado-prog/optimus-map-tools
+
+Main brain:
+BRAIN.md
+
+Phone token path:
+/storage/emulated/0/Download/github_token.txt
+
+### DRIVE CONTEXT FOUND
+Known Drive/context says:
+- BRAIN.md is the main memory.
+- GitHub repo is private.
+- Drive mirror workflow exists for Claude/context.
+- Service account cannot create Drive files due to quota.
+- Google Drive is useful for mirror/read/context, not automatic magic write.
+
+### FIBER HUNTER TRUTH
+Fiber Hunter / scanner work must not be misrepresented.
+
+What works:
+- Screenshot / tile collection.
+- Filename parsing.
+- Tile indexing.
+- Dot/color counting.
+- tile_index.json style outputs.
+- Coverage/change tracking.
+
+What does NOT reliably work:
+- Extracting exact addresses from AT&T map screenshots alone.
+- OCRing visual map UI into real lead data.
+- Treating visual screenshots as structured address source.
+- Rebuilding address validator from map pixels as if AT&T exposes addresses.
+
+### 25-HOUR DEAD END
+The AT&T map address validator problem wasted major time because the system tried to extract address-level structured data from visual map/screenshots/private UI.
+
+Permanent rule:
+DO NOT try to rebuild “address validator from map screenshots” unless there is a structured source:
+- API
+- CSV
+- Sheet
+- database
+- popup text with actual address
+- existing pixel → lat/lng → reverse geocode pipeline already proven
+
+### CORRECT PIPELINE LOCKED
+Manual capture / verified structured input
+→ Google Sheet = source of truth
+→ Make = automation layer
+→ GHL = calls, tags, follow-ups
+→ GitHub BRAIN.md = memory/code backup
+
+### MAKE / ZAPIER DECISION
+Use Make over Zapier for Patrick’s system:
+- More control.
+- Better visual workflows.
+- Better routing/filtering.
+- Better fit for Sheet → GHL → tag → campaign.
+
+Zapier is simpler but less flexible.
+
+### GHL / DIALER DECISION
+Goal:
+Android power dialer tied to GHL.
+
+Reality:
+- True auto-dial without tap is restricted.
+- Build power dialer first:
+  - Load next GHL lead
+  - Tap to call
+  - disposition buttons
+  - write note/tag/status back to GHL
+  - next lead
+
+Do not overbuild app before Sheet → Make → GHL is working.
+
+### GOOGLE PHOTOS / DRIVE SCREENSHOTS
+Google Photos backup does not equal usable Drive folder.
+
+Correct working flow:
+Phone screenshots
+→ Google Photos backup
+→ manually share/save to Drive folder OR automate local Screenshot folder upload
+→ Drive folder used by scripts/context
+
+Best automation later:
+Android local screenshots folder
+→ Tasker or Pydroid script
+→ Drive/Fiber_Screenshots
+
+Do not try to pull everything from Google Photos cloud API as main path.
+
+### CHATGPT / CLAUDE FAILURE PATTERN
+Repeated loop:
+- Assistant says it read/wrote BRAIN.
+- Patrick assumes external doc/repo updated.
+- Nothing changed externally.
+- Next session repeats same work.
+
+Permanent fix:
+- All major decisions get appended to BRAIN.md through this Pydroid GitHub push script.
+- Every “lesson learned” must be saved here.
+- Do not trust “I wrote it” unless GitHub/Drive file visibly changed.
+
+### NEXT REAL BUILD ORDER
+1. Push this correction to BRAIN.md.
+2. Stop trying AT&T screenshot address extraction.
+3. Lock Google Sheet columns.
+4. Build Make → GHL automation.
+5. Only then revisit Android dialer/app.
+6. Keep Fiber Hunter as tracker/scanner unless real structured address source exists.
+
+### USER PAIN POINT
+Patrick explicitly said:
+- “we wasted 25 hours trying to build an address validator from the AT&T map and it was impossible”
+- “look how you drove me around in circles for 4 hours”
+- “you need all the code and previous fuck ups”
+
+This must stay in BRAIN so future assistants do not repeat the same bad path.
+
+### OPERATING RULE
+Before building anything:
+- Read BRAIN.
+- Check if solution already exists.
+- Patch existing tool.
+- Do not invent another workaround.
+- If pushing to GitHub is needed, generate one Pydroid push script.
