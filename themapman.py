@@ -1,120 +1,419 @@
-# =============================================================
-# HUNTER ENRICH ADDON v1  —  paste at TOP of themapman.py (line 1)
-# Run with:    python themapman.py --enrich --visible --limit 10
-# Full pass:   python themapman.py --enrich
-# Flags: --enrich  --visible  --all  --limit N  --tab "Name"
-# Adds Phone + Business Name to Hunter Green Commercial + Hunter
-# Commercial in place. Self-contained. Does not touch existing
-# themapman code paths. Exits before themapman main() runs.
-# =============================================================
-if any(_a in ("--enrich", "--hunter-enrich") for _a in __import__("sys").argv):
-    import argparse, os, re, sys, time
-    import gspread
-    from google.oauth2.service_account import Credentials
-    from playwright.sync_api import sync_playwright
+#!/usr/bin/env python3
+"""
+THE MAP MAN — Hunter sheet enricher
+====================================
+ONE JOB: read Hunter Green Commercial, find rows missing
+Phone / Business Name / Business Address, look up via Google Maps,
+write back IN PLACE on the same row.
 
-    _SHEET_ID = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
-    _TABS     = ["Hunter Green Commercial", "Hunter Commercial"]
-    _CREDS    = "google_creds.json"
-    _SCOPES   = ["https://www.googleapis.com/auth/spreadsheets"]
-    _ELIG     = ("fiber", "upgrade", "eligible", "gold", "green")
+Run on PC laptop (needs Playwright + Chromium):
+  python themapman.py                  # full pass, headless
+  python themapman.py --visible        # show browser window
+  python themapman.py --limit 10       # cap rows for testing
+  python themapman.py --tab "Hunter Green Commercial"
+  python themapman.py --all            # ignore fiber-status filter
+  python themapman.py --no-update      # skip GitHub auto-update
 
-    _p = argparse.ArgumentParser(add_help=False)
-    _p.add_argument("--enrich", action="store_true")
-    _p.add_argument("--hunter-enrich", action="store_true")
-    _p.add_argument("--visible", action="store_true")
-    _p.add_argument("--all", action="store_true")
-    _p.add_argument("--limit", type=int, default=0)
-    _p.add_argument("--tab")
-    _args, _ = _p.parse_known_args()
+Auto-pulls latest themapman.py from private GitHub repo on launch.
+Reads token from any of:
+  - env var GITHUB_TOKEN
+  - /storage/emulated/0/Download/github_token.txt   (Pydroid)
+  - C:\\Users\\patri\\Downloads\\github_token.txt   (PC)
+  - ~/Downloads/github_token.txt
+  - ~/optimus/github_token.txt
+  - ./github_token.txt
+"""
 
-    def _blank(v): return v is None or str(v).strip() == ""
-    def _is_elig(s): return any(k in (s or "").lower() for k in _ELIG)
+VERSION   = "10.0"
+SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
+DEFAULT_TAB = "Hunter Green Commercial"
+GH_REPO   = "patricksiado-prog/optimus-map-tools"
+GH_FILE   = "themapman.py"
+GH_BRANCH = "main"
 
-    def _fmt_phone(s):
-        d = re.sub(r"\D", "", str(s or ""))
-        if len(d) == 11 and d.startswith("1"): d = d[1:]
-        return f"({d[:3]}) {d[3:6]}-{d[6:]}" if len(d) == 10 else ""
+import os, sys, re, time, json, argparse, base64
+from datetime import datetime
+from pathlib import Path
+import urllib.request
 
-    def _find_col(headers, *cands):
-        for c in cands:
-            for i, h in enumerate(headers):
-                if h.strip().lower() == c.lower(): return i + 1
+# ─── AUTO-UPDATE (token-aware, private repo) ─────────────────────────
+TOKEN_PATHS = [
+    Path("/storage/emulated/0/Download/github_token.txt"),
+    Path("C:/Users/patri/Downloads/github_token.txt"),
+    Path.home() / "Downloads" / "github_token.txt",
+    Path.home() / "optimus" / "github_token.txt",
+    Path.cwd() / "github_token.txt",
+]
+
+def _read_token():
+    env = os.environ.get("GITHUB_TOKEN", "").strip()
+    if env: return env
+    for p in TOKEN_PATHS:
+        try:
+            if p.exists():
+                t = p.read_text(errors="replace").strip()
+                if t: return t
+        except Exception:
+            pass
+    return ""
+
+def check_update():
+    print("  Checking for updates...")
+    tok = _read_token()
+    if not tok:
+        print("  No token found — skipping update check.")
+        return
+    try:
+        url = (f"https://api.github.com/repos/{GH_REPO}"
+               f"/contents/{GH_FILE}?ref={GH_BRANCH}")
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"token {tok}")
+        req.add_header("Accept", "application/vnd.github.v3+json")
+        req.add_header("User-Agent", "themapman-update")
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode())
+        latest = base64.b64decode(data["content"]).decode("utf-8", errors="replace")
+        m = re.search(r'^\s*VERSION\s*=\s*["\']([^"\']+)["\']',
+                      latest, re.MULTILINE)
+        new_ver = m.group(1) if m else None
+        if not new_ver or new_ver == VERSION:
+            print(f"  Up to date (v{VERSION})")
+            return
+        print(f"  Updating to v{new_ver}...")
+        with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
+            f.write(latest)
+        print("  Updated! Restarting...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    except Exception as e:
+        print(f"  Update check failed: {e}")
+
+if "--no-update" not in sys.argv:
+    check_update()
+
+
+# ─── DEPS ────────────────────────────────────────────────────────────
+import gspread
+from google.oauth2.service_account import Credentials
+from playwright.sync_api import sync_playwright
+
+CREDS_FILE = "google_creds.json"
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
+          "https://www.googleapis.com/auth/drive"]
+
+ELIGIBLE_KEYWORDS = ("green", "fiber", "upgrade", "eligible", "gold")
+
+PAGE_TIMEOUT = 30000
+SETTLE_DELAY = 2.5
+RATE_DELAY   = 1.0
+
+
+# ─── HELPERS ─────────────────────────────────────────────────────────
+def now_str():
+    return datetime.now().strftime("%m/%d/%Y %I:%M %p")
+
+def col_letter(n):
+    out = ""
+    while n:
+        n, rem = divmod(n - 1, 26)
+        out = chr(65 + rem) + out
+    return out
+
+def fmt_phone(s):
+    d = re.sub(r"\D", "", str(s or ""))
+    if len(d) == 11 and d.startswith("1"): d = d[1:]
+    return f"({d[:3]}) {d[3:6]}-{d[6:]}" if len(d) == 10 else ""
+
+def is_blank(v):
+    return v is None or str(v).strip() == ""
+
+def is_eligible(status):
+    s = (status or "").lower()
+    return any(k in s for k in ELIGIBLE_KEYWORDS)
+
+def looks_like_address(text):
+    if not text: return False
+    t = str(text).strip()
+    if not re.search(r"\b\d{2,6}\b", t): return False
+    sigs = (" st", " street", " rd", " road", " ave", " avenue",
+            " dr", " drive", " ln", " lane", " blvd", " boulevard",
+            " pkwy", " parkway", " way", " ct", " court", " cir",
+            " circle", " hwy", " highway", " fwy", " freeway",
+            " loop", " trail", " trl", " place", " pl", " plaza")
+    return any(sig in (" " + t.lower()) for sig in sigs)
+
+def find_col(headers, *cands):
+    low = [h.strip().lower() for h in headers]
+    for c in cands:
+        if c.lower() in low:
+            return low.index(c.lower()) + 1
+    return None
+
+def ensure_columns(ws, headers, needed):
+    low = [h.strip().lower() for h in headers]
+    new_cols = [c for c in needed if c.lower() not in low]
+    if not new_cols:
+        return headers
+    new_headers = list(headers) + new_cols
+    try:
+        ws.resize(rows=max(ws.row_count, 5000),
+                  cols=max(len(new_headers), 20))
+    except Exception:
+        pass
+    last = col_letter(len(new_headers))
+    ws.update(range_name=f"A1:{last}1", values=[new_headers])
+    print(f"  Added columns: {new_cols}")
+    return new_headers
+
+
+# ─── BROWSER ─────────────────────────────────────────────────────────
+_pw = _browser = _page = None
+
+def init_browser(headless=True):
+    global _pw, _browser, _page
+    _pw = sync_playwright().start()
+    _browser = _pw.chromium.launch(
+        headless=headless,
+        args=["--disable-blink-features=AutomationControlled",
+              "--no-sandbox", "--disable-dev-shm-usage"])
+    ctx = _browser.new_context(
+        viewport={"width": 1366, "height": 768},
+        user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/122.0.0.0 Safari/537.36"),
+        locale="en-US")
+    _page = ctx.new_page()
+    print("  Browser ready ✓")
+
+def close_browser():
+    global _browser, _pw
+    try:
+        if _browser: _browser.close()
+        if _pw: _pw.stop()
+    except Exception:
+        pass
+
+
+# ─── GOOGLE MAPS PANEL SCRAPING ──────────────────────────────────────
+PANEL_NAME_REJECT = {"results", "sponsored", "directions", "search results",
+                     "places", "you", "your places", "saved", "timeline"}
+
+def safe_text(el):
+    try: return el.inner_text().strip()
+    except Exception: return ""
+
+def panel_name():
+    try: _page.wait_for_selector("h1.DUwDvf", timeout=2500)
+    except Exception: pass
+    for sel in ("h1.DUwDvf", "h1.fontHeadlineLarge", "h1"):
+        try:
+            el = _page.query_selector(sel)
+            if el:
+                t = safe_text(el)
+                if t and t.lower().strip() not in PANEL_NAME_REJECT:
+                    return t
+        except Exception:
+            pass
+    return ""
+
+def panel_phone():
+    selectors = ("button[data-item-id='phone']",
+                 "button[aria-label^='Phone:']",
+                 "button[aria-label*='Phone:']",
+                 "a[href^='tel:']")
+    for sel in selectors:
+        try:
+            for el in _page.query_selector_all(sel):
+                lbl = el.get_attribute("aria-label") or ""
+                href = el.get_attribute("href") or ""
+                txt = safe_text(el)
+                m = re.search(r"[\(]?\d{3}[\)]?[\s\-\.]\d{3}[\s\-\.]\d{4}",
+                              lbl + " " + href + " " + txt)
+                if m:
+                    p = fmt_phone(m.group(0))
+                    if p: return p
+        except Exception:
+            pass
+    return ""
+
+def panel_address():
+    selectors = ("button[data-item-id='address']",
+                 "button[aria-label^='Address:']",
+                 "button[aria-label*='Address:']")
+    for sel in selectors:
+        try:
+            for el in _page.query_selector_all(sel):
+                lbl = el.get_attribute("aria-label") or ""
+                txt = safe_text(el)
+                val = (lbl + " " + txt).replace("Address:", "").strip()
+                val = re.sub(r"\s+", " ", val)
+                if looks_like_address(val):
+                    return val
+        except Exception:
+            pass
+    return ""
+
+def maps_lookup(address, zipc=""):
+    if not address or not looks_like_address(address):
+        return None
+    try:
+        _page.evaluate("""() => {
+            const h = document.querySelector('h1.DUwDvf');
+            if (h) h.innerText = '';
+        }""")
+    except Exception:
+        pass
+    try:
+        q = address.strip()
+        if zipc and re.match(r"^\d{5}$", zipc.strip()):
+            q += " " + zipc.strip()
+        url = "https://www.google.com/maps/search/" + q.replace(" ", "+")
+        _page.goto(url, timeout=PAGE_TIMEOUT, wait_until="domcontentloaded")
+        time.sleep(SETTLE_DELAY)
+        if "/place/" in _page.url:
+            return {"name": panel_name(), "phone": panel_phone(),
+                    "address": panel_address()}
+        for sel in ("a.hfpxzc", "div.Nv2PKd a", "div[role='article'] a"):
+            try:
+                el = _page.query_selector(sel)
+                if el:
+                    el.click()
+                    time.sleep(SETTLE_DELAY)
+                    break
+            except Exception:
+                pass
+        return {"name": panel_name(), "phone": panel_phone(),
+                "address": panel_address()}
+    except Exception as e:
+        print(f"    lookup err: {e}")
         return None
 
-    def _maps_lookup(page, addr):
-        try:
-            q = re.sub(r"\s+", "+", addr.strip())
-            page.goto(f"https://www.google.com/maps/search/{q}", timeout=30000)
-            page.wait_for_timeout(2500)
-            n, ph = None, None
-            try:
-                t = page.locator("h1").first.inner_text(timeout=2000).strip()
-                if t and t.lower() != "results": n = t
-            except Exception: pass
-            try:
-                lbl = page.locator('button[aria-label^="Phone:"]').first.get_attribute(
-                    "aria-label", timeout=2000) or ""
-                m = re.search(r"Phone:\s*([\d\s\-\(\)+]+)", lbl)
-                if m: ph = _fmt_phone(m.group(1))
-            except Exception: pass
-            return n, ph
-        except Exception as e:
-            print(f"    lookup err: {e}")
-            return None, None
 
-    print("=== HUNTER ENRICH ADDON v1 ===")
-    if not os.path.exists(_CREDS):
-        sys.exit(f"missing {_CREDS}")
-    _gc = gspread.authorize(Credentials.from_service_account_file(_CREDS, scopes=_SCOPES))
-    _ss = _gc.open_by_key(_SHEET_ID)
-    _tabs_to_run = [_args.tab] if _args.tab else _TABS
-    _total = 0
+# ─── MAIN ENRICHER ───────────────────────────────────────────────────
+def enrich(tab_name, args):
+    print(f"\n=== {tab_name} ===")
+    if not os.path.exists(CREDS_FILE):
+        sys.exit(f"ERROR: {CREDS_FILE} not found in current folder")
+    creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPES)
+    ss = gspread.authorize(creds).open_by_key(SHEET_ID)
+    try:
+        ws = ss.worksheet(tab_name)
+    except gspread.WorksheetNotFound:
+        sys.exit(f"ERROR: tab '{tab_name}' not found in sheet")
+    data = ws.get_all_values()
+    if len(data) < 2:
+        print("  empty"); return
+    headers = data[0]
+    print(f"  headers: {headers}")
 
-    with sync_playwright() as _pw:
-        _br = _pw.chromium.launch(headless=not _args.visible)
-        _pg = _br.new_context().new_page()
-        for _tn in _tabs_to_run:
-            print(f"\n--- {_tn} ---")
-            try:
-                _ws = _ss.worksheet(_tn)
-            except gspread.WorksheetNotFound:
-                print("  NOT FOUND"); continue
-            _data = _ws.get_all_values()
-            if len(_data) < 2:
-                print("  empty"); continue
-            _hd = _data[0]
-            print(f"  headers: {_hd}")
-            _ca = _find_col(_hd, "Address", "Address 1", "Street")
-            _cp = _find_col(_hd, "Phone", "Phone Number")
-            _cb = _find_col(_hd, "Business Name", "Name", "Business")
-            _cs = _find_col(_hd, "Fiber Status", "Status")
-            if not _ca:
-                print("  NO ADDRESS COL"); continue
-            print(f"  cols: addr={_ca} phone={_cp} biz={_cb} stat={_cs}")
-            _cands = []
-            for _ri, _row in enumerate(_data[1:], start=2):
-                def _g(c): return _row[c-1] if c and c-1 < len(_row) else ""
-                _ad = _g(_ca).strip()
-                if not _ad: continue
-                if (not _args.all) and _cs and not _is_elig(_g(_cs)): continue
-                _np = bool(_cp) and _blank(_g(_cp))
-                _nb = bool(_cb) and _blank(_g(_cb))
-                if not (_np or _nb): continue
-                _cands.append((_ri, _ad, _np, _nb))
-            print(f"  candidates: {len(_cands)}")
-            if _args.limit: _cands = _cands[:_args.limit]
-            for _i, (_ri, _ad, _np, _nb) in enumerate(_cands, 1):
-                print(f"  [{_i}/{len(_cands)}] r{_ri}: {_ad[:70]}")
-                _bz, _ph = _maps_lookup(_pg, _ad)
-                if _np and _ph:
-                    _ws.update_cell(_ri, _cp, _ph); print(f"    + phone {_ph}"); _total += 1
-                if _nb and _bz:
-                    _ws.update_cell(_ri, _cb, _bz); print(f"    + biz   {_bz}"); _total += 1
-                time.sleep(1.0)
-        _br.close()
-    print(f"\nTOTAL CELLS WRITTEN: {_total}")
-    sys.exit(0)
-# =============================================================
-# END HUNTER ENRICH ADDON
-# =============================================================
+    headers = ensure_columns(ws, headers,
+        ["Phone", "Business Name", "Business Address",
+         "Phone Source", "Checked At"])
+    if len(headers) > len(data[0]):
+        data = ws.get_all_values()
+        headers = data[0]
+
+    c_addr  = find_col(headers, "Address", "Address 1", "Street")
+    c_phone = find_col(headers, "Phone", "Phone Number")
+    c_biz   = find_col(headers, "Business Name", "Name", "Business")
+    c_baddr = find_col(headers, "Business Address",
+                       "Verified Address", "Confirmed Address")
+    c_psrc  = find_col(headers, "Phone Source")
+    c_chk   = find_col(headers, "Checked At", "Phone Checked At")
+    c_zip   = find_col(headers, "ZIP", "Zip", "Postal Code")
+    c_stat  = find_col(headers, "Type", "Fiber Status", "Status")
+
+    if not c_addr:
+        sys.exit("ERROR: no Address column found in tab")
+    print(f"  cols: addr={c_addr} phone={c_phone} biz={c_biz} "
+          f"biz_addr={c_baddr} zip={c_zip} stat={c_stat}")
+
+    def cell(row, c):
+        return row[c-1].strip() if c and c-1 < len(row) else ""
+
+    candidates = []
+    for r_idx, row in enumerate(data[1:], start=2):
+        addr = cell(row, c_addr)
+        if not addr or not looks_like_address(addr): continue
+        if "(no #" in addr.lower(): continue
+        if not args.all and c_stat and not is_eligible(cell(row, c_stat)):
+            continue
+        need_p = bool(c_phone) and is_blank(cell(row, c_phone))
+        need_b = bool(c_biz)   and is_blank(cell(row, c_biz))
+        need_a = bool(c_baddr) and is_blank(cell(row, c_baddr))
+        if not (need_p or need_b or need_a): continue
+        candidates.append({
+            "row": r_idx, "addr": addr,
+            "zip": cell(row, c_zip) if c_zip else "",
+            "need_p": need_p, "need_b": need_b, "need_a": need_a,
+        })
+
+    print(f"  candidates: {len(candidates)}")
+    if args.limit:
+        candidates = candidates[:args.limit]
+        print(f"  (limited to {len(candidates)})")
+    if not candidates:
+        return
+
+    init_browser(headless=not args.visible)
+    written = 0
+    try:
+        for i, c in enumerate(candidates, 1):
+            print(f"\n  [{i}/{len(candidates)}] r{c['row']}: {c['addr'][:70]}")
+            found = maps_lookup(c["addr"], c["zip"])
+            if not found:
+                print("    no result"); continue
+            updates = []
+            if c["need_p"] and found["phone"]:
+                updates.append({"range": f"{col_letter(c_phone)}{c['row']}",
+                                "values": [[found["phone"]]]})
+                print(f"    + phone {found['phone']}")
+            if c["need_b"] and found["name"]:
+                updates.append({"range": f"{col_letter(c_biz)}{c['row']}",
+                                "values": [[found["name"]]]})
+                print(f"    + biz   {found['name']}")
+            if c["need_a"] and found["address"]:
+                updates.append({"range": f"{col_letter(c_baddr)}{c['row']}",
+                                "values": [[found["address"]]]})
+                print(f"    + baddr {found['address']}")
+            if updates and c_psrc:
+                updates.append({"range": f"{col_letter(c_psrc)}{c['row']}",
+                                "values": [["Google Maps"]]})
+            if updates and c_chk:
+                updates.append({"range": f"{col_letter(c_chk)}{c['row']}",
+                                "values": [[now_str()]]})
+            if updates:
+                for attempt in range(3):
+                    try:
+                        ws.batch_update(updates,
+                                        value_input_option="USER_ENTERED")
+                        written += len(updates)
+                        break
+                    except Exception as e:
+                        print(f"    write err {attempt+1}: {e}")
+                        time.sleep(3)
+            time.sleep(RATE_DELAY)
+    finally:
+        close_browser()
+    print(f"\n  TOTAL CELLS WRITTEN: {written}")
+
+
+def main():
+    p = argparse.ArgumentParser(description=f"THE MAP MAN v{VERSION}")
+    p.add_argument("--tab", default=DEFAULT_TAB)
+    p.add_argument("--visible", action="store_true")
+    p.add_argument("--all", action="store_true")
+    p.add_argument("--limit", type=int, default=0)
+    p.add_argument("--no-update", action="store_true")
+    args = p.parse_args()
+
+    print("\n" + "#" * 60)
+    print(f"  THE MAP MAN v{VERSION}")
+    print(f"  Tab: {args.tab}")
+    print("  Goal: Phone + Business Name + Business Address (in place)")
+    print("#" * 60 + "\n")
+
+    enrich(args.tab, args)
+
+
+if __name__ == "__main__":
+    main()
