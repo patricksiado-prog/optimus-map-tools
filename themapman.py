@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
 """
-THE MAP MAN — Hunter sheet enricher v10.3
+THE MAP MAN — Hunter sheet enricher v10.4
 =========================================
 Enriches every tab named Hunter* with Phone + Business Name +
 Business Address via Google Maps. Writes back IN PLACE.
 
-NEW IN v10.3:
-- Tab priority ordering. Highest-yield tabs run first by default:
-    1. Hunter Commercial         (highest commercial concentration)
-    2. Hunter Green Commercial   (already partially enriched)
-    3. Hunter Leads              (mixed)
-    4. Hunter Residential        (lowest yield but most rows)
-    5. Hunter Green Residential
-    6. anything else Hunter*
-  Override per-run with --tab "Name" to target one tab directly.
+NEW IN v10.4:
+- Reject "address-as-name" pollution. When Google Maps returns
+  the searched address itself as the h1 (because no real business
+  exists at that location), v10.4 detects this and treats the
+  result as empty. Stops writing rows like:
+      Address: 9316 Dogwood Avenue
+      Business Name: 9316 Dogwood Ave    <- pollution, dropped
+  This keeps the Business Name column clean. Real callable leads
+  are now easy to filter (Business Name not blank).
+- Side effect: fewer cell writes per row → fewer Sheets API 429s
+  → faster overall throughput.
 
-CARRIED FROM v10.2:
-- Sheet-based cache pre-load (skips already-queried addresses
-  cross-machine and cross-restart).
-- In-memory cache during run (handles duplicate addresses).
+CARRIED FROM v10.3:
+- Tab priority order (Hunter Commercial first).
+- Sheet-based cache pre-load (cross-machine, cross-restart).
+- In-memory cache during run.
 - --instance N/M flag for parallel runs.
-- RATE_DELAY auto-scales with instance count
-  (single=1s, 2-way=2s, 4-way=4s).
+- RATE_DELAY auto-scales with instance count.
 - Address normalization for cache keys.
 - Phone Source stamped on every queried row.
 
@@ -35,21 +36,10 @@ USAGE:
   python themapman.py --no-update            # skip GitHub auto-update
   python themapman.py --limit 10             # cap per tab (testing)
 
-PARALLEL EXAMPLES:
-  Two machines, two instances each (4 parallel):
-    Machine A T1:  python themapman.py --instance 1of4
-    Machine A T2:  python themapman.py --instance 2of4
-    Machine B T1:  python themapman.py --instance 3of4
-    Machine B T2:  python themapman.py --instance 4of4
-  All four start on Hunter Commercial together (priority #1),
-  partitioned by row index. No duplicate work.
-
 Auto-update from private GitHub on launch.
-Token paths searched: env GITHUB_TOKEN, /storage/emulated/0/Download,
-C:/Users/patri/Downloads, ~/Downloads, ~/optimus, current folder.
 """
 
-VERSION   = "10.3"
+VERSION   = "10.4"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -429,19 +419,59 @@ def build_cache_from_sheet(ss, tab_names):
     return cache
 
 
+def _is_address_echo(name, input_addr):
+    """True if the returned name is just the input address echoed back
+    (Maps returns h1 = address when no real business is at the location)."""
+    if not name or not input_addr:
+        return False
+    n = normalize_address(name)
+    a = normalize_address(input_addr)
+    if not n or not a:
+        return False
+    # Exact match
+    if n == a:
+        return True
+    # One contains the other and the other has no extra business words
+    # E.g. name "9316 Dogwood Ave" vs input "9316 Dogwood Avenue Biloxi MS"
+    if n in a or a in n:
+        # Check the longer one doesn't have non-address words after the match
+        longer = n if len(n) > len(a) else a
+        shorter = a if longer is n else n
+        extra = longer.replace(shorter, "", 1).strip()
+        # If the only extra tokens look like city/state/zip, still an echo
+        extra_tokens = extra.split()
+        if not extra_tokens:
+            return True
+        if all(re.match(r"^[a-z]+$|^\d{5}$|^[a-z]{2}$", t) for t in extra_tokens):
+            return True
+    return False
+
+
+def sanitize_result(result, input_addr):
+    """Drop address-as-name pollution. If Maps returned the input
+    address itself (or a near-echo) as the biz name, treat as no biz."""
+    if not result:
+        return {"name": "", "phone": "", "address": "", "src": PHONE_SOURCE_EMPTY}
+    name  = (result.get("name") or "").strip()
+    phone = (result.get("phone") or "").strip()
+    addr  = (result.get("address") or "").strip()
+
+    if name and _is_address_echo(name, input_addr):
+        name = ""
+
+    if not (name or phone):
+        return {"name": "", "phone": "", "address": "", "src": PHONE_SOURCE_EMPTY}
+    return {"name": name, "phone": phone, "address": addr,
+            "src": PHONE_SOURCE_FOUND}
+
+
 def maps_lookup_cached(cache, address, zipc=""):
     """Cache-aware lookup. Returns (result_dict, was_cached_bool)."""
     cached = cache.get(address)
     if cached is not None:
         return cached, True
-    result = maps_lookup_raw(address, zipc)
-    if result is None:
-        result = {"name": "", "phone": "", "address": "", "src": ""}
-    if not (result.get("phone") or result.get("name") or result.get("address")):
-        result = {"name": "", "phone": "", "address": "",
-                  "src": PHONE_SOURCE_EMPTY}
-    else:
-        result["src"] = PHONE_SOURCE_FOUND
+    raw = maps_lookup_raw(address, zipc)
+    result = sanitize_result(raw, address)
     cache.put(address, result)
     return result, False
 
