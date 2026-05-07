@@ -1,46 +1,69 @@
 #!/usr/bin/env python3
 """
-THE MAP MAN — Hunter sheet enricher v10.1
+THE MAP MAN — Hunter sheet enricher v10.2
 =========================================
-Enriches EVERY tab in the master sheet whose name starts with "Hunter"
-(Hunter Green Commercial, Hunter Commercial, Hunter Green Residential,
-Hunter Residential, etc.) with Phone + Business Name + Business Address
-via Google Maps lookup. Writes back IN PLACE on the same row.
+Enriches every tab named Hunter* with Phone + Business Name +
+Business Address via Google Maps. Writes back IN PLACE.
 
-NEW IN v10.1:
-- Auto-discovers all Hunter* tabs in the sheet
-- Processes residential addresses too — captures home-based businesses
-  whose phone is publicly listed on Google Maps
-- Status filter removed from default (was fiber-eligible only)
-- Use --fiber-only to restore old behavior
-- Auto-detects column layout per tab (each Hunter tab has different headers)
+NEW IN v10.2:
+- Sheet-based cache pre-load. On startup, walks all Hunter tabs
+  and builds {normalized_address: result} dict from rows already
+  enriched (Phone Source column populated). Cross-instance,
+  cross-machine, cross-restart. Massive speedup on re-runs.
+- In-memory cache during run — duplicate addresses use cached
+  result, no re-query.
+- --instance N/M flag for parallel runs across machines/terminals.
+  Partitions candidate rows by (r_idx % M == N-1).
+  Two machines × two terminals each = --instance 1of4 / 2of4 /
+  3of4 / 4of4. No overlap.
+- Stamps Phone Source on EVERY queried row, including rows where
+  Maps returned nothing. This is what makes the cache work — we
+  can tell "queried, nothing here" from "never queried."
+- Address normalization for cache keys: "611 E Beach Dr" matches
+  "611 East Beach Drive."
 
-Run on PC laptop (needs Playwright + Chromium):
-  python themapman.py                   # all Hunter* tabs, headless
-  python themapman.py --visible         # show browser window
-  python themapman.py --limit 10        # cap rows per tab
-  python themapman.py --tab "Hunter Green Commercial"   # single tab
-  python themapman.py --tab-prefix "Hunter Green"       # only Green tabs
-  python themapman.py --fiber-only      # only fiber-eligible rows
-  python themapman.py --no-update       # skip GitHub auto-update
+USAGE:
+  python themapman.py                        # single instance, all Hunter*
+  python themapman.py --visible              # show browser
+  python themapman.py --tab "Hunter Leads"   # one specific tab
+  python themapman.py --instance 1of2        # parallel: half 1
+  python themapman.py --instance 1of4        # parallel: quarter 1
+  python themapman.py --fiber-only           # restrict to fiber-eligible
+  python themapman.py --no-cache             # disable startup cache load
+  python themapman.py --no-update            # skip GitHub auto-update
+  python themapman.py --limit 10             # cap per tab (testing)
 
-Reads token from any of:
-  env GITHUB_TOKEN, /storage/emulated/0/Download/github_token.txt,
-  C:/Users/patri/Downloads/github_token.txt, ~/Downloads/github_token.txt,
-  ~/optimus/github_token.txt, ./github_token.txt
+PARALLEL EXAMPLES:
+  Two machines, one instance each:
+    Machine A:  python themapman.py --instance 1of2
+    Machine B:  python themapman.py --instance 2of2
+
+  Two machines, two instances each (4 total):
+    Machine A T1:  python themapman.py --instance 1of4
+    Machine A T2:  python themapman.py --instance 2of4
+    Machine B T1:  python themapman.py --instance 3of4
+    Machine B T2:  python themapman.py --instance 4of4
+
+Auto-update from private GitHub on launch.
+Token paths searched: env GITHUB_TOKEN, /storage/emulated/0/Download,
+C:/Users/patri/Downloads, ~/Downloads, ~/optimus, current folder.
 """
 
-VERSION   = "10.1"
+VERSION   = "10.2"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
 GH_FILE   = "themapman.py"
 GH_BRANCH = "main"
 
+PHONE_SOURCE_FOUND = "Google Maps"
+PHONE_SOURCE_EMPTY = "Google Maps (no biz)"
+
 import os, sys, re, time, json, argparse, base64
 from datetime import datetime
 from pathlib import Path
 import urllib.request
+
 
 # ─── AUTO-UPDATE (token-aware, private repo) ─────────────────────────
 TOKEN_PATHS = [
@@ -97,7 +120,7 @@ if "--no-update" not in sys.argv:
     check_update()
 
 
-# ─── DEPS (after possible self-update) ───────────────────────────────
+# ─── DEPS ────────────────────────────────────────────────────────────
 import gspread
 from google.oauth2.service_account import Credentials
 from playwright.sync_api import sync_playwright
@@ -107,13 +130,12 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
 
 ELIGIBLE_KEYWORDS = ("green", "fiber", "upgrade", "eligible", "gold")
-
 PAGE_TIMEOUT = 30000
 SETTLE_DELAY = 2.5
 RATE_DELAY   = 1.0
 
 
-# ─── HELPERS ─────────────────────────────────────────────────────────
+# ─── BASIC HELPERS ───────────────────────────────────────────────────
 def now_str():
     return datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
@@ -178,6 +200,32 @@ def ensure_columns(ws, headers, needed):
     ws.update(range_name=f"A1:{last}1", values=[new_headers])
     print(f"    Added columns: {new_cols}")
     return new_headers
+
+
+# ─── ADDRESS NORMALIZATION (for cache keys) ──────────────────────────
+ABBREV_MAP = {
+    "street": "st", "road": "rd", "avenue": "ave", "drive": "dr",
+    "lane": "ln", "boulevard": "blvd", "parkway": "pkwy",
+    "court": "ct", "circle": "cir", "highway": "hwy", "freeway": "fwy",
+    "trail": "trl", "place": "pl", "terrace": "ter", "square": "sq",
+    "north": "n", "south": "s", "east": "e", "west": "w",
+    "northeast": "ne", "northwest": "nw",
+    "southeast": "se", "southwest": "sw",
+    "suite": "ste", "apartment": "apt", "building": "bldg",
+}
+
+def normalize_address(addr):
+    """Lowercase, collapse whitespace, expand to canonical abbreviations.
+    '611 East Beach Drive' and '611 E Beach Dr' both → '611 e beach dr'."""
+    if not addr: return ""
+    s = str(addr).lower().strip()
+    s = re.sub(r"[,\.]", " ", s)
+    s = re.sub(r"\s+", " ", s)
+    tokens = s.split()
+    out = []
+    for t in tokens:
+        out.append(ABBREV_MAP.get(t, t))
+    return " ".join(out).strip()
 
 
 # ─── BROWSER ─────────────────────────────────────────────────────────
@@ -267,7 +315,9 @@ def panel_address():
             pass
     return ""
 
-def maps_lookup(address, zipc=""):
+def maps_lookup_raw(address, zipc=""):
+    """Direct Maps query. Returns dict or None.
+    Use maps_lookup() for cached version."""
     if not address or not looks_like_address(address):
         return None
     try:
@@ -303,6 +353,99 @@ def maps_lookup(address, zipc=""):
         return None
 
 
+# ─── ADDRESS CACHE (in-memory, populated from sheet on startup) ──────
+class AddressCache:
+    """{normalized_address: {"name", "phone", "address", "src"}}"""
+    def __init__(self):
+        self._d = {}
+        self._hits = 0
+        self._misses = 0
+        self._added = 0
+
+    def get(self, addr):
+        k = normalize_address(addr)
+        if k in self._d:
+            self._hits += 1
+            return self._d[k]
+        self._misses += 1
+        return None
+
+    def put(self, addr, result_dict):
+        if not addr: return
+        k = normalize_address(addr)
+        if k and k not in self._d:
+            self._d[k] = result_dict
+            self._added += 1
+
+    def stats(self):
+        return f"cache: {len(self._d)} entries, {self._hits} hits, {self._misses} misses"
+
+    def __len__(self):
+        return len(self._d)
+
+
+def build_cache_from_sheet(ss, tab_names):
+    """Pre-load cache: walk all listed tabs, capture every row with
+    Phone Source populated. That row was queried in a past run, so
+    we know what Maps said about that address."""
+    cache = AddressCache()
+    print(f"\n  Building cross-run cache from {len(tab_names)} tab(s)...")
+    for tab_name in tab_names:
+        try:
+            ws = ss.worksheet(tab_name)
+        except gspread.WorksheetNotFound:
+            continue
+        try:
+            data = ws.get_all_values()
+        except Exception as e:
+            print(f"    {tab_name}: read error {e}")
+            continue
+        if len(data) < 2: continue
+        headers = data[0]
+        c_addr = find_col(headers, "Address", "Address 1", "Street")
+        c_phone = find_col(headers, "Phone", "Phone Number")
+        c_biz = find_col(headers, "Business Name", "Name", "Business")
+        c_baddr = find_col(headers, "Business Address",
+                           "Verified Address", "Confirmed Address")
+        c_src = find_col(headers, "Phone Source")
+        if not c_addr or not c_src: continue
+        loaded = 0
+        for row in data[1:]:
+            def cell(c):
+                return row[c-1].strip() if c and c-1 < len(row) else ""
+            addr = cell(c_addr)
+            src = cell(c_src)
+            if not addr or not src: continue
+            cache.put(addr, {
+                "name":    cell(c_biz)   if c_biz   else "",
+                "phone":   cell(c_phone) if c_phone else "",
+                "address": cell(c_baddr) if c_baddr else "",
+                "src":     src,
+            })
+            loaded += 1
+        if loaded:
+            print(f"    {tab_name}: loaded {loaded} cached rows")
+    print(f"  Cache built: {len(cache)} unique addresses\n")
+    return cache
+
+
+def maps_lookup_cached(cache, address, zipc=""):
+    """Cache-aware lookup. Returns (result_dict, was_cached_bool)."""
+    cached = cache.get(address)
+    if cached is not None:
+        return cached, True
+    result = maps_lookup_raw(address, zipc)
+    if result is None:
+        result = {"name": "", "phone": "", "address": "", "src": ""}
+    if not (result.get("phone") or result.get("name") or result.get("address")):
+        result = {"name": "", "phone": "", "address": "",
+                  "src": PHONE_SOURCE_EMPTY}
+    else:
+        result["src"] = PHONE_SOURCE_FOUND
+    cache.put(address, result)
+    return result, False
+
+
 # ─── TAB DISCOVERY ───────────────────────────────────────────────────
 def discover_tabs(ss, prefix):
     pl = prefix.strip().lower()
@@ -310,8 +453,19 @@ def discover_tabs(ss, prefix):
             if w.title.lower().startswith(pl)]
 
 
+# ─── PARTITION ───────────────────────────────────────────────────────
+def parse_instance(s):
+    """Parse '1of4' → (1, 4). Returns (None, None) if invalid."""
+    if not s: return (None, None)
+    m = re.match(r"^\s*(\d+)\s*of\s*(\d+)\s*$", s.lower())
+    if not m: return (None, None)
+    n, total = int(m.group(1)), int(m.group(2))
+    if n < 1 or total < 1 or n > total: return (None, None)
+    return (n, total)
+
+
 # ─── ENRICH ONE TAB ──────────────────────────────────────────────────
-def enrich_tab(ss, tab_name, args):
+def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
         ws = ss.worksheet(tab_name)
@@ -346,13 +500,16 @@ def enrich_tab(ss, tab_name, args):
         print("    NO Address column — skip"); return 0, 0
 
     print(f"    cols: addr={c_addr} phone={c_phone} biz={c_biz} "
-          f"biz_addr={c_baddr} zip={c_zip} stat={c_stat}")
+          f"biz_addr={c_baddr} src={c_psrc} chk={c_chk} zip={c_zip}")
 
     def cell(row, c):
         return row[c-1].strip() if c and c-1 < len(row) else ""
 
     candidates = []
     skip_coord = skip_no_num = skip_already = skip_no_addr = skip_filter = 0
+    skip_partition = 0
+    inst_n, inst_total = partition
+
     for r_idx, row in enumerate(data[1:], start=2):
         addr = cell(row, c_addr)
         if not addr:
@@ -363,20 +520,23 @@ def enrich_tab(ss, tab_name, args):
             skip_no_num += 1; continue
         if args.fiber_only and c_stat and not is_eligible(cell(row, c_stat)):
             skip_filter += 1; continue
-        need_p = bool(c_phone) and is_blank(cell(row, c_phone))
-        need_b = bool(c_biz)   and is_blank(cell(row, c_biz))
-        need_a = bool(c_baddr) and is_blank(cell(row, c_baddr))
-        if not (need_p or need_b or need_a):
+        # Partition filter
+        if inst_n is not None:
+            if (r_idx - 2) % inst_total != (inst_n - 1):
+                skip_partition += 1; continue
+        # Already-queried check (Phone Source populated = mapman already
+        # touched this row before, regardless of result)
+        if c_psrc and cell(row, c_psrc):
             skip_already += 1; continue
         candidates.append({
             "row": r_idx, "addr": addr,
             "zip": cell(row, c_zip) if c_zip else "",
-            "need_p": need_p, "need_b": need_b, "need_a": need_a,
         })
 
     print(f"    candidates: {len(candidates)}  "
           f"(skipped: coord={skip_coord} no#={skip_no_num} "
-          f"already={skip_already} filtered={skip_filter} blank={skip_no_addr})")
+          f"already={skip_already} filtered={skip_filter} "
+          f"blank={skip_no_addr} other-instance={skip_partition})")
 
     if args.limit:
         candidates = candidates[:args.limit]
@@ -386,46 +546,67 @@ def enrich_tab(ss, tab_name, args):
 
     written_cells = 0
     written_rows  = 0
+    cache_hits_local = 0
     for i, c in enumerate(candidates, 1):
-        print(f"\n    [{i}/{len(candidates)}] r{c['row']}: {c['addr'][:70]}")
-        found = maps_lookup(c["addr"], c["zip"])
-        if not found:
-            print("      no result"); continue
+        marker = ""
+        before_hits = cache._hits
+        result, was_cached = maps_lookup_cached(cache, c["addr"], c["zip"])
+        if was_cached:
+            cache_hits_local += 1
+            marker = " (cached)"
+        print(f"    [{i}/{len(candidates)}] r{c['row']}: {c['addr'][:60]}{marker}")
+
         updates = []
-        row_had_write = False
-        if c["need_p"] and found.get("phone"):
-            updates.append({"range": f"{col_letter(c_phone)}{c['row']}",
-                            "values": [[found["phone"]]]})
-            print(f"      + phone {found['phone']}"); row_had_write = True
-        if c["need_b"] and found.get("name"):
-            updates.append({"range": f"{col_letter(c_biz)}{c['row']}",
-                            "values": [[found["name"]]]})
-            print(f"      + biz   {found['name']}"); row_had_write = True
-        if c["need_a"] and found.get("address"):
-            updates.append({"range": f"{col_letter(c_baddr)}{c['row']}",
-                            "values": [[found["address"]]]})
-            print(f"      + baddr {found['address']}"); row_had_write = True
-        if updates and c_psrc:
+        row_had_data = False
+        # Always stamp Phone Source + Checked At so this row gets cached
+        src_val = result.get("src") or PHONE_SOURCE_EMPTY
+        if c_psrc:
             updates.append({"range": f"{col_letter(c_psrc)}{c['row']}",
-                            "values": [["Google Maps"]]})
-        if updates and c_chk:
+                            "values": [[src_val]]})
+        if c_chk:
             updates.append({"range": f"{col_letter(c_chk)}{c['row']}",
                             "values": [[now_str()]]})
+        # Write data fields if present and the target cell is currently blank
+        cur = data[c['row'] - 1] if c['row'] - 1 < len(data) else []
+        def is_target_blank(col): return col and is_blank(cur[col-1] if col-1 < len(cur) else "")
+
+        if c_phone and result.get("phone") and is_target_blank(c_phone):
+            updates.append({"range": f"{col_letter(c_phone)}{c['row']}",
+                            "values": [[result["phone"]]]})
+            print(f"      + phone {result['phone']}"); row_had_data = True
+        if c_biz and result.get("name") and is_target_blank(c_biz):
+            updates.append({"range": f"{col_letter(c_biz)}{c['row']}",
+                            "values": [[result["name"]]]})
+            print(f"      + biz   {result['name']}"); row_had_data = True
+        if c_baddr and result.get("address") and is_target_blank(c_baddr):
+            updates.append({"range": f"{col_letter(c_baddr)}{c['row']}",
+                            "values": [[result["address"]]]})
+            print(f"      + baddr {result['address']}"); row_had_data = True
+
         if updates:
             for attempt in range(3):
                 try:
                     ws.batch_update(updates,
                                     value_input_option="USER_ENTERED")
                     written_cells += len(updates)
-                    if row_had_write: written_rows += 1
+                    if row_had_data: written_rows += 1
                     break
                 except Exception as e:
-                    print(f"      write err {attempt+1}: {e}")
-                    time.sleep(3)
-        time.sleep(RATE_DELAY)
+                    msg = str(e)
+                    if "429" in msg or "Quota" in msg or "RESOURCE_EXHAUSTED" in msg:
+                        wait = 30 * (attempt + 1)
+                        print(f"      quota hit, waiting {wait}s ...")
+                        time.sleep(wait)
+                    else:
+                        print(f"      write err {attempt+1}: {e}")
+                        time.sleep(3)
+        # Slow down only on real Maps lookups, not cache hits
+        if not was_cached:
+            time.sleep(RATE_DELAY)
 
-    print(f"\n    {tab_name}: wrote {written_cells} cells across "
-          f"{written_rows} rows")
+    print(f"\n    {tab_name}: wrote {written_cells} cells, "
+          f"{written_rows} rows had real data, "
+          f"{cache_hits_local} cache hits (no Maps call)")
     return written_cells, written_rows
 
 
@@ -435,18 +616,35 @@ def main():
     p.add_argument("--tab", help="single tab name (overrides discovery)")
     p.add_argument("--tab-prefix", default=DEFAULT_TAB_PREFIX,
                    help=f"tab prefix to discover (default: {DEFAULT_TAB_PREFIX})")
-    p.add_argument("--visible", action="store_true")
+    p.add_argument("--visible", action="store_true",
+                   help="show Chromium window")
     p.add_argument("--fiber-only", action="store_true",
-                   help="restrict to fiber-eligible rows (old behavior)")
+                   help="restrict to fiber-eligible rows")
     p.add_argument("--limit", type=int, default=0,
-                   help="cap rows per tab")
-    p.add_argument("--no-update", action="store_true")
+                   help="cap rows per tab (testing)")
+    p.add_argument("--instance", default="",
+                   help="parallel partition: 1of2, 2of4, etc.")
+    p.add_argument("--no-cache", action="store_true",
+                   help="skip startup cache pre-load")
+    p.add_argument("--no-update", action="store_true",
+                   help="skip GitHub auto-update")
     args = p.parse_args()
+
+    inst_n, inst_total = parse_instance(args.instance)
+    inst_label = f"{inst_n}of{inst_total}" if inst_n else "single"
+
+    # Auto-scale RATE_DELAY based on instance count to stay under
+    # Sheets API write quota (60 batches/min/user).
+    # single=1s, 2-way=2s, 4-way=4s, etc.
+    global RATE_DELAY
+    if inst_total and inst_total > 1:
+        RATE_DELAY = float(max(1, inst_total))
 
     print("\n" + "#" * 60)
     print(f"  THE MAP MAN v{VERSION}")
-    print("  Goal: Phone + Business Name + Business Address (in place)")
+    print(f"  Goal: Phone + Business Name + Business Address (in place)")
     print(f"  Mode: {'fiber-eligible only' if args.fiber_only else 'ALL rows incl. residential'}")
+    print(f"  Instance: {inst_label}  (rate delay {RATE_DELAY}s/row)")
     print("#" * 60)
 
     if not os.path.exists(CREDS_FILE):
@@ -464,19 +662,26 @@ def main():
         if not tabs:
             sys.exit(f"\nNo tabs found starting with '{args.tab_prefix}'")
 
+    # Build cross-run cache from sheet
+    if args.no_cache:
+        print("\n  --no-cache passed; skipping startup cache load.")
+        cache = AddressCache()
+    else:
+        cache = build_cache_from_sheet(ss, tabs)
+
     init_browser(headless=not args.visible)
     total_cells = total_rows = 0
     try:
         for tab in tabs:
-            c, r = enrich_tab(ss, tab, args)
+            c, r = enrich_tab(ss, tab, args, cache, (inst_n, inst_total))
             total_cells += c
             total_rows  += r
     finally:
         close_browser()
 
     print("\n" + "#" * 60)
-    print(f"  DONE. {total_cells} cells written across {total_rows} rows "
-          f"in {len(tabs)} tab(s).")
+    print(f"  DONE. {total_cells} cells written, {total_rows} rows had real data.")
+    print(f"  Final {cache.stats()}")
     print("#" * 60)
 
 
