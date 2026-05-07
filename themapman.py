@@ -1,55 +1,55 @@
 #!/usr/bin/env python3
 """
-THE MAP MAN — Hunter sheet enricher v10.2
+THE MAP MAN — Hunter sheet enricher v10.3
 =========================================
 Enriches every tab named Hunter* with Phone + Business Name +
 Business Address via Google Maps. Writes back IN PLACE.
 
-NEW IN v10.2:
-- Sheet-based cache pre-load. On startup, walks all Hunter tabs
-  and builds {normalized_address: result} dict from rows already
-  enriched (Phone Source column populated). Cross-instance,
-  cross-machine, cross-restart. Massive speedup on re-runs.
-- In-memory cache during run — duplicate addresses use cached
-  result, no re-query.
-- --instance N/M flag for parallel runs across machines/terminals.
-  Partitions candidate rows by (r_idx % M == N-1).
-  Two machines × two terminals each = --instance 1of4 / 2of4 /
-  3of4 / 4of4. No overlap.
-- Stamps Phone Source on EVERY queried row, including rows where
-  Maps returned nothing. This is what makes the cache work — we
-  can tell "queried, nothing here" from "never queried."
-- Address normalization for cache keys: "611 E Beach Dr" matches
-  "611 East Beach Drive."
+NEW IN v10.3:
+- Tab priority ordering. Highest-yield tabs run first by default:
+    1. Hunter Commercial         (highest commercial concentration)
+    2. Hunter Green Commercial   (already partially enriched)
+    3. Hunter Leads              (mixed)
+    4. Hunter Residential        (lowest yield but most rows)
+    5. Hunter Green Residential
+    6. anything else Hunter*
+  Override per-run with --tab "Name" to target one tab directly.
+
+CARRIED FROM v10.2:
+- Sheet-based cache pre-load (skips already-queried addresses
+  cross-machine and cross-restart).
+- In-memory cache during run (handles duplicate addresses).
+- --instance N/M flag for parallel runs.
+- RATE_DELAY auto-scales with instance count
+  (single=1s, 2-way=2s, 4-way=4s).
+- Address normalization for cache keys.
+- Phone Source stamped on every queried row.
 
 USAGE:
-  python themapman.py                        # single instance, all Hunter*
+  python themapman.py                        # priority order, all Hunter*
   python themapman.py --visible              # show browser
-  python themapman.py --tab "Hunter Leads"   # one specific tab
-  python themapman.py --instance 1of2        # parallel: half 1
-  python themapman.py --instance 1of4        # parallel: quarter 1
+  python themapman.py --tab "Hunter Leads"   # single tab override
+  python themapman.py --instance 1of4        # parallel partition
   python themapman.py --fiber-only           # restrict to fiber-eligible
   python themapman.py --no-cache             # disable startup cache load
   python themapman.py --no-update            # skip GitHub auto-update
   python themapman.py --limit 10             # cap per tab (testing)
 
 PARALLEL EXAMPLES:
-  Two machines, one instance each:
-    Machine A:  python themapman.py --instance 1of2
-    Machine B:  python themapman.py --instance 2of2
-
-  Two machines, two instances each (4 total):
+  Two machines, two instances each (4 parallel):
     Machine A T1:  python themapman.py --instance 1of4
     Machine A T2:  python themapman.py --instance 2of4
     Machine B T1:  python themapman.py --instance 3of4
     Machine B T2:  python themapman.py --instance 4of4
+  All four start on Hunter Commercial together (priority #1),
+  partitioned by row index. No duplicate work.
 
 Auto-update from private GitHub on launch.
 Token paths searched: env GITHUB_TOKEN, /storage/emulated/0/Download,
 C:/Users/patri/Downloads, ~/Downloads, ~/optimus, current folder.
 """
 
-VERSION   = "10.2"
+VERSION   = "10.3"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -447,10 +447,26 @@ def maps_lookup_cached(cache, address, zipc=""):
 
 
 # ─── TAB DISCOVERY ───────────────────────────────────────────────────
+TAB_PRIORITY_ORDER = [
+    "Hunter Commercial",
+    "Hunter Green Commercial",
+    "Hunter Leads",
+    "Hunter Residential",
+    "Hunter Green Residential",
+]
+
 def discover_tabs(ss, prefix):
     pl = prefix.strip().lower()
     return [w.title for w in ss.worksheets()
             if w.title.lower().startswith(pl)]
+
+def order_tabs(tabs):
+    """Sort discovered tabs by TAB_PRIORITY_ORDER. Tabs not in the
+    priority list go to the end in alphabetical order."""
+    priority = {n.lower(): i for i, n in enumerate(TAB_PRIORITY_ORDER)}
+    def key(t):
+        return (priority.get(t.lower(), 999), t.lower())
+    return sorted(tabs, key=key)
 
 
 # ─── PARTITION ───────────────────────────────────────────────────────
@@ -658,9 +674,11 @@ def main():
         print(f"\n  Single tab mode: {args.tab}")
     else:
         tabs = discover_tabs(ss, args.tab_prefix)
+        tabs = order_tabs(tabs)
         print(f"\n  Discovered tabs (prefix '{args.tab_prefix}'): {tabs}")
         if not tabs:
             sys.exit(f"\nNo tabs found starting with '{args.tab_prefix}'")
+        print(f"  Processing in priority order (commercial first).")
 
     # Build cross-run cache from sheet
     if args.no_cache:
