@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION   = "10.7"
+VERSION   = "10.8"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -123,7 +123,13 @@ def check_update():
         print(f"  Updating to v{new_ver}...")
         with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
             f.write(latest)
-        print("  Updated! Restarting...")
+        print("  Updated! Restart required.")
+        # On Windows, os.execv breaks stdin (cmd.exe and the new python
+        # process fight over the console handle). Exit cleanly and let
+        # the user re-run. On Linux/Mac, os.execv works fine.
+        if sys.platform == "win32":
+            print("  Re-run the same command to use v" + new_ver + ".")
+            sys.exit(0)
         os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
         print(f"  Update check failed: {e}")
@@ -697,7 +703,11 @@ def enrich_tab(ss, tab_name, args, cache, partition):
 def pick_city_interactive():
     """Show city options at startup. Return comma-separated city filter
     (empty string = no filter / all cities). Called only when no --city
-    flag was passed and stdin is a tty."""
+    flag was passed and stdin is a tty.
+
+    Defensive against broken stdin (Windows .py file-association
+    launches share the console with cmd.exe; input() can return
+    garbage). After 3 invalid picks or any EOF, defaults to ALL."""
     METROS = [
         ("Houston metro       (Houston, Bellaire)",                          "Houston,Bellaire"),
         ("Austin metro        (Austin, Hornsby Bend)",                       "Austin,Hornsby Bend"),
@@ -711,15 +721,33 @@ def pick_city_interactive():
     for i, (label, _) in enumerate(METROS, 1):
         print(f"    {i}. {label}")
     print()
+
+    # Drain any pre-buffered junk on Windows (cmd.exe leftovers).
+    if sys.platform == "win32":
+        try:
+            import msvcrt
+            while msvcrt.kbhit():
+                msvcrt.getch()
+        except Exception:
+            pass
+
+    failures = 0
     while True:
         try:
             choice = input("  Pick (1-5, or Enter for ALL): ").strip()
         except (EOFError, KeyboardInterrupt):
+            print("  No input received - defaulting to ALL.")
+            print("  TIP: launch via mapman.bat to avoid this.")
             return ""
         if choice == "":
             return ""
         if choice.isdigit() and 1 <= int(choice) <= len(METROS):
             return METROS[int(choice)-1][1]
+        failures += 1
+        if failures >= 3:
+            print("  Too many invalid picks - defaulting to ALL.")
+            print("  TIP: launch via mapman.bat for proper input handling.")
+            return ""
         print("  Invalid pick. Try again.")
 
 
