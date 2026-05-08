@@ -1,45 +1,67 @@
 #!/usr/bin/env python3
 """
-THE MAP MAN — Hunter sheet enricher v10.4
+THE MAP MAN — Hunter sheet enricher v10.7
 =========================================
 Enriches every tab named Hunter* with Phone + Business Name +
 Business Address via Google Maps. Writes back IN PLACE.
 
-NEW IN v10.4:
-- Reject "address-as-name" pollution. When Google Maps returns
-  the searched address itself as the h1 (because no real business
-  exists at that location), v10.4 detects this and treats the
-  result as empty. Stops writing rows like:
-      Address: 9316 Dogwood Avenue
-      Business Name: 9316 Dogwood Ave    <- pollution, dropped
-  This keeps the Business Name column clean. Real callable leads
-  are now easy to filter (Business Name not blank).
-- Side effect: fewer cell writes per row → fewer Sheets API 429s
-  → faster overall throughput.
+NEW IN v10.7:
+- Interactive city picker on startup. When themapman.py is run
+  without --city or --tab AND stdin is a tty, shows a numbered
+  metro menu (Houston / Austin / OKC / MS Gulf Coast / ALL).
+  Skip with --no-pick or by passing --city/--tab explicitly.
+- Tab priority order: Hunter Commercial first. (v10.6 briefly
+  swapped Green Commercial first; v10.7 reverted that swap.)
+
+CARRIED FROM v10.5:
+- --city "Name1,Name2" flag for targeted metro enrichment
+  (case-insensitive substring match against the City column).
+
+CARRIED FROM v10.4:
+- sanitize_result() rejects address-as-name pollution. When
+  Maps returns input address itself as h1 (no real biz at the
+  location), v10.4+ treats result as empty instead of writing
+  the address into the Business Name column.
+- _is_address_echo() handles abbreviation variants
+  (Drive→dr, Avenue→ave) and city/state/zip suffix.
 
 CARRIED FROM v10.3:
-- Tab priority order (Hunter Commercial first).
-- Sheet-based cache pre-load (cross-machine, cross-restart).
+- TAB_PRIORITY_ORDER constant: Hunter Commercial first, then
+  Green Commercial, Leads, Residential, Green Residential.
+
+CARRIED FROM v10.2:
+- Sheet-based cache pre-load (skips already-queried addresses
+  cross-machine and cross-restart).
 - In-memory cache during run.
 - --instance N/M flag for parallel runs.
-- RATE_DELAY auto-scales with instance count.
+- RATE_DELAY auto-scales with instance count
+  (single=1s, 2-way=2s, 4-way=4s).
 - Address normalization for cache keys.
 - Phone Source stamped on every queried row.
 
 USAGE:
-  python themapman.py                        # priority order, all Hunter*
-  python themapman.py --visible              # show browser
-  python themapman.py --tab "Hunter Leads"   # single tab override
-  python themapman.py --instance 1of4        # parallel partition
-  python themapman.py --fiber-only           # restrict to fiber-eligible
-  python themapman.py --no-cache             # disable startup cache load
-  python themapman.py --no-update            # skip GitHub auto-update
-  python themapman.py --limit 10             # cap per tab (testing)
+  python themapman.py                              # picker on tty
+  python themapman.py --city "Oklahoma City"       # OKC only
+  python themapman.py --city "Houston,Bellaire"    # Houston metro
+  python themapman.py --city "Austin" --no-pick    # skip picker
+  python themapman.py --tab "Hunter Leads"         # single tab
+  python themapman.py --instance 1of2 --no-pick    # parallel partition
+  python themapman.py --no-cache                   # skip cache pre-load
+  python themapman.py --no-update                  # skip auto-update
+  python themapman.py --limit 10                   # cap per tab (test)
 
-Auto-update from private GitHub on launch.
+OKC PARALLEL (2 instances):
+  PC A: python themapman.py --city "Oklahoma City,Edmond,Midwest City,Choctaw" --instance 1of2 --no-pick
+  PC B: python themapman.py --city "Oklahoma City,Edmond,Midwest City,Choctaw" --instance 2of2 --no-pick
+
+REPO: patricksiado-prog/optimus-map-tools (public for read,
+authenticated for push). Auto-update on launch fetches the raw
+file via Contents API; works with or without a valid token for
+read on a public repo, but the push scripts still require a
+token with Contents:write scope.
 """
 
-VERSION   = "10.4"
+VERSION   = "10.7"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -541,19 +563,29 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     c_zip   = find_col(headers, "ZIP", "Zip", "Zip Code", "Postal Code")
     c_stat  = find_col(headers, "Type", "Fiber Status", "Status",
                        "Dot Type", "Property Type")
+    c_city  = find_col(headers, "City")
 
     if not c_addr:
         print("    NO Address column — skip"); return 0, 0
 
     print(f"    cols: addr={c_addr} phone={c_phone} biz={c_biz} "
-          f"biz_addr={c_baddr} src={c_psrc} chk={c_chk} zip={c_zip}")
+          f"biz_addr={c_baddr} src={c_psrc} chk={c_chk} zip={c_zip} "
+          f"city={c_city}")
 
     def cell(row, c):
         return row[c-1].strip() if c and c-1 < len(row) else ""
 
+    # Parse city filter from args (comma-separated, case-insensitive)
+    city_filter = []
+    if getattr(args, "city", ""):
+        city_filter = [c.strip().lower() for c in args.city.split(",") if c.strip()]
+    if city_filter and c_city is None:
+        print(f"    --city set but tab has no City column — skip")
+        return 0, 0
+
     candidates = []
     skip_coord = skip_no_num = skip_already = skip_no_addr = skip_filter = 0
-    skip_partition = 0
+    skip_partition = skip_city = 0
     inst_n, inst_total = partition
 
     for r_idx, row in enumerate(data[1:], start=2):
@@ -566,12 +598,16 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             skip_no_num += 1; continue
         if args.fiber_only and c_stat and not is_eligible(cell(row, c_stat)):
             skip_filter += 1; continue
+        # City filter
+        if city_filter:
+            row_city = cell(row, c_city).lower()
+            if not any(cf in row_city for cf in city_filter):
+                skip_city += 1; continue
         # Partition filter
         if inst_n is not None:
             if (r_idx - 2) % inst_total != (inst_n - 1):
                 skip_partition += 1; continue
-        # Already-queried check (Phone Source populated = mapman already
-        # touched this row before, regardless of result)
+        # Already-queried check
         if c_psrc and cell(row, c_psrc):
             skip_already += 1; continue
         candidates.append({
@@ -582,7 +618,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"    candidates: {len(candidates)}  "
           f"(skipped: coord={skip_coord} no#={skip_no_num} "
           f"already={skip_already} filtered={skip_filter} "
-          f"blank={skip_no_addr} other-instance={skip_partition})")
+          f"blank={skip_no_addr} other-instance={skip_partition} "
+          f"other-city={skip_city})")
 
     if args.limit:
         candidates = candidates[:args.limit]
@@ -657,6 +694,35 @@ def enrich_tab(ss, tab_name, args, cache, partition):
 
 
 # ─── MAIN ────────────────────────────────────────────────────────────
+def pick_city_interactive():
+    """Show city options at startup. Return comma-separated city filter
+    (empty string = no filter / all cities). Called only when no --city
+    flag was passed and stdin is a tty."""
+    METROS = [
+        ("Houston metro       (Houston, Bellaire)",                          "Houston,Bellaire"),
+        ("Austin metro        (Austin, Hornsby Bend)",                       "Austin,Hornsby Bend"),
+        ("OKC metro           (OK City, Edmond, Midwest City, Choctaw)",     "Oklahoma City,Edmond,Midwest City,Choctaw"),
+        ("MS Gulf Coast       (Biloxi, Ocean Springs, Gulfport)",            "Biloxi,Ocean Springs,Gulfport"),
+        ("ALL cities          (no filter, runs everything)",                 ""),
+    ]
+    print("\n" + "=" * 60)
+    print("  THE MAP MAN  -  pick where to enrich")
+    print("=" * 60)
+    for i, (label, _) in enumerate(METROS, 1):
+        print(f"    {i}. {label}")
+    print()
+    while True:
+        try:
+            choice = input("  Pick (1-5, or Enter for ALL): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return ""
+        if choice == "":
+            return ""
+        if choice.isdigit() and 1 <= int(choice) <= len(METROS):
+            return METROS[int(choice)-1][1]
+        print("  Invalid pick. Try again.")
+
+
 def main():
     p = argparse.ArgumentParser(description=f"THE MAP MAN v{VERSION}")
     p.add_argument("--tab", help="single tab name (overrides discovery)")
@@ -670,11 +736,21 @@ def main():
                    help="cap rows per tab (testing)")
     p.add_argument("--instance", default="",
                    help="parallel partition: 1of2, 2of4, etc.")
+    p.add_argument("--city", default="",
+                   help="filter to rows in these cities (comma-separated, case-insensitive)")
     p.add_argument("--no-cache", action="store_true",
                    help="skip startup cache pre-load")
     p.add_argument("--no-update", action="store_true",
                    help="skip GitHub auto-update")
+    p.add_argument("--no-pick", action="store_true",
+                   help="skip interactive city picker")
     args = p.parse_args()
+
+    # Interactive city picker — runs only if no --city/--tab passed
+    # AND we're attached to a terminal. Skip for headless/CI/script use.
+    if (not args.city and not args.tab and sys.stdin.isatty()
+            and not args.no_pick):
+        args.city = pick_city_interactive()
 
     inst_n, inst_total = parse_instance(args.instance)
     inst_label = f"{inst_n}of{inst_total}" if inst_n else "single"
@@ -691,6 +767,8 @@ def main():
     print(f"  Goal: Phone + Business Name + Business Address (in place)")
     print(f"  Mode: {'fiber-eligible only' if args.fiber_only else 'ALL rows incl. residential'}")
     print(f"  Instance: {inst_label}  (rate delay {RATE_DELAY}s/row)")
+    if args.city:
+        print(f"  City filter: {args.city}")
     print("#" * 60)
 
     if not os.path.exists(CREDS_FILE):
