@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.7"
+VERSION = "5.8"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -125,7 +125,7 @@ GEO_CACHE = "hunter_geocode_cache.json"
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
 WAIT_AFTER_PAN = 1.5
-MAX_WAIT_DOTS = 6.0
+MAX_WAIT_DOTS = 4.0
 POLL_INTERVAL = 0.12
 PAN_PIXELS = 150
 START_DELAY = 10
@@ -391,6 +391,7 @@ def pixel_to_latlng(px, py, row, col, sl, sg):
 
 # GEOCODING (unchanged from v5.6)
 _geo_cache = {}
+_phone_cache = {}  # v5.8: OSM phones
 _geo_lock = threading.Lock()
 _geo_last = [0.0]
 
@@ -507,6 +508,16 @@ def geocode(lat, lng):
         extra = d.get("extratags") or {}
         if isinstance(extra, dict):
             biz = extra.get("name", "") or ""
+    _osm_ph = ""
+    if isinstance(extra, dict):
+        _osm_ph = (extra.get("phone") or extra.get("contact:phone") or
+                   extra.get("contact:mobile") or "")
+        if _osm_ph:
+            import re as _re
+            _osm_ph = _re.sub(r"[^\d+\-\(\) ]", "", str(_osm_ph)).strip()
+    if _osm_ph:
+        with _geo_lock:
+            _phone_cache["%.6f,%.6f" % (lat, lng)] = _osm_ph
     types = (str(d.get("type") or "") + str(d.get("class") or "") +
              str(d.get("addresstype") or "")).lower()
     if any(t in types for t in COMMERCIAL_TYPES):
@@ -519,9 +530,8 @@ def geocode(lat, lng):
         ptype = "UNKNOWN"
     if house and street:
         full = "%s %s" % (house, street)
-    elif street:
-        full = "%s (no #)" % street
     else:
+        # v5.8: no house number = write nothing
         with _geo_lock:
             _geo_cache[key] = None
         return None
@@ -1051,7 +1061,7 @@ class Processor:
 
             self.existing.setdefault(full, set()).add(dot_type)
             self.counters["new"] += 1
-            phone = ""
+            phone = _phone_cache.get("%.6f,%.6f" % (lat, lng), "")
             tag = "GREY" if is_grey else ("COMM" if ptype == "COMMERCIAL" else "RES")
             print("  %s [I%d]: %s %s" % (
                 tag, self.instance, full[:50],
