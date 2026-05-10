@@ -613,8 +613,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if inst_n is not None:
             if (r_idx - 2) % inst_total != (inst_n - 1):
                 skip_partition += 1; continue
-        # Already-queried check
-        if c_psrc and cell(row, c_psrc):
+        # Already-queried check (v10.9: only skip if phone is also populated)
+        if c_psrc and cell(row, c_psrc) and c_phone and cell(row, c_phone):
             skip_already += 1; continue
         candidates.append({
             "row": r_idx, "addr": addr,
