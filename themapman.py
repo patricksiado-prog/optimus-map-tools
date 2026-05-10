@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.9"
+VERSION = "10.10"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -433,7 +433,8 @@ def build_cache_from_sheet(ss, tab_names):
                 return row[c-1].strip() if c and c-1 < len(row) else ""
             addr = cell(c_addr)
             src = cell(c_src)
-            if not addr or not src: continue
+            phone_val = cell(c_phone) if c_phone else ""
+            if not addr or not src or not phone_val: continue
             cache.put(addr, {
                 "name":    cell(c_biz)   if c_biz   else "",
                 "phone":   cell(c_phone) if c_phone else "",
