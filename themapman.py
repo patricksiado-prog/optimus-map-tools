@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION   = "10.8"
+VERSION = "10.9"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
