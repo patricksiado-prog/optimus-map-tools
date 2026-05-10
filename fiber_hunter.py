@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.8"
+VERSION = "5.9"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -118,6 +118,7 @@ def check_update():
 CREDS_FILE = "google_creds.json"
 SHEET_NAME = "ATT FIBER LEADS"
 SCREENSHOTS_DIR = "hunter_screenshots"
+DRIVE_SCREENSHOTS_FOLDER = "1yh4I1OxabdmEchLcA3KR9AMZ2F7QsJUw"  # v5.9
 PROGRESS_FILE = "hunter_progress.json"
 HISTORY_FILE = "hunter_zone_history.json"
 BUTTON_FILE = "hunter_button_pos.json"
@@ -1148,12 +1149,42 @@ def pan(direction):
         pyautogui.drag(0, -PAN_PIXELS, duration=0.2, button="left", _pause=False)
     time.sleep(WAIT_AFTER_PAN)
 
+def upload_screenshot_to_drive(local_path):
+    """v5.9: upload PNG to Drive so all machines share screenshots."""
+    try:
+        import google.auth.transport.requests as _gtr
+        _scopes = ["https://www.googleapis.com/auth/drive"]
+        _creds = Credentials.from_service_account_file(CREDS_FILE, scopes=_scopes)
+        _creds.refresh(_gtr.Request())
+        _token = _creds.token
+        _fname = os.path.basename(local_path)
+        with open(local_path, "rb") as _f:
+            _img = _f.read()
+        _bnd = "fhboundary"
+        _meta = json.dumps({"name": _fname,
+                            "parents": [DRIVE_SCREENSHOTS_FOLDER]}).encode()
+        _body = (b"--" + _bnd.encode() + b"\r\n"
+                 b"Content-Type: application/json; charset=UTF-8\r\n\r\n" +
+                 _meta + b"\r\n"
+                 b"--" + _bnd.encode() + b"\r\n"
+                 b"Content-Type: image/png\r\n\r\n" +
+                 _img + b"\r\n"
+                 b"--" + _bnd.encode() + b"--")
+        requests.post(
+            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+            headers={"Authorization": "Bearer " + _token,
+                     "Content-Type": "multipart/related; boundary=" + _bnd},
+            data=_body, timeout=20)
+    except Exception:
+        pass
+
 def screenshot(scan_num, zone_name, row, col, instance):
     ts = datetime.now().strftime("%H%M%S")
     fn = os.path.join(SCREENSHOTS_DIR,
         "i%d_scan%02d_%s_r%02d_c%02d_%s.png" % (
             instance, scan_num, zone_name, row, col, ts))
     pyautogui.screenshot(fn)
+    upload_screenshot_to_drive(fn)  # v5.9
     return fn
 
 def scan_cell(zone, city, row, col, btn_x, btn_y, processor, scan_num, instance):
