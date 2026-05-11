@@ -752,6 +752,7 @@ def main():
     print(f"  THE MAP MAN v{VERSION}")
     print(f"  Goal: Phone + Business Name + Business Address (in place)")
     print(f"  Mode: {'fiber-eligible only' if args.fiber_only else 'ALL rows incl. residential'}")
+    RATE_DELAY = 1.0
     print(f"  Instance: {inst_label}  (rate delay {RATE_DELAY}s/row)")
     if args.city:
         print(f"  City filter: {args.city}")
