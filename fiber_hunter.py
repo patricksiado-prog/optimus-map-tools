@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.9"
+VERSION = "5.10"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -81,127 +81,18 @@ GITHUB_REPO = "patricksiado-prog/optimus-map-tools"
 GITHUB_FILE = "fiber_hunter.py"
 GITHUB_BRANCH = "main"
 
+
 def check_update():
-    if not AUTO_UPDATE:
-        return
     try:
-        url = ("https://raw.githubusercontent.com/%s/%s/%s"
-               % (GITHUB_REPO, GITHUB_BRANCH, GITHUB_FILE))
-        print("Checking for updates...")
-        r = requests.get(url, timeout=10)
-        if r.status_code != 200:
-            print("  Update check failed (HTTP %d), continuing" % r.status_code)
-            return
-        remote_code = r.text
-        m = re.search(r'VERSION\s*=\s*["\']([\d.]+)["\']', remote_code)
-        if not m:
-            print("  Couldn't read remote version, continuing")
-            return
-        remote_version = m.group(1)
-        if remote_version == VERSION:
-            print("  Up to date (v%s)" % VERSION)
-            return
-        def vtuple(v): return tuple(int(x) for x in v.split("."))
-        if vtuple(remote_version) <= vtuple(VERSION):
-            print("  Local v%s is newer than remote v%s" % (VERSION, remote_version))
-            return
-        print("  Updating to v%s..." % remote_version)
-        with open(__file__, "w", encoding="utf-8") as f:
-            f.write(remote_code)
-        print("  Updated! Restarting...")
-        os.execv(sys.executable, [sys.executable] + sys.argv)
-    except Exception as e:
-        print("  Update err (continuing): %s" % str(e)[:100])
-
-
-# CONFIG
-CREDS_FILE = "google_creds.json"
-SHEET_NAME = "ATT FIBER LEADS"
-SCREENSHOTS_DIR = "hunter_screenshots"
-DRIVE_SCREENSHOTS_FOLDER = "1yh4I1OxabdmEchLcA3KR9AMZ2F7QsJUw"  # v5.9
-PROGRESS_FILE = "hunter_progress.json"
-HISTORY_FILE = "hunter_zone_history.json"
-BUTTON_FILE = "hunter_button_pos.json"
-GEO_CACHE = "hunter_geocode_cache.json"
-os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-
-WAIT_AFTER_PAN = 1.5
-MAX_WAIT_DOTS = 4.0
-POLL_INTERVAL = 0.12
-PAN_PIXELS = 150
-START_DELAY = 10
-BATCH_SIZE = 12
-GEOCODE_TIMEOUT = 7
-PHONE_TIMEOUT = 3
-GEO_RATE = 1.2
-
-# v5.7 size + shape filter
-MIN_DOT_PIXELS = 3
-MAX_DOT_PIXELS = 800
-MAX_DOT_BBOX_AREA = 1500
-MIN_DOT_COMPACTNESS = 0.45
-MAX_DOT_ASPECT = 2.5
-MIN_DOT_CLUSTERS = 1
-CLUSTER_THRESHOLD = 15
-
-# v5.7 blank-map detection
-BLANK_STD_THRESHOLD = 12.0
-BLANK_CENTER_STD_THRESHOLD = 9.0
-BLANK_BRIGHT_MEAN = 240
-BLANK_DARK_MEAN = 30
-
-# Hot-zone alert thresholds (unchanged)
-GREENFIELD_GREEN_MIN = 80
-GREENFIELD_GOLD_MAX = 20
-GREENFIELD_BLUE_MAX = 30
-
-MAP_LEFT, MAP_TOP, MAP_RIGHT, MAP_BOTTOM = 50, 100, 1350, 720
-MAP_CX = (MAP_LEFT + MAP_RIGHT) // 2
-MAP_CY = (MAP_TOP + MAP_BOTTOM) // 2
-
-# Color ranges
-ORANGE_MIN = (220, 160, 0)
-ORANGE_MAX = (255, 200, 60)
-GREEN_MIN  = (30, 130, 30)
-GREEN_MAX  = (100, 210, 80)
-# BLUE retained for hot-zone alert math (legacy)
-BLUE_MIN   = (50, 80, 180)
-BLUE_MAX   = (120, 160, 255)
-# v5.7 GREY: desaturated existing-customer dot range (Grok to verify)
-GREY_MIN   = (140, 140, 160)
-GREY_MAX   = (190, 190, 210)
-
-GREY_DOT_TYPE = "EXISTING FIBER (Grey)"
-
-LAT_PER_PIXEL = -0.000015
-LNG_PER_PIXEL = 0.000020
-REP_NAME = "Patri"
-KNOWN_COMMERCIAL_ZIPS = set()
-COLS_PER_ZONE = 50
-ROWS_PER_ZONE = 40
-
-COMMERCIAL_TYPES = [
-    "commercial", "retail", "office", "industrial", "warehouse",
-    "supermarket", "mall", "hotel", "restaurant", "fast_food",
-    "cafe", "bar", "hospital", "clinic", "school", "university",
-    "government", "bank", "pharmacy", "shop", "store", "building",
-    "business", "company", "plaza", "tower", "center", "centre",
-    "suite", "pkwy", "parkway", "blvd", "corporate", "logistics",
-    "distribution", "manufacturing", "medical", "dental",
-    "automotive", "dealership", "terminal", "port", "airport",
-]
-RESIDENTIAL_TYPES = [
-    "house", "apartments", "residential", "detached", "terrace",
-    "dormitory", "condo", "flat", "dwelling", "home", "bungalow",
-    "villa", "subdivision", "estates",
-]
-COMMERCIAL_STREET_WORDS = [
-    "industrial", "commerce", "corporate", "business", "trade",
-    "enterprise", "market", "distribution", "logistics", "pkwy",
-    "parkway", "plaza", "center", "blvd", "highway", "freeway",
-    "expressway", "loop", "port", "terminal", "airport",
-]
-
+        import urllib.request as u,os,sys,re
+        url="https://raw.githubusercontent.com/"+GITHUB_REPO+"/"+GITHUB_BRANCH+"/"+GITHUB_FILE
+        code=u.urlopen(url,timeout=10).read().decode()
+        m=re.search('VERSION.*?([0-9]+[.][0-9.]+)',code)
+        if not m or m.group(1)==VERSION:return
+        print("Updating to v"+m.group(1))
+        open(__file__,"w").write(code)
+        os.execv(sys.executable,[sys.executable]+sys.argv)
+    except Exception as e:print("Update skip:",e)
 
 def now_str():
     return datetime.now().strftime("%m/%d/%Y %I:%M %p")
