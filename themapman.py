@@ -61,7 +61,14 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.11"
+VERSION = "10.12"
+CREDS_FILE   = "google_creds.json"
+SHEET_NAME   = "ATT FIBER LEADS"
+BATCH_SIZE   = 10
+GEO_TIMEOUT  = 8
+MAPS_TIMEOUT = 15
+START_DELAY  = 5
+
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
