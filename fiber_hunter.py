@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.9"
+VERSION = "5.10"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -461,6 +461,37 @@ def _photon_reverse(lat, lng):
     except:
         pass
     return None
+
+
+PHONE_TIMEOUT = 15
+
+def get_phone_and_biz(address, city, state):
+    try:
+        import re as _re
+        from playwright.sync_api import sync_playwright
+        query = (address + " " + city + " " + state).replace(" ", "+")
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto("https://www.google.com/maps/search/" + query,
+                      timeout=PHONE_TIMEOUT * 1000)
+            page.wait_for_timeout(3000)
+            content = page.content()
+            browser.close()
+        phone = ""
+        m = _re.search(r"(\+?1?[\s\(]?\d{3}[\)\-\.\s]\s*\d{3}[\-\.\s]\d{4})", content)
+        if m:
+            digits = _re.sub(r"[^\d]", "", m.group(1))
+            if len(digits) >= 10:
+                phone = digits[-10:]
+        biz = ""
+        bm = _re.search(r'"name":"([^"]{3,80})"', content)
+        if bm:
+            biz = bm.group(1).strip()
+        return phone, biz
+    except:
+        pass
+    return "", ""
 
 def geocode(lat, lng):
     key = "%.6f,%.6f" % (lat, lng)
@@ -1063,6 +1094,12 @@ class Processor:
             self.existing.setdefault(full, set()).add(dot_type)
             self.counters["new"] += 1
             phone = _phone_cache.get("%.6f,%.6f" % (lat, lng), "")
+            if is_green and not phone:
+                try:
+                    _p, _b = get_phone_and_biz(full, gcity, state)
+                    if _p: phone = _p
+                    if _b and not biz: biz = _b
+                except: pass
             tag = "GREY" if is_grey else ("COMM" if ptype == "COMMERCIAL" else "RES")
             print("  %s [I%d]: %s %s" % (
                 tag, self.instance, full[:50],
