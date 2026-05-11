@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.12"
+VERSION = "10.13"
 CREDS_FILE   = "google_creds.json"
 SHEET_NAME   = "ATT FIBER LEADS"
 BATCH_SIZE   = 10
@@ -717,6 +717,12 @@ def pick_city_interactive():
 
 
 def main():
+    CREDS_FILE = "google_creds.json"
+    SHEET_NAME = "ATT FIBER LEADS"
+    BATCH_SIZE = 10
+    GEO_TIMEOUT = 8
+    MAPS_TIMEOUT = 15
+    START_DELAY = 5
     p = argparse.ArgumentParser(description=f"THE MAP MAN v{VERSION}")
     p.add_argument("--tab", help="single tab name (overrides discovery)")
     p.add_argument("--tab-prefix", default=DEFAULT_TAB_PREFIX,
