@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.10"
+VERSION = "10.11"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -98,62 +98,19 @@ def _read_token():
             pass
     return ""
 
+
 def check_update():
-    print("  Checking GitHub for updates...")
-    tok = _read_token()
-    if not tok:
-        print("  No token — skipping update check.")
-        return
     try:
-        url = (f"https://api.github.com/repos/{GH_REPO}"
-               f"/contents/{GH_FILE}?ref={GH_BRANCH}")
-        req = urllib.request.Request(url)
-        req.add_header("Authorization", f"token {tok}")
-        req.add_header("Accept", "application/vnd.github.v3+json")
-        req.add_header("User-Agent", "themapman-update")
-        with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
-        latest = base64.b64decode(data["content"]).decode("utf-8", errors="replace")
-        m = re.search(r'^\s*VERSION\s*=\s*["\']([^"\']+)["\']',
-                      latest, re.MULTILINE)
-        new_ver = m.group(1) if m else None
-        if not new_ver or new_ver == VERSION:
-            print(f"  Up to date (v{VERSION})")
-            return
-        print(f"  Updating to v{new_ver}...")
-        with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
-            f.write(latest)
-        print("  Updated! Restart required.")
-        # On Windows, os.execv breaks stdin (cmd.exe and the new python
-        # process fight over the console handle). Exit cleanly and let
-        # the user re-run. On Linux/Mac, os.execv works fine.
-        if sys.platform == "win32":
-            print("  Re-run the same command to use v" + new_ver + ".")
-            sys.exit(0)
-        os.execv(sys.executable, [sys.executable] + sys.argv)
-    except Exception as e:
-        print(f"  Update check failed: {e}")
+        import urllib.request as u,os,sys,re
+        url="https://raw.githubusercontent.com/"+GITHUB_REPO+"/"+GITHUB_BRANCH+"/"+GITHUB_FILE
+        code=u.urlopen(url,timeout=10).read().decode()
+        m=re.search('VERSION.*?([0-9]+[.][0-9.]+)',code)
+        if not m or m.group(1)==VERSION:return
+        print("Updating to v"+m.group(1))
+        open(__file__,"w").write(code)
+        os.execv(sys.executable,[sys.executable]+sys.argv)
+    except Exception as e:print("Update skip:",e)
 
-if "--no-update" not in sys.argv:
-    check_update()
-
-
-# ─── DEPS ────────────────────────────────────────────────────────────
-import gspread
-from google.oauth2.service_account import Credentials
-from playwright.sync_api import sync_playwright
-
-CREDS_FILE = "google_creds.json"
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
-          "https://www.googleapis.com/auth/drive"]
-
-ELIGIBLE_KEYWORDS = ("green", "fiber", "upgrade", "eligible", "gold")
-PAGE_TIMEOUT = 30000
-SETTLE_DELAY = 2.5
-RATE_DELAY   = 1.0
-
-
-# ─── BASIC HELPERS ───────────────────────────────────────────────────
 def now_str():
     return datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
