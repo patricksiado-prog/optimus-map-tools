@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.16"
+VERSION = "10.17"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -99,23 +99,16 @@ def _read_token():
     return ""
 
 def check_update():
-    print("  Checking GitHub for updates...")
-    tok = _read_token()
-    if not tok:
-        print("  No token — skipping update check.")
-        return
+    """v10.17: anonymous raw URL — no token needed for public repo reads."""
+    import os
     try:
-        url = (f"https://api.github.com/repos/{GH_REPO}"
-               f"/contents/{GH_FILE}?ref={GH_BRANCH}")
-        req = urllib.request.Request(url)
-        req.add_header("Authorization", f"token {tok}")
-        req.add_header("Accept", "application/vnd.github.v3+json")
-        req.add_header("User-Agent", "themapman-update")
+        url = ("https://raw.githubusercontent.com/%s/%s/%s"
+               % (GH_REPO, GH_BRANCH, GH_FILE))
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "themapman-update"})
         with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
-        latest = base64.b64decode(data["content"]).decode("utf-8", errors="replace")
-        m = re.search(r'^\s*VERSION\s*=\s*["\']([^"\']+)["\']',
-                      latest, re.MULTILINE)
+            latest = r.read().decode("utf-8", errors="replace")
+        m = re.search(r"VERSION\s*=\s*[\"']([\.\d]+)[\"']", latest)
         new_ver = m.group(1) if m else None
         if not new_ver or new_ver == VERSION:
             print(f"  Up to date (v{VERSION})")
@@ -124,11 +117,8 @@ def check_update():
         with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
             f.write(latest)
         print("  Updated! Restart required.")
-        # On Windows, os.execv breaks stdin (cmd.exe and the new python
-        # process fight over the console handle). Exit cleanly and let
-        # the user re-run. On Linux/Mac, os.execv works fine.
-        if sys.platform == "win32":
-            print("  Re-run the same command to use v" + new_ver + ".")
+        if os.name == "nt":
+            print("  Re-run: python themapman.py")
             sys.exit(0)
         os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
@@ -149,7 +139,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
 
 ELIGIBLE_KEYWORDS = ("green", "fiber", "upgrade", "eligible", "gold")
 PAGE_TIMEOUT = 30000
-SETTLE_DELAY = 2.5
+SETTLE_DELAY = 3.5
 RATE_DELAY   = 1.0
 
 
