@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.10"
+VERSION = "5.11"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -1037,8 +1037,7 @@ class Processor:
 
         # Priority order: Green > Gold > Grey
         all_dots = ([("FIBER ELIGIBLE (Green)",        d) for d in g_dots]    +
-                    [("UPGRADE ELIGIBLE (Gold/Orange)", d) for d in o_dots]    +
-                    [(GREY_DOT_TYPE,                    d) for d in grey_dots])
+                    [("UPGRADE ELIGIBLE (Gold/Orange)", d) for d in o_dots])
 
         shot_basename = os.path.basename(shot)
 
