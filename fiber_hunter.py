@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.11"
+VERSION = "5.12"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -109,6 +109,9 @@ def check_update():
         with open(__file__, "w", encoding="utf-8") as f:
             f.write(remote_code)
         print("  Updated! Restarting...")
+        if os.name == "nt":
+            print("  Run: python fiber_hunter.py")
+            sys.exit(0)
         os.execv(sys.executable, [sys.executable] + sys.argv)
     except Exception as e:
         print("  Update err (continuing): %s" % str(e)[:100])
