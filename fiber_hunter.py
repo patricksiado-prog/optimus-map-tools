@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.12"
+VERSION = "5.13"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -1096,7 +1096,7 @@ class Processor:
             self.existing.setdefault(full, set()).add(dot_type)
             self.counters["new"] += 1
             phone = _phone_cache.get("%.6f,%.6f" % (lat, lng), "")
-            if is_green and not phone:
+            if (is_green or (is_gold and ptype == "COMMERCIAL")) and not phone:
                 try:
                     _p, _b = get_phone_and_biz(full, gcity, state)
                     if _p: phone = _p
