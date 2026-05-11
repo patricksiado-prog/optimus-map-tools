@@ -63,7 +63,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.14"
+VERSION = "10.15"
 CREDS_FILE   = "google_creds.json"
 SHEET_NAME   = "ATT FIBER LEADS"
 BATCH_SIZE   = 10
@@ -84,6 +84,8 @@ import os, sys, re, time, json, argparse, base64
 from datetime import datetime
 from pathlib import Path
 import urllib.request
+import gspread
+from google.oauth2.service_account import Credentials
 
 
 # ─── AUTO-UPDATE (token-aware, private repo) ─────────────────────────
