@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.17"
+VERSION = "10.19"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -287,10 +287,10 @@ def panel_name():
     return ""
 
 def panel_phone():
-    selectors = ("button[data-item-id='phone']",
+    selectors = ("a[href^='tel:']",
                  "button[aria-label^='Phone:']",
                  "button[aria-label*='Phone:']",
-                 "a[href^='tel:']")
+                 "button[data-item-id='phone']")
     for sel in selectors:
         try:
             for el in _page.query_selector_all(sel):
@@ -323,39 +323,99 @@ def panel_address():
             pass
     return ""
 
+# v10.19: tracks last ZIP for adaptive timeout
+_last_zip = {"val": None}
+
 def maps_lookup_raw(address, zipc=""):
-    """Direct Maps query. Returns dict or None.
-    Use maps_lookup() for cached version."""
+    """
+    v10.19 — search box reuse is the centerpiece.
+    fiber_hunter spiral = rows already geographic. Reusing the Maps SPA
+    session keeps tiles cached, panels preload, nearby lookups resolve fast.
+
+    Stale panel guard: verifies URL changed after Enter — if Maps ignored
+    the submit (stale panel stuck), falls back to page.goto().
+
+    Adaptive timeout: 2500ms same ZIP cluster / 5000ms new ZIP.
+    """
     if not address or not looks_like_address(address):
         return None
-    try:
-        _page.evaluate("""() => {
-            const h = document.querySelector('h1.DUwDvf');
-            if (h) h.innerText = '';
-        }""")
-    except Exception:
-        pass
     try:
         q = address.strip()
         if zipc and re.match(r"^\d{5}$", str(zipc).strip()):
             q += " " + str(zipc).strip()
-        url = "https://www.google.com/maps/search/" + q.replace(" ", "+")
-        _page.goto(url, timeout=PAGE_TIMEOUT, wait_until="domcontentloaded")
-        time.sleep(SETTLE_DELAY)
-        if "/place/" in _page.url:
-            return {"name": panel_name(), "phone": panel_phone(),
-                    "address": panel_address()}
-        for sel in ("a.hfpxzc", "div.Nv2PKd a", "div[role='article'] a"):
+
+        # adaptive timeout — same ZIP cluster resolves faster
+        same_zip = (zipc and zipc == _last_zip["val"])
+        smart_timeout = 2500 if same_zip else 5000
+        _last_zip["val"] = zipc or _last_zip["val"]
+
+        # ── SEARCH BOX REUSE (fast path) ──────────────────────────────
+        reused = False
+        try:
+            if "google.com/maps" in _page.url:
+                box = _page.query_selector("input#searchboxinput")
+                if box:
+                    old_url = _page.url
+                    box.click()
+                    _page.keyboard.press("Control+A")
+                    _page.keyboard.press("Backspace")
+                    box.type(q, delay=20)
+                    box.press("Enter")
+
+                    # stale panel guard: verify Maps actually navigated
+                    try:
+                        _page.wait_for_load_state("networkidle", timeout=1500)
+                    except Exception:
+                        pass
+                    if _page.url == old_url:
+                        # Maps ignored the submit — stale panel stuck
+                        reused = False
+                    else:
+                        reused = True
+        except Exception:
+            reused = False
+
+        # ── FALLBACK: cold navigation ──────────────────────────────────
+        if not reused:
+            url = "https://www.google.com/maps/search/" + q.replace(" ", "+")
+            _page.goto(url, timeout=PAGE_TIMEOUT, wait_until="domcontentloaded")
             try:
-                el = _page.query_selector(sel)
-                if el:
-                    el.click()
-                    time.sleep(SETTLE_DELAY)
-                    break
+                _page.wait_for_load_state("networkidle", timeout=1500)
             except Exception:
                 pass
+
+        # ── SMART WAIT — move on when panel or phone appears ──────────
+        try:
+            _page.wait_for_selector(
+                "h1.DUwDvf, a[href^='tel:'], button[aria-label^='Phone:'], div[role='article']",
+                timeout=smart_timeout
+            )
+        except Exception:
+            pass
+        time.sleep(0.35)
+
+        # ── CLICK INTO PLACE PANEL if still on results list ───────────
+        if "/place/" not in _page.url:
+            clicked = False
+            for sel in ("a.hfpxzc", "div.Nv2PKd a", "div[role='article'] a"):
+                try:
+                    el = _page.query_selector(sel)
+                    if el:
+                        el.click()
+                        clicked = True
+                        break
+                except Exception:
+                    pass
+            if clicked:
+                try:
+                    _page.wait_for_selector("h1.DUwDvf", timeout=3000)
+                except Exception:
+                    pass
+                time.sleep(0.25)
+
         return {"name": panel_name(), "phone": panel_phone(),
                 "address": panel_address()}
+
     except Exception as e:
         print(f"      lookup err: {e}")
         return None
@@ -580,6 +640,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         print(f"    --city set but tab has no City column — skip")
         return 0, 0
 
+    c_date  = find_col(headers, "Date", "Last Scanned", "Date Found",
+                       "Checked At", "Phone Checked At")
     candidates = []
     skip_coord = skip_no_num = skip_already = skip_no_addr = skip_filter = 0
     skip_partition = skip_city = 0
@@ -604,12 +666,28 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if inst_n is not None:
             if (r_idx - 2) % inst_total != (inst_n - 1):
                 skip_partition += 1; continue
-        # Already-queried check (v10.9: only skip if phone is also populated)
-        if c_psrc and cell(row, c_psrc) and c_phone and cell(row, c_phone):
+        # v10.19: three-state skip logic
+        #   EMPTY   = confirmed no biz          → skip forever
+        #   FULL    = phone confirmed found      → skip forever
+        #   PARTIAL = has something but incomplete → retry
+        # Phone is the real target. Biz name is secondary.
+        # Some locations (warehouses, shell LLCs) never have a biz name.
+        _src_val   = cell(row, c_psrc) if c_psrc else ""
+        _has_phone = bool(c_phone and cell(row, c_phone))
+        _has_biz   = bool(c_biz   and cell(row, c_biz))
+        _confirmed_empty = (_src_val == PHONE_SOURCE_EMPTY)
+        _fully_resolved  = (
+            (_has_phone and _has_biz)
+            or (_has_phone and _src_val == PHONE_SOURCE_FOUND)
+        )
+        if _confirmed_empty or _fully_resolved:
             skip_already += 1; continue
+        # PARTIAL rows fall through and retry
         candidates.append({
-            "row": r_idx, "addr": addr,
-            "zip": cell(row, c_zip) if c_zip else "",
+            "row":  r_idx,
+            "addr": addr,
+            "zip":  cell(row, c_zip)  if c_zip  else "",
+            "date": cell(row, c_date) if c_date else "",
         })
 
     print(f"    candidates: {len(candidates)}  "
@@ -627,6 +705,41 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     written_cells = 0
     written_rows  = 0
     cache_hits_local = 0
+    # ── CANDIDATE ORDERING (v10.19) ───────────────────────────────────
+    # Recent rows (last 7 days) processed first — freshest leads.
+    # IMPORTANT: do NOT re-sort recents. Preserve exact sheet order.
+    # fiber_hunter spiral locality is more valuable than any artificial sort.
+    # Geo-sort safeguard applied to older backlog only.
+    from datetime import datetime, timedelta
+    _cutoff = datetime.now() - timedelta(days=7)
+
+    def _parse_scan_date(c):
+        raw = c.get("date", "")
+        if not raw: return None
+        for fmt in ("%m/%d/%Y %I:%M %p", "%m/%d/%Y", "%Y-%m-%d"):
+            try: return datetime.strptime(raw.strip(), fmt)
+            except ValueError: pass
+        return None
+
+    _recent = [c for c in candidates if
+               (lambda d: d is not None and d >= _cutoff)(_parse_scan_date(c))]
+    _older  = [c for c in candidates if c not in set(id(x) for x in _recent)]
+
+    # recents: keep exact sheet order — spiral locality intact
+    # older:   geo-sort safeguard for merged/edited tabs
+    def _geo_key(x):
+        a = normalize_address(x.get("addr", ""))
+        street = re.sub(r"^\d+\s+", "", a)
+        street = re.sub(r"(apt|ste|unit|suite).*$", "", street).strip()
+        m = re.match(r"^\s*(\d+)", str(x.get("addr", "")))
+        hnum = int(m.group(1)) if m else 999999
+        return (str(x.get("zip", "")).strip(), street, hnum)
+
+    _older.sort(key=_geo_key)
+    candidates = _recent + _older
+    print(f"    ordering: {len(_recent)} recent + {len(_older)} older backlog ✓")
+    # ─────────────────────────────────────────────────────────────────
+
     for i, c in enumerate(candidates, 1):
         marker = ""
         before_hits = cache._hits
@@ -763,6 +876,8 @@ def main():
                    help="skip GitHub auto-update")
     p.add_argument("--no-pick", action="store_true",
                    help="skip interactive city picker")
+    p.add_argument("--no-spawn", action="store_true",
+                   help="do not auto-spawn second instance (used internally)")
     args = p.parse_args()
 
     # Interactive city picker — runs only if no --city/--tab passed
@@ -770,6 +885,24 @@ def main():
     if (not args.city and not args.tab and sys.stdin.isatty()
             and not args.no_pick):
         args.city = pick_city_interactive()
+
+    # v10.19: auto-spawn second instance unless we already are one
+    if "--instance" not in sys.argv and not getattr(args, "no_spawn", False):
+        import subprocess
+        child = [sys.executable, os.path.abspath(__file__),
+                 "--instance", "2of2", "--no-pick", "--no-spawn"]
+        if args.city:     child += ["--city", args.city]
+        if args.no_cache: child.append("--no-cache")
+        # Windows-safe: only use CREATE_NEW_CONSOLE on Windows
+        kwargs = {}
+        if os.name == "nt":
+            kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
+        try:
+            subprocess.Popen(child, **kwargs)
+            print("  [v10.19] Spawned instance 2of2 in new window ✓")
+        except Exception as e:
+            print(f"  [v10.19] Could not spawn second instance: {e}")
+        args.instance = "1of2"
 
     inst_n, inst_total = parse_instance(args.instance)
     inst_label = f"{inst_n}of{inst_total}" if inst_n else "single"
