@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.19.2"
+VERSION = "10.20"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -161,10 +161,22 @@ def col_letter(n):
         out = chr(65 + rem) + out
     return out
 
+def _is_bad_phone_number(d):
+    if len(d) != 10: return True
+    ac = d[:3]
+    if ac[0] in ('0', '1'): return True
+    # safe garbage set — does NOT include real area codes like 202/303/404
+    _GARBAGE = {'000','111','123','456','654','789','900','911','999','555'}
+    if ac in _GARBAGE: return True
+    ex = d[3:6]
+    if ex in ('000','100','111','555'): return True
+    if d[6:] in ('0000','1111'): return True
+    return False
+
 def fmt_phone(s):
     d = re.sub(r"\D", "", str(s or ""))
     if len(d) == 11 and d.startswith("1"): d = d[1:]
-    return f"({d[:3]}) {d[3:6]}-{d[6:]}" if len(d) == 10 else ""
+    return f"({d[:3]}) {d[3:6]}-{d[6:]}" if len(d) == 10 and not _is_bad_phone_number(d) else ""
 
 def is_blank(v):
     return v is None or str(v).strip() == ""
@@ -491,7 +503,7 @@ def build_cache_from_sheet(ss, tab_names):
             addr = cell(c_addr)
             src = cell(c_src)
             phone_val = cell(c_phone) if c_phone else ""
-            if not addr or not src or not phone_val: continue
+            if not addr or not src: continue
             cache.put(addr, {
                 "name":    cell(c_biz)   if c_biz   else "",
                 "phone":   cell(c_phone) if c_phone else "",
@@ -544,6 +556,16 @@ def sanitize_result(result, input_addr):
 
     if name and _is_address_echo(name, input_addr):
         name = ""
+    if name:
+        _n = name.strip().rstrip('.,').lower()
+        _road_sigs = (' dr',' ave',' blvd',' st',' rd',' ln',
+                      ' way',' pkwy',' hwy',' fwy',' loop')
+        if any(_n.endswith(s) for s in _road_sigs):
+            name = ''
+        elif re.match(r'^[a-z]{2}\s+\d{5}$', _n):
+            name = ''
+        elif re.match(r'^[a-z\s]+,\s*[a-z]{2}\s+\d{5}$', _n):
+            name = ''
 
     if not (name or phone):
         return {"name": "", "phone": "", "address": "", "src": PHONE_SOURCE_EMPTY}
@@ -643,6 +665,125 @@ def _is_echo_biz(biz, addr):
     return False
 # -- END ADDRESS ECHO DETECTION --
 
+# -- STREET-LEVEL BATCHING v10.20 --
+
+def _street_key(addr, zipc=''):
+    if not addr: return ''
+    m = re.match(r'^\d+\s+(.*)', addr.strip())
+    base = m.group(1) if m else addr
+    key = re.sub(r'\s+', ' ', base.lower().strip())
+    return key + '|' + str(zipc).strip() if zipc else key
+
+def _group_by_street(candidates):
+    groups = {}
+    for c in candidates:
+        k = _street_key(c.get('addr',''), c.get('zip',''))
+        groups.setdefault(k or '__single__', []).append(c)
+    return groups
+
+def _scrape_street_list(street_name, city, state, zipc):
+    global _page
+    q = street_name
+    if city:  q += ' ' + city
+    if state: q += ' ' + state
+    if zipc:  q += ' ' + zipc
+    url = 'https://www.google.com/maps/search/' + q.strip().replace(' ','+')
+    results = []
+    try:
+        _page.goto(url, timeout=PAGE_TIMEOUT, wait_until='domcontentloaded')
+        try:
+            _page.wait_for_selector("div[role='article'], h1.DUwDvf", timeout=4000)
+        except Exception: pass
+        time.sleep(0.5)
+        if '/place/' in _page.url:
+            n=panel_name(); p=panel_phone(); a=panel_address()
+            if n or p: results.append({'name':n,'phone':p,'address':a})
+            return results
+        cards = []
+        for sel in ("div[role='article']", 'div.Nv2PK'):
+            try:
+                cards = _page.query_selector_all(sel)
+                if cards: break
+            except Exception: pass
+        for card in cards[:25]:
+            try:
+                txt = card.inner_text(); n = ''
+                for ns in ('div.fontHeadlineSmall','div.qBF1Pd'):
+                    try:
+                        el = card.query_selector(ns)
+                        if el: n=el.inner_text().strip().split('\n')[0]; break
+                    except Exception: pass
+                pm = re.search(r'[\(]?\d{3}[\)]?[\s\-\.]?\d{3}[\s\-\.]?\d{4}', txt)
+                p = fmt_phone(pm.group(0)) if pm else ''
+                a = ''
+                for line in txt.split('\n'):
+                    line = line.strip()
+                    if looks_like_address(line): a = line; break
+                if n and a: results.append({'name':n,'phone':p,'address':a})
+            except Exception: pass
+        print(f'  [street-batch] {street_name[:40]} {zipc} -> {len(results)} results')
+    except Exception as e:
+        print(f'  [street-batch] err: {e}')
+    return results
+
+def _match_panel_to_cands(panel_results, street_cands):
+    # exact house number + street name prefix — prevents false positives
+    matched = {}
+    for c in street_cands:
+        m_row = re.search(r'\b(\d{2,6})\b', c.get('addr',''))
+        if not m_row: continue
+        row_num = int(m_row.group(1))
+        row_street = re.sub(r'^\d+\s+', '', c.get('addr','').lower()).strip()
+        for r in panel_results:
+            m_res = re.search(r'\b(\d{2,6})\b', r.get('address',''))
+            if not m_res: continue
+            try:
+                res_num = int(m_res.group(1))
+                res_street = re.sub(r'^\d+\s+', '', r.get('address','').lower()).strip()
+                if res_num == row_num and row_street[:20] in res_street and r.get('phone'):
+                    matched[c['row']] = {'phone':r['phone'],
+                        'name':r.get('name',''), 'biz_addr':r.get('address','')}
+                    break
+            except Exception: pass
+    return matched
+
+def process_street_batch(street_key, street_cands, ws,
+                         c_phone, c_biz, c_baddr, c_psrc, c_chk, cache):
+    if not street_cands: return set()
+    s = street_cands[0]
+    street_name = street_key.split('|')[0].strip()
+    panel = _scrape_street_list(
+        street_name, s.get('city',''), s.get('state','TX'), s.get('zip',''))
+    if not panel: return set()
+    matched = _match_panel_to_cands(panel, street_cands)
+    if not matched: return set()
+    handled = set()
+    for row_idx, hit in matched.items():
+        phone = fmt_phone(hit['phone'])
+        if not phone: continue
+        updates = []
+        if c_phone: updates.append({'range':f'{col_letter(c_phone)}{row_idx}','values':[[phone]]})
+        if c_biz and hit['name']: updates.append({'range':f'{col_letter(c_biz)}{row_idx}','values':[[hit['name']]]})
+        if c_baddr and hit['biz_addr']: updates.append({'range':f'{col_letter(c_baddr)}{row_idx}','values':[[hit['biz_addr']]]})
+        if c_psrc: updates.append({'range':f'{col_letter(c_psrc)}{row_idx}','values':[[PHONE_SOURCE_FOUND]]})
+        if c_chk: updates.append({'range':f'{col_letter(c_chk)}{row_idx}','values':[[now_str()]]})
+        if updates:
+            for attempt in range(3):
+                try:
+                    # fresh copy each retry — avoids mutation/corruption bug
+                    fresh = [{'range':u['range'],'values':u['values']} for u in updates]
+                    ws.batch_update(fresh, value_input_option='USER_ENTERED'); break
+                except Exception as e: time.sleep(30*(attempt+1) if '429' in str(e) else 3)
+        src_addr = next((c['addr'] for c in street_cands if c['row']==row_idx),'')
+        if src_addr and cache:
+            cache.put(src_addr,{'name':hit['name'],'phone':phone,
+                                 'address':hit['biz_addr'],'src':PHONE_SOURCE_FOUND})
+        print(f'    [batch] r{row_idx}: {src_addr[:35]} -> {phone}')
+        handled.add(row_idx)
+    return handled
+
+# -- END STREET-LEVEL BATCHING --
+
 def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
@@ -674,6 +815,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     c_stat  = find_col(headers, "Type", "Fiber Status", "Status",
                        "Dot Type", "Property Type")
     c_city  = find_col(headers, "City")
+    c_state = find_col(headers, "State", "ST")
+    c_ptype = find_col(headers, "Dot Type", "Type", "Property Type")
 
     if not c_addr:
         print("    NO Address column — skip"); return 0, 0
@@ -710,6 +853,9 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             skip_no_num += 1; continue
         if args.fiber_only and c_stat and not is_eligible(cell(row, c_stat)):
             skip_filter += 1; continue
+        if getattr(args, "commercial_only", False) and c_ptype:
+            if "residential" in cell(row, c_ptype).lower():
+                skip_filter += 1; continue
         # City filter
         if city_filter:
             row_city = cell(row, c_city).lower()
@@ -744,7 +890,10 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             "row":  r_idx,
             "addr": addr,
             "zip":  cell(row, c_zip)  if c_zip  else "",
-            "date": cell(row, c_date) if c_date else "",
+            "date":      cell(row, c_date)  if c_date  else "",
+            "city":      cell(row, c_city)  if c_city  else "",
+            "state":     cell(row, c_state) if c_state else "TX",
+            "prop_type": cell(row, c_ptype) if c_ptype else "",
         })
 
     print(f"    candidates: {len(candidates)}  "
@@ -794,11 +943,62 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         return (str(x.get("zip", "")).strip(), street, hnum)
 
     _older.sort(key=_geo_key)
-    candidates = _recent + _older
+    # v10.20: 4-tier ordering — freshest commercial first
+    _recent_comm = [c for c in _recent if 'commercial' in c.get('prop_type','').lower()]
+    _recent_res  = [c for c in _recent if 'commercial' not in c.get('prop_type','').lower()]
+    _older_comm  = [c for c in _older  if 'commercial' in c.get('prop_type','').lower()]
+    _older_res   = [c for c in _older  if 'commercial' not in c.get('prop_type','').lower()]
+    _older_comm.sort(key=_geo_key)
+    _older_res.sort(key=_geo_key)
+    candidates = _recent_comm + _older_comm + _recent_res + _older_res
+    print(
+        f'    ordering: recent commercial={len(_recent_comm)}, '
+        f'older commercial={len(_older_comm)}, '
+        f'recent residential={len(_recent_res)}, '
+        f'older residential={len(_older_res)}'
+    )
     print(f"    ordering: {len(_recent)} recent + {len(_older)} older backlog ✓")
     # ─────────────────────────────────────────────────────────────────
 
+    _pending_updates = []
+    _real_lookups = [0]
+
+    def _flush_pending(ws, pending):
+        if not pending: return
+        for attempt in range(3):
+            try:
+                # fresh deep-copy each retry — prevents range mutation bug
+                safe = json.loads(json.dumps(pending))
+                ws.batch_update(safe, value_input_option='USER_ENTERED')
+                return
+            except Exception as e:
+                msg = str(e)
+                if '429' in msg or 'Quota' in msg or 'RESOURCE_EXHAUSTED' in msg:
+                    wait = 30 * (attempt + 1)
+                    print(f'      quota hit, waiting {wait}s ...')
+                    time.sleep(wait)
+                else:
+                    print(f'      write err {attempt+1}: {e}')
+                    time.sleep(3)
+
+    # -- street-level batching pre-pass (v10.20) --
+    _street_groups = _group_by_street(candidates)
+    _batched_rows  = set()
+    _batch_s = 0; _batch_h = 0
+    for _sk, _sg in _street_groups.items():
+        if len(_sg) < 4 or _sk == '__single__': continue
+        _done = process_street_batch(
+            _sk, _sg, ws, c_phone, c_biz, c_baddr, c_psrc, c_chk, cache)
+        _batched_rows |= _done
+        if _done: _batch_s += 1; _batch_h += len(_done)
+    if _batch_s:
+        print(f'  [street-batch] {_batch_s} searches, '
+              f'{len(_batched_rows)} rows, {_batch_h} phones')
+    # -----------------------------------------------
+
     for i, c in enumerate(candidates, 1):
+        if c["row"] in _batched_rows:
+            continue
         marker = ""
         before_hits = cache._hits
         result, was_cached = maps_lookup_cached(cache, c["addr"], c["zip"])
@@ -837,26 +1037,24 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             print(f"      + baddr {result['address']}"); row_had_data = True
 
         if updates:
-            for attempt in range(3):
-                try:
-                    ws.batch_update(updates,
-                                    value_input_option="USER_ENTERED")
-                    written_cells += len(updates)
-                    if row_had_data: written_rows += 1
-                    break
-                except Exception as e:
-                    msg = str(e)
-                    if "429" in msg or "Quota" in msg or "RESOURCE_EXHAUSTED" in msg:
-                        wait = 30 * (attempt + 1)
-                        print(f"      quota hit, waiting {wait}s ...")
-                        time.sleep(wait)
-                    else:
-                        print(f"      write err {attempt+1}: {e}")
-                        time.sleep(3)
+            _pending_updates.extend(updates)
+            written_cells += len(updates)
+            if row_had_data: written_rows += 1
+        if len(_pending_updates) >= 10:
+            _flush_pending(ws, _pending_updates)
+            _pending_updates.clear()
         # Slow down only on real Maps lookups, not cache hits
         if not was_cached:
             time.sleep(RATE_DELAY)
+            _real_lookups[0] += 1
+            if _real_lookups[0] % 1000 == 0:
+                print('  [v10.20] 1000 lookups — restarting browser...')
+                close_browser()
+                init_browser(headless=not args.visible)
+                print('  [v10.20] Browser restarted.')
 
+    _flush_pending(ws, _pending_updates)
+    _pending_updates.clear()
     print(f"\n    {tab_name}: wrote {written_cells} cells, "
           f"{written_rows} rows had real data, "
           f"{cache_hits_local} cache hits (no Maps call)")
@@ -936,6 +1134,8 @@ def main():
                    help="skip GitHub auto-update")
     p.add_argument("--no-pick", action="store_true",
                    help="skip interactive city picker")
+    p.add_argument("--commercial-only", action="store_true",
+                   help="skip residential rows entirely")
     p.add_argument("--no-spawn", action="store_true",
                    help="do not auto-spawn second instance (used internally)")
     args = p.parse_args()
@@ -953,6 +1153,8 @@ def main():
                  "--instance", "2of2", "--no-pick", "--no-spawn"]
         if args.city:     child += ["--city", args.city]
         if args.no_cache: child.append("--no-cache")
+        if getattr(args, "commercial_only", False): child.append("--commercial-only")
+        if args.fiber_only: child.append("--fiber-only")
         # Windows-safe: only use CREATE_NEW_CONSOLE on Windows
         kwargs = {}
         if os.name == "nt":
