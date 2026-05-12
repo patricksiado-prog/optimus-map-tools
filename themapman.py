@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.19.1"
+VERSION = "10.19.2"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -597,6 +597,52 @@ def parse_instance(s):
 
 
 # ─── ENRICH ONE TAB ──────────────────────────────────────────────────
+
+# -- ADDRESS ECHO DETECTION (v10.20.1) --
+_ROAD_SFX_201 = {
+    'st','street','rd','road','ave','avenue','dr','drive',
+    'ln','lane','blvd','boulevard','pkwy','parkway',
+    'ct','court','cir','circle','hwy','highway',
+    'pl','place','ter','terrace','trl','trail',
+    'way','loop','sq','square','row','path',
+}
+_ABBREV_201 = {
+    'street':'st','road':'rd','avenue':'ave','drive':'dr',
+    'lane':'ln','boulevard':'blvd','parkway':'pkwy',
+    'court':'ct','circle':'cir','highway':'hwy',
+    'freeway':'fwy','place':'pl','terrace':'ter',
+    'trail':'trl','north':'n','south':'s','east':'e','west':'w',
+    'southwest':'sw','southeast':'se','northwest':'nw','northeast':'ne',
+}
+
+def _addr_norm_201(s):
+    if not s: return ''
+    s = re.sub(r'[^a-z0-9\s]', ' ', str(s).lower())
+    s = re.sub(r'\s+', ' ', s).strip()
+    return ' '.join(_ABBREV_201.get(t, t) for t in s.split())
+
+def _is_echo_biz(biz, addr):
+    if not biz: return False
+    n = re.sub(r'[^a-z\s]', ' ', biz.lower()).strip()
+    toks = n.split()
+    if toks and _ABBREV_201.get(toks[-1], toks[-1]) in _ROAD_SFX_201:
+        return True
+    if re.match(r'^[a-z]{2}\s+\d{5}$', n): return True
+    if re.match(r'^[a-z\s]+,\s*[a-z]{2}\s+\d{5}$', n): return True
+    if not addr: return False
+    nb = _addr_norm_201(biz); na = _addr_norm_201(addr)
+    if not nb or not na: return False
+    if nb == na: return True
+    if nb in na or na in nb:
+        longer = nb if len(nb) > len(na) else na
+        shorter = na if longer is nb else nb
+        extra = longer.replace(shorter, '', 1).strip().split()
+        if not extra: return True
+        if all(re.match(r'[a-z]+|\d{5}|[a-z]{2}', t) for t in extra):
+            return True
+    return False
+# -- END ADDRESS ECHO DETECTION --
+
 def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
@@ -683,8 +729,12 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         _has_phone = bool(c_phone and cell(row, c_phone))
         _has_biz   = bool(c_biz   and cell(row, c_biz))
         _confirmed_empty = (_src_val == PHONE_SOURCE_EMPTY)
+        # v10.20.1: echo biz name = treat as not fully resolved
+        _biz_val      = cell(row, c_biz) if c_biz else ""
+        _biz_is_echo  = bool(_biz_val) and _is_echo_biz(_biz_val, addr)
+        _has_real_biz = _has_biz and not _biz_is_echo
         _fully_resolved  = (
-            (_has_phone and _has_biz)
+            (_has_phone and _has_real_biz)
             or (_has_phone and _src_val == PHONE_SOURCE_FOUND)
         )
         if _confirmed_empty or _fully_resolved:
@@ -775,7 +825,9 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             updates.append({"range": f"{col_letter(c_phone)}{c['row']}",
                             "values": [[result["phone"]]]})
             print(f"      + phone {result['phone']}"); row_had_data = True
-        if c_biz and result.get("name") and is_target_blank(c_biz):
+        _cur_biz_val = cur[c_biz-1].strip() if c_biz and c_biz-1 < len(cur) else ""
+        _biz_writable = is_target_blank(c_biz) or _is_echo_biz(_cur_biz_val, c["addr"])
+        if c_biz and result.get("name") and _biz_writable:
             updates.append({"range": f"{col_letter(c_biz)}{c['row']}",
                             "values": [[result["name"]]]})
             print(f"      + biz   {result['name']}"); row_had_data = True
