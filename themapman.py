@@ -130,6 +130,13 @@ if "--no-update" not in sys.argv:
 
 # ─── DEPS ────────────────────────────────────────────────────────────
 import gspread
+try:
+    from drive_commander import check_command, notify_make
+    _COMMANDER = True
+except ImportError:
+    _COMMANDER = False
+    def check_command(): return ('IDLE', '')
+    def notify_make(s): pass
 from google.oauth2.service_account import Credentials
 from playwright.sync_api import sync_playwright
 
