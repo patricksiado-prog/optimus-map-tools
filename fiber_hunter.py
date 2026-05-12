@@ -73,7 +73,7 @@ from google.oauth2.service_account import Credentials
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.16"
+VERSION = "5.17"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -126,6 +126,18 @@ PROGRESS_FILE = "hunter_progress.json"
 HISTORY_FILE = "hunter_zone_history.json"
 BUTTON_FILE = "hunter_button_pos.json"
 GEO_CACHE = "hunter_geocode_cache.json"
+PROCESSED_MANIFEST = os.path.join(SCREENSHOTS_DIR,
+    "hunter_processed_manifest.json")  # v5.17
+
+def load_processed_manifest():
+    try:
+        with open(PROCESSED_MANIFEST) as _mf: return set(json.load(_mf))
+    except: return set()
+
+def save_processed_manifest(s):
+    try:
+        with open(PROCESSED_MANIFEST,"w") as _mf: json.dump(sorted(s),_mf)
+    except: pass
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
 WAIT_AFTER_PAN = 1.5
@@ -533,7 +545,8 @@ def geocode(lat, lng):
     if state.lower() in state_abbrev:
         state = state_abbrev[state.lower()]
     zipc = a.get("postcode") or ""
-    biz = ""
+    extra = {}  # v5.17: init before loop
+biz = ""
     for k in ["amenity", "shop", "office", "building", "industrial",
               "commercial", "tourism", "healthcare", "leisure"]:
         biz = a.get(k) or ""
@@ -972,6 +985,8 @@ class Processor:
         print("  Background processor started")
 
     def submit(self, shot, zone, city, row, col, ts):
+        if not hasattr(self,"_submitted_shots"): self._submitted_shots=set()
+        self._submitted_shots.add(shot)
         self.q.put((shot, zone, city, row, col, ts))
 
     def _run(self):
@@ -1202,11 +1217,14 @@ def upload_screenshot_to_drive(local_path):
         _bnd = "fhboundary"
         _meta = json.dumps({"name": _fname,
                             "parents": [DRIVE_SCREENSHOTS_FOLDER]}).encode()
+        _ext = os.path.splitext(local_path)[1].lower()
+        _mime = {".png":"image/png",".json":"application/json"}.get(
+            _ext,"application/octet-stream")  # v5.17
         _body = (b"--" + _bnd.encode() + b"\r\n"
                  b"Content-Type: application/json; charset=UTF-8\r\n\r\n" +
                  _meta + b"\r\n"
                  b"--" + _bnd.encode() + b"\r\n"
-                 b"Content-Type: image/png\r\n\r\n" +
+                 + ("Content-Type: %s\r\n\r\n" % _mime).encode() +
                  _img + b"\r\n"
                  b"--" + _bnd.encode() + b"--")
         requests.post(
@@ -1217,19 +1235,27 @@ def upload_screenshot_to_drive(local_path):
     except Exception:
         pass
 
-def screenshot(scan_num, zone_name, row, col, instance):
+def screenshot(scan_num, zone_name, row, col, instance, zone_obj=None):
     ts = datetime.now().strftime("%H%M%S")
     fn = os.path.join(SCREENSHOTS_DIR,
         "i%d_scan%02d_%s_r%02d_c%02d_%s.png" % (
             instance, scan_num, zone_name, row, col, ts))
     pyautogui.screenshot(fn)
     upload_screenshot_to_drive(fn)  # v5.9
+    if zone_obj:
+        try:
+            sc = fn.replace(".png",".json")
+            with open(sc,"w") as _sf:
+                json.dump({"zone":zone_obj,"row":row,"col":col,
+                    "scan_num":scan_num,"instance":instance},_sf)
+            upload_screenshot_to_drive(sc)  # v5.17 MIME-correct
+        except: pass
     return fn
 
 def scan_cell(zone, city, row, col, btn_x, btn_y, processor, scan_num, instance):
     pyautogui.click(btn_x, btn_y)
     found, o, g = wait_for_dots()
-    shot = screenshot(scan_num, zone["name"], row, col, instance)
+    shot = screenshot(scan_num, zone["name"], row, col, instance, zone_obj=zone)
     print("  [I%d %s R%dC%d] O:%d G:%d" % (
         instance, zone["name"], row + 1, col + 1, o, g))
     processor.submit(shot, zone, city, row, col, now_str())
@@ -1259,6 +1285,39 @@ def scan_zone(zone, city, start_row, start_col, btn_x, btn_y,
         if row < rows - 1:
             pan("down")
             direction *= -1
+
+
+def reprocess_screenshots(processor):
+    import glob
+    manifest = load_processed_manifest()
+    submitted = getattr(processor,"_submitted_shots",set())
+    pending = [p for p in sorted(glob.glob(os.path.join(SCREENSHOTS_DIR,"*.png")))
+               if os.path.basename(p) not in manifest and p not in submitted]
+    if not pending:
+        print("  Auto-reprocess: nothing new."); return
+    viable = []
+    for p in pending:
+        sc = p.replace(".png",".json")
+        if os.path.exists(sc):
+            try:
+                m = json.load(open(sc))
+                if "zone" in m and "start_lat" in m.get("zone",{}):
+                    viable.append((p,m))
+            except: pass
+    if not viable:
+        print("  Auto-reprocess: no valid sidecars (v5.17+ only)."); return
+    print("\n  Auto-reprocess: %d screenshots..." % len(viable))
+    done = set()
+    for p,m in viable:
+        processor.submit(p,m["zone"],"reprocess",m["row"],m["col"],
+                         __import__("datetime").datetime.now().strftime("%m/%d/%Y %I:%M %p"))
+        done.add(os.path.basename(p))
+    processor.q.join()
+    manifest.update(done)
+    save_processed_manifest(manifest)
+    try: upload_screenshot_to_drive(PROCESSED_MANIFEST)
+    except: pass
+    print("  Done. Manifest: %d total." % len(manifest))
 
 
 # MAIN
@@ -1321,6 +1380,7 @@ def main():
     finally:
         print("\nFinishing background processing...")
         processor.q.join()
+        reprocess_screenshots(processor)  # v5.17
         processor.stop()
     c = processor.counters
     print("\n" + "=" * 60)
