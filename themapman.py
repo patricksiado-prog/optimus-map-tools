@@ -784,6 +784,65 @@ def process_street_batch(street_key, street_cands, ws,
 
 # -- END STREET-LEVEL BATCHING --
 
+
+# -- GITHUB PROGRESS LOGGER (v10.20) --
+def _log_progress(tab_name, i, total, phones_found, last_addr,
+                   city_filter, inst_label, was_cached, recent_phones):
+    try:
+        import urllib.request as _ur
+        _tok = None
+        for _tp in TOKEN_PATHS:
+            if _tp.exists():
+                _tok = _tp.read_text(errors='replace').strip()
+                if _tok: break
+        if not _tok: return
+        _now = now_str()
+        _lines = [
+            '# MapMan Progress Log',
+            '',
+            f'**Updated:** {_now}',
+            f'**Version:** {VERSION}',
+            f'**Instance:** {inst_label}',
+            f'**City:** {city_filter or "ALL"}',
+            f'**Tab:** {tab_name}',
+            '',
+            '## Current Run',
+            f'- Rows processed: {i}/{total}',
+            f'- Phones found this tab: {phones_found}',
+            f'- Last address: {last_addr}',
+            f'- Cache hit: {was_cached}',
+            '',
+            '## Recent Phones',
+        ]
+        for _rp in recent_phones[-10:]:
+            _lines.append(f'- {_rp}')
+        if not recent_phones:
+            _lines.append('- (none yet this run)')
+        _content = '\n'.join(_lines)
+        _url = f'https://api.github.com/repos/patricksiado-prog/optimus-map-tools/contents/MAPMAN_LOG.md'
+        _sha = None
+        try:
+            _req = _ur.Request(_url + f'?t={int(time.time())}',
+                headers={'Authorization': f'token {_tok}',
+                         'Accept': 'application/vnd.github.v3+json',
+                         'User-Agent': 'mapman-logger'})
+            with _ur.urlopen(_req, timeout=8) as _r:
+                _sha = json.loads(_r.read()).get('sha')
+        except Exception: pass
+        _payload = {'message': f'mapman progress: {i}/{total} rows, {phones_found} phones',
+                    'content': base64.b64encode(_content.encode()).decode(),
+                    'branch': 'main'}
+        if _sha: _payload['sha'] = _sha
+        _req2 = _ur.Request(_url, data=json.dumps(_payload).encode(), method='PUT',
+            headers={'Authorization': f'token {_tok}',
+                     'Accept': 'application/vnd.github.v3+json',
+                     'Content-Type': 'application/json',
+                     'User-Agent': 'mapman-logger'})
+        with _ur.urlopen(_req2, timeout=10): pass
+    except Exception as _e:
+        pass  # never block mapman for logging
+# -- END GITHUB PROGRESS LOGGER --
+
 def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
@@ -996,6 +1055,9 @@ def enrich_tab(ss, tab_name, args, cache, partition):
               f'{len(_batched_rows)} rows, {_batch_h} phones')
     # -----------------------------------------------
 
+    _log_phones   = []
+    _log_ph_count = 0
+    _log_city     = getattr(args, 'city', '') or 'ALL'
     for i, c in enumerate(candidates, 1):
         if c["row"] in _batched_rows:
             continue
@@ -1052,6 +1114,15 @@ def enrich_tab(ss, tab_name, args, cache, partition):
                 close_browser()
                 init_browser(headless=not args.visible)
                 print('  [v10.20] Browser restarted.')
+        # log progress to GitHub every 50 rows
+        if i % 50 == 0 or row_had_data:
+            if row_had_data and result.get('phone'):
+                _log_ph_count += 1
+                _log_phones.append(
+                    f"{result['phone']} — {c['addr'][:40]} ({c.get('city','')})")
+            _log_progress(tab_name, i, len(candidates), _log_ph_count,
+                          c['addr'][:60], _log_city, inst_label,
+                          was_cached, _log_phones)
 
     _flush_pending(ws, _pending_updates)
     _pending_updates.clear()
