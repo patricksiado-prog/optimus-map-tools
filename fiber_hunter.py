@@ -546,7 +546,7 @@ def geocode(lat, lng):
         state = state_abbrev[state.lower()]
     zipc = a.get("postcode") or ""
     extra = {}  # v5.17: init before loop
-biz = ""
+    biz = ""
     for k in ["amenity", "shop", "office", "building", "industrial",
               "commercial", "tourism", "healthcare", "leisure"]:
         biz = a.get(k) or ""
