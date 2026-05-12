@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.19"
+VERSION = "10.19.1"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -723,7 +723,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
 
     _recent = [c for c in candidates if
                (lambda d: d is not None and d >= _cutoff)(_parse_scan_date(c))]
-    _older  = [c for c in candidates if c not in set(id(x) for x in _recent)]
+    _recent_ids = set(id(x) for x in _recent)
+    _older      = [c for c in candidates if id(c) not in _recent_ids]
 
     # recents: keep exact sheet order — spiral locality intact
     # older:   geo-sort safeguard for merged/edited tabs
