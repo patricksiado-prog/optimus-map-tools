@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.23"
+VERSION = "10.23.1"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -871,6 +871,13 @@ def _scrape_block_panel(street_name, city, state, zip_code, candidates_map):
     q = f'{street_name} {city} {state} {zip_code}'.strip()
     url = 'https://www.google.com/maps/search/' + _urlparse_v1021.quote_plus(q)
     try:
+        # BLOCKBATCH_STOPFIX (v10.23.1): cancel in-flight nav
+        # from previous block-batch (prevents 'interrupted by
+        # another navigation' cascade on goto timeout)
+        try:
+            _page.evaluate("() => window.stop()")
+        except Exception:
+            pass
         _page.goto(url, timeout=8000, wait_until='domcontentloaded')
         try:
             _page.wait_for_selector(
