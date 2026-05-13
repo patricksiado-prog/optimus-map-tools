@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.20.5"
+VERSION = "10.21"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -843,6 +843,69 @@ def _log_progress(tab_name, i, total, phones_found, last_addr,
         pass  # never block mapman for logging
 # -- END GITHUB PROGRESS LOGGER --
 
+
+# -- GEO-CLUSTER BATCH v10.21 --
+import urllib.parse as _urlparse_v1021
+
+def _block_key(addr, zip_code=''):
+    m = re.match(r'^(\d+)\s+(.+)', addr.strip())
+    if not m: return None
+    block = (int(m.group(1)) // 100) * 100
+    street = re.sub(r'\s+', ' ', m.group(2).strip().lower())
+    return f'{block}_{street}_{zip_code}'
+
+def _scrape_block_panel(street_name, city, state, zip_code, candidates_map):
+    '''One Maps search → scrape all sidebar cards → match to candidates.
+    candidates_map = {addr: cand_dict}
+    Returns {addr: {name, phone}} for matches found.'''
+    found = {}
+    q = f'{street_name} {city} {state} {zip_code}'.strip()
+    url = 'https://www.google.com/maps/search/' + _urlparse_v1021.quote_plus(q)
+    try:
+        _page.goto(url, timeout=8000, wait_until='domcontentloaded')
+        try:
+            _page.wait_for_selector(
+                "div[role='article'], h1.DUwDvf", timeout=2000)
+        except Exception: pass
+        # scroll to trigger lazy card loading
+        try: _page.keyboard.press('PageDown'); time.sleep(0.4)
+        except Exception: pass
+        time.sleep(0.5)
+        cards = []
+        for sel in ("div[role='article']", 'div.Nv2PK'):
+            try:
+                cards = _page.query_selector_all(sel)
+                if cards: break
+            except Exception: pass
+        for card in cards[:20]:
+            try:
+                txt = card.inner_text()
+                lines = [ln.strip() for ln in txt.split('\n') if ln.strip()]
+                if not lines: continue
+                biz_name = lines[0]
+                phone = ''
+                for ln in lines:
+                    ph = re.search(r'\(?\d{3}\)?[\s\-\.]?\d{3}[\s\-\.]\d{4}', ln)
+                    if ph:
+                        phone = fmt_phone(ph.group()); break
+                addr_line = ''
+                for ln in lines:
+                    if looks_like_address(ln): addr_line = ln; break
+                if not phone: continue
+                # match by house number with word boundary
+                num_m = re.search(r'^(\d+)\b', addr_line.strip())
+                if not num_m: continue
+                num = num_m.group(1)
+                nm_pat = r'^' + re.escape(num) + r'\b'
+                for cand_addr in candidates_map:
+                    if re.match(nm_pat, cand_addr.strip()) and phone:
+                        found[cand_addr] = {'name': biz_name, 'phone': phone}
+            except Exception: pass
+    except Exception as _e:
+        print(f'  [block-batch] err: {_e}')
+    return found
+# -- END GEO-CLUSTER BATCH --
+
 def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
@@ -1030,6 +1093,40 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"    ordering: {len(_recent)} recent + {len(_older)} older backlog ✓")
     # ─────────────────────────────────────────────────────────────────
 
+    # v10.21: geo-cluster pre-pass
+    _block_done = set()
+    _block_map = {}
+    for _bi, _bc in enumerate(candidates):
+        _bk = _block_key(_bc['addr'], _bc.get('zip',''))
+        if _bk: _block_map.setdefault(_bk, []).append((_bc, _bi))
+    for _bk, _bgroup in _block_map.items():
+        if len(_bgroup) < 2: continue
+        _anchor = _bgroup[0][0]
+        _cands_m = {x[0]['addr']: x[0] for x in _bgroup}
+        _street_m = re.sub(r'^\d+\s+', '', _anchor['addr']).strip()
+        print(f'  [block-batch] {len(_bgroup)} addrs on {_street_m[:35]}')
+        _bresults = _scrape_block_panel(
+            _street_m, _anchor.get('city',''),
+            _anchor.get('state','TX'), _anchor.get('zip',''), _cands_m)
+        for _ba, _bres in _bresults.items():
+            for _bc2, _bi2 in _bgroup:
+                if _bc2['addr'] != _ba: continue
+                _block_done.add(_bi2)
+                _upd = []
+                _ph = fmt_phone(_bres.get('phone',''))
+                if _ph and c_phone:
+                    _upd.append({'range': f'{col_letter(c_phone)}{_bc2["row"]}',
+                                 'values': [[_ph]]})
+                    _upd.append({'range': f'{col_letter(c_psrc)}{_bc2["row"]}',
+                                 'values': [[PHONE_SOURCE_FOUND]]})
+                    print(f'    [block] {_ba[:40]} -> {_ph}')
+                if _bres.get('name') and c_biz:
+                    _upd.append({'range': f'{col_letter(c_biz)}{_bc2["row"]}',
+                                 'values': [[_bres['name']]]})
+                if _upd:
+                    _flush_pending(ws, _upd)
+    print(f'  [block-batch] pre-pass: {len(_block_done)} rows handled')
+
     _pending_updates = []
     _real_lookups = [0]
 
@@ -1070,6 +1167,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     _log_ph_count = 0
     _log_city     = getattr(args, 'city', '') or 'ALL'
     for i, c in enumerate(candidates, 1):
+        if i-1 in _block_done: continue
         if c["row"] in _batched_rows:
             continue
         marker = ""
