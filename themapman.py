@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.20.2"
+VERSION = "10.20.3"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -690,9 +690,9 @@ def _scrape_street_list(street_name, city, state, zipc):
     url = 'https://www.google.com/maps/search/' + q.strip().replace(' ','+')
     results = []
     try:
-        _page.goto(url, timeout=PAGE_TIMEOUT, wait_until='domcontentloaded')
+        _page.goto(url, timeout=8000, wait_until='domcontentloaded')
         try:
-            _page.wait_for_selector("div[role='article'], h1.DUwDvf", timeout=4000)
+            _page.wait_for_selector("div[role='article'], h1.DUwDvf", timeout=2000)
         except Exception: pass
         time.sleep(0.5)
         if '/place/' in _page.url:
