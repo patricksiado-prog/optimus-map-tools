@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.21.1"
+VERSION = "10.23"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -576,11 +576,17 @@ def sanitize_result(result, input_addr):
 
 def maps_lookup_cached(cache, address, zipc=""):
     """Cache-aware lookup. Returns (result_dict, was_cached_bool).
-    v10.21.1: only cache real finds. No-biz results must retry later."""
+    v10.23: lookup retry — one retry on empty/None before giving up."""
     cached = cache.get(address)
     if cached is not None:
         return cached, True
     raw = maps_lookup_raw(address, zipc)
+    # v10.23: retry once if first attempt returned nothing useful
+    if not raw or (not raw.get("name") and not raw.get("phone")):
+        time.sleep(0.5)
+        raw2 = maps_lookup_raw(address, zipc)
+        if raw2 and (raw2.get("name") or raw2.get("phone")):
+            raw = raw2
     result = sanitize_result(raw, address)
     if result.get("src") == PHONE_SOURCE_FOUND:
         cache.put(address, result)
@@ -1154,6 +1160,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
 
     _pending_updates = []
     _real_lookups = [0]
+    _consec_empty = [0]  # v10.23: detect Maps stuck (5 empties = force reload)
 
     # -- street-level batching pre-pass (v10.20) --
     _street_groups = _group_by_street(candidates)
@@ -1183,6 +1190,21 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if was_cached:
             cache_hits_local += 1
             marker = " (cached)"
+        # v10.23: detect Maps stuck — if 5 fresh lookups in a row return EMPTY,
+        # force browser reload (Maps SPA can get stuck on stale results).
+        if not was_cached:
+            if result.get("src") == PHONE_SOURCE_EMPTY:
+                _consec_empty[0] += 1
+                if _consec_empty[0] >= 5:
+                    print(f"  [v10.23] 5 empties in a row — forcing browser reload")
+                    try:
+                        close_browser()
+                        init_browser(headless=not args.visible)
+                    except Exception as _e:
+                        print(f"  [v10.23] reload err: {_e}")
+                    _consec_empty[0] = 0
+            else:
+                _consec_empty[0] = 0
         print(f"    [{i}/{len(candidates)}] r{c['row']}: {c['addr'][:60]}{marker}")
 
         updates = []
@@ -1225,7 +1247,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if not was_cached:
             time.sleep(RATE_DELAY)
             _real_lookups[0] += 1
-            if _real_lookups[0] % 1000 == 0:
+            if _real_lookups[0] % 200 == 0:  # v10.23: tighter refresh
                 print('  [v10.20] 1000 lookups — restarting browser...')
                 close_browser()
                 init_browser(headless=not args.visible)
