@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.20.3"
+VERSION = "10.20.5"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -915,6 +915,12 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if getattr(args, "commercial_only", False) and c_ptype:
             if "residential" in cell(row, c_ptype).lower():
                 skip_filter += 1; continue
+        # v10.20.5: --named-only skips rows with no business name
+        if getattr(args, "named_only", False) and c_biz:
+            _biz_check = cell(row, c_biz)
+            _biz_is_blank = not _biz_check or _is_echo_biz(_biz_check, addr)
+            if _biz_is_blank:
+                skip_filter += 1; continue
         # City filter
         if city_filter:
             row_city = cell(row, c_city).lower()
@@ -1214,6 +1220,8 @@ def main():
                    help="skip residential rows entirely")
     p.add_argument("--no-spawn", action="store_true",
                    help="do not auto-spawn second instance (used internally)")
+    p.add_argument("--named-only", action="store_true",
+                   help="skip rows where Business Name is blank (faster, higher hit rate)")
     args = p.parse_args()
 
     # Interactive city picker — runs only if no --city/--tab passed
