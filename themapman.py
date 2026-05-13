@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.20"
+VERSION = "10.20.2"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -875,7 +875,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
                        "Dot Type", "Property Type")
     c_city  = find_col(headers, "City")
     c_state = find_col(headers, "State", "ST")
-    c_ptype = find_col(headers, "Dot Type", "Type", "Property Type")
+    c_ptype = find_col(headers, "Dot Type", "Type", "Property Type", "Lead Type", "Category")
 
     if not c_addr:
         print("    NO Address column — skip"); return 0, 0
@@ -952,14 +952,19 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             "date":      cell(row, c_date)  if c_date  else "",
             "city":      cell(row, c_city)  if c_city  else "",
             "state":     cell(row, c_state) if c_state else "TX",
-            "prop_type": cell(row, c_ptype) if c_ptype else "",
+            # v10.20.2: tab name "commercial" forces commercial priority
+            "prop_type": ("commercial"
+                          if "commercial" in tab_name.lower()
+                          else (cell(row, c_ptype) if c_ptype else "")),
         })
 
-    print(f"    candidates: {len(candidates)}  "
-          f"(skipped: coord={skip_coord} no#={skip_no_num} "
+    _n_comm = sum(1 for c in candidates if "commercial" in c.get("prop_type","").lower())
+    print(f"    candidates: {len(candidates)} "
+          f"({_n_comm} commercial, {len(candidates)-_n_comm} residential)")
+    print(f"    skipped: coord={skip_coord} no#={skip_no_num} "
           f"already={skip_already} filtered={skip_filter} "
           f"blank={skip_no_addr} other-instance={skip_partition} "
-          f"other-city={skip_city})")
+          f"other-city={skip_city}")
 
     if args.limit:
         candidates = candidates[:args.limit]
