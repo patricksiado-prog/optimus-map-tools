@@ -61,7 +61,7 @@ read on a public repo, but the push scripts still require a
 token with Contents:write scope.
 """
 
-VERSION = "10.21"
+VERSION = "10.21.1"
 SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -503,7 +503,8 @@ def build_cache_from_sheet(ss, tab_names):
             addr = cell(c_addr)
             src = cell(c_src)
             phone_val = cell(c_phone) if c_phone else ""
-            if not addr or not src: continue
+            # v10.21.1: only cache real finds; no-biz must retry next run
+            if not addr or src != PHONE_SOURCE_FOUND: continue
             cache.put(addr, {
                 "name":    cell(c_biz)   if c_biz   else "",
                 "phone":   cell(c_phone) if c_phone else "",
@@ -574,13 +575,15 @@ def sanitize_result(result, input_addr):
 
 
 def maps_lookup_cached(cache, address, zipc=""):
-    """Cache-aware lookup. Returns (result_dict, was_cached_bool)."""
+    """Cache-aware lookup. Returns (result_dict, was_cached_bool).
+    v10.21.1: only cache real finds. No-biz results must retry later."""
     cached = cache.get(address)
     if cached is not None:
         return cached, True
     raw = maps_lookup_raw(address, zipc)
     result = sanitize_result(raw, address)
-    cache.put(address, result)
+    if result.get("src") == PHONE_SOURCE_FOUND:
+        cache.put(address, result)
     return result, False
 
 
@@ -1002,7 +1005,9 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         _src_val   = cell(row, c_psrc) if c_psrc else ""
         _has_phone = bool(c_phone and cell(row, c_phone))
         _has_biz   = bool(c_biz   and cell(row, c_biz))
-        _confirmed_empty = (_src_val == PHONE_SOURCE_EMPTY)
+        # v10.21.1: no-biz is retryable, never permanent.
+        # Old broken runs (timeouts, stale selectors, 3.5s sleep) poisoned
+        # hundreds of rows with PHONE_SOURCE_EMPTY. Always retry those.
         # v10.20.1: echo biz name = treat as not fully resolved
         _biz_val      = cell(row, c_biz) if c_biz else ""
         _biz_is_echo  = bool(_biz_val) and _is_echo_biz(_biz_val, addr)
@@ -1011,7 +1016,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
             (_has_phone and _has_real_biz)
             or (_has_phone and _src_val == PHONE_SOURCE_FOUND)
         )
-        if _confirmed_empty or _fully_resolved:
+        if _fully_resolved:
             skip_already += 1; continue
         # PARTIAL rows fall through and retry
         candidates.append({
@@ -1093,6 +1098,26 @@ def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"    ordering: {len(_recent)} recent + {len(_older)} older backlog ✓")
     # ─────────────────────────────────────────────────────────────────
 
+    # v10.21.1: _flush_pending defined here, before geo-cluster pre-pass
+    # uses it (was previously defined after, causing NameError on writes).
+    def _flush_pending(ws, pending):
+        if not pending: return
+        for attempt in range(3):
+            try:
+                # fresh deep-copy each retry — prevents range mutation bug
+                safe = json.loads(json.dumps(pending))
+                ws.batch_update(safe, value_input_option='USER_ENTERED')
+                return
+            except Exception as e:
+                msg = str(e)
+                if '429' in msg or 'Quota' in msg or 'RESOURCE_EXHAUSTED' in msg:
+                    wait = 30 * (attempt + 1)
+                    print(f'      quota hit, waiting {wait}s ...')
+                    time.sleep(wait)
+                else:
+                    print(f'      write err {attempt+1}: {e}')
+                    time.sleep(3)
+
     # v10.21: geo-cluster pre-pass
     _block_done = set()
     _block_map = {}
@@ -1129,24 +1154,6 @@ def enrich_tab(ss, tab_name, args, cache, partition):
 
     _pending_updates = []
     _real_lookups = [0]
-
-    def _flush_pending(ws, pending):
-        if not pending: return
-        for attempt in range(3):
-            try:
-                # fresh deep-copy each retry — prevents range mutation bug
-                safe = json.loads(json.dumps(pending))
-                ws.batch_update(safe, value_input_option='USER_ENTERED')
-                return
-            except Exception as e:
-                msg = str(e)
-                if '429' in msg or 'Quota' in msg or 'RESOURCE_EXHAUSTED' in msg:
-                    wait = 30 * (attempt + 1)
-                    print(f'      quota hit, waiting {wait}s ...')
-                    time.sleep(wait)
-                else:
-                    print(f'      write err {attempt+1}: {e}')
-                    time.sleep(3)
 
     # -- street-level batching pre-pass (v10.20) --
     _street_groups = _group_by_street(candidates)
