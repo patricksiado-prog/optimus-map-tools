@@ -1,4 +1,8 @@
 @echo off
+REM ==========================================================
+REM  OPTIMUS MAP TOOLS - MANUAL UPDATER
+REM  Pulls latest scripts from GitHub. Can be triggered by Make.
+REM ==========================================================
 set REPO=patricksiado-prog/optimus-map-tools
 set BRANCH=main
 set INSTALL_DIR=%USERPROFILE%\Optimus
@@ -11,11 +15,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Updating Optimus scripts...
+echo Updating Optimus scripts from %REPO%/%BRANCH%...
 for %%F in (mapman_api_batch.py hunter_reclassifier_safe.py hunter_screenshot_extractor.py update.bat install.bat) do (
-    echo %%F
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '%RAW%/%%F' -OutFile '%INSTALL_DIR%\%%F.new' -UseBasicParsing"
-    if exist "%INSTALL_DIR%\%%F.new" move /Y "%INSTALL_DIR%\%%F.new" "%INSTALL_DIR%\%%F" >nul
+    echo   %%F
+    powershell -Command "Invoke-WebRequest -Uri '%RAW%/%%F' -OutFile '%INSTALL_DIR%\%%F.new' -UseBasicParsing"
+    if exist "%INSTALL_DIR%\%%F.new" (
+        move /Y "%INSTALL_DIR%\%%F.new" "%INSTALL_DIR%\%%F" >nul
+    )
 )
 echo Done.
-pause
