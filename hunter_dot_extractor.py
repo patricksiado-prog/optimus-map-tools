@@ -30,10 +30,10 @@ PC_DIR = os.path.join(os.path.expanduser("~"), "Optimus", "hunter_screenshots")
 SCREENSHOTS_DIR = PHONE_DIR if os.path.isdir(PHONE_DIR) else PC_DIR
 OUTPUT_CSV = os.path.join(os.path.dirname(SCREENSHOTS_DIR) or ".", "extracted_dots.csv")
 
-DRIVE_SCREENSHOTS_FOLDER = "1g5kE9cJFlx5LChmDXSVpU2jUqUPMVd0B"
+DRIVE_SCREENSHOTS_FOLDER = "1Go9e5S6cGGxew8QRYhzMRBMw5HFfPoQV"
 USE_DRIVE = True
 
-CREDS_FILE = "google_creds.json"
+CREDS_FILE = os.path.join(os.path.expanduser("~"), "Download", "google_creds.json")
 SHEET_NAME = "ATT FIBER LEADS"
 SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 
