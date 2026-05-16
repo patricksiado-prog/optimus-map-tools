@@ -392,6 +392,25 @@ def is_good_address(address, city, state):
         return False
     return True
 
+
+def write_status(ws_cmd, msg):
+    """Write status to COMMAND tab C1 so Claude can monitor remotely."""
+    try:
+        if ws_cmd:
+            ws_cmd.update_acell("C1", msg)
+    except:
+        pass
+
+
+STATUS_WEBHOOK = "https://hook.us2.make.com/28eg5dfsd8woey4a6y71napuq7tc9o6w"
+
+def post_status(msg):
+    try:
+        import requests as _req
+        _req.post(STATUS_WEBHOOK, json={"status": msg}, timeout=5, verify=False)
+    except:
+        pass
+
 def process_one_img(fn, img, tabs):
     origin = filename_origin(fn)
     if not origin:
@@ -526,6 +545,7 @@ def main():
                 else: res_count += 1
                 print(f"    {row['color']}: {row['address'][:40]} ({ptype})")
     print("\n" + "=" * 70)
+    post_status(f"COMPLETE | Comm:{comm_count} Res:{res_count}")
     print("COMPLETE")
     print(f"  Commercial: {comm_count}")
     print(f"  Residential: {res_count}")
