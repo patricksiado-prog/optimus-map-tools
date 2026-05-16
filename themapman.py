@@ -3,8 +3,8 @@
 THE MAP MAN — Hunter sheet enricher v10.23.1
 """
 
-VERSION = "10.23.1"
-SHEET_ID  = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
+VERSION = "10.23.2"
+SHEET_ID  = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
 GH_FILE   = "themapman.py"
@@ -55,10 +55,9 @@ def check_update():
         with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
             f.write(latest)
         print("  Updated! Restarting...")
-        if os.name == "nt":
-            print("  Re-run: python themapman.py")
-            sys.exit(0)
-        os.execv(sys.executable, [sys.executable] + sys.argv)
+        import subprocess
+        subprocess.Popen([sys.executable, os.path.abspath(__file__)] + sys.argv[1:])
+        sys.exit(0)
     except Exception as e:
         print(f"  Update check failed: {e}")
 
@@ -76,7 +75,12 @@ except ImportError:
 from google.oauth2.service_account import Credentials
 from playwright.sync_api import sync_playwright
 
-CREDS_FILE = "google_creds.json"
+CREDS_FILE = next((p for p in [
+    r"C:\Users\patri\Desktop\google_creds.json",
+    "/storage/emulated/0/Download/google_creds.json",
+    os.path.join(os.path.expanduser("~"), "Desktop", "google_creds.json"),
+    "google_creds.json",
+] if os.path.exists(p)), "google_creds.json")
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
 
@@ -697,6 +701,19 @@ def _scrape_block_panel(street_name, city, state, zip_code, candidates_map):
         print(f'  [block-batch] err: {_e}')
     return found
 
+
+STATUS_WEBHOOK = "https://hook.us2.make.com/28eg5dfsd8woey4a6y71napuq7tc9o6w"
+
+def post_status(msg):
+    try:
+        import urllib.request as _ur, json as _json
+        data = _json.dumps({"status": msg, "script": "mapman"}).encode()
+        req = _ur.Request(STATUS_WEBHOOK, data=data, method="POST",
+            headers={"Content-Type": "application/json", "User-Agent": "mapman/1.0"})
+        _ur.urlopen(req, timeout=5)
+    except Exception:
+        pass
+
 def enrich_tab(ss, tab_name, args, cache, partition):
     print(f"\n=== {tab_name} ===")
     try:
@@ -887,6 +904,8 @@ def enrich_tab(ss, tab_name, args, cache, partition):
         if len(_pending_updates) >= 10:
             _flush_pending(ws, _pending_updates)
             _pending_updates.clear()
+        if i % 50 == 0:
+            post_status(f"mapman [{i}/{len(candidates)}] {tab_name} | phones:{written_rows}")
         if not was_cached:
             time.sleep(RATE_DELAY)
             _real_lookups[0] += 1
@@ -896,6 +915,7 @@ def enrich_tab(ss, tab_name, args, cache, partition):
                 init_browser(headless=not args.visible)
 
     _flush_pending(ws, _pending_updates)
+    post_status(f"DONE {tab_name} cells:{written_cells} phones:{written_rows}")
     print(f"\n    {tab_name}: wrote {written_cells} cells, {written_rows} rows had real data")
     return written_cells, written_rows
 
@@ -1003,6 +1023,7 @@ def main():
     else:
         cache = build_cache_from_sheet(ss, tabs)
 
+    post_status(f"STARTED mapman v{VERSION} city:{getattr(args,'city','ALL')}")
     init_browser(headless=not args.visible)
     total_cells = total_rows = 0
     try:
