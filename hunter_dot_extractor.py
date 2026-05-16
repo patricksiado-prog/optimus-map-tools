@@ -21,7 +21,7 @@ except ImportError:
 
 VERSION = "1.2"
 
-AUTO_UPDATE = True
+AUTO_UPDATE = False
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/hunter_dot_extractor.py"
 LOCAL_SCRIPT = os.path.abspath(__file__)
 
@@ -33,7 +33,14 @@ OUTPUT_CSV = os.path.join(os.path.dirname(SCREENSHOTS_DIR) or ".", "extracted_do
 DRIVE_SCREENSHOTS_FOLDER = "1Go9e5S6cGGxew8QRYhzMRBMw5HFfPoQV"
 USE_DRIVE = True
 
-CREDS_FILE = os.path.join(os.path.expanduser("~"), "Download", "google_creds.json")
+CREDS_FILE = next((p for p in [
+    r"C:\Users\patri\Desktop\google_creds.json",
+    "/storage/emulated/0/Download/google_creds.json",
+    "/sdcard/Download/google_creds.json",
+    os.path.join(os.path.expanduser("~"), "Desktop", "google_creds.json"),
+    os.path.join(os.path.expanduser("~"), "Download", "google_creds.json"),
+    "google_creds.json",
+] if os.path.exists(p)), "google_creds.json")
 SHEET_NAME = "ATT FIBER LEADS"
 SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 
@@ -61,6 +68,26 @@ BLANK_STD_THRESHOLD = 12.0
 BLANK_CENTER_STD_THRESHOLD = 9.0
 BLANK_BRIGHT_MEAN = 240
 BLANK_DARK_MEAN = 30
+
+# City name aliases (fiber_hunter uses city names as zone prefixes)
+CITY_ALIASES = {
+    'Pineville':   (31.3225, -92.4334),  # Pineville, LA
+    'Alexandria':  (31.2932, -92.4666),  # Alexandria, LA
+    'Biloxi':      (30.3960, -88.8853),  # Biloxi, MS
+    'Mobile':      (30.6850, -88.0567),  # Mobile, AL
+    'Houston':     (29.7572, -95.3656),  # Houston, TX
+    'Austin':      (30.2672, -97.7431),  # Austin, TX
+    'Edmond':      (35.6528, -97.4781),  # Edmond, OK
+    'Norman':      (35.2226, -97.4395),  # Norman, OK
+    'Gulfport':    (30.3674, -89.0928),  # Gulfport, MS
+    'Midland':     (31.9974, -102.0779), # Midland, TX
+    'Odessa':      (31.8457, -102.3676), # Odessa, TX
+    'Bossier':     (32.5160, -93.7321),  # Bossier City, LA
+    'Shreveport':  (32.5252, -93.7502),  # Shreveport, LA
+    'Lafayette':   (30.2241, -92.0198),  # Lafayette, LA
+    'Baton':       (30.4515, -91.1871),  # Baton Rouge, LA
+    'NewOrleans':  (29.9511, -90.0715),  # New Orleans, LA
+}
 
 ZIP_CENTROIDS = {
     '36607': (30.6850, -88.0567), '71301': (31.2932, -92.4666),
@@ -150,9 +177,10 @@ def filename_origin(fn):
     if not info:
         return None
     prefix, ox, oy = decode_zone(info['zone'])
-    if prefix not in ZIP_CENTROIDS or ox is None or oy is None:
+    coords = ZIP_CENTROIDS.get(prefix) or CITY_ALIASES.get(prefix)
+    if not coords or ox is None or oy is None:
         return None
-    zip_lat, zip_lng = ZIP_CENTROIDS[prefix]
+    zip_lat, zip_lng = coords
     zlat = ROWS_PER_ZONE * PAN_PIXELS * abs(LAT_PER_PIXEL)
     zlng = COLS_PER_ZONE * PAN_PIXELS * LNG_PER_PIXEL
     return (zip_lat + oy * zlat, zip_lng + ox * zlng, info['row'], info['col'], prefix)
@@ -261,16 +289,19 @@ def smart_classify(address, state, biz_name="", city=""):
         if word in a: score -= 4
     return "COMMERCIAL" if score > 0 else "RESIDENTIAL"
 
-def get_drive_screenshots():
+def get_drive_token():
+    from google.auth.transport.requests import Request
+    scopes = ["https://www.googleapis.com/auth/drive"]
+    creds = Credentials.from_service_account_file(CREDS_FILE, scopes=scopes)
+    creds.refresh(Request())
+    return creds.token
+
+def list_drive_files():
     if not os.path.exists(CREDS_FILE):
         print("No google_creds.json - Drive disabled")
-        return []
+        return [], None
     try:
-        from google.auth.transport.requests import Request
-        scopes = ["https://www.googleapis.com/auth/drive"]
-        creds = Credentials.from_service_account_file(CREDS_FILE, scopes=scopes)
-        creds.refresh(Request())
-        token = creds.token
+        token = get_drive_token()
         url = "https://www.googleapis.com/drive/v3/files"
         params = {
             "q": f"'{DRIVE_SCREENSHOTS_FOLDER}' in parents and mimeType='image/png' and trashed=false",
@@ -281,22 +312,23 @@ def get_drive_screenshots():
         headers = {"Authorization": f"Bearer {token}"}
         r = requests.get(url, params=params, headers=headers, timeout=10)
         files = r.json().get("files", [])
-        import tempfile
-        tmpdir = tempfile.gettempdir()
-        results = []
-        for f in files:
-            fpath = os.path.join(tmpdir, f["name"])
-            dl_url = f"https://www.googleapis.com/drive/v3/files/{f['id']}?alt=media"
-            dr = requests.get(dl_url, headers=headers, timeout=15)
-            if dr.status_code == 200:
-                with open(fpath, "wb") as fw:
-                    fw.write(dr.content)
-                results.append(fpath)
-        print(f"Downloaded {len(results)} PNGs from Drive")
-        return results
+        print(f"Found {len(files)} PNGs in Drive")
+        return files, token
     except Exception as e:
         print(f"Drive error: {e}")
-        return []
+        return [], None
+
+def fetch_image_from_drive(file_id, token):
+    from io import BytesIO
+    dl_url = f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media"
+    headers = {"Authorization": f"Bearer {token}"}
+    r = requests.get(dl_url, headers=headers, timeout=30)
+    if r.status_code == 200:
+        return BytesIO(r.content)
+    return None
+
+def get_drive_screenshots():
+    return []  # not used anymore
 
 def connect_sheets():
     if not SHEETS_OK:
@@ -343,6 +375,13 @@ def is_good_address(address, city, state):
         return False
     return True
 
+def process_one_img(fn, img, tabs):
+    origin = filename_origin(fn)
+    if not origin:
+        return {"file": fn, "status": "SKIP no zip centroid"}
+    sl, sg, row, col, zipc = origin
+    return _process_img(fn, img, sl, sg, row, col, zipc, tabs)
+
 def process_one(path, tabs):
     fn = os.path.basename(path)
     origin = filename_origin(fn)
@@ -353,6 +392,9 @@ def process_one(path, tabs):
         img = Image.open(path)
     except Exception as e:
         return {"file": fn, "status": f"BAD_IMG: {e}"}
+    return _process_img(fn, img, sl, sg, row, col, zipc, tabs)
+
+def _process_img(fn, img, sl, sg, row, col, zipc, tabs):
     cropped = img.crop((MAP_LEFT, MAP_TOP, MAP_RIGHT, MAP_BOTTOM))
     if is_blank_map(cropped):
         return {"file": fn, "status": "BLANK_SKIP"}
@@ -408,36 +450,64 @@ def main():
     print("=" * 70)
     print(f"HUNTER DOT EXTRACTOR v{VERSION}")
     print("=" * 70)
+    tabs = connect_sheets()
+    if not tabs:
+        print("ERROR: Google Sheets not connected.")
+        input("Press Enter to close...")
+        return
+
     if USE_DRIVE:
-        print("Downloading from Google Drive...")
-        shots = get_drive_screenshots()
+        files, token = list_drive_files()
+        if not files:
+            print("No screenshots found.")
+            input("Press Enter to close...")
+            return
+        total = len(files)
+        comm_count = 0
+        res_count = 0
+        for i, f in enumerate(files, 1):
+            fn = f["name"]
+            print(f"[{i}/{total}] {fn}")
+            buf = fetch_image_from_drive(f["id"], token)
+            if not buf:
+                print("  SKIP - download failed")
+                continue
+            from PIL import Image as _PIL
+            try:
+                img = _PIL.open(buf)
+            except Exception as e:
+                print(f"  SKIP - bad image: {e}")
+                continue
+            r = process_one_img(fn, img, tabs)
+            if r.get("status") != "OK":
+                print(f"  {r.get('status')}")
+                continue
+            print(f"  G={r['green_count']} O={r['orange_count']}")
+            for row in r["results"]:
+                ptype = row.get("ptype","?")
+                if ptype == "COMMERCIAL": comm_count += 1
+                else: res_count += 1
+                print(f"    {row['color']}: {row['address'][:40]} ({ptype})")
     else:
         if not os.path.isdir(SCREENSHOTS_DIR):
             print(f"ERROR: dir not found: {SCREENSHOTS_DIR}")
             input("Press Enter to close...")
             return
         shots = sorted(glob.glob(os.path.join(SCREENSHOTS_DIR, "*.png")))
-    print(f"Found {len(shots)} screenshots\n")
-    tabs = connect_sheets()
-    if not tabs:
-        print("ERROR: Google Sheets not connected.")
-        input("Press Enter to close...")
-        return
-    comm_count = 0
-    res_count = 0
-    for i, path in enumerate(shots, 1):
-        r = process_one(path, tabs)
-        if r.get("status") != "OK":
-            print(f"[{i}/{len(shots)}] {r['file']}: {r.get('status')}")
-            continue
-        print(f"[{i}/{len(shots)}] {r['file']}: G={r['green_count']} O={r['orange_count']}")
-        for row in r["results"]:
-            ptype = row.get("ptype","?")
-            if ptype == "COMMERCIAL":
-                comm_count += 1
-            else:
-                res_count += 1
-            print(f"    {row['color']}: {row['address'][:40]} ({ptype})")
+        total = len(shots)
+        comm_count = 0
+        res_count = 0
+        for i, path in enumerate(shots, 1):
+            r = process_one(path, tabs)
+            if r.get("status") != "OK":
+                print(f"[{i}/{total}] {r['file']}: {r.get('status')}")
+                continue
+            print(f"[{i}/{total}] {r['file']}: G={r['green_count']} O={r['orange_count']}")
+            for row in r["results"]:
+                ptype = row.get("ptype","?")
+                if ptype == "COMMERCIAL": comm_count += 1
+                else: res_count += 1
+                print(f"    {row['color']}: {row['address'][:40]} ({ptype})")
     print("\n" + "=" * 70)
     print("COMPLETE")
     print(f"  Commercial: {comm_count}")
