@@ -21,7 +21,23 @@ except ImportError:
 
 VERSION = "1.2"
 
-AUTO_UPDATE = False
+# Suppress SSL warnings (Windows cert store issue)
+try:
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+except Exception:
+    pass
+
+# Fix SSL certificate errors on Windows
+import os as _os
+try:
+    import certifi as _certifi
+    _os.environ["REQUESTS_CA_BUNDLE"] = _certifi.where()
+    _os.environ["SSL_CERT_FILE"] = _certifi.where()
+except ImportError:
+    pass
+
+AUTO_UPDATE = True
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/hunter_dot_extractor.py"
 LOCAL_SCRIPT = os.path.abspath(__file__)
 
@@ -90,6 +106,7 @@ CITY_ALIASES = {
 }
 
 ZIP_CENTROIDS = {
+    '31405': (32.0478, -81.0997),  # Savannah, GA
     '36607': (30.6850, -88.0567), '71301': (31.2932, -92.4666),
     '71328': (31.0865, -92.0782), '71360': (31.3225, -92.4334),
     '73007': (35.7228, -97.4400), '73013': (35.6528, -97.4781),
@@ -310,7 +327,7 @@ def list_drive_files():
             "pageSize": 1000,
         }
         headers = {"Authorization": f"Bearer {token}"}
-        r = requests.get(url, params=params, headers=headers, timeout=10)
+        r = requests.get(url, params=params, headers=headers, verify=False, timeout=10)
         files = r.json().get("files", [])
         print(f"Found {len(files)} PNGs in Drive")
         return files, token
