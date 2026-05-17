@@ -19,7 +19,7 @@ except ImportError:
     SHEETS_OK = False
     print("WARNING: gspread not installed. CSV only mode.")
 
-VERSION = "1.2"
+VERSION = "1.5"
 
 # Suppress SSL warnings (Windows cert store issue)
 try:
@@ -58,7 +58,7 @@ CREDS_FILE = next((p for p in [
     "google_creds.json",
 ] if os.path.exists(p)), "google_creds.json")
 SHEET_NAME = "ATT FIBER LEADS"
-SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
+SHEET_ID = "12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag"
 
 MAX_DOTS_PER_SHOT = 200
 SLEEP_BETWEEN_GEOCODE = 1.1
