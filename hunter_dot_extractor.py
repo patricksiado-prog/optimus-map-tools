@@ -19,7 +19,7 @@ except ImportError:
     SHEETS_OK = False
     print("WARNING: gspread not installed. CSV only mode.")
 
-VERSION = "1.5"
+VERSION = "1.5.1"
 
 # Suppress SSL warnings (Windows cert store issue)
 try:
