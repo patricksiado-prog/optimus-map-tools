@@ -3,7 +3,7 @@
 THE MAP MAN — Hunter sheet enricher v10.23.1
 """
 
-VERSION = "10.23.2"
+VERSION = "10.23.3"
 SHEET_ID  = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 DEFAULT_TAB_PREFIX = "Hunter"
 GH_REPO   = "patricksiado-prog/optimus-map-tools"
@@ -12,11 +12,13 @@ GH_BRANCH = "main"
 
 PHONE_SOURCE_FOUND = "Google Maps"
 PHONE_SOURCE_EMPTY = "Google Maps (no biz)"
+PLACES_API_KEY = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
 
 import os, sys, re, time, json, argparse, base64
 from datetime import datetime
 from pathlib import Path
 import urllib.request
+import requests
 
 TOKEN_PATHS = [
     Path("/storage/emulated/0/Download/github_token.txt"),
@@ -270,6 +272,59 @@ def panel_address():
 
 _last_zip = {"val": None}
 
+
+def _places_api_fallback(address, zipc=""):
+    """v10.23.3: Google Places fallback when browser Maps finds no phone."""
+    try:
+        q = str(address or "").strip()
+        if not q:
+            return {"name": "", "phone": "", "address": ""}
+        if zipc and re.match(r"^\d{5}$", str(zipc).strip()):
+            q += " " + str(zipc).strip()
+
+        r = requests.get(
+            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json",
+            params={
+                "input": q,
+                "inputtype": "textquery",
+                "fields": "place_id,name,formatted_address,types,business_status",
+                "key": PLACES_API_KEY,
+            },
+            timeout=12,
+        )
+        d = r.json()
+        if d.get("status") != "OK" or not d.get("candidates"):
+            return {"name": "", "phone": "", "address": ""}
+
+        place = d["candidates"][0]
+        pid = place.get("place_id", "")
+        name = (place.get("name") or "").strip()
+        addr = (place.get("formatted_address") or "").strip()
+
+        if pid:
+            r2 = requests.get(
+                "https://maps.googleapis.com/maps/api/place/details/json",
+                params={
+                    "place_id": pid,
+                    "fields": "formatted_phone_number,name,formatted_address,business_status",
+                    "key": PLACES_API_KEY,
+                },
+                timeout=12,
+            )
+            d2 = r2.json()
+            if d2.get("status") == "OK":
+                res = d2.get("result") or {}
+                phone = fmt_phone(res.get("formatted_phone_number") or "")
+                rn = (res.get("name") or name or "").strip()
+                ra = (res.get("formatted_address") or addr or "").strip()
+                return {"name": rn, "phone": phone, "address": ra}
+
+        return {"name": name, "phone": "", "address": addr}
+    except Exception as e:
+        print(f"      places fallback err: {str(e)[:80]}")
+        return {"name": "", "phone": "", "address": ""}
+
+
 def maps_lookup_raw(address, zipc=""):
     if not address or not looks_like_address(address):
         return None
@@ -332,10 +387,21 @@ def maps_lookup_raw(address, zipc=""):
                 except Exception:
                     pass
                 time.sleep(0.25)
-        return {"name": panel_name(), "phone": panel_phone(), "address": panel_address()}
+        out = {"name": panel_name(), "phone": panel_phone(), "address": panel_address()}
+        if not out.get("phone"):
+            fb = _places_api_fallback(address, zipc)
+            if fb.get("phone"):
+                print(f"      + api phone {fb.get('phone')}")
+                out["phone"] = fb.get("phone", "")
+                if fb.get("name"):
+                    out["name"] = fb.get("name", out.get("name", ""))
+                if fb.get("address"):
+                    out["address"] = fb.get("address", out.get("address", ""))
+        return out
     except Exception as e:
         print(f"      lookup err: {e}")
-        return None
+        fb = _places_api_fallback(address, zipc)
+        return fb if (fb.get("phone") or fb.get("name")) else None
 
 class AddressCache:
     def __init__(self):
