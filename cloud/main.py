@@ -85,7 +85,7 @@ def chat():
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 1500,
                 "system": CLAUDE_SYSTEM,
                 "messages": msgs,
