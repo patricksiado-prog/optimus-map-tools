@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-"""Optimus Portal - Minimal Flask app"""
-
 from flask import Flask, jsonify
 import os
 
