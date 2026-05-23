@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Optimus Portal - Absolute minimal Flask app that cannot crash"""
+"""Optimus Portal - Minimal Flask app"""
 
 from flask import Flask, jsonify
 import os
