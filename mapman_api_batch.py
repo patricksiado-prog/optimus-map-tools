@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
 """
-mapman_api_batch.py - Optimus MapMan (v3.2, tenant-resolver)
+mapman_api_batch.py - Optimus MapMan (v3.3, tenant-resolver, no-geocoding-api)
 
 PRIMARY (precision) workflow - this is the product:
-  fiber-serviceable address -> geocode to coordinates -> nearby search at a
-  SMALL radius -> NEAREST operating commercial tenant to the point -> Place
-  Details -> phone -> write lead. If no commercial tenant with a phone is
-  operating near the point, the address is residential/vacant -> SKIP.
+  fiber-serviceable address -> coordinates -> nearby search at a SMALL radius
+  -> NEAREST operating commercial tenant to the point -> Place Details -> phone
+  -> write lead. No commercial tenant with a phone near the point => the address
+  is residential/vacant -> SKIP.
 
-  Radius cascade 30 -> 60 -> 100m: take the nearest qualifying tenant at the
-  tightest radius that produces one. Tighter = more confident it is THE tenant.
+  *** v3.3 CHANGE: coordinates come from Places TEXT SEARCH, not the Geocoding
+  API. The Geocoding API returns REQUEST_DENIED on this key/project; Places Text
+  Search works on the same key and returns geometry.location in its results.
+  Proven live 2026-05-24 (732 Esters Blvd -> 30.3992889,-88.8861755 -> nearby
+  -> Saucier Brothers Roofing). Same resolver, one API swap. ***
 
-  Why coordinates: Google resolves a bare address string to the PARCEL, not the
-  tenant. Resolve by COORDINATE + tight radius instead. (Proven live.)
+  Radius cascade 30 -> 60 -> 100m, tightest first; nearest qualifying tenant wins.
 
 FALLBACK (area lead-gen, NOT the product): nearest commercial business to a ZIP
-  center. DEFAULT OFF. Rows are clearly labeled Source='Area fallback' so they
-  are never confused with address-precise leads. Turn on only deliberately.
+  center. DEFAULT OFF. Rows labeled Source='Area fallback'.
 
 RUN MODES:
   CLI / Pydroid / HP : python mapman_api_batch.py            (fallback OFF)
                        python mapman_api_batch.py --fallback (fallback ON)
+                       python mapman_api_batch.py --addr "123 Main St, City ST 00000"
   Cloud Run endpoint : gunicorn mapman_api_batch:app
       POST /run                          -> precision, all Hunter Commercial rows
       POST /run {"addr":"..."}           -> precision for ONE address
@@ -30,7 +32,7 @@ RUN MODES:
 import os, re, json, time, math
 import requests
 
-VERSION = "3.2-tenant-resolver"
+VERSION = "3.3-tenant-resolver-no-geocoding-api"
 
 # ---- production defaults (override via env) ----
 API_KEY = os.environ.get("PLACES_API_KEY", "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g")
@@ -42,8 +44,6 @@ RADII = [30, 60, 100]      # tight-first cascade; nearest qualifying tenant wins
 MAX_TENANT_M = 60          # never accept a match farther than this from the point
 FALLBACK_RADIUS_M = 4000   # area fallback search radius around ZIP center
 
-# Tightened to REAL callable businesses. No parks, transit, cemeteries,
-# airports, parking, places of worship, government, etc.
 COMMERCIAL = {
     "store", "restaurant", "food", "cafe", "bakery", "bar", "meal_takeaway",
     "meal_delivery", "supermarket", "grocery_or_supermarket", "convenience_store",
@@ -57,9 +57,7 @@ COMMERCIAL = {
     "general_contractor", "painter", "locksmith", "moving_company", "storage",
     "laundry", "night_club",
 }
-# generic types that are not, by themselves, a callable commercial tenant
 GENERIC = {"point_of_interest", "establishment"}
-# hard reject - never a sales lead even if tagged establishment/POI
 NON_TENANT = {
     "premise", "street_address", "subpremise", "route", "locality", "political",
     "postal_code", "geocode", "park", "parking", "transit_station", "train_station",
@@ -104,9 +102,11 @@ def _dist_m(lat1, lng1, lat2, lng2):
 
 
 def geocode(addr):
-    """address -> (lat, lng) or None."""
-    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json",
-                     params={"address": addr, "key": API_KEY}, timeout=20).json()
+    """address -> (lat, lng) or None.
+    Uses Places TEXT SEARCH (not the Geocoding API, which is denied on this key).
+    Text Search returns geometry.location for the matched address point."""
+    r = requests.get("https://maps.googleapis.com/maps/api/place/textsearch/json",
+                     params={"query": addr, "key": API_KEY}, timeout=20).json()
     res = r.get("results") or []
     if not res:
         return None
@@ -300,7 +300,7 @@ except Exception:
 
 if __name__ == "__main__":
     import argparse
-    ap = argparse.ArgumentParser(description="MapMan v3.2 tenant resolver")
+    ap = argparse.ArgumentParser(description="MapMan v3.3 tenant resolver")
     ap.add_argument("--addr", default=None, help="resolve a single address")
     ap.add_argument("--fallback", action="store_true", help="enable area fallback on misses (default OFF)")
     a = ap.parse_args()
