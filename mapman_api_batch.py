@@ -1,139 +1,160 @@
-import csv, requests, time, os
+#!/usr/bin/env python3
+"""
+mapman_api_batch.py - Optimus MapMan (area-search edition, v2.0)
+Finds CALLABLE COMMERCIAL businesses inside fiber-eligible ZIPs and writes
+their phones to the sheet. Does NOT enrich bare addresses - that returns the
+empty lot (proven: address lookups give premise/street_address, no phone).
 
-VERSION = "1.4"
-API_KEY = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
-INPUT  = "enrich_queue.csv"
-OUTPUT = "enrich_queue_filled.csv"
-BATCH_ORDER = ["HOUSTON_DT", "AUSTIN", "LOUISIANA", "EDMOND"]
+METHOD (proven live): Places Text Search by business type within each fiber
+ZIP -> Place Details for the phone -> keep OPERATIONAL + has phone + commercial
+type -> write to 'Fiber Commercial Leads'. Dedupe by phone (place_id kept too),
+paginate with next_page_token, loop business types per ZIP.
 
-COMMERCIAL_TYPES = {
-    "restaurant","cafe","store","shopping_mall","supermarket","gas_station",
-    "car_repair","car_dealer","hospital","doctor","dentist","pharmacy",
-    "bank","atm","hotel","gym","spa","beauty_salon","hair_care",
-    "clothing_store","electronics_store","furniture_store","hardware_store",
-    "jewelry_store","shoe_store","book_store","department_store","florist",
-    "pet_store","real_estate_agency","insurance_agency","lawyer","accountant",
-    "travel_agency","electrician","plumber","roofing_contractor",
-    "general_contractor","moving_company","locksmith","painter",
-    "car_wash","car_rental","movie_theater","casino","bowling_alley",
-    "amusement_park","art_gallery","museum","night_club","bar",
-    "liquor_store","bakery","school","university","library","fire_station",
-    "police","post_office","courthouse","church","mosque","synagogue",
-    "cemetery","funeral_home","laundry","storage","veterinary_care"
-}
+RUN MODES:
+  CLI / Pydroid / HP : python mapman_api_batch.py
+  Cloud Run endpoint : gunicorn mapman_api_batch:app   (POST /run, GET /healthz)
+"""
+import os, time, json
+import requests
 
-def find_place(addr, city, state):
-    url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
-    params = {"input": f"{addr}, {city}, {state}", "inputtype": "textquery",
-              "fields": "place_id,name,types,business_status", "key": API_KEY}
+VERSION = "2.0-area"
+API_KEY = os.environ.get("PLACES_API_KEY", "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g")
+SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
+SRC_TAB = "Hunter Commercial"
+OUT_TAB = "Fiber Commercial Leads"
+
+TYPES = ["restaurant", "store", "car_repair", "contractor", "medical", "dentist",
+         "lawyer", "real_estate_agency", "gym", "bank", "hotel", "pharmacy",
+         "beauty_salon", "veterinary_care", "electrician", "plumber", "insurance_agency"]
+COMMERCIAL = {"establishment", "store", "restaurant", "food", "health", "finance",
+              "car_repair", "lawyer", "doctor", "dentist", "gym", "lodging",
+              "point_of_interest", "general_contractor", "electrician", "plumber"}
+
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+CRED_PATHS = ["google_creds.json",
+              "/storage/emulated/0/Download/google_creds.json",
+              os.path.expanduser("~/google_creds.json"),
+              "C:/Users/patri/Desktop/google_creds.json"]
+
+
+def _creds():
+    from google.oauth2.service_account import Credentials
+    env = os.environ.get("GOOGLE_CREDS_JSON")
+    if env:
+        return Credentials.from_service_account_info(json.loads(env), scopes=SCOPES)
+    for p in CRED_PATHS:
+        if os.path.exists(p):
+            return Credentials.from_service_account_file(p, scopes=SCOPES)
+    raise RuntimeError("google_creds.json not found in any known path")
+
+
+def _sheet():
+    import gspread
+    return gspread.authorize(_creds()).open_by_key(SHEET_ID)
+
+
+def textsearch(q, token=None):
+    p = {"pagetoken": token, "key": API_KEY} if token else {"query": q, "key": API_KEY}
+    return requests.get("https://maps.googleapis.com/maps/api/place/textsearch/json",
+                        params=p, timeout=20).json()
+
+
+def details(pid):
+    p = {"place_id": pid, "key": API_KEY,
+         "fields": "name,formatted_phone_number,business_status,types,rating,formatted_address"}
+    return requests.get("https://maps.googleapis.com/maps/api/place/details/json",
+                        params=p, timeout=20).json().get("result", {})
+
+
+def worth_calling(d):
+    if d.get("business_status") != "OPERATIONAL":
+        return False
+    if not d.get("formatted_phone_number"):
+        return False
+    return any(t in COMMERCIAL for t in d.get("types", []))
+
+
+def fiber_zips(sh):
+    """Distinct (zip, 'City ST') pulled from the Hunter Commercial tab."""
+    vals = sh.worksheet(SRC_TAB).get_all_values()
+    out, seen = [], set()
+    for r in vals[1:]:
+        if len(r) < 5:
+            continue
+        city, state, zc = r[2].strip(), r[3].strip(), r[4].strip()
+        if zc and zc not in seen:
+            seen.add(zc)
+            out.append((zc, ("%s %s" % (city, state)).strip()))
+    return out
+
+
+def enrich(zips=None, limit_types=None):
+    sh = _sheet()
     try:
-        r = requests.get(url, params=params, timeout=10).json()
-        if r.get("status") != "OK":
-            print(f"  >>> {r.get('status')} {r.get('error_message','')}")
-            return None
-        return r["candidates"][0] if r.get("candidates") else None
-    except Exception as e:
-        print(f"  ERR: {e}")
-        return None
-
-def get_details(pid):
-    url = "https://maps.googleapis.com/maps/api/place/details/json"
-    params = {"place_id": pid, "fields": "formatted_phone_number,business_status", "key": API_KEY}
-    try:
-        r = requests.get(url, params=params, timeout=10).json()
-        return r.get("result", {}) if r.get("status") == "OK" else {}
+        ws = sh.worksheet(OUT_TAB)
     except Exception:
-        return {}
+        ws = sh.add_worksheet(OUT_TAB, 2000, 9)
+        ws.append_row(["Business", "Phone", "Type", "Rating", "Address",
+                       "Zip", "PlaceId", "Status", "Source"])
+    existing = ws.get_all_values()[1:]
+    seen_phone = set(r[1] for r in existing if len(r) > 1 and r[1])
+    seen_pid = set(r[6] for r in existing if len(r) > 6 and r[6])
+    zips = zips or fiber_zips(sh)
+    types = limit_types or TYPES
+    added = 0
+    for zc, zq in zips:
+        rows = []
+        for t in types:
+            token = None
+            for _ in range(3):
+                r = textsearch("%s in %s %s" % (t, zq, zc), token)
+                for c in r.get("results", []):
+                    pid = c.get("place_id", "")
+                    if not pid or pid in seen_pid:
+                        continue
+                    d = details(pid)
+                    time.sleep(0.1)
+                    ph = d.get("formatted_phone_number", "")
+                    if worth_calling(d) and ph not in seen_phone:
+                        seen_phone.add(ph)
+                        seen_pid.add(pid)
+                        rows.append([d.get("name", ""), ph, t, d.get("rating", ""),
+                                     d.get("formatted_address", ""), zc, pid,
+                                     d.get("business_status", ""), "Places area"])
+                token = r.get("next_page_token")
+                if not token:
+                    break
+                time.sleep(2)
+        if rows:
+            ws.append_rows(rows)
+            added += len(rows)
+            print("ZIP %s: +%d leads" % (zc, len(rows)))
+    print("DONE. %d new callable leads -> %s" % (added, OUT_TAB))
+    return added
 
-def main():
-    print(f"\nMAPMAN ENRICHMENT v{VERSION}\n")
-    if not os.path.exists(INPUT):
-        print(f"ERROR: {INPUT} not found in {os.getcwd()}")
-        print("Put enrich_queue.csv in this folder, then run again.")
-        input("Press Enter to close...")
-        return
 
-    with open(INPUT, newline="", encoding="utf-8-sig") as fh:
-        rows = list(csv.DictReader(fh))
-    if not rows:
-        print("Empty input")
-        input("Press Enter to close...")
-        return
+try:
+    from flask import Flask, request, jsonify
+    app = Flask(__name__)
 
-    extra_cols = ["verified_biz", "verified_types", "verified_phone", "verdict"]
-    fieldnames = list(rows[0].keys())
-    for c in extra_cols:
-        if c not in fieldnames:
-            fieldnames.append(c)
+    @app.route("/healthz")
+    def _h():
+        return jsonify({"ok": True, "version": VERSION})
 
-    def keyof(r):
-        return f"{r.get('address','') or r.get('Address','')}|{r.get('city','') or r.get('City','')}|{r.get('state','') or r.get('State','')}"
-
-    done = set()
-    if os.path.exists(OUTPUT):
+    @app.route("/run", methods=["POST", "GET"])
+    def _run():
+        body = request.get_json(silent=True) or {}
+        zips = None
+        if body.get("zip"):
+            zips = [(str(body["zip"]), body.get("area", ""))]
         try:
-            with open(OUTPUT, newline="", encoding="utf-8-sig") as fh:
-                for r in csv.DictReader(fh):
-                    if r.get("verdict"):
-                        done.add(keyof(r))
-            print(f"RESUME: skipping {len(done)} done rows")
+            n = enrich(zips=zips)
+            return jsonify({"ok": True, "added": n})
         except Exception as e:
-            print(f"  resume err: {e}")
+            return jsonify({"ok": False, "error": str(e)}), 200
+except Exception:
+    app = None
 
-    if "batch" in rows[0]:
-        rows.sort(key=lambda r: BATCH_ORDER.index(r.get("batch","")) if r.get("batch","") in BATCH_ORDER else 99)
-
-    remaining = [r for r in rows if keyof(r) not in done]
-    print(f"Total: {len(rows)} | Done: {len(done)} | Remaining: {len(remaining)}\n")
-
-    if not remaining:
-        input("Nothing remaining. Press Enter to close...")
-        return
-
-    mode = "a" if done else "w"
-    with open(OUTPUT, mode, newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-        if not done:
-            w.writeheader()
-
-        for i, row in enumerate(remaining, 1):
-            for c in extra_cols:
-                row.setdefault(c, "")
-
-            addr  = (row.get("address") or row.get("Address") or "").strip()
-            city  = (row.get("city") or row.get("City") or "").strip()
-            state = (row.get("state") or row.get("State") or "").strip()
-
-            if not addr:
-                row["verdict"] = "SKIP_NO_ADDRESS"
-                w.writerow(row); f.flush()
-                print(f"[{i}/{len(remaining)}] (no address) -> SKIP")
-                continue
-
-            result = find_place(addr, city, state)
-            if not result:
-                row["verdict"] = "NOT_FOUND"
-            else:
-                types = result.get("types", [])
-                row["verified_biz"] = result.get("name", "")
-                row["verified_types"] = "|".join(types[:5])
-                if any(t in COMMERCIAL_TYPES for t in types):
-                    d = get_details(result["place_id"])
-                    status = d.get("business_status", "OPERATIONAL")
-                    if status != "OPERATIONAL":
-                        row["verdict"] = f"CLOSED ({status})"
-                    else:
-                        row["verified_phone"] = d.get("formatted_phone_number", "")
-                        row["verdict"] = "COMMERCIAL_VERIFIED" if row["verified_phone"] else "COMMERCIAL_NO_PHONE"
-                else:
-                    row["verdict"] = "RESIDENTIAL_OR_OTHER"
-
-            w.writerow(row); f.flush()
-            print(f"[{i}/{len(remaining)}] {row.get('batch',''):10} {addr[:30]:30} -> {row['verdict']:22} {row.get('verified_biz','')[:25]}")
-            time.sleep(0.05)
-
-    print(f"\nDONE. See {OUTPUT}")
-    input("Press Enter to close...")
 
 if __name__ == "__main__":
-    main()
+    enrich()
