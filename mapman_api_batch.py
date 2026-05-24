@@ -1,53 +1,74 @@
 #!/usr/bin/env python3
 """
-mapman_api_batch.py - Optimus MapMan (v3.1, tenant-resolver, nearest-match)
+mapman_api_batch.py - Optimus MapMan (v3.2, tenant-resolver)
 
 PRIMARY (precision) workflow - this is the product:
-  fiber-serviceable address  ->  geocode to coordinates  ->  nearby search at
-  a SMALL radius  ->  NEAREST operating commercial tenant to the point  ->
-  Place Details  ->  phone  ->  write lead. If no commercial tenant is
-  operating at/near the point, the address is residential/vacant -> SKIP.
+  fiber-serviceable address -> geocode to coordinates -> nearby search at a
+  SMALL radius -> NEAREST operating commercial tenant to the point -> Place
+  Details -> phone -> write lead. If no commercial tenant with a phone is
+  operating near the point, the address is residential/vacant -> SKIP.
 
-  Why nearest: a small-radius search still returns businesses across the
-  street. We sort candidates by distance from the fiber coordinate and take
-  the closest OPERATIONAL commercial one - that is the actual tenant.
+  Radius cascade 30 -> 60 -> 100m: take the nearest qualifying tenant at the
+  tightest radius that produces one. Tighter = more confident it is THE tenant.
 
-  Why coordinates: Google resolves a bare address string to the PARCEL, not
-  the tenant. Resolve by COORDINATE + tight radius instead. (Patrick+ChatGPT.)
+  Why coordinates: Google resolves a bare address string to the PARCEL, not the
+  tenant. Resolve by COORDINATE + tight radius instead. (Proven live.)
 
-FALLBACK (area lead-gen, NOT the product): businesses by type in a fiber ZIP.
-  Clearly labeled Source='Area fallback' so hit rates can be compared.
+FALLBACK (area lead-gen, NOT the product): nearest commercial business to a ZIP
+  center. DEFAULT OFF. Rows are clearly labeled Source='Area fallback' so they
+  are never confused with address-precise leads. Turn on only deliberately.
 
 RUN MODES:
-  CLI / Pydroid / HP : python mapman_api_batch.py
+  CLI / Pydroid / HP : python mapman_api_batch.py            (fallback OFF)
+                       python mapman_api_batch.py --fallback (fallback ON)
   Cloud Run endpoint : gunicorn mapman_api_batch:app
-      POST /run                 -> precision over all Hunter Commercial rows
-      POST /run {"addr":"..."}  -> precision for ONE address (returns the lead)
-      POST /run_area {"zip":"39564","area":"Ocean Springs MS"} -> fallback
+      POST /run                          -> precision, all Hunter Commercial rows
+      POST /run {"addr":"..."}           -> precision for ONE address
+      POST /run {"fallback":true}        -> precision + area fallback on misses
       GET  /healthz
 """
-import os, time, json, math
+import os, re, json, time, math
 import requests
 
-VERSION = "3.1-tenant-resolver-nearest"
+VERSION = "3.2-tenant-resolver"
+
+# ---- production defaults (override via env) ----
 API_KEY = os.environ.get("PLACES_API_KEY", "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g")
-SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
-SRC_TAB = "Hunter Commercial"
-OUT_TAB = "Fiber Commercial Leads"
-RADIUS_M = 55          # tight radius: tenant AT the point, not the neighborhood
-MAX_TENANT_M = 35      # accept tenant only if within this distance of the coordinate
+SHEET_ID = os.environ.get("MAP_SHEET_ID", "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA")
+SRC_TAB = os.environ.get("MAP_INPUT_TAB", "Hunter Commercial")
+OUT_TAB = os.environ.get("MAP_OUTPUT_TAB", "Fiber Commercial Leads")
 
-COMMERCIAL = {"establishment", "store", "restaurant", "food", "health", "finance",
-              "car_repair", "lawyer", "doctor", "dentist", "gym", "lodging",
-              "point_of_interest", "general_contractor", "electrician", "plumber",
-              "real_estate_agency", "insurance_agency", "beauty_salon", "bank",
-              "pharmacy", "veterinary_care", "bakery", "bar", "school"}
-NON_TENANT = {"premise", "street_address", "subpremise", "route", "locality",
-              "political", "postal_code", "geocode"}
+RADII = [30, 60, 100]      # tight-first cascade; nearest qualifying tenant wins
+MAX_TENANT_M = 60          # never accept a match farther than this from the point
+FALLBACK_RADIUS_M = 4000   # area fallback search radius around ZIP center
 
-AREA_TYPES = ["restaurant", "store", "car_repair", "contractor", "medical",
-              "dentist", "lawyer", "real_estate_agency", "gym", "bank", "hotel",
-              "pharmacy", "beauty_salon", "veterinary_care", "electrician", "plumber"]
+# Tightened to REAL callable businesses. No parks, transit, cemeteries,
+# airports, parking, places of worship, government, etc.
+COMMERCIAL = {
+    "store", "restaurant", "food", "cafe", "bakery", "bar", "meal_takeaway",
+    "meal_delivery", "supermarket", "grocery_or_supermarket", "convenience_store",
+    "liquor_store", "clothing_store", "electronics_store", "furniture_store",
+    "hardware_store", "home_goods_store", "jewelry_store", "shoe_store",
+    "book_store", "pet_store", "bicycle_store", "car_dealer", "car_repair",
+    "car_wash", "gas_station", "doctor", "dentist", "pharmacy", "physiotherapist",
+    "veterinary_care", "gym", "spa", "beauty_salon", "hair_care", "lodging",
+    "finance", "insurance_agency", "lawyer", "real_estate_agency", "travel_agency",
+    "accounting", "bank", "plumber", "electrician", "roofing_contractor",
+    "general_contractor", "painter", "locksmith", "moving_company", "storage",
+    "laundry", "night_club",
+}
+# generic types that are not, by themselves, a callable commercial tenant
+GENERIC = {"point_of_interest", "establishment"}
+# hard reject - never a sales lead even if tagged establishment/POI
+NON_TENANT = {
+    "premise", "street_address", "subpremise", "route", "locality", "political",
+    "postal_code", "geocode", "park", "parking", "transit_station", "train_station",
+    "subway_station", "bus_station", "light_rail_station", "taxi_stand", "airport",
+    "cemetery", "church", "mosque", "synagogue", "hindu_temple", "place_of_worship",
+    "city_hall", "courthouse", "embassy", "local_government_office", "police",
+    "fire_station", "post_office", "school", "university", "library", "campground",
+    "rv_park", "natural_feature",
+}
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 CRED_PATHS = ["google_creds.json",
@@ -73,7 +94,7 @@ def _sheet():
 
 
 def _dist_m(lat1, lng1, lat2, lng2):
-    """Approximate meters between two lat/lng points (haversine)."""
+    """Meters between two lat/lng points (haversine)."""
     r = 6371000.0
     p1, p2 = math.radians(lat1), math.radians(lat2)
     dp = math.radians(lat2 - lat1)
@@ -95,63 +116,108 @@ def geocode(addr):
     return None
 
 
-def nearby(lat, lng):
-    """establishments operating at this coordinate (tight radius)."""
+def nearby(lat, lng, radius):
     r = requests.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-                     params={"location": "%s,%s" % (lat, lng), "radius": RADIUS_M,
+                     params={"location": "%s,%s" % (lat, lng), "radius": radius,
                              "key": API_KEY}, timeout=20).json()
     return r.get("results") or []
 
 
 def details(pid):
     p = {"place_id": pid, "key": API_KEY,
-         "fields": "name,formatted_phone_number,business_status,types,rating,formatted_address"}
+         "fields": "name,formatted_phone_number,business_status,types,rating,formatted_address,website"}
     return requests.get("https://maps.googleapis.com/maps/api/place/details/json",
                         params=p, timeout=20).json().get("result", {})
 
 
 def is_commercial(types):
+    """Real callable business: a concrete commercial type, and not a hard-reject."""
+    if any(t in NON_TENANT for t in types):
+        return False
     return any(t in COMMERCIAL for t in types)
 
 
+def has_phone(ph):
+    return bool(ph) and len(re.sub(r"\D", "", ph)) >= 7
+
+
+def _lead_from_details(d, dist, source, fiber_addr, zip_code):
+    return {
+        "biz": d.get("name", ""),
+        "phone": d.get("formatted_phone_number", ""),
+        "type": (d.get("types", [""])[0] if d.get("types") else ""),
+        "rating": d.get("rating", ""),
+        "matched": d.get("formatted_address", ""),
+        "website": d.get("website", ""),
+        "status": d.get("business_status", ""),
+        "dist_m": (round(dist) if dist is not None else ""),
+        "source": source,
+        "fiber_addr": fiber_addr,
+        "zip": zip_code,
+    }
+
+
 def tenant_at(addr):
-    """PRECISION resolver: the NEAREST operating commercial tenant to a fiber
-    address, with phone. Returns a lead dict, or None if residential/vacant."""
+    """PRECISION: nearest operating commercial tenant (with phone) to a fiber
+    address. Cascades 30->60->100m, tightest first. None if residential/vacant."""
     geo = geocode(addr)
     if not geo:
         return None
     lat, lng = geo
 
-    # keep only commercial candidates, tag each with distance from the point
+    for radius in RADII:
+        scored = []
+        for c in nearby(lat, lng, radius):
+            types = c.get("types", [])
+            if not is_commercial(types):
+                continue
+            if c.get("business_status") and c.get("business_status") != "OPERATIONAL":
+                continue
+            cl = c.get("geometry", {}).get("location", {})
+            if "lat" not in cl or "lng" not in cl:
+                continue
+            dist = _dist_m(lat, lng, cl["lat"], cl["lng"])
+            if dist > MAX_TENANT_M:
+                continue
+            scored.append((dist, c))
+        scored.sort(key=lambda x: x[0])     # NEAREST first = the tenant
+        for dist, c in scored:
+            d = details(c["place_id"])
+            time.sleep(0.1)
+            if d.get("business_status", "OPERATIONAL") == "OPERATIONAL" and has_phone(d.get("formatted_phone_number")):
+                return _lead_from_details(d, dist, "Tenant resolver", addr, "")
+    return None
+
+
+def area_fallback(addr, zip_code=""):
+    """FALLBACK only (off by default): nearest operating commercial business to
+    the ZIP center. Source='Area fallback'. NOT address-precise."""
+    if not zip_code:
+        m = re.search(r"\b\d{5}(?:-\d{4})?\b", addr)
+        zip_code = m.group(0) if m else ""
+    if not zip_code:
+        return None
+    geo = geocode(zip_code)
+    if not geo:
+        return None
+    lat, lng = geo
     scored = []
-    for c in nearby(lat, lng):
+    for c in nearby(lat, lng, FALLBACK_RADIUS_M):
         types = c.get("types", [])
         if not is_commercial(types):
-            continue
-        if any(t in NON_TENANT for t in types) and not is_commercial(types):
             continue
         if c.get("business_status") and c.get("business_status") != "OPERATIONAL":
             continue
         cl = c.get("geometry", {}).get("location", {})
         if "lat" not in cl or "lng" not in cl:
             continue
-        dist = _dist_m(lat, lng, cl["lat"], cl["lng"])
-        scored.append((dist, c))
-
-    # NEAREST first - that is the tenant at this address, not across the street
+        scored.append((_dist_m(lat, lng, cl["lat"], cl["lng"]), c))
     scored.sort(key=lambda x: x[0])
-
     for dist, c in scored:
-        if dist > MAX_TENANT_M:
-            break  # nearest commercial is too far -> no tenant at this address
         d = details(c["place_id"])
         time.sleep(0.1)
-        ph = d.get("formatted_phone_number", "")
-        if d.get("business_status", "OPERATIONAL") == "OPERATIONAL" and ph:
-            return {"biz": d.get("name", ""), "phone": ph,
-                    "type": (d.get("types", [""])[0] if d.get("types") else ""),
-                    "rating": d.get("rating", ""), "matched": d.get("formatted_address", ""),
-                    "status": d.get("business_status", ""), "dist_m": round(dist)}
+        if d.get("business_status", "OPERATIONAL") == "OPERATIONAL" and has_phone(d.get("formatted_phone_number")):
+            return _lead_from_details(d, dist, "Area fallback", addr, zip_code)
     return None
 
 
@@ -159,15 +225,23 @@ def _open_out(sh):
     try:
         return sh.worksheet(OUT_TAB)
     except Exception:
-        ws = sh.add_worksheet(OUT_TAB, 4000, 11)
+        ws = sh.add_worksheet(OUT_TAB, 4000, 12)
         ws.append_row(["Business", "Phone", "Type", "Rating", "FiberAddress",
-                       "MatchedAddress", "Zip", "DistM", "Status", "Source", "AddedAt"])
+                       "MatchedAddress", "Zip", "DistM", "Status", "Website",
+                       "Source", "AddedAt"])
         return ws
 
 
-def enrich(addr=None):
+def _row(lead, now):
+    return [lead["biz"], lead["phone"], lead["type"], lead["rating"],
+            lead["fiber_addr"], lead["matched"], lead["zip"], lead["dist_m"],
+            lead["status"], lead["website"], lead["source"], now]
+
+
+def enrich(addr=None, fallback=False):
     """Precision run. addr=one address -> returns that lead. else all Hunter
-    Commercial rows -> writes leads to the sheet."""
+    Commercial rows -> writes leads to the sheet. fallback=True only adds an
+    'Area fallback' row when the precise resolver misses."""
     sh = _sheet()
     ws = _open_out(sh)
     existing = ws.get_all_values()[1:]
@@ -175,11 +249,9 @@ def enrich(addr=None):
     now = time.strftime("%Y-%m-%d %H:%M")
 
     if addr:
-        lead = tenant_at(addr)
+        lead = tenant_at(addr) or (area_fallback(addr) if fallback else None)
         if lead and lead["phone"] not in seen:
-            ws.append_row([lead["biz"], lead["phone"], lead["type"], lead["rating"],
-                           addr, lead["matched"], "", lead["dist_m"], lead["status"],
-                           "Tenant resolver", now])
+            ws.append_row(_row(lead, now))
         return lead
 
     rows = sh.worksheet(SRC_TAB).get_all_values()
@@ -190,50 +262,19 @@ def enrich(addr=None):
             continue
         full = "%s, %s, %s %s" % (r[0].strip(), r[2].strip(), r[3].strip(), r[4].strip())
         lead = tenant_at(full)
+        if not lead and fallback:
+            lead = area_fallback(full, r[4].strip())
         if lead and lead["phone"] not in seen:
             seen.add(lead["phone"])
-            batch.append([lead["biz"], lead["phone"], lead["type"], lead["rating"],
-                          full, lead["matched"], r[4].strip(), lead["dist_m"],
-                          lead["status"], "Tenant resolver", now])
+            lead["zip"] = lead["zip"] or r[4].strip()
+            batch.append(_row(lead, now))
             if len(batch) >= 20:
                 ws.append_rows(batch); added += len(batch); batch = []
                 print("  +%d leads (running)" % added)
         time.sleep(0.1)
     if batch:
         ws.append_rows(batch); added += len(batch)
-    print("DONE. %d callable tenants at fiber addresses -> %s" % (added, OUT_TAB))
-    return added
-
-
-def enrich_area(zip_code, area):
-    """FALLBACK only: businesses by type in a fiber ZIP. Source='Area fallback'."""
-    sh = _sheet()
-    ws = _open_out(sh)
-    existing = ws.get_all_values()[1:]
-    seen = set(r[1] for r in existing if len(r) > 1 and r[1])
-    now = time.strftime("%Y-%m-%d %H:%M")
-    added = 0
-    for t in AREA_TYPES:
-        token = None
-        for _ in range(3):
-            p = {"pagetoken": token, "key": API_KEY} if token else {
-                "query": "%s in %s %s" % (t, area, zip_code), "key": API_KEY}
-            r = requests.get("https://maps.googleapis.com/maps/api/place/textsearch/json",
-                             params=p, timeout=20).json()
-            for c in r.get("results", []):
-                d = details(c.get("place_id", "")); time.sleep(0.1)
-                ph = d.get("formatted_phone_number", "")
-                if d.get("business_status") == "OPERATIONAL" and ph and ph not in seen and is_commercial(d.get("types", [])):
-                    seen.add(ph)
-                    ws.append_row([d.get("name", ""), ph, t, d.get("rating", ""), "",
-                                   d.get("formatted_address", ""), zip_code, "",
-                                   d.get("business_status", ""), "Area fallback", now])
-                    added += 1
-            token = r.get("next_page_token")
-            if not token:
-                break
-            time.sleep(2)
-    print("DONE (fallback). %d area leads -> %s" % (added, OUT_TAB))
+    print("DONE. %d callable tenants -> %s" % (added, OUT_TAB))
     return added
 
 
@@ -249,17 +290,8 @@ try:
     def _run():
         body = request.get_json(silent=True) or {}
         try:
-            res = enrich(addr=body.get("addr"))
+            res = enrich(addr=body.get("addr"), fallback=bool(body.get("fallback", False)))
             return jsonify({"ok": True, "result": res})
-        except Exception as e:
-            return jsonify({"ok": False, "error": str(e)}), 200
-
-    @app.route("/run_area", methods=["POST"])
-    def _run_area():
-        body = request.get_json(silent=True) or {}
-        try:
-            n = enrich_area(str(body.get("zip", "")), body.get("area", ""))
-            return jsonify({"ok": True, "added": n})
         except Exception as e:
             return jsonify({"ok": False, "error": str(e)}), 200
 except Exception:
@@ -267,4 +299,9 @@ except Exception:
 
 
 if __name__ == "__main__":
-    enrich()
+    import argparse
+    ap = argparse.ArgumentParser(description="MapMan v3.2 tenant resolver")
+    ap.add_argument("--addr", default=None, help="resolve a single address")
+    ap.add_argument("--fallback", action="store_true", help="enable area fallback on misses (default OFF)")
+    a = ap.parse_args()
+    print(enrich(addr=a.addr, fallback=a.fallback))
