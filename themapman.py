@@ -8,34 +8,6 @@ from datetime import datetime, timezone
 
 VERSION = "11.1.0"
 
-GITHUB_USER   = "patricksiado-prog"
-GITHUB_REPO   = "optimus-map-tools"
-GITHUB_BRANCH = "main"
-THIS_FILE     = "themapman.py"
-GITHUB_RAW    = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (GITHUB_USER, GITHUB_REPO, GITHUB_BRANCH, THIS_FILE)
-
-def check_update():
-    print("  Checking for updates...")
-    try:
-        import requests as _rq
-        r = _rq.get(GITHUB_RAW, timeout=10)
-        if r.status_code != 200:
-            print("  GitHub unreachable - running v%s" % VERSION)
-            return
-        latest = r.text
-        m = re.search(r'^\s*VERSION\s*=\s*["'](.*?)["']', latest, re.MULTILINE)
-        new_ver = m.group(1) if m else None
-        if not new_ver or new_ver == VERSION:
-            print("  Up to date (v%s)" % VERSION)
-            return
-        print("  Updating to v%s ..." % new_ver)
-        with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
-            f.write(latest)
-        print("  Updated! Restarting...")
-        os.execv(sys.executable, [sys.executable] + sys.argv)
-    except Exception as e:
-        print("  Update check failed: %s" % e)
-
 print("Checking packages...")
 for pkg in ["gspread", "google-auth", "requests"]:
     try:
@@ -48,8 +20,6 @@ for pkg in ["gspread", "google-auth", "requests"]:
 import gspread
 from google.oauth2.service_account import Credentials
 import requests
-
-check_update()
 
 API_KEY  = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
 SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
@@ -184,18 +154,7 @@ COMM_TYPES = {
     "car_wash","funeral_home","office","establishment",
     "point_of_interest","local_government_office","post_office",
     "library","fire_station","police","hospital","courthouse",
-    "city_hall","parking","car_wash","dentist","doctor",
-    "pharmacy","health","physiotherapist","veterinary_care",
-    "car_repair","car_dealer","gas_station","clothing_store",
-    "electronics_store","furniture_store","hardware_store",
-    "jewelry_store","shoe_store","bakery","meal_delivery",
-    "meal_takeaway","night_club","bar","bowling_alley",
-    "book_store","plumber","electrician","roofing_contractor",
-    "general_contractor","painter","locksmith","moving_company",
-    "storage","laundry","car_wash","funeral_home",
-    "real_estate_agency","travel_agency","accounting","insurance_agency",
-    "lawyer","finance","bank","gym","spa","beauty_salon",
-    "hair_care","lodging","store","restaurant","food","cafe",
+    "city_hall","parking",
 }
 
 def is_commercial(types):
@@ -221,9 +180,9 @@ def resolve(address):
     result["fiber_lng"] = geo["lng"]
     for radius in RADII:
         cands = nearby(geo["lat"], geo["lng"], radius)
-        filtered = [c for c in cands 
-                    if c.get("status") == "OPERATIONAL" 
-                    and c.get("place_id") 
+        filtered = [c for c in cands
+                    if c.get("status") == "OPERATIONAL"
+                    and c.get("place_id")
                     and is_commercial(c.get("types", []))
                     and not is_blocked(c.get("name", ""))]
         if not filtered:
@@ -261,8 +220,8 @@ def read_input(client, sheet_id, tab):
     records = ws.get_all_records()
     out = []
     for row in records:
-        addr = (row.get("Address") or row.get("address") or 
-                row.get("Street Address") or row.get("Full Address") or 
+        addr = (row.get("Address") or row.get("address") or
+                row.get("Street Address") or row.get("Full Address") or
                 row.get("Location"))
         if addr and str(addr).strip():
             out.append({"address": str(addr).strip()})
@@ -302,8 +261,7 @@ def write_result(ws, result):
         result.get("error", "")
     ])
 
-print("
-" + "="*55)
+print("\n" + "="*55)
 print("  THE MAP MAN v%s - API Resolver (pulls phones)" % VERSION)
 print("="*55)
 print("Connecting to Google Sheets...")
@@ -331,8 +289,7 @@ init_out(out_ws)
 
 for i, item in enumerate(to_process, 1):
     addr = item["address"]
-    print("
-[%d/%d] %s" % (i, len(to_process), addr))
+    print("\n[%d/%d] %s" % (i, len(to_process), addr))
     result = resolve(addr)
     write_result(out_ws, result)
     print("  -> %s | Phone: %s | Distance: %sm" % (
@@ -341,5 +298,4 @@ for i, item in enumerate(to_process, 1):
     ))
     time.sleep(0.2)
 
-print("
-Done! Results in '%s' tab." % OUT_TAB)
+print("\nDone! Results in '%s' tab." % OUT_TAB)
