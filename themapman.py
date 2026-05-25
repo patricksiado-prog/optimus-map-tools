@@ -1,257 +1,255 @@
 #!/usr/bin/env python3
 """
-mapman_api_batch.py - Optimus MapMan (v3.3, tenant-resolver, no-geocoding-api)
+THE MAP MAN v11.0.0 - API Resolver (replaces the browser scraper)
+================================================================
+The old browser-scraper themapman did NOT reliably pull phone numbers.
+This version uses the Google Places API (Text Search + Nearby + Details)
+and DOES pull phone numbers. No Selenium, no browser.
 
-For each fiber address: Text Search -> coordinates -> tight-radius nearby search
--> nearest operating commercial tenant -> Place Details -> phone -> write lead.
-No commercial tenant near the point => residential/vacant => SKIP.
+For each fiber address in 'Hunter Green Commercial':
+  Text Search -> coordinates -> Nearby (tight radius) -> nearest operating
+  commercial tenant -> Place Details -> phone -> write to 'Fiber Commercial Leads'.
+Resume-enabled: skips addresses already in the output tab.
 
-geocode() uses Places TEXT SEARCH (not the Geocoding API, which is REQUEST_DENIED
-on this key). Text Search returns geometry.location on the same key. Proven live.
-
-RUN:
-  python mapman_api_batch.py                 (all Hunter Commercial rows, fallback OFF)
-  python mapman_api_batch.py --fallback      (area fallback on misses)
-  python mapman_api_batch.py --addr "732 Esters Boulevard, Biloxi, MS 39530"
+NOTE: geocode() uses Places Text Search, NOT the Geocoding API
+(Geocoding returns REQUEST_DENIED on this key; Text Search works).
 """
-import os, re, json, time, math
+
+import subprocess, sys, os, re, json, math, time
+from datetime import datetime, timezone
+
+VERSION = "11.0.0"
+
+# ===== AUTO UPDATE (kept so future pushes still reach this machine) =====
+GITHUB_USER   = "patricksiado-prog"
+GITHUB_REPO   = "optimus-map-tools"
+GITHUB_BRANCH = "main"
+THIS_FILE     = "themapman.py"
+GITHUB_RAW    = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (
+    GITHUB_USER, GITHUB_REPO, GITHUB_BRANCH, THIS_FILE)
+
+def check_update():
+    print("  Checking for updates...")
+    try:
+        import requests as _rq
+        r = _rq.get(GITHUB_RAW, timeout=10)
+        if r.status_code != 200:
+            print("  GitHub unreachable - running v%s" % VERSION); return
+        latest = r.text
+        m = re.search(r'''^\s*VERSION\s*=\s*["\'](.*?)["\']''', latest, re.MULTILINE)
+        new_ver = m.group(1) if m else None
+        if not new_ver or new_ver == VERSION:
+            print("  Up to date (v%s)" % VERSION); return
+        print("  Updating to v%s ..." % new_ver)
+        with open(os.path.abspath(__file__), "w", encoding="utf-8") as f:
+            f.write(latest)
+        print("  Updated! Restarting...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    except Exception as e:
+        print("  Update check failed: %s" % e)
+
+# 1. INSTALL PACKAGES
+print("Checking packages...")
+for pkg in ["gspread", "google-auth", "requests"]:
+    try:
+        __import__(pkg.replace("-", "_"))
+        print("  %s OK" % pkg)
+    except:
+        print("  Installing %s..." % pkg)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
+
+import gspread
+from google.oauth2.service_account import Credentials
 import requests
 
-VERSION = "3.3-tenant-resolver-no-geocoding-api"
+check_update()
 
-API_KEY  = os.environ.get("PLACES_API_KEY", "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g")
-SHEET_ID = os.environ.get("MAP_SHEET_ID", "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA")
-SRC_TAB  = os.environ.get("MAP_INPUT_TAB", "Hunter Commercial")
-OUT_TAB  = os.environ.get("MAP_OUTPUT_TAB", "Fiber Commercial Leads")
+# 2. CONFIG
+API_KEY  = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
+SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
+IN_TAB   = "Hunter Green Commercial"
+OUT_TAB  = "Fiber Commercial Leads"
+SCOPES   = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+RADII    = [30, 60, 100]
+MAX_M    = 60
+EARTH_M  = 6371000
 
-RADII = [30, 60, 100]      # tight-first; nearest qualifying tenant wins
-MAX_TENANT_M = 60          # never accept a match farther than this from the point
-FALLBACK_RADIUS_M = 4000   # area fallback radius around ZIP center
+# 3. FIND CREDS
+import pathlib
+creds_file = None
+for p in ["google_creds.json", "./google_creds.json", "/storage/emulated/0/Download/google_creds.json", "/storage/emulated/0/google_creds.json", "C:/Users/patri/Desktop/google_creds.json"]:
+    if pathlib.Path(p).exists():
+        creds_file = str(pathlib.Path(p).resolve())
+        break
+if not creds_file:
+    print("ERROR: google_creds.json not found. Put it in Downloads or same folder.")
+    sys.exit(1)
 
-COMMERCIAL = {
-    "store","restaurant","food","cafe","bakery","bar","meal_takeaway",
-    "meal_delivery","supermarket","grocery_or_supermarket","convenience_store",
-    "liquor_store","clothing_store","electronics_store","furniture_store",
-    "hardware_store","home_goods_store","jewelry_store","shoe_store",
-    "book_store","pet_store","bicycle_store","car_dealer","car_repair",
-    "car_wash","gas_station","doctor","dentist","pharmacy","physiotherapist",
-    "veterinary_care","gym","spa","beauty_salon","hair_care","lodging",
-    "finance","insurance_agency","lawyer","real_estate_agency","travel_agency",
-    "accounting","bank","plumber","electrician","roofing_contractor",
-    "general_contractor","painter","locksmith","moving_company","storage",
-    "laundry","night_club",
-}
-NON_TENANT = {
-    "premise","street_address","subpremise","route","locality","political",
-    "postal_code","geocode","park","parking","transit_station","train_station",
-    "subway_station","bus_station","light_rail_station","taxi_stand","airport",
-    "cemetery","church","mosque","synagogue","hindu_temple","place_of_worship",
-    "city_hall","courthouse","embassy","local_government_office","police",
-    "fire_station","post_office","school","university","library","campground",
-    "rv_park","natural_feature",
-}
+# 4. HELPERS
+def haversine(lat1, lng1, lat2, lng2):
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lng2 - lng1)
+    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+    return EARTH_M * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-CRED_PATHS = ["google_creds.json",
-              "/storage/emulated/0/Download/google_creds.json",
-              os.path.expanduser("~/google_creds.json"),
-              "C:/Users/patri/Desktop/google_creds.json"]
-
-
-def _creds():
-    from google.oauth2.service_account import Credentials
-    env = os.environ.get("GOOGLE_CREDS_JSON")
-    if env:
-        return Credentials.from_service_account_info(json.loads(env), scopes=SCOPES)
-    for p in CRED_PATHS:
-        if os.path.exists(p):
-            return Credentials.from_service_account_file(p, scopes=SCOPES)
-    raise RuntimeError("google_creds.json not found in any known path")
-
-
-def _sheet():
-    import gspread
-    return gspread.authorize(_creds()).open_by_key(SHEET_ID)
-
-
-def _dist_m(lat1, lng1, lat2, lng2):
-    r = 6371000.0
-    p1, p2 = math.radians(lat1), math.radians(lat2)
-    dp = math.radians(lat2 - lat1)
-    dl = math.radians(lng2 - lng1)
-    a = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
-    return r * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-
-
-def geocode(addr):
-    """address -> (lat,lng) via Places Text Search (NOT the denied Geocoding API)."""
-    r = requests.get("https://maps.googleapis.com/maps/api/place/textsearch/json",
-                     params={"query": addr, "key": API_KEY}, timeout=20).json()
-    res = r.get("results") or []
-    if not res:
-        return None
-    loc = res[0].get("geometry", {}).get("location", {})
-    if "lat" in loc and "lng" in loc:
-        return loc["lat"], loc["lng"]
+def geocode(address):
+    url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+    params = {"query": address, "key": API_KEY}
+    try:
+        r = requests.get(url, params=params, timeout=30)
+        data = r.json()
+        if data.get("status") == "OK" and data.get("results"):
+            loc = data["results"][0]["geometry"]["location"]
+            return {"lat": loc["lat"], "lng": loc["lng"]}
+    except:
+        pass
     return None
-
 
 def nearby(lat, lng, radius):
-    r = requests.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-                     params={"location": "%s,%s" % (lat, lng), "radius": radius,
-                             "key": API_KEY}, timeout=20).json()
-    return r.get("results") or []
+    url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    params = {"location": "%s,%s" % (lat, lng), "radius": radius, "key": API_KEY}
+    try:
+        r = requests.get(url, params=params, timeout=30)
+        data = r.json()
+        if data.get("status") == "OK":
+            return [{
+                "place_id": p.get("place_id"),
+                "name": p.get("name"),
+                "types": p.get("types", []),
+                "status": p.get("business_status", "UNKNOWN"),
+                "lat": p["geometry"]["location"]["lat"],
+                "lng": p["geometry"]["location"]["lng"],
+            } for p in data.get("results", [])]
+    except:
+        pass
+    return []
 
+def place_details(place_id):
+    url = "https://maps.googleapis.com/maps/api/place/details/json"
+    params = {
+        "place_id": place_id,
+        "fields": "name,formatted_phone_number,formatted_address,website,types,business_status",
+        "key": API_KEY,
+    }
+    try:
+        r = requests.get(url, params=params, timeout=30)
+        data = r.json()
+        if data.get("status") == "OK":
+            rr = data.get("result", {})
+            return {
+                "name": rr.get("name"),
+                "phone": rr.get("formatted_phone_number"),
+                "address": rr.get("formatted_address"),
+                "website": rr.get("website"),
+                "types": rr.get("types", []),
+            }
+    except:
+        pass
+    return None
 
-def details(pid):
-    p = {"place_id": pid, "key": API_KEY,
-         "fields": "name,formatted_phone_number,business_status,types,rating,formatted_address,website"}
-    return requests.get("https://maps.googleapis.com/maps/api/place/details/json",
-                        params=p, timeout=20).json().get("result", {})
-
+COMM_TYPES = {"store","restaurant","food","cafe","health","doctor","dentist","pharmacy","gym","spa","beauty_salon","hair_care","lodging","finance","insurance_agency","lawyer","real_estate_agency","travel_agency","accounting","bank","car_repair","car_dealer","gas_station","shopping_mall","clothing_store","electronics_store","furniture_store","hardware_store","home_goods_store","jewelry_store","shoe_store","supermarket","grocery_or_supermarket","convenience_store","liquor_store","bakery","meal_delivery","meal_takeaway","night_club","bar","bowling_alley","casino","movie_theater","amusement_park","aquarium","art_gallery","museum","zoo","book_store","veterinary_care","physiotherapist","plumber","electrician","roofing_contractor","general_contractor","painter","locksmith","moving_company","storage","laundry","car_wash","funeral_home"}
 
 def is_commercial(types):
-    if any(t in NON_TENANT for t in types):
-        return False
-    return any(t in COMMERCIAL for t in types)
+    return any(t in COMM_TYPES for t in types)
 
+def has_phone(phone):
+    return phone and len(re.sub(r"\D", "", phone)) >= 7
 
-def has_phone(ph):
-    return bool(ph) and len(re.sub(r"\D", "", ph)) >= 7
-
-
-def _lead(d, dist, source, fiber_addr, zip_code):
-    return {
-        "biz": d.get("name", ""),
-        "phone": d.get("formatted_phone_number", ""),
-        "type": (d.get("types", [""])[0] if d.get("types") else ""),
-        "rating": d.get("rating", ""),
-        "matched": d.get("formatted_address", ""),
-        "website": d.get("website", ""),
-        "status": d.get("business_status", ""),
-        "dist_m": (round(dist) if dist is not None else ""),
-        "source": source,
-        "fiber_addr": fiber_addr,
-        "zip": zip_code,
-    }
-
-
-def tenant_at(addr):
-    """Nearest operating commercial tenant (with phone) to a fiber address."""
-    geo = geocode(addr)
+# 5. RESOLVER
+def resolve(address):
+    result = {"input": address, "source": None, "radius": None, "distance_m": None, "place_id": None, "status": None, "name": None, "phone": None, "address": None, "website": None, "types": None, "fiber_lat": None, "fiber_lng": None, "error": None}
+    geo = geocode(address)
     if not geo:
-        return None
-    lat, lng = geo
+        result["status"] = "GEOCODE_FAILED"
+        result["error"] = "Could not geocode"
+        return result
+    result["fiber_lat"] = geo["lat"]
+    result["fiber_lng"] = geo["lng"]
     for radius in RADII:
-        scored = []
-        for c in nearby(lat, lng, radius):
-            types = c.get("types", [])
-            if not is_commercial(types):
-                continue
-            if c.get("business_status") and c.get("business_status") != "OPERATIONAL":
-                continue
-            cl = c.get("geometry", {}).get("location", {})
-            if "lat" not in cl or "lng" not in cl:
-                continue
-            dist = _dist_m(lat, lng, cl["lat"], cl["lng"])
-            if dist > MAX_TENANT_M:
-                continue
-            scored.append((dist, c))
-        scored.sort(key=lambda x: x[0])      # NEAREST = the tenant
-        for dist, c in scored:
-            d = details(c["place_id"]); time.sleep(0.1)
-            if d.get("business_status", "OPERATIONAL") == "OPERATIONAL" and has_phone(d.get("formatted_phone_number")):
-                return _lead(d, dist, "Tenant resolver", addr, "")
-    return None
-
-
-def area_fallback(addr, zip_code=""):
-    """FALLBACK (off by default): nearest commercial business to the ZIP center."""
-    if not zip_code:
-        m = re.search(r"\b\d{5}(?:-\d{4})?\b", addr)
-        zip_code = m.group(0) if m else ""
-    if not zip_code:
-        return None
-    geo = geocode(zip_code)
-    if not geo:
-        return None
-    lat, lng = geo
-    scored = []
-    for c in nearby(lat, lng, FALLBACK_RADIUS_M):
-        types = c.get("types", [])
-        if not is_commercial(types):
+        cands = nearby(geo["lat"], geo["lng"], radius)
+        filtered = [c for c in cands if c.get("status") == "OPERATIONAL" and c.get("place_id") and is_commercial(c.get("types", []))]
+        if not filtered:
             continue
-        if c.get("business_status") and c.get("business_status") != "OPERATIONAL":
+        for c in filtered:
+            c["distance_m"] = haversine(geo["lat"], geo["lng"], c["lat"], c["lng"])
+        filtered.sort(key=lambda x: x["distance_m"])
+        best = filtered[0]
+        if best["distance_m"] > MAX_M:
             continue
-        cl = c.get("geometry", {}).get("location", {})
-        if "lat" not in cl or "lng" not in cl:
+        det = place_details(best["place_id"])
+        if not det or not has_phone(det.get("phone")):
             continue
-        scored.append((_dist_m(lat, lng, cl["lat"], cl["lng"]), c))
-    scored.sort(key=lambda x: x[0])
-    for dist, c in scored:
-        d = details(c["place_id"]); time.sleep(0.1)
-        if d.get("business_status", "OPERATIONAL") == "OPERATIONAL" and has_phone(d.get("formatted_phone_number")):
-            return _lead(d, dist, "Area fallback", addr, zip_code)
-    return None
+        result.update({"source": "Tenant resolver", "radius": radius, "distance_m": round(best["distance_m"], 1), "place_id": best["place_id"], "status": "RESOLVED", "name": det["name"], "phone": det["phone"], "address": det["address"], "website": det["website"], "types": ", ".join(det.get("types", []))})
+        return result
+    result["status"] = "NO_TENANT_FOUND"
+    result["error"] = "No valid tenant with phone"
+    return result
 
+# 6. SHEET I/O
+def read_input(client, sheet_id, tab):
+    ws = client.open_by_key(sheet_id).worksheet(tab)
+    records = ws.get_all_records()
+    out = []
+    for row in records:
+        addr = row.get("Address") or row.get("address") or row.get("Street Address") or row.get("Full Address") or row.get("Location")
+        if addr and str(addr).strip():
+            out.append({"address": str(addr).strip()})
+    return out
 
-def _open_out(sh):
+def get_already_done(client, sheet_id, tab):
     try:
-        return sh.worksheet(OUT_TAB)
-    except Exception:
-        ws = sh.add_worksheet(OUT_TAB, 4000, 12)
-        ws.append_row(["Business","Phone","Type","Rating","FiberAddress",
-                       "MatchedAddress","Zip","DistM","Status","Website","Source","AddedAt"])
-        return ws
+        ws = client.open_by_key(sheet_id).worksheet(tab)
+        rows = ws.get_all_values()
+        if len(rows) <= 1:
+            return set()
+        return set(row[0].strip() for row in rows[1:] if row and row[0].strip())
+    except gspread.WorksheetNotFound:
+        return set()
 
+def init_out(ws):
+    headers = ["Input Address","Source","Resolver Radius","Resolver Distance Meters","Place ID","Resolver Status","Tenant Name","Tenant Phone","Tenant Address","Tenant Website","Tenant Types","Fiber Lat","Fiber Lng","Processed At","Error"]
+    if not ws.get_all_values():
+        ws.append_row(headers)
+    return headers
 
-def _row(lead, now):
-    return [lead["biz"], lead["phone"], lead["type"], lead["rating"],
-            lead["fiber_addr"], lead["matched"], lead["zip"], lead["dist_m"],
-            lead["status"], lead["website"], lead["source"], now]
+def write_result(ws, result):
+    ws.append_row([result.get("input",""), result.get("source",""), result.get("radius",""), result.get("distance_m",""), result.get("place_id",""), result.get("status",""), result.get("name",""), result.get("phone",""), result.get("address",""), result.get("website",""), result.get("types",""), result.get("fiber_lat",""), result.get("fiber_lng",""), datetime.now(timezone.utc).isoformat(), result.get("error","")])
 
+# 7. MAIN
+print("\n" + "="*55)
+print("  THE MAP MAN v%s - API Resolver (pulls phones)" % VERSION)
+print("="*55)
+print("Connecting to Google Sheets...")
+client = gspread.authorize(Credentials.from_service_account_file(creds_file, scopes=SCOPES))
 
-def enrich(addr=None, fallback=False):
-    sh = _sheet()
-    ws = _open_out(sh)
-    existing = ws.get_all_values()[1:]
-    seen = set(r[1] for r in existing if len(r) > 1 and r[1])
-    now = time.strftime("%Y-%m-%d %H:%M")
+print("Checking for already-processed addresses...")
+already_done = get_already_done(client, SHEET_ID, OUT_TAB)
+print("Found %d already processed. Will skip them." % len(already_done))
 
-    if addr:
-        lead = tenant_at(addr) or (area_fallback(addr) if fallback else None)
-        if lead and lead["phone"] not in seen:
-            ws.append_row(_row(lead, now))
-        print(lead)
-        return lead
+addresses = read_input(client, SHEET_ID, IN_TAB)
+print("Loaded %d total addresses from '%s'" % (len(addresses), IN_TAB))
 
-    rows = sh.worksheet(SRC_TAB).get_all_values()
-    added = 0; batch = []
-    for r in rows[1:]:
-        if len(r) < 5 or not r[0].strip():
-            continue
-        full = "%s, %s, %s %s" % (r[0].strip(), r[2].strip(), r[3].strip(), r[4].strip())
-        lead = tenant_at(full)
-        if not lead and fallback:
-            lead = area_fallback(full, r[4].strip())
-        if lead and lead["phone"] not in seen:
-            seen.add(lead["phone"])
-            lead["zip"] = lead["zip"] or r[4].strip()
-            batch.append(_row(lead, now))
-            if len(batch) >= 20:
-                ws.append_rows(batch); added += len(batch); batch = []
-                print("  +%d leads (running)" % added)
-        time.sleep(0.1)
-    if batch:
-        ws.append_rows(batch); added += len(batch)
-    print("DONE. %d callable tenants -> %s" % (added, OUT_TAB))
-    return added
+to_process = [a for a in addresses if a["address"] not in already_done]
+print("New addresses to process: %d" % len(to_process))
 
+if not to_process:
+    print("Nothing new to process. All done!")
+    sys.exit(0)
 
-if __name__ == "__main__":
-    import argparse
-    ap = argparse.ArgumentParser(description="MapMan v3.3 tenant resolver")
-    ap.add_argument("--addr", default=None, help="resolve a single address")
-    ap.add_argument("--fallback", action="store_true", help="enable area fallback (default OFF)")
-    a = ap.parse_args()
-    enrich(addr=a.addr, fallback=a.fallback)
+try:
+    out_ws = client.open_by_key(SHEET_ID).worksheet(OUT_TAB)
+except gspread.WorksheetNotFound:
+    out_ws = client.open_by_key(SHEET_ID).add_worksheet(title=OUT_TAB, rows="1000", cols="20")
+init_out(out_ws)
+
+for i, item in enumerate(to_process, 1):
+    addr = item["address"]
+    print("\n[%d/%d] %s" % (i, len(to_process), addr))
+    result = resolve(addr)
+    write_result(out_ws, result)
+    print("  -> %s | Phone: %s | Distance: %sm" % (
+        result["status"], result.get("phone") or "N/A", result.get("distance_m") or "N/A"))
+    time.sleep(0.2)
+
+print("\nDone! Results in '%s' tab." % OUT_TAB)
