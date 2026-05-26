@@ -80,8 +80,8 @@ except: pass
 
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.03
-VERSION = "5.21"
+pyautogui.PAUSE = 0.0  # v5.22: zero delay between actions
+VERSION = "5.22"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -148,8 +148,8 @@ def save_processed_manifest(s):
     except: pass
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
-WAIT_AFTER_PAN = 0.5
-TILE_WAIT = 4.0  # v5.21: fixed per-tile settle, then move
+WAIT_AFTER_PAN = 0.1  # v5.22: minimal settle
+TILE_WAIT = 2.0  # v5.22: 2s is enough for dots to appear
 MAX_WAIT_DOTS = 4.0
 POLL_INTERVAL = 0.12
 PAN_PIXELS = 150
@@ -1205,11 +1205,11 @@ def save_progress(p):
 def pan(direction):
     pyautogui.moveTo(MAP_CX, MAP_CY)
     if direction == "right":
-        pyautogui.drag(-PAN_PIXELS, 0, duration=0.2, button="left", _pause=False)
+        pyautogui.dragRel(-PAN_PIXELS, 0, duration=0.05, button="left")
     elif direction == "left":
-        pyautogui.drag(PAN_PIXELS, 0, duration=0.2, button="left", _pause=False)
+        pyautogui.dragRel(PAN_PIXELS, 0, duration=0.05, button="left")
     elif direction == "down":
-        pyautogui.drag(0, -PAN_PIXELS, duration=0.2, button="left", _pause=False)
+        pyautogui.dragRel(0, -PAN_PIXELS, duration=0.05, button="left")
     time.sleep(WAIT_AFTER_PAN)
 
 def upload_screenshot_to_drive(local_path):
@@ -1250,7 +1250,7 @@ def screenshot(scan_num, zone_name, row, col, instance, zone_obj=None):
         "i%d_scan%02d_%s_r%02d_c%02d_%s.png" % (
             instance, scan_num, zone_name, row, col, ts))
     pyautogui.screenshot(fn)
-    import threading as _t; _t.Thread(target=upload_screenshot_to_drive, args=(fn,), daemon=True).start()  # v5.21 async
+    threading.Thread(target=upload_screenshot_to_drive, args=(fn,), daemon=True).start()  # v5.22 async
     if zone_obj:
         try:
             sc = fn.replace(".png",".json")
