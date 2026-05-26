@@ -81,7 +81,7 @@ except: pass
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.0  # v5.22: zero delay between actions
-VERSION = "5.22"
+VERSION = "5.23"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -149,8 +149,8 @@ def save_processed_manifest(s):
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
 WAIT_AFTER_PAN = 0.1  # v5.22: minimal settle
-TILE_WAIT = 2.0  # v5.22: 2s is enough for dots to appear
-MAX_WAIT_DOTS = 4.0
+TILE_WAIT = 0.5  # v5.23: map loads in 0.5s  # v5.22: 2s is enough for dots to appear
+MAX_WAIT_DOTS = 1.5  # v5.23: dots appear in <1s
 POLL_INTERVAL = 0.12
 PAN_PIXELS = 150
 START_DELAY = 10
@@ -1250,21 +1250,25 @@ def screenshot(scan_num, zone_name, row, col, instance, zone_obj=None):
         "i%d_scan%02d_%s_r%02d_c%02d_%s.png" % (
             instance, scan_num, zone_name, row, col, ts))
     pyautogui.screenshot(fn)
-    threading.Thread(target=upload_screenshot_to_drive, args=(fn,), daemon=True).start()  # v5.22 async
+    # v5.23: fire-and-forget upload (don't wait for it)
+    try:
+        threading.Thread(target=upload_screenshot_to_drive, args=(fn,), daemon=True).start()
+    except: pass
     if zone_obj:
         try:
             sc = fn.replace(".png",".json")
             with open(sc,"w") as _sf:
                 json.dump({"zone":zone_obj,"row":row,"col":col,
                     "scan_num":scan_num,"instance":instance},_sf)
-            import threading as _t; _t.Thread(target=upload_screenshot_to_drive, args=(sc,), daemon=True).start()  # v5.21 async
+            threading.Thread(target=upload_screenshot_to_drive, args=(sc,), daemon=True).start()
         except: pass
     return fn
 
 def scan_cell(zone, city, row, col, btn_x, btn_y, processor, scan_num, instance):
     pyautogui.click(btn_x, btn_y)
-    time.sleep(TILE_WAIT)  # v5.21: fixed settle, then move
-    found, o, g = dots_on_screen()
+    found, o, g = wait_for_dots(max_wait=MAX_WAIT_DOTS)  # v5.23: smart wait, max 1.5s
+    if not found:
+        found, o, g = dots_on_screen()  # fallback
     shot = screenshot(scan_num, zone["name"], row, col, instance, zone_obj=zone)
     print("  [I%d %s R%dC%d] O:%d G:%d" % (
         instance, zone["name"], row + 1, col + 1, o, g))
