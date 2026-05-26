@@ -81,7 +81,7 @@ except: pass
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.03
-VERSION = "5.17"
+VERSION = "5.21"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -148,7 +148,8 @@ def save_processed_manifest(s):
     except: pass
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
-WAIT_AFTER_PAN = 1.5
+WAIT_AFTER_PAN = 0.5
+TILE_WAIT = 4.0  # v5.21: fixed per-tile settle, then move
 MAX_WAIT_DOTS = 4.0
 POLL_INTERVAL = 0.12
 PAN_PIXELS = 150
@@ -1249,20 +1250,21 @@ def screenshot(scan_num, zone_name, row, col, instance, zone_obj=None):
         "i%d_scan%02d_%s_r%02d_c%02d_%s.png" % (
             instance, scan_num, zone_name, row, col, ts))
     pyautogui.screenshot(fn)
-    upload_screenshot_to_drive(fn)  # v5.9
+    import threading as _t; _t.Thread(target=upload_screenshot_to_drive, args=(fn,), daemon=True).start()  # v5.21 async
     if zone_obj:
         try:
             sc = fn.replace(".png",".json")
             with open(sc,"w") as _sf:
                 json.dump({"zone":zone_obj,"row":row,"col":col,
                     "scan_num":scan_num,"instance":instance},_sf)
-            upload_screenshot_to_drive(sc)  # v5.17 MIME-correct
+            import threading as _t; _t.Thread(target=upload_screenshot_to_drive, args=(sc,), daemon=True).start()  # v5.21 async
         except: pass
     return fn
 
 def scan_cell(zone, city, row, col, btn_x, btn_y, processor, scan_num, instance):
     pyautogui.click(btn_x, btn_y)
-    found, o, g = wait_for_dots()
+    time.sleep(TILE_WAIT)  # v5.21: fixed settle, then move
+    found, o, g = dots_on_screen()
     shot = screenshot(scan_num, zone["name"], row, col, instance, zone_obj=zone)
     print("  [I%d %s R%dC%d] O:%d G:%d" % (
         instance, zone["name"], row + 1, col + 1, o, g))
