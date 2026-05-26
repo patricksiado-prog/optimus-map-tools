@@ -6,7 +6,7 @@ Reads Hunter Green Commercial, adds phones, skips done, blocks chains.
 import subprocess, sys, os, re, json, math, time
 from datetime import datetime, timezone
 
-VERSION = "11.1.0"
+VERSION = "11.2.0"
 
 print("Checking packages...")
 for pkg in ["gspread", "google-auth", "requests"]:
@@ -171,7 +171,7 @@ def is_commercial(types):
 def has_phone(phone):
     return phone and len(re.sub(r"\D", "", phone)) >= 7
 
-def resolve(address):
+def resolve(address, fiber_lat=None, fiber_lng=None, want_state=None):
     result = {
         "input": address, "source": None, "radius": None,
         "distance_m": None, "place_id": None, "status": None,
@@ -179,7 +179,13 @@ def resolve(address):
         "website": None, "types": None,
         "fiber_lat": None, "fiber_lng": None, "error": None
     }
-    geo = geocode(address)
+    def _ff(x):
+        try:
+            return float(str(x).strip())
+        except Exception:
+            return None
+    _flat, _flng = _ff(fiber_lat), _ff(fiber_lng)
+    geo = {"lat": _flat, "lng": _flng} if (_flat is not None and _flng is not None) else geocode(address)
     if not geo:
         result["status"] = "GEOCODE_FAILED"
         result["error"] = "Could not geocode"
@@ -232,7 +238,7 @@ def read_input(client, sheet_id, tab):
                 row.get("Street Address") or row.get("Full Address") or
                 row.get("Location"))
         if addr and str(addr).strip():
-            out.append({"address": str(addr).strip()})
+            out.append({"address": str(addr).strip(), "lat": row.get("Lat") or row.get("lat"), "lng": row.get("Lng") or row.get("lng"), "state": (row.get("State") or row.get("state") or "")})
     return out
 
 def get_already_done(client, sheet_id, tab):
@@ -298,7 +304,7 @@ init_out(out_ws)
 for i, item in enumerate(to_process, 1):
     addr = item["address"]
     print("\n[%d/%d] %s" % (i, len(to_process), addr))
-    result = resolve(addr)
+    result = resolve(addr, item.get("lat"), item.get("lng"), item.get("state"))
     write_result(out_ws, result)
     print("  -> %s | Phone: %s | Distance: %sm" % (
         result["status"], result.get("phone") or "N/A",
