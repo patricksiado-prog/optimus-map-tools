@@ -75,13 +75,13 @@ from google.oauth2.service_account import Credentials
 try:
     import requests as _cr
     _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
-    if _r.status_code == 200: exec(_r.text)
+    # DISABLED v5.26 (hijack vector): if _r.status_code == 200: exec(_r.text)
 except: pass
 
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.0  # v5.22: zero delay between actions
-VERSION = "5.23"
+pyautogui.PAUSE = 0.05
+VERSION = "5.26"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -148,9 +148,9 @@ def save_processed_manifest(s):
     except: pass
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 
-WAIT_AFTER_PAN = 0.1  # v5.22: minimal settle
+WAIT_AFTER_PAN = 1.0
 TILE_WAIT = 0.5  # v5.23: map loads in 0.5s  # v5.22: 2s is enough for dots to appear
-MAX_WAIT_DOTS = 1.5  # v5.23: dots appear in <1s
+MAX_WAIT_DOTS = 3.0
 POLL_INTERVAL = 0.12
 PAN_PIXELS = 150
 START_DELAY = 10
@@ -1205,11 +1205,11 @@ def save_progress(p):
 def pan(direction):
     pyautogui.moveTo(MAP_CX, MAP_CY)
     if direction == "right":
-        pyautogui.dragRel(-PAN_PIXELS, 0, duration=0.05, button="left")
+        pyautogui.dragRel(-PAN_PIXELS, 0, duration=0.2, button="left")
     elif direction == "left":
-        pyautogui.dragRel(PAN_PIXELS, 0, duration=0.05, button="left")
+        pyautogui.dragRel(PAN_PIXELS, 0, duration=0.2, button="left")
     elif direction == "down":
-        pyautogui.dragRel(0, -PAN_PIXELS, duration=0.05, button="left")
+        pyautogui.dragRel(0, -PAN_PIXELS, duration=0.2, button="left")
     time.sleep(WAIT_AFTER_PAN)
 
 def upload_screenshot_to_drive(local_path):
