@@ -81,7 +81,7 @@ except: pass
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.05
-VERSION = "5.26"
+VERSION = "5.27"
 
 # AUTO-UPDATER
 AUTO_UPDATE = True
@@ -799,7 +799,7 @@ def connect_sheets():
                   "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_file(CREDS_FILE, scopes=scopes)
         client = gspread.authorize(creds)
-        ss = client.open(SHEET_NAME)
+        ss = client.open_by_key("1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA")
         existing = [ws.title for ws in ss.worksheets()]
         tabs = {}
         for tname, headers in TAB_HEADERS.items():
