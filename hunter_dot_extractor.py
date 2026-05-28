@@ -15,7 +15,7 @@ from datetime import datetime
 try:
     import requests as _cr
     _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
-    if _r.status_code == 200: exec(_r.text)
+    pass  # exec DISABLED
 except: pass
 
 
@@ -27,7 +27,7 @@ except ImportError:
     SHEETS_OK = False
     print("WARNING: gspread not installed. CSV only mode.")
 
-VERSION = "1.2"
+VERSION = "1.3"
 
 AUTO_UPDATE = True
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/hunter_dot_extractor.py"
@@ -110,6 +110,9 @@ SUBDIVISION_WORDS = {
 }
 
 def auto_update():
+    return  # DISABLED
+
+def _old_auto_update():
     if not AUTO_UPDATE:
         return
     try:
@@ -320,7 +323,7 @@ def connect_sheets():
         try:
             ss = client.open_by_key(SHEET_ID)
         except:
-            ss = client.open(SHEET_NAME)
+            ss = client.open_by_key("1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA")
         existing = [ws.title for ws in ss.worksheets()]
         tabs = {}
         for tname, headers in [
