@@ -307,7 +307,8 @@ for i, item in enumerate(to_process, 1):
     result = resolve(addr, item.get("lat"), item.get("lng"), item.get("state"))
     write_result(out_ws, result)
     print("  -> %s | Name: %s | Phone: %s | Distance: %sm" % (
-        result["status"], result.get("name") or "N/A", result.get("phone") or "N/A",
+        result["status"], result.get("name") or "N/A",
+        result.get("phone") or "N/A",
         result.get("distance_m") or "N/A"
     ))
     time.sleep(0.2)
