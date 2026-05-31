@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-THE MAP MAN v11.1.0 - API Resolver
-Reads Hunter Green Commercial, adds phones, skips done, blocks chains.
+THE MAP MAN v11.2.5 - Run on Pydroid (cell phone)
 """
 import subprocess, sys, os, re, json, math, time
 from datetime import datetime, timezone
 
-VERSION = "11.2.0"
+VERSION = "11.2.5"
 
 print("Checking packages...")
 for pkg in ["gspread", "google-auth", "requests"]:
@@ -30,22 +29,13 @@ RADII    = [30, 60, 100, 200, 500]
 MAX_M    = 150
 EARTH_M  = 6371000
 
-import pathlib
-
-# Unified tabs config
-try:
-    import requests as _cr
-    _r = _cr.get("https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/main/optimus_config.py", timeout=10)
-    if _r.status_code == 200: exec(_r.text)
-except: pass
-
 creds_file = None
-for p in ["google_creds.json", "./google_creds.json", "/storage/emulated/0/Download/google_creds.json", "/storage/emulated/0/google_creds.json", "C:/Users/patri/Desktop/google_creds.json"]:
-    if pathlib.Path(p).exists():
-        creds_file = str(pathlib.Path(p).resolve())
+for p in ["google_creds.json", "/storage/emulated/0/Download/google_creds.json", "/storage/emulated/0/google_creds.json"]:
+    if os.path.exists(p):
+        creds_file = p
         break
 if not creds_file:
-    print("ERROR: google_creds.json not found.")
+    print("ERROR: google_creds.json not found. Put it in /Download or same folder.")
     sys.exit(1)
 
 def haversine(lat1, lng1, lat2, lng2):
@@ -262,8 +252,8 @@ def init_out(ws):
         ws.append_row(headers)
     return headers
 
-def write_result(ws, result):
-    ws.append_row([
+def write_result(ws, result, max_retries=3):
+    row = [
         result.get("input", ""), result.get("source", ""),
         result.get("radius", ""), result.get("distance_m", ""),
         result.get("place_id", ""), result.get("status", ""),
@@ -273,10 +263,23 @@ def write_result(ws, result):
         result.get("fiber_lng", ""),
         datetime.now(timezone.utc).isoformat(),
         result.get("error", "")
-    ])
+    ]
+    for attempt in range(max_retries):
+        try:
+            ws.append_row(row)
+            return True
+        except Exception as e:
+            print("  Write error (attempt %d/%d): %s" % (attempt + 1, max_retries, e))
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+            else:
+                print("  FAILED to write after %d attempts" % max_retries)
+                return False
+    return False
 
 print("\n" + "="*55)
 print("  THE MAP MAN v%s - API Resolver (pulls phones)" % VERSION)
+print("  Running on Pydroid - cell phone")
 print("="*55)
 print("Connecting to Google Sheets...")
 client = gspread.authorize(Credentials.from_service_account_file(creds_file, scopes=SCOPES))
@@ -305,12 +308,15 @@ for i, item in enumerate(to_process, 1):
     addr = item["address"]
     print("\n[%d/%d] %s" % (i, len(to_process), addr))
     result = resolve(addr, item.get("lat"), item.get("lng"), item.get("state"))
-    write_result(out_ws, result)
-    print("  -> %s | Name: %s | Phone: %s | Distance: %sm" % (
-        result["status"], result.get("name") or "N/A",
-        result.get("phone") or "N/A",
-        result.get("distance_m") or "N/A"
-    ))
+    success = write_result(out_ws, result)
+    if success:
+        print("  -> %s | Name: %s | Phone: %s | Distance: %sm" % (
+            result["status"], result.get("name") or "N/A",
+            result.get("phone") or "N/A",
+            result.get("distance_m") or "N/A"
+        ))
+    else:
+        print("  -> WRITE FAILED for %s" % addr)
     time.sleep(0.2)
 
 print("\nDone! Results in '%s' tab." % OUT_TAB)
