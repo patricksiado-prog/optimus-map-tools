@@ -303,6 +303,39 @@ def pan(page, direction):
     time.sleep(WAIT_AFTER_PAN)
 
 
+# --- borrowed from fiber_hunter's proven loop: the AT&T map only loads dots for
+#     a new area AFTER you click "Search this area", then you wait for them to appear.
+SEARCH_BTN_SELECTORS = [
+    "button:has-text('Search this area')", "text=Search this area",
+    "[aria-label*='Search this area']", "button:has-text('Search this Area')",
+]
+MAX_WAIT_DOTS = 4.0
+POLL_INTERVAL = 0.15
+
+
+def click_search_this_area(page):
+    """Click the 'Search this area' button so the new viewport loads its dots."""
+    for sel in SEARCH_BTN_SELECTORS:
+        try:
+            el = page.query_selector(sel)
+            if el:
+                el.click(timeout=1500)
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def wait_for_dots(page, max_wait=MAX_WAIT_DOTS):
+    """Reactive wait: poll until green dots appear (or give up). fiber_hunter pattern."""
+    start = time.time()
+    while time.time() - start < max_wait:
+        if find_green_dots(grab(page)):
+            return True
+        time.sleep(POLL_INTERVAL)
+    return False
+
+
 def search_zip(page, zip_code):
     for sel in ["input[type='search']", "input[placeholder*='ddress']",
                 "input[placeholder*='earch']", "input"]:
@@ -327,6 +360,8 @@ def drain_viewport(page, ws, seen, area_label, dry):
     """Click EVERY green dot in the current viewport, capture, return count."""
     captured = 0
     clicked_pixels = set()
+    click_search_this_area(page)   # load this area's dots (fiber_hunter pattern)
+    wait_for_dots(page)            # poll until they render before reading
     dots = find_green_dots(grab(page))
     print("  viewport: %d green dots" % len(dots))
     for (x, y) in dots:
