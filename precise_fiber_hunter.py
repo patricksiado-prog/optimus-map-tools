@@ -388,6 +388,8 @@ def main():
     ap.add_argument("--zoom-in", type=int, default=0, help="press zoom-IN this many times after load")
     ap.add_argument("--zoom-out", type=int, default=0, help="press zoom-OUT this many times after load")
     ap.add_argument("--dry", action="store_true", help="don't write to the sheet, just print")
+    ap.add_argument("--wait", action="store_true",
+                    help="open the map, then PAUSE so you log in + zoom/position it; press Enter to start clicking")
     args = ap.parse_args()
 
     os.makedirs(PROFILE_DIR, exist_ok=True)
@@ -424,6 +426,11 @@ def main():
         if args.zoom_out:
             print("Zooming OUT x%d" % args.zoom_out)
             zoom(page, args.zoom_out, "out")
+
+        if args.wait:
+            print("\n>>> Log in (if needed) and zoom/position the map to your area.")
+            input(">>> When the green dots are showing how you want, press Enter to start clicking... ")
+            focus_map(page)
 
         print("Scanning %d x %d viewports...\n" % (args.cols, args.rows))
         n = scan(page, ws, args.zip or "manual", args.cols, args.rows, args.dry)
