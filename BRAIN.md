@@ -1,11 +1,11 @@
 # Optimus BRAIN
 
-_Last updated: 2026-05-02 05:32:19 CDT_
+_Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 
 ## Active systems
 - GitHub repo: patricksiado-prog/optimus-map-tools
 - Active sheet: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
-- GHL Houston Location: TXw28sw0Z2rl6tcCDhJY (~41,325 contacts)
+- GHL Houston Location: TXw28sw0Z2rl6tcCDhJY — "Frontline Direct" (44,523 contacts as of 2026-06-02, up from ~41,325 on 2026-05-02)
 - Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
 - Map Man v10
 - Drive mirror: 1u38EOzaGO7Sd5Y8ERqQoXeYZW5Pws8Z_
@@ -17,6 +17,8 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 
 ## Run log
 (append new entries below this line)
+
+- 2026-06-02 — GHL contacts at 44,523 (live API, location Frontline Direct TXw28sw0Z2rl6tcCDhJY). Up +3,198 since 2026-05-02 baseline of ~41,325. Newest 100 all added 2026-06-01 via CSV import through the GHL CRM UI; allowDuplicateContact=false so the gain is net-new (deduped on email+phone).
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
