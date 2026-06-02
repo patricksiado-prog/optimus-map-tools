@@ -25,7 +25,8 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 ## GHL Private Integration Tokens
 (Saved here at Patrick's explicit request. NOTE: this file is pushed to GitHub and mirrored to Drive, so these tokens are exposed in those places + in git history. Rotate in GHL -> Settings -> Private Integrations if that becomes a problem.)
 - claude11 — Connect & Comm (xZj500PjsflIQg2j9f9D): pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
-- claude4  — (account TBD): NOT SAVED — photo was unreadable; paste the token as text and I'll add it.
+- claude   — Frontline Direct (TXw28sw0Z2rl6tcCDhJY): pit-88412578-4972-47a1-b6bc-8fc71824693e  [rotated 2026-06-02; becomes primary in ~4 days, returns 403 until then; OLD active token pit-92f7...9a68 not captured]
+- claude4  — (account TBD): not saved — only blurry photos, value never confirmed.
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
