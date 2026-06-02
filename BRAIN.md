@@ -24,9 +24,11 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 
 ## GHL Private Integration Tokens
 (Saved here at Patrick's explicit request. NOTE: this file is pushed to GitHub and mirrored to Drive, so these tokens are exposed in those places + in git history. Rotate in GHL -> Settings -> Private Integrations if that becomes a problem.)
-- claude11 — Connect & Comm (xZj500PjsflIQg2j9f9D): pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
-- claude   — Frontline Direct (TXw28sw0Z2rl6tcCDhJY): pit-88412578-4972-47a1-b6bc-8fc71824693e  [rotated 2026-06-02; becomes primary in ~4 days, returns 403 until then; OLD active token pit-92f7...9a68 not captured]
-- claude4  — (account TBD): not saved — only blurry photos, value never confirmed.
+(Tokens can't be verified from the Claude container — outbound to GHL is blocked. Clean transcriptions from Patrick's doc, for the deployed bridge / MCP setup.)
+- Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude": pit-88412578-4972-47af-a6bc-8fc71824693e
+- Connect & Comm (xZj500PjsflIQg2j9f9D) — "claude11": pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
+- Account UNCONFIRMED (likely Connect & Comm): pit-d04904c8-9e39-4023-88df-e60fa0cff61e
+- GHL MCP endpoint: https://services.leadconnectorhq.com/mcp/
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
