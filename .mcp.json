@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "ghl-frontline": {
+      "type": "http",
+      "url": "https://services.leadconnectorhq.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GHL_TOKEN_FRONTLINE}",
+        "locationId": "TXw28sw0Z2rI6tcCDhJY"
+      }
+    },
+    "ghl-connectcomm": {
+      "type": "http",
+      "url": "https://services.leadconnectorhq.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GHL_TOKEN_CONNECT_COMM}",
+        "locationId": "xZj500PjsflIQg2j9f9D"
+      }
+    }
+  }
+}
