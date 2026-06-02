@@ -20,6 +20,7 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 
 - 2026-06-02 — GHL contacts at 44,523 (live API, location Frontline Direct TXw28sw0Z2rl6tcCDhJY). Up +3,198 since 2026-05-02 baseline of ~41,325. Newest 100 all added 2026-06-01 via CSV import through the GHL CRM UI; allowDuplicateContact=false so the gain is net-new (deduped on email+phone).
 - 2026-06-02 — Added `ghl_ai/` GHL<->Claude auto-reply bridge (Flask, deployable on Render/Cloud Run like the other portals). GHL workflow webhook -> /ghl/inbound -> Claude drafts an AT&T fiber SMS reply -> sent back via GHL conversations API. Model claude-opus-4-8 (CLAUDE_MODEL overridable). DRY_RUN defaults TRUE (drafts only, no send) to protect the 44k list; opt-out words never answered. Secrets via env vars (ANTHROPIC_API_KEY, GHL_TOKEN, BRIDGE_SECRET). Setup steps in ghl_ai/README.md.
+- 2026-06-02 — Created GHL Private Integration "claude11" for the Connect & Comm sub-account (location xZj500PjsflIQg2j9f9D). Token is stored ONLY in gitignored `ghl_ai/.env` (key GHL_TOKEN_CONNECT_COMM) — NOT in the repo, never commit it. Rotate it in GHL (Settings -> Private Integrations) if it is ever exposed. Frontline Direct (TXw28sw0Z2rl6tcCDhJY) stays on the session connector.
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
