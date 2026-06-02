@@ -390,6 +390,8 @@ def main():
     ap.add_argument("--dry", action="store_true", help="don't write to the sheet, just print")
     ap.add_argument("--wait", action="store_true",
                     help="open the map, then PAUSE so you log in + zoom/position it; press Enter to start clicking")
+    ap.add_argument("--forever", action="store_true",
+                    help="snake across the map with arrow keys and keep going until you press Ctrl+C")
     args = ap.parse_args()
 
     os.makedirs(PROFILE_DIR, exist_ok=True)
@@ -432,8 +434,32 @@ def main():
             input(">>> When the green dots are showing how you want, press Enter to start clicking... ")
             focus_map(page)
 
+        area_label = args.zip or "manual"
+
+        if args.forever:
+            print("FOREVER mode: snaking with arrow keys until you press Ctrl+C in this window.\n")
+            seen = already_seen(ws)
+            print("Resume: %d addresses already captured -> will skip them." % len(seen))
+            width = max(2, args.cols)
+            total = 0
+            going_right = True
+            try:
+                while True:
+                    for c in range(width):
+                        total += drain_viewport(page, ws, seen, area_label, args.dry)
+                        if c < width - 1:
+                            pan(page, "right" if going_right else "left")
+                    pan(page, "down")
+                    going_right = not going_right
+                    print("  ... %d captured so far (Ctrl+C to stop)" % total)
+            except KeyboardInterrupt:
+                print("\nStopped. Captured %d total this session." % total)
+            print(("They're in the '%s' tab." % OUT_TAB) if ws else "(dry run, nothing written)")
+            ctx.close()
+            return
+
         print("Scanning %d x %d viewports...\n" % (args.cols, args.rows))
-        n = scan(page, ws, args.zip or "manual", args.cols, args.rows, args.dry)
+        n = scan(page, ws, area_label, args.cols, args.rows, args.dry)
         print("\nDONE. Captured %d new fiber-eligible addresses." % n)
         print(("They're in the '%s' tab." % OUT_TAB) if ws else "(dry run, nothing written)")
         input("Press Enter to close the browser... ")
