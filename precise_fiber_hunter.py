@@ -427,18 +427,35 @@ def main():
                     help="open the map, then PAUSE so you log in + zoom/position it; press Enter to start clicking")
     ap.add_argument("--forever", action="store_true",
                     help="snake across the map with arrow keys and keep going until you press Ctrl+C")
+    ap.add_argument("--attach", action="store_true",
+                    help="attach to your ALREADY-OPEN Chrome (started with --remote-debugging-port=9222); skips login entirely")
+    ap.add_argument("--cdp", default="http://localhost:9222", help="CDP url for --attach")
     args = ap.parse_args()
 
     os.makedirs(PROFILE_DIR, exist_ok=True)
 
     with sync_playwright() as pw:
-        ctx = pw.chromium.launch_persistent_context(
-            PROFILE_DIR, headless=False,
-            viewport={"width": 1366, "height": 768},
-            args=["--start-maximized"],
-        )
-        page = ctx.pages[0] if ctx.pages else ctx.new_page()
-        page.goto(MAP_URL, wait_until="domcontentloaded", timeout=60000)
+        if args.attach:
+            # Use the browser YOU already have open + logged in. No automated login.
+            browser = pw.chromium.connect_over_cdp(args.cdp)
+            ctx = browser.contexts[0] if browser.contexts else browser.new_context()
+            page = None
+            for p in ctx.pages:
+                if "youachieve" in p.url or "att.com" in p.url:
+                    page = p
+                    break
+            if page is None:
+                page = ctx.pages[0] if ctx.pages else ctx.new_page()
+            page.bring_to_front()
+            print("Attached to your Chrome. Current tab: %s" % page.url)
+        else:
+            ctx = pw.chromium.launch_persistent_context(
+                PROFILE_DIR, headless=False,
+                viewport={"width": 1366, "height": 768},
+                args=["--start-maximized"],
+            )
+            page = ctx.pages[0] if ctx.pages else ctx.new_page()
+            page.goto(MAP_URL, wait_until="domcontentloaded", timeout=60000)
 
         if args.login:
             print("\nLOG IN in the browser, open the Fiber Map, then come back here.")
@@ -490,14 +507,16 @@ def main():
             except KeyboardInterrupt:
                 print("\nStopped. Captured %d total this session." % total)
             print(("They're in the '%s' tab." % OUT_TAB) if ws else "(dry run, nothing written)")
-            ctx.close()
+            if not args.attach:
+                ctx.close()
             return
 
         print("Scanning %d x %d viewports...\n" % (args.cols, args.rows))
         n = scan(page, ws, area_label, args.cols, args.rows, args.dry)
         print("\nDONE. Captured %d new fiber-eligible addresses." % n)
         print(("They're in the '%s' tab." % OUT_TAB) if ws else "(dry run, nothing written)")
-        input("Press Enter to close the browser... ")
+        if not args.attach:
+            input("Press Enter to close the browser... ")
         ctx.close()
 
 
