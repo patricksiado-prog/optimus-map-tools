@@ -29,7 +29,7 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 - Connect & Comm (xZj500PjsflIQg2j9f9D) — "claude11": pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
 - Account UNCONFIRMED (likely Connect & Comm): pit-d04904c8-9e39-4023-88df-e60fa0cff61e
 - GHL MCP endpoint: https://services.leadconnectorhq.com/mcp/
-- Self-hosted "fuller" GHL MCP (Go-High-Level-MCP-2026-Complete, deployed on Railway, 2026-06-04): https://go-high-level-mcp-2026-complete-production-46d1.up.railway.app  (env vars set: GHL_API_KEY=Frontline pit, GHL_LOCATION_ID=TXw28sw0Z2rl6tcCDhJY, port 8000). Connect path likely /sse or /mcp.
+- Self-hosted "fuller" GHL MCP (Go-High-Level-MCP-2026-Complete, deployed on Railway, 2026-06-04): https://go-high-level-mcp-2026-complete-production-46d1.up.railway.app  (env vars set: GHL_API_KEY=Frontline pit, GHL_LOCATION_ID=TXw28sw0Z2rl6tcCDhJY, public domain mapped to port 8080). Connect path is /mcp. CONNECTED to Claude as custom connector "ghl-full" 2026-06-04 (654 tools, status Needs-approval). Add via Claude app Settings -> Connectors -> Add custom connector -> URL .../mcp (no token in the connector; server holds it).
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
