@@ -46,6 +46,17 @@ Rules:
 4. Quick one - AT&T fiber/Air is live at your spot. 2 months free, $40s after. When's good for a 10-min call? Reply a time.
 (GHL auto-appends the opt-out line; do not add "Reply STOP".)
 
+## LA PORTE DRIP - fiber $40s + free trial (randomized, sender Patrick 832-247-4060)
+Rotate one per contact; vary wording so no two are identical. Tag: laporte-77571. Account: Command.
+1. Hi, it's Patrick w/ AT&T. Fiber's available at your La Porte address - in the $40s with a free trial. Want to get connected? Call or text me at 832-247-4060. Text NO to unsubscribe from Command & Conq.
+2. AT&T Fiber just went live in your La Porte neighborhood - plans in the $40s, free trial to start. Interested? Reach Patrick at 832-247-4060. Text NO to opt out, Command & Conq.
+3. Hey, Patrick w/ AT&T here. Your address qualifies for fiber - $40s a month plus a free trial. Want details? Call/text 832-247-4060. Text NO to unsubscribe, Command & Conq.
+4. Good news - AT&T Fiber is available at your place. Low $40s with a free trial. Ready to set it up? Patrick, AT&T: 832-247-4060. Text NO to stop. Command & Conq.
+5. AT&T Fiber's now in your area - in the $40s, free trial included. Questions? Text or call Patrick at 832-247-4060. Text NO to unsubscribe from Command & Conq.
+6. Hi! It's Patrick, AT&T. Fiber at your address is in the $40s with a free trial to start. Want in? 832-247-4060, call or text. Text NO to opt out, Command & Conq.
+7. Fiber's live in your La Porte neighborhood - AT&T, $40s/mo, free trial. Grab it? Reach Patrick: 832-247-4060. Text NO to unsubscribe. Command & Conq.
+8. Quick one - AT&T Fiber is available at your address, in the $40s plus a free trial. Interested? Call/text Patrick 832-247-4060. Text NO to stop. Command & Conq.
+
 ## OBJECTION SNIPPETS (for the brain)
 - "Too expensive" -> It's actually in the $40s with 2 months free and no contract. Want me to lock that in?
 - "Already have internet" -> Totally fine - most folks switch for the 2 free months + lower price. Worth a 10-min look?
