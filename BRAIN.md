@@ -37,6 +37,10 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
     1. GHL_BASE_URL must be exactly `https://services.leadconnectorhq.com` (with https://, no trailing slash). It was accidentally set to the location ID, then swapped so BASE_URL/LOCATION_ID held each other's values. `status: undefined` (vs a real 401) = malformed request URL, i.e. a bad GHL_BASE_URL, NOT a bad token.
     2. GHL private-integration tokens get MASKED after creation; you can't copy the full value off the page later. To get a readable token, "Rotate and expire token later" (keeps old alive 7 days, same scopes) then click Copy. Never hand-type a pit- token (every typo here = a crash loop).
   Cross-check trick: the working Frontline ghl-full server's Variables are ground truth for the correct GHL_BASE_URL value.
+- BOTH busy bee connectors LIVE in Patrick's Claude app (verified 2026-06-06, each pings 403 = path exists, both show in-app with tools + Disconnect button):
+    - `command` connector -> https://go-high-level-mcp-2026-complete-production-71a.up.railway.app/mcp  (Command / Connect & Comm, location xZj500PjsflIQg2j9f9D, project fulfilling-growth). 414 tools.
+    - `ghl-full` connector -> https://go-high-level-mcp-2026-complete-production-46d1.up.railway.app/mcp  (Frontline, location TXw28sw0Z2rl6tcCDhJY, project loving-heart). 414 read + 459 write tools.
+  CONNECTOR URL RULE: it must be the Railway public domain (Settings -> Networking -> Public Networking -> Generate Domain, port 8080) + `/mcp`. NOT the GHL_BASE_URL (services.leadconnectorhq.com, that's an internal var), NOT the railway.com dashboard URL, NOT the .railway.internal private domain. Wrong URL = 404; right URL pings 403.
 
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_START -->
 ## OPERATING RULE - REPO LOG BRAIN THINK ACT RECORD
