@@ -28,6 +28,7 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 - Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude" (read-only): pit-88412578-4972-47af-a6bc-8fc71824693e
 - Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude-writes" (ALL scopes incl WRITE, 2026-06-06): pit-9b15a452-5250-4c33-bacc-0bd749046f1d  <-- put this in Railway GHL_API_KEY for ghl-full write
 - Connect & Comm (xZj500PjsflIQg2j9f9D) — "claude11": pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
+- COMMAND = Connect & Comm (xZj500PjsflIQg2j9f9D) — "claude-write-command" (ALL scopes incl WRITE, 2026-06-06): pit-3cb2e2f7-4619-483b-8341-43a85e6ae750  <-- goes in the Command Railway service GHL_API_KEY. (Frontline = Zack's team; Command = Patrick's.)
 - Account UNCONFIRMED (likely Connect & Comm): pit-d04904c8-9e39-4023-88df-e60fa0cff61e
 - GHL MCP endpoint: https://services.leadconnectorhq.com/mcp/
 - Self-hosted "fuller" GHL MCP (Go-High-Level-MCP-2026-Complete, deployed on Railway, 2026-06-04): https://go-high-level-mcp-2026-complete-production-46d1.up.railway.app  (env vars set: GHL_API_KEY=Frontline pit, GHL_LOCATION_ID=TXw28sw0Z2rl6tcCDhJY, public domain mapped to port 8080). Connect path is /mcp. CONNECTED to Claude as custom connector "ghl-full" 2026-06-04 (654 tools, status Needs-approval). Add via Claude app Settings -> Connectors -> Add custom connector -> URL .../mcp (no token in the connector; server holds it).
