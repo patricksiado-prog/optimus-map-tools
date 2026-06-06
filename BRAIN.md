@@ -25,7 +25,8 @@ _Last updated: 2026-06-02 (GHL contact count refreshed from live API)_
 ## GHL Private Integration Tokens
 (Saved here at Patrick's explicit request. NOTE: this file is pushed to GitHub and mirrored to Drive, so these tokens are exposed in those places + in git history. Rotate in GHL -> Settings -> Private Integrations if that becomes a problem.)
 (Tokens can't be verified from the Claude container — outbound to GHL is blocked. Clean transcriptions from Patrick's doc, for the deployed bridge / MCP setup.)
-- Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude": pit-88412578-4972-47af-a6bc-8fc71824693e
+- Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude" (read-only): pit-88412578-4972-47af-a6bc-8fc71824693e
+- Frontline Direct (TXw28sw0Z2rl6tcCDhJY) — "claude-writes" (ALL scopes incl WRITE, 2026-06-06): pit-9b15a452-5250-4c33-bacc-0bd749046f1d  <-- put this in Railway GHL_API_KEY for ghl-full write
 - Connect & Comm (xZj500PjsflIQg2j9f9D) — "claude11": pit-ca275b6d-4ec1-4e44-bcc5-29be36035950
 - Account UNCONFIRMED (likely Connect & Comm): pit-d04904c8-9e39-4023-88df-e60fa0cff61e
 - GHL MCP endpoint: https://services.leadconnectorhq.com/mcp/
