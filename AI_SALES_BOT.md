@@ -59,19 +59,21 @@ No filler openers - lead with the offer.
 8. Fiber at your address - AT&T, in the $40s with a free trial. Patrick: 832-247-4060, call or text. Text NO to stop. Command & Conq.
 
 ## PROMO-HOOK DRIP v2 (verified AT&T offers, randomized, A/B graphics, 30s pacing)
-Verified promos (att.com, June 2026): 20% bundle discount -> $40s/mo; up to $150 reward card
-($50/$100/$150 by speed) w/ wireless bundle; AT&T covers switch cancellation fees; no contract;
-no data caps; up to 5 GIG. DO NOT use the $200 reward card (expired 6/1/26). "Free trial / 2 mo
+Verified promos (att.com, June 2026): 20% bundle discount -> $40s/mo; up to $150 ($50/$100/$150
+by speed) w/ wireless bundle - AT&T ISSUES THIS AS A VISA REWARD CARD; Patrick converts it to a
+BILL CREDIT for the customer, so all messaging says "bill credit" (accurate to what they receive);
+AT&T covers switch cancellation fees; no contract; no data caps; up to 5 GIG. DO NOT use the $200
+offer (expired 6/1/26). "Free trial / 2 mo
 free" UNVERIFIED - confirm on att.com before using. Lead with the catch, no filler.
-1. AT&T Fiber is live in La Porte - in the $40s when you bundle, plus up to a $150 reward card. Call or text Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.
+1. AT&T Fiber is live in La Porte - in the $40s when you bundle, plus up to a $150 bill credit. Call or text Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.
 2. Switch to AT&T Fiber - we cover your current provider's cancellation fees, $40s/mo, no contract. Patrick, AT&T: 832-247-4060. Text NO to opt out, Command & Conq.
-3. AT&T Fiber at your address: $40s/mo, no annual contract, no data caps. Up to $150 reward card. Call/text Patrick 832-247-4060. Text NO to stop, Command & Conq.
-4. Fiber's available in La Porte - up to $150 AT&T reward card + $40s/mo with bundle. Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.
+3. AT&T Fiber at your address: $40s/mo, no annual contract, no data caps. Up to $150 bill credit. Call/text Patrick 832-247-4060. Text NO to stop, Command & Conq.
+4. Fiber's available in La Porte - up to $150 AT&T bill credit + $40s/mo with bundle. Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.
 5. AT&T Fiber - speeds up to 5 GIG, $40s/mo, no data caps. We'll cover your switch fees. Patrick: 832-247-4060, call or text. Text NO to stop, Command & Conq.
-6. Your La Porte address qualifies for AT&T Fiber - $40s/mo + up to $150 reward card. Call or text Patrick 832-247-4060. Text NO to opt out, Command & Conq.
+6. Your La Porte address qualifies for AT&T Fiber - $40s/mo + up to $150 bill credit. Call or text Patrick 832-247-4060. Text NO to opt out, Command & Conq.
 7. AT&T Fiber in La Porte: no contract, no data caps, $40s/mo. Switching? We cover your cancellation fees. Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.
-8. Get AT&T Fiber at your address - $40s/mo, up to $150 reward card, up to 5 GIG. Call/text Patrick 832-247-4060. Text NO to stop, Command & Conq.
-9. AT&T Fiber's now in your neighborhood - $40s with bundle, $150 reward card, no contract. Patrick: 832-247-4060. Text NO to opt out, Command & Conq.
+8. Get AT&T Fiber at your address - $40s/mo, up to $150 bill credit, up to 5 GIG. Call/text Patrick 832-247-4060. Text NO to stop, Command & Conq.
+9. AT&T Fiber's now in your neighborhood - $40s with bundle, $150 bill credit, no contract. Patrick: 832-247-4060. Text NO to opt out, Command & Conq.
 10. Fiber at your La Porte address - AT&T, $40s/mo, we pay your switch fees, no data caps. Call or text Patrick 832-247-4060. Text NO to unsubscribe, Command & Conq.
 
 ## A/B TEST: GRAPHICS vs TEXT-ONLY (30s drip)
@@ -80,7 +82,7 @@ Split the 190 into two equal groups, send 1 per 30 seconds (~95 min total):
 - GROUP B (with graphic, ~95): same messages as MMS + ONE image attached.
   Image options (use AT&T-authorized creative - Patrick is an AT&T Business rep):
     - Official AT&T Fiber promo graphic from att.com/deals, OR
-    - A clean branded card: "AT&T FIBER - Now in La Porte - $40s/mo + up to $150 reward card".
+    - A clean branded card: "AT&T FIBER - Now in La Porte - $40s/mo + up to $150 bill credit".
   Host the image at a public URL; in GHL attach it to the MMS step.
 - TRACK: reply rate + appointment rate per group (tag GROUP A `ab-text`, GROUP B `ab-mms`).
   After ~50 sends/group, keep whichever wins, drop the loser.
