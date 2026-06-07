@@ -76,27 +76,32 @@ free" UNVERIFIED - confirm on att.com before using. Lead with the catch, no fill
 9. AT&T Fiber's now in your neighborhood - $40s with bundle, $150 bill credit, no contract. Patrick: 832-247-4060. Text NO to opt out, Command & Conq.
 10. Fiber at your La Porte address - AT&T, $40s/mo, we pay your switch fees, no data caps. Call or text Patrick 832-247-4060. Text NO to unsubscribe, Command & Conq.
 
-## A/B TEST: GRAPHICS vs TEXT-ONLY (30s drip)
-Split the 190 into two equal groups, send 1 per 30 seconds (~95 min total):
-- GROUP A (text-only, ~95): the messages above, SMS.
-- GROUP B (with graphic, ~95): same messages as MMS + ONE image attached.
-  Image options (use AT&T-authorized creative - Patrick is an AT&T Business rep):
-    - Official AT&T Fiber promo graphic from att.com/deals, OR
-    - A clean branded card: "AT&T FIBER - Now in La Porte - $40s/mo + up to $150 bill credit".
-  Host the image at a public URL; in GHL attach it to the MMS step.
-- TRACK: reply rate + appointment rate per group (tag GROUP A `ab-text`, GROUP B `ab-mms`).
-  After ~50 sends/group, keep whichever wins, drop the loser.
+## LIVE A/B DESIGN (La Porte 190, run from Command via GHL workflow)
+3 arms, pre-split into 3 tagged CSVs (so the A/B is reliable, no GHL "Split" action needed).
+Graphics (MMS) cost more than SMS -> capped to every 10th of the AT&T arm to keep MMS spend tiny.
+- ARM 1 - `ab-plain-sms` (95): NO "AT&T" anywhere, plain SMS. Tests if dropping the brand lifts replies.
+- ARM 2 - `ab-att-sms`  (85): AT&T-branded, plain SMS.
+- ARM 3 - `ab-att-mms`  (10): AT&T-branded + the promo IMAGE (MMS). Every 10th of the AT&T arm only.
+Files (PII, /home/user, not committed): laporte_plain_sms.csv, laporte_att_sms.csv, laporte_att_mms.csv.
 
-## HOW TO RUN THE 30s DRIP (Command)
-Best = GHL Workflow (handles timing reliably; an ephemeral chat cannot):
-1. Import laporte_clean_190.csv -> Command (tags laporte-77571 etc applied).
-2. Workflow trigger: tag added = laporte-77571.
-3. Add "Split" / random 50-50 -> branch A (SMS) and branch B (MMS+image).
-4. Each branch: Send message (use spintax/rotation of the 10 above), then enroll-throttle
-   to 1 contact / 30 sec (Workflow Settings -> "Allow re-entry"/throttle, or a 30s Wait
-   between contacts via drip mode).
-5. Hand replies to Conversation AI (booking mode) + calendar.
-Alt = app `command` connector for a manual paced send (slower, you babysit it).
+### Spintax messages (GHL randomizes {a|b|c} per send)
+ARM 1 (ab-plain-sms, SMS, no AT&T):
+`Fiber {is live|is now available} in your La Porte neighborhood - {$40s/mo|in the $40s}, up to a $150 bill credit, and we cover your switch fees. {Call or text|Text or call} Patrick: 832-247-4060. Text NO to unsubscribe, Command & Conq.`
+ARM 2 (ab-att-sms, SMS, AT&T):
+`AT&T Fiber {is live in|is now available in|just launched in} La Porte - {$40s/mo with bundle|in the $40s when you bundle}, plus up to a $150 bill credit. {Call or text|Text or call} Patrick, AT&T: 832-247-4060. Text NO to unsubscribe, Command & Conq.`
+ARM 3 (ab-att-mms, MMS, AT&T): same as ARM 2 + attach the AT&T promo image.
+
+## HOW TO RUN THE 30s DRIP (Command, GHL workflow)
+1. Import the 3 CSVs into Command (Contacts -> Import). Tags auto-apply.
+2. Three tag-triggered workflows (one per arm):
+   - Trigger = Contact Tag added (`ab-plain-sms` / `ab-att-sms` / `ab-att-mms`)
+   - Action = Send SMS with that arm's spintax; ARM 3 also attaches the image (MMS step).
+   - Settings -> Drip Mode ON -> 2 events per 1 minute (~1 text / 30 sec).
+3. Inbound (shared): Conversation AI (Appointment Booking) + a Calendar books replies.
+4. Opt-out: STOP auto-honored; add a workflow: inbound contains "NO" -> Set DND.
+5. TEST FIRST: import 2-3 test contacts (Patrick's own numbers, one per arm), confirm picture vs
+   text + no "AT&T" in ARM 1 + AI books + NO sets DND. THEN import the real CSVs (that = launch).
+6. TRACK by tag: reply + appointment rate per arm. Keep the winner; then consider the 129 DNC bucket.
 SAFETY: tested to Patrick's phone first (done). Mobile-only. Honor STOP/NO. Skip DNC bucket.
 
 ## OBJECTION SNIPPETS (for the brain)
