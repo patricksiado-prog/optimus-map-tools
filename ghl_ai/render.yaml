@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: ghl-claude-bridge
+    runtime: python
+    plan: free
+    rootDir: ghl_ai
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GHL_TOKEN
+        sync: false
+      - key: GHL_LOCATION_ID
+        value: "TXw28sw0Z2rI6tcCDhJY"
+      - key: BRIDGE_SECRET
+        sync: false
+      - key: DRY_RUN
+        value: "true"

@@ -1,6 +1,6 @@
 # OPTIMUS HOUSTON - PROJECT BRAIN
 
-Last updated: 2026-04-30
+Last updated: 2026-06-02
 
 Team's shared context. Stored in github.com/patricksiado-prog/optimus-map-tools
 
@@ -26,9 +26,9 @@ Partners working together. Roles, not ranks.
 
 GitHub: github.com/patricksiado-prog/optimus-map-tools
 GCP: project fiberscanner-493900, service account fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
-GHL: Optimus Houston, Location ID TXw28sw0Z2rl6tcCDhJY
+GHL: Optimus Houston / "Frontline Direct", Location ID TXw28sw0Z2rl6tcCDhJY
 Sheets: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
-CRM: 41,325 contacts in GHL
+CRM: 44,523 contacts in GHL (as of 2026-06-02; was 41,325 on 2026-05-02)
 
 ---
 
