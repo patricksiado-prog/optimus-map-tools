@@ -113,3 +113,56 @@ branch `claude/optimus-map-tools-setup-6dcl6o`) deploys two tools:
 - Build a clean "Callable Leads" tab (~1,200 strict matches: Address·Business·Phone·Category·Website),
   phones corrected + deduped.
 - Patch the scraper phone regex (1-line) and add dedup-on-write to both tools.
+
+---
+
+## HOW TO COUNT FIBER LEADS (canonical method) — ATT FIBER LEADS sheet
+
+Sheet `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`. The lead count comes from
+**2 source tabs that the 2 programs write SEPARATELY**, plus their overlap:
+
+| Tab | Written by | What a row is |
+|---|---|---|
+| **Precise Fiber** | precise_fiber_hunter.py | one AT&T green fiber dot (address) |
+| **Maps Businesses** | maps_scraper_standalone.py | one scraped business (by ZIP) |
+| Fiber Green Biz | derived join | **DO NOT trust its row count** (see below) |
+
+### Step 0 — get FULL data (never trust the truncated read)
+Drive text-read caps each tab at ~500 rows. Export the whole workbook as **ODS**
+(`download_file_content` mime `application/vnd.oasis.opendocument.spreadsheet`),
+base64-decode, unzip `content.xml`, parse `table:table` rows. (xlsx/csv export errors;
+pandas/odfpy don't install — parse XML by hand.)
+
+### Step 1 — normalize before counting
+- **Phone:** strip to digits; drop leading `1` if 11 digits; valid = exactly 10 digits.
+- **Address "core":** UPPERCASE, take text before first comma, then drop everything from
+  ` UNIT / APT / STE / SUITE / # / BLDG / FL ` onward. (Collapses apartment units + suites
+  to the building so a business at "24 GREENWAY PLZ STE 1800" matches dot "24 GREENWAY PLZ UNIT COIN".)
+
+### Step 2 — the three counts
+1. **Green dots (Precise Fiber):** rows where Dot Color == GREEN. Unique by full address =
+   the address list; unique by *core* address = distinct buildings (apartments inflate raw rows).
+2. **Businesses (Maps Businesses):** unique by normalized phone.
+3. **FIBER LEADS = the overlap** = businesses whose OWN core address is in the green-dot set.
+   This is the real callable list. (Match business core-address ∈ {green core-addresses}.)
+
+### Step 3 — sanity rules
+- **Maps Businesses is NOT a fiber list** — only ~20% of its businesses sit on a green dot.
+- **Fiber Green Biz tab ≠ the overlap.** It is bloated (one business stamped across every
+  apartment unit → ~8 rows each) AND incomplete (missing ~1,000 real on-dot businesses).
+  Recompute the overlap from the 2 source tabs; don't read it off this tab.
+- "Callable" = overlap business has a valid 10-digit phone. Filter to Houston via the
+  business address city/ZIP if a Houston-only list is needed.
+
+### Canonical numbers as of 2026-06-29 (full ODS export)
+- Green dots: **180,190** GREEN rows → ~175,635 unique addresses → ~115,000 buildings.
+- Businesses: **13,181** unique phones (14,939 rows).
+- **FIBER LEADS (overlap, biz on a green dot): ~2,686** (~2,576 Houston).
+- Fiber Green Biz tab: 14,691 rows = only 1,667 unique businesses (1,549 verified on-dot, 118 near-match noise).
+- Loaded into GHL autodialer: **122** (tag `green-houston`/`fiber-green`/`optimus-fiber-biz`,
+  source "Optimus Fiber Biz") = ~5% of the 2,686. Last load 2026-06-19; not refreshed since.
+
+### GHL location ID correction
+Real autodialer location = **`TXw28sw0Z2rI6tcCDhJY`** (capital `I`). The id written elsewhere
+in this brain as `TXw28sw0Z2rl6tcCDhJY` (lowercase `l`) is WRONG and 403s.
+Note: same location also holds an unrelated ~320 "romeo"-tagged Florida insurance set — keep dialer on the `green-houston` tag.
