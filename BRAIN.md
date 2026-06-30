@@ -166,3 +166,22 @@ pandas/odfpy don't install — parse XML by hand.)
 Real autodialer location = **`TXw28sw0Z2rI6tcCDhJY`** (capital `I`). The id written elsewhere
 in this brain as `TXw28sw0Z2rl6tcCDhJY` (lowercase `l`) is WRONG and 403s.
 Note: same location also holds an unrelated ~320 "romeo"-tagged Florida insurance set — keep dialer on the `green-houston` tag.
+
+---
+
+## BUILDING-FED / EXCLUDE ADDRESSES (do NOT load or call)
+
+These are multi-tenant high-rises / office towers where **internet comes from the building**
+(shared building service), NOT an individually sellable standalone fiber drop. The green dot is
+the building, not the tenant. A tenant in a suite there cannot buy AT&T Fiber for their unit, so
+every "business at this address" is a dead lead. **Skip these when counting/loading; delete if loaded.**
+
+Rule of thumb (already in the canonical method): any address with a suite/Ste/#/Floor token at a
+high green-dot-density building is building-fed — exclude it. Standalone single-tenant addresses
+(no suite, low dot density) are the only sellable fiber-green leads.
+
+| Address | City/ZIP | Notes | Action taken |
+|---|---|---|---|
+| 4265 San Felipe St (all suites: #780/#800/#970/#1100…) | Houston, TX 77027 | Multi-tenant office tower, internet from building | **11 contacts deleted from Optimus dialer 2026-06-30** |
+
+(Append new building-fed towers here as they're found so they never get re-loaded.)
