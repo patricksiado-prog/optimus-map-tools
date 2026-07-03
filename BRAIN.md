@@ -185,3 +185,47 @@ high green-dot-density building is building-fed — exclude it. Standalone singl
 | 4265 San Felipe St (all suites: #780/#800/#970/#1100…) | Houston, TX 77027 | Multi-tenant office tower, internet from building | **11 contacts deleted from Optimus dialer 2026-06-30** |
 
 (Append new building-fed towers here as they're found so they never get re-loaded.)
+
+---
+
+## DIALER EXCLUSION RULE — "can't-sell" leads stay OUT of the dialer (2026-07-03)
+
+**Standing rule:** before enrolling ANY lead into a power dialer (Optimus workflow
+`41e00387-a766-4975-bbcd-627c684a3ee1` or Frontline `ac28196d-a9fc-4e26-8247-d148681c0b7b`),
+FILTER OUT everything below. These do not sell and/or cannot be reached — keep them out.
+
+**Persistent exclusion phone list:** `dialer_exclusions.json` (repo root, 487 phones as of
+2026-07-03). Subtract these from every load. Contacts already scrubbed carry GHL tags
+`excluded-unsellable`, `excluded-clinic`, or `excluded-vertical` (unenrolled, not deleted).
+
+### Never load / always pull (the "can't sell" set)
+1. **Invalid / unreachable** — any contact tagged `invalid` (SMS failed, Twilio 30003/30005/30006 =
+   landline/dead number). ~205 in Optimus. Enumerate via `search_contacts` query="invalid".
+2. **Building-fed towers** — suite-numbered addresses at multi-tenant high-rises (internet from the
+   building). Known: 24 Greenway Plz/Plaza, 4200 Westheimer, 1201 San Jacinto, 4265 San Felipe,
+   any `San Felipe St #`. Same logic as the BUILDING-FED section above.
+3. **Medical / clinics** — orthodontist, physical therapy, chiropractor, counseling, therapist,
+   optometrist, acupuncture, med spa, podiatrist, nutritionist, dermatologist, dental, veterinary,
+   urgent care, hospital, pharmacy. (Category tags are unreliable — also match on the NAME.)
+4. **Professional offices w/ gatekeepers** — law firms / attorneys / `PC` / `PLLC` / `LLP`,
+   CPA / accountant. (Per Patrick, real-estate agents / bookkeepers / insurance are KEPT.)
+5. **National chains** — Pep Boys, AutoZone, O'Reilly, U-Haul, CubeSmart, Public Storage, Kroger,
+   H&R Block, Jackson Hewitt, Sherwin-Williams, Johnstone Supply, Transtar, Regus/WeWork, banks
+   (PNC/Chase/BofA/etc.), fast food, gas stations, gym franchises, etc.
+6. **Government / institutional** — police/fire/sheriff, city of / county / state / federal,
+   schools / ISD / university, post office, library, funeral/cremation, etc.
+7. **Non-businesses** — public parks, etc.
+
+### How to filter (canonical)
+- Skip any phone in `dialer_exclusions.json`.
+- Skip any GHL contact tagged `invalid` / `excluded-unsellable` / `excluded-clinic` / `excluded-vertical`.
+- Skip by NAME keyword (chains/gov/clinic/law) AND by suite-at-tower ADDRESS — do NOT trust the
+  scraper's Category column alone (it mislabels: a park as "pool cleaning", a law firm as "bookkeeper",
+  a vet clinic as "dog grooming").
+- Prefer standalone (single-tenant, no suite) owner-operated small biz — "the boss picks up".
+
+### Cleanup done 2026-07-02/03 (Optimus dialer)
+Pulled from the dialer (unenrolled + tagged, not deleted): 152 clinics, ~311 tower/office/junk,
+~200 invalid/unreachable, 18 chains/government. 11 building-fed (4265 San Felipe) hard-deleted.
+Watch for FALSE POSITIVES on name keywords (e.g. "Chase Carpentry" = a carpenter, "…Lending Library"
+= a salon, "Federal American Grill" = a restaurant) — confirm before cutting.
