@@ -31,3 +31,23 @@ addresses directly.
 - **Scope note:** `fiber_scout.py` / `optimus_dot_detect.py` live in repo
   Go-High-Level-MCP-2026-Complete (not reachable this session); the classifier
   was built standalone here to drop into the Scout via one import + one call.
+
+## 2026-07-01 — Claude (Scout reuses HUNTER dot detection)
+**SESSION GOAL:** Fix the Scout's GREEN-0 bug by making it reuse the hunter's
+proven pixel detection (green+gold high, very little grey) instead of its own
+broken green window.
+
+- Root cause of GREEN-0: the Scout's own `optimus_dot_detect.py` green window
+  misses green dots; the HUNTER's window works (pulled thousands of 77027 greens).
+- **New module `scout_dot_score.py`** (optimus-map-tools): ports fiber_hunter.py's
+  EXACT color windows (GREEN 30,130,30–100,210,80; GOLD/ORANGE 220,160,0–255,200,60;
+  GREY 140,140,160–190,190,210), the shape-filtered `count_dot_clusters`, and the
+  `is_blank_map` guard. Adds `score_view()` → green/gold/grey + FRESH verdict
+  (FRESH = green+gold ≥6 and grey% <20) and `summary_row()` for the Fiber Scout tab.
+  Tested with numpy/scipy: green+gold view → FRESH, grey-heavy view → MATURE.
+- **Wire-in (other chat / tools repo):** in fiber_scout.py, per scanned view:
+  `import scout_dot_score as sds; r = sds.score_view(screenshot)` → write
+  r["green"], r["gold"], r["grey"], r["grey_pct"], r["verdict"]; hunt where FRESH.
+- Two paths now exist for the Scout: `scout_dot_score.py` (pixel, hunter-matched)
+  and `backend_classifier.py` (server JSON, no pixels). Backend is better long-term;
+  scout_dot_score is the immediate GREEN-0 fix that needs no endpoint.
