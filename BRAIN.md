@@ -18,6 +18,24 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-26 (b) — Code audit + external-API research (DISCOVERIES)
+PIPELINE IS "PARTS, NOT A MACHINE": programs work individually but the hunt->enrich->score->load chain is not fully wired. Top conflicts (files under optimus/):
+- hunter_fixes.py is DEAD CODE — imported by nothing. SafePending (data-loss), Deduper (address drift), junk-address blocker, apartment roll-up all un-wired. Hunter still dedups on raw string (precise_fiber_hunter.py:2237). The "critical fixes" are inert.
+- enrich->load handoff BROKEN: enrich_phones writes enriched_leads.jsonl (JSONL) but ghl_loader does json.load() (needs a JSON array) -> crash. business_score wraps records under ["business"] but ghl_loader reads name/phone/address at top level -> contacts load with score but no name/phone. business_score imported by nothing.
+- Hunter can't tell GOLD(copper) from GREY(fiber): it uses optimus_dot_detect.classify_status and NEVER loads build_codes.json; only fiber_scout uses backend_classifier + codes. backend_classifier ships empty code sets.
+- enrich sets phone_type="business" but business_score only rewards "landline"/"wireless" -> every enriched phone scores 0 reachability.
+- Vocab conflicts across tabs: copper = "ORANGE" (hunter/enrich) vs "GOLD" (scout/classifier); grey spelled "GRAY" vs "GREY".
+- Phone stored 3 ways (bare 10-digit / E.164 / raw); ~/Optimus vs ~/optimus path casing breaks state on Linux; two Maps scrapers write different businesses.csv columns; hunter hardcodes zone_label="WORKING" so FRESH weighting never fires.
+- BUG: enrich cache stores empty misses with no tier -> running FREE then --paid SKIPS every earlier free miss (undermines the ~4,800 enrichment plan).
+EXTERNAL (research, sources in Drive delta):
+- AT&T map = biggest fragility: undocumented internal API; main community tool broke on an endpoint change and was ARCHIVED June 2026. backend_classifier has NO schema tolerance (hardcoded subscriber_ban / curr_ntwrk_bld_type_cd). Isolate behind an adapter + add a canary.
+- Google Places: legacy API FROZEN Mar 2025; phone (nationalPhoneNumber) is an Enterprise-tier field ~=$20/1k requests, ~1k free/mo. Must be on Places API (New) with X-Goog-FieldMask. De-dupe by place_id; fetch all needed fields in one call. ~4,800 enrich run ~= ~$76 after free tier IF cache bug fixed.
+- mapbox_vector_tile maintained (v2.2.0) but coords are tile-local ints [0,4096) -> must transform to lat/lng, watch y-flip + v2 GeoJSON default.
+- Playwright: stealth alone insufficient; TLS/JA3-JA4 mismatch is the layer stealth can't fix. Ongoing maintenance cost.
+OUTPUT MAP: hunter -> precise_addresses.jsonl (+ "Precise Fiber" tab); enrich -> enriched_leads.jsonl (+ "Enriched Leads" tab); scout -> "Fiber Scout"/"Backend Capture" tabs + fresh_leads.csv; maps_scraper -> businesses.csv; ghl_loader -> GHL contacts/opps + power-dialer + dial_queue.json.
+GOOD: no hardcoded secrets (all env-based); SHEET_ID 1FhO consistent everywhere; backend green-dot logic sound where used.
+TOP FIXES: (1) wire hunter_fixes, (2) fix enrich->load format/shape, (3) load build_codes.json in hunter, (4) fix enrich cache tiering.
+
 ### 2026-07-26 — Optimus programs copied into repo + brain/sheet pointer corrections
 - COPIED the three production programs into this repo under `optimus/` (branch
   `claude/chat-repetitive-questions-9ex5h7`), pulled verbatim from
