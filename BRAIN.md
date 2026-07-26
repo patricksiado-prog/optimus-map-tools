@@ -18,6 +18,35 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-26 (d) — DIALER SOLVED: data was never the blocker
+LOCATION: xZj500PjsflIQg2j9f9D. Confirmed live via search_contacts(query="optimus-fiber-biz"):
+- **total = 1,922 contacts**, tag `optimus-fiber-biz`, source "Optimus Fiber Biz", ALL assigned
+  to Zack (qOa2OVzPabolfU9xjVXM). Each contact is FULLY built:
+  firstName = business name, lastName = full street address, phone = E.164, most have an open
+  opportunity in pipeline 2V9thfxQpuhn6ZP0Peqt. So name+address show on every dialer card
+  (not just notes). THE LEADS ARE DONE — loading was never the missing piece.
+- Two dialer workflows exist:
+  - `41e00387` "Optimus Fiber Biz — Power Dialer Queue": 1 action = manual-call "Fiber Biz Call",
+    no trigger, no loop. Clean/pristine.
+  - `9d3c7d0c` "Optimus Dialer 2 — Zack Call Queue": manual-call "Fiber Call" -> wait 2 days ->
+    LOOP back to the call. The recycle loop wiring IS intact in stored structure. BUT both
+    manual-call actions have `attributes:{}` (NO assigned user) — the likely reason Manual
+    Actions showed empty: a manual-call task with no assignee surfaces to nobody.
+- WORKING ANSWER (no fragile automation): native Power Dialer on the tag filter. Contacts ->
+  filter Tag = optimus-fiber-biz -> select all -> Power Dialer. Works for ANY rep with a dialer
+  seat, shows name+address per card, and "recycles" because the filter re-includes every lead
+  each session. No workflow / Manual Actions dependency.
+- MULTI-REP: leads are assigned to Zack; for Dave/Shika/Dominic/TFA to dial the same list they
+  need "view all contacts" permission (Settings > Team) OR run it from a shared smart list.
+- AUTO 2-DAY RECYCLE (optional upgrade): Dialer 2 already has the call->wait2d->recall loop.
+  To light it up, open Dialer 2 in UI, click the "Fiber Call" Manual Call step, set Assign To =
+  rep, Save. That one field is what makes the tasks appear (can't set reliably via API).
+- DISPOSITIONS: set Custom Call Dispositions so "Not Interested"/"Do Not Call" removes tag
+  optimus-fiber-biz (drops the lead off the list); "Sold/Yes" moves pipeline stage. Everything
+  else keeps the tag and naturally recycles on the next Power Dialer pass.
+- API LIMITS re-confirmed: get_smart_lists 400s; workflow /executions endpoint 404s;
+  get_users needs companyId. Manual Actions screen not readable via API (user must eyeball).
+
 ### 2026-07-26 (c) — REAL live sheet counts (corrected) + how to get them
 CORRECTION: an earlier "224 Houston callable" was WRONG — it came from a stale mini-extract
 ("ATT FIBER LEADS - Fiber Green Biz", id 1hI_t3..., ~245 Houston rows). The LIVE production
