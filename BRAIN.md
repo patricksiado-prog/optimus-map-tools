@@ -18,6 +18,41 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-26 (c) — REAL live sheet counts (corrected) + how to get them
+CORRECTION: an earlier "224 Houston callable" was WRONG — it came from a stale mini-extract
+("ATT FIBER LEADS - Fiber Green Biz", id 1hI_t3..., ~245 Houston rows). The LIVE production
+sheet 1FhO is far bigger. Patrick was right about ~18,000 matches.
+
+HOW TO GET LIVE COUNTS (the MCP Drive read truncates + download caps at 10 MB, so use the
+Sheets API directly): download google_creds.json from Drive (service account
+fiberscanner@fiberscanner-493900, Drive id 1upYH4h2VsmOwO82v9CVjMpE6IzV-5dIs), then
+`gspread.authorize(Credentials.from_service_account_file(... scopes=[spreadsheets.readonly]))`,
+`gc.open_by_key('1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA')`. Count filled rows per tab
+via `len(ws.col_values(1))`. NOTE: cryptography lib in the sandbox needed a reinstall; creds
+are a SECRET — use in scratchpad only, never commit.
+
+LIVE TAB COUNTS (2026-07-26):
+- Precise Fiber ......... 308,522 rows (hunter fiber addresses)
+- Maps Businesses ....... 23,759   (raw scrape; cols: Name,Address,Phone,Website,Category,Fiber Check; NO header row)
+- Fiber Green Biz ....... 18,218   (MATCHED green-biz = the ~18k; cols: Business Name,Phone,Address,Website,Category)
+- Enriched Leads ........ 1,311
+- Hunter Status ......... 24,004   (run log)
+- Fiber Scout .......... 1,750 ; Upgrade Orange Biz ~empty(1)
+
+HOUSTON callable (from Fiber Green Biz):
+- Houston rows: 1,932  ->  unique callable phones (deduped): ~1,675  (all-cities unique: ~2,472)
+- In dialer now: 17  ->  ~1,658 Houston callable NOT yet loaded.
+
+DATA LINEAGE (where dialer data came from):
+- precise_fiber_hunter.py -> tab "Precise Fiber" (SHEET_ID 1FhO, OUT_TAB).
+- maps_scraper_standalone.py -> tab "Maps Businesses"; then MATCHES scraped biz vs "Precise Fiber"
+  green dots -> writes hits to "Fiber Green Biz" (green) / "Upgrade Orange Biz" (copper).
+- The Houston rows of "Fiber Green Biz" were imported to GHL as source "Fiber Green Biz - Houston"
+  = the dialer contacts.
+
+NEXT: load the ~1,675 Houston callable into Dialer 2 (dedup by phone, assign Zack, tag
+"power dialer queue"). Only 17 loaded so far.
+
 ### 2026-07-26 (b) — Code audit + external-API research (DISCOVERIES)
 PIPELINE IS "PARTS, NOT A MACHINE": programs work individually but the hunt->enrich->score->load chain is not fully wired. Top conflicts (files under optimus/):
 - hunter_fixes.py is DEAD CODE — imported by nothing. SafePending (data-loss), Deduper (address drift), junk-address blocker, apartment roll-up all un-wired. Hunter still dedups on raw string (precise_fiber_hunter.py:2237). The "critical fixes" are inert.
