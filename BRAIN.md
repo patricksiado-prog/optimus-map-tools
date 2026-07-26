@@ -18,6 +18,30 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-26 (e) — DIALER: what API can/can't do + the working design (FINAL)
+Tested every path live. HARD API LIMITS in command_connector for GHL dialer:
+- ghl_update_workflow_actions accepts triggers in the payload but SILENTLY DROPS them
+  (re-GET shows triggers:[]). Confirmed: workflow triggers are UI-only.
+- manual-call actions create "Manual Actions", a SEPARATE object from Tasks. get_contact_tasks
+  and search_location_tasks both return [] for an enrolled contact -> Manual Actions are
+  invisible/unverifiable via API. This is why the Manual-Actions dialer path burned 3 days.
+- create_smart_list -> 404 (Cannot POST /contacts/smart-lists). Smart lists are UI-only.
+- No custom-call-disposition API. Dispositions are UI/DND-driven.
+WHAT WORKS (native, verifiable): dialer list = Contacts filtered by tag `optimus-fiber-biz`.
+- Recycle = inherent: tag stays, list repopulates every Power Dialer session.
+- Dispositions = DND: "no" -> rep sets DND (Power Dialer won't dial DND) -> drops from list.
+  "sold/yes" -> move opportunity to Won -> filter excludes. else -> stays -> recycles.
+- Multi-rep = Settings>Team> each rep enable "view all contacts" (leads are assigned to Zack).
+COUNTS (live from Fiber Green Biz tab via Sheets API): 18,241 rows but only **2,495 unique
+callable phones** (dedup collapses the 18k -> reconciles the "18k vs 2k" argument; both true).
+Houston unique 1,683; non-Houston 812 (incl. OKC 405-area). Already tagged optimus-fiber-biz:
+1,922. Upserted 12 non-Houston (OKC) as a test -> ALL came back new:false = they ALREADY EXIST
+in GHL (loaded 7/24) but LACKED the tag. So "load the rest" = really "add the tag to existing".
+DELIVERABLE: generated scratchpad/optimus_fiber_dialer_import.csv (2,495 rows, cols First Name=
+business, Last Name=address, Phone E.164, Address, Category, Tags=optimus-fiber-biz). GHL bulk
+CSV import (Contacts>Import) adds the tag to all existing + creates any missing = whole list in
+one drop (API has no bulk contact create; import is the only bulk path). 12 already done via API.
+
 ### 2026-07-26 (d) — DIALER SOLVED: data was never the blocker
 LOCATION: xZj500PjsflIQg2j9f9D. Confirmed live via search_contacts(query="optimus-fiber-biz"):
 - **total = 1,922 contacts**, tag `optimus-fiber-biz`, source "Optimus Fiber Biz", ALL assigned
