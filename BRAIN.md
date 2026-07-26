@@ -18,6 +18,19 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-26 (f) — KEY FINDING: all 2,495 leads ALREADY EXIST in GHL (tag-sync, not load)
+Upserted 72 "non-Houston" uniques via API. EVERY ONE returned new:false (dateAdded 6/30 &
+7/24 via INTEGRATION/OAUTH source 6a25617c1d5fcb2f6e8b826b). So the full 2,495-unique callable
+set was already imported to GHL weeks ago; ~573 of them just lacked the `optimus-fiber-biz`
+tag. optimus-fiber-biz tagged count moved 1,922 -> 1,945 after the 72 upserts (only ~23 were
+genuinely untagged; rest already tagged). => API upsert is a BAD tool to finish: ~23 net tags
+per 60 calls means ~1,400 more calls for the last ~550, all redundant re-writes of existing
+contacts. The GHL bulk CSV import (Contacts>Import, scratchpad/optimus_fiber_dialer_import.csv)
+matches by phone and adds the tag to all 2,495 in ONE op — the correct finish. Note: many
+non-Houston-by-address rows are actually Houston-metro suburbs (Heights/Katy/Satsuma); only
+405-area OKC (~273) is a genuinely separate market. Some contacts carry Twilio SMS DND
+(error 30006) but voice-callable.
+
 ### 2026-07-26 (e) — DIALER: what API can/can't do + the working design (FINAL)
 Tested every path live. HARD API LIMITS in command_connector for GHL dialer:
 - ghl_update_workflow_actions accepts triggers in the payload but SILENTLY DROPS them
