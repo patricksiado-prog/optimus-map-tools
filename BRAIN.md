@@ -240,3 +240,29 @@ sales-skills/sales `sales-gohighlevel` (API ref), mvanhorn/printing-press-librar
 `pp-gohighlevel` (bulk tag/dedup CLI). Connector = BusyBee3333
 Go-High-Level-MCP-2026-Complete (user fork: patricksiado-prog/go-high-level-mcp-2026-complete).
 Wrote custom skill: `.claude/skills/ghl-power-dialer/SKILL.md`.
+
+---
+## RUN-LOG 2026-07-27 (cont) — Dialer deep source dive, definitive API limits
+
+Read the connector source (patricksiado-prog/go-high-level-mcp-2026-complete):
+- Workflows are built via HIDDEN internal API `backend.leadconnectorhq.com/workflow`
+  (Firebase-token auth). NOT the official API. `ghl_update_workflow_actions` sends
+  `workflowData.templates = [my action objects]` verbatim and REPLACES all actions.
+- `add_contact_to_workflow` = official `POST /contacts/{id}/workflow/{id}` — enrollment
+  is REAL and works.
+- Official GHL API spec (bundled, 168KB): ZERO endpoints for manual/dialer/manual-action.
+  No `/workflows` endpoints. Manual Actions has NO public API (can't create OR read).
+- Action TYPE naming: valid recognized types are hyphen/word (`manual-call` ACCEPTED),
+  and snake_case for multiword (`create_opportunity`,`add_contact_tag`,`if_else`,`add_notes`,
+  `ivr_say`,`conversation_ai`). Tested `manual_call` (underscore) → 400 "corrupted type".
+  So `manual-call` (hyphen) IS the correct, engine-recognized type. Node is NOT a dead node.
+- Real UI-built action nodes carry hybrid fields: `isHybridAction:true`,`hybridActionType`,
+  `cat:"action"`,`transitions:[]`, and wait uses `startAfter:{when,type,value,action_in}`.
+  Account has NO UI-built manual-call node anywhere to copy (checked Wavv, Fiber Info Voice
+  Call = ivr_say/ivr_gather/ivr_connect_call/conversation_ai, Commercial Lead = call/conversation_ai).
+- Optimus Dialer 2 (9d3c7d0c-...) is at v5: manual-call + assignTo=Zack (qOa2OVzPabolfU9xjVXM)
+  + wait 2d loop, published. ~113 optimus-fiber-biz contacts enrolled this session.
+- CANNOT verify Manual Actions screen via API (no read endpoint). Final inch = open workflow
+  in desktop UI, Save+Publish the manual-call step (re-serializes it the way the engine needs),
+  then bulk Add-To-Workflow the tag list. This is the only remaining step and requires UI.
+- Works-today alternative needing no workflow: Contacts → tag filter → tap-to-call.
