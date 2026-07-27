@@ -205,3 +205,38 @@ Important:
 - Do not create workaround files when the correct move is to fix the real repo/BAT/program.
 - If GitHub connector is unavailable, use Drive BRAIN, Drive mirror files, and uploaded repo bundle until live GitHub access is fixed.
 <!-- REPO_LOG_BRAIN_THINK_ACT_RECORD_END -->
+
+---
+## RUN-LOG 2026-07-27 — Dialer ROOT CAUSE found + custom skill written
+
+**THE bug (3-day mystery solved):** every `manual-call` action in the dialer
+workflows was built via `ghl_update_workflow_actions` with `attributes: {}` —
+i.e. **empty assignee**. An empty `assignTo` makes GHL create the Manual-Call
+task UNASSIGNED, so it never shows when Conversations → Manual Actions is
+filtered to a rep (Zack). That is why the screen kept reading "Good Work! no
+pending tasks" despite contacts being tagged + assigned + enrolled.
+
+**Fix applied:** rewrote "Optimus Dialer 2 — Zack Call Queue"
+(`9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8`) manual-call action to
+`attributes: {"assignTo": "qOa2OVzPabolfU9xjVXM"}` (Zack), loop preserved
+(manual-call → wait 2d → back to manual-call). Now version 5, re-GET confirmed
+assignTo + next/parentKey survived. Re-enrolled the 5 test contacts
+(remove+re-add) so they hit the corrected step. Awaiting a DESKTOP
+Conversations → Manual Actions check (mobile app screen is unreliable; API
+cannot read Manual Actions to self-verify).
+
+**Recycle confirmed by HighLevel docs:** manual-call advances only when the rep
+deletes/completes the task → then Wait 2d → loops back. No native disposition
+branching (open feature request); dispositions handled by rep (DND+remove / move
+to pipeline / leave to recycle).
+
+**Enrollment reality:** tagging ≠ enrolling. `add_contact_to_workflow` is single
+-only (no bulk API); fastest full load is desktop UI bulk "Add To Workflow".
+`official_contacts_get_contacts?query=optimus-fiber-biz` paginates via
+startAfter/startAfterId (100/pg) — used to pull all 2,525 IDs.
+
+**Skill research:** no public skill covers the power dialer. Closest useful ones:
+sales-skills/sales `sales-gohighlevel` (API ref), mvanhorn/printing-press-library
+`pp-gohighlevel` (bulk tag/dedup CLI). Connector = BusyBee3333
+Go-High-Level-MCP-2026-Complete (user fork: patricksiado-prog/go-high-level-mcp-2026-complete).
+Wrote custom skill: `.claude/skills/ghl-power-dialer/SKILL.md`.
