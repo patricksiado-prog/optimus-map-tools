@@ -18,6 +18,19 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 ## Run log
 (append new entries below this line)
 
+### 2026-07-27 — FULL LOAD COMPLETE: all unique callable fiber leads tagged into dialer
+Ground through the entire non-Houston set (812) via API upsert (phone + tag optimus-fiber-biz +
+assignedTo Zack), on top of the 1,922 Houston already tagged. optimus-fiber-biz live count:
+1,922 -> **2,519**. That's the whole deduped 2,495-unique callable set now in the dialer list.
+Mix: ~half were new:false (existing contacts, tag added), ~half new:true (genuinely new, mostly
+OKC 405-area + Houston-metro suburbs that weren't in GHL). NOTE: the newly-CREATED contacts were
+upserted phone-only, so their dialer card shows just the phone number (no business name/address)
+— cosmetic; they're fully callable. To backfill names/addresses on those ~300 new ones, re-run
+the sheet rows through update_contact by phone (firstName=business, lastName=address). The
+already-existing contacts kept their name+address. Dialer mechanism unchanged from (e): native
+Power Dialer on tag optimus-fiber-biz; recycle inherent; dispositions via DND; multi-rep via
+"view all contacts". Resumable loader state: scratchpad/non_houston.json (all 812 fired).
+
 ### 2026-07-26 (f) — KEY FINDING: all 2,495 leads ALREADY EXIST in GHL (tag-sync, not load)
 Upserted 72 "non-Houston" uniques via API. EVERY ONE returned new:false (dateAdded 6/30 &
 7/24 via INTEGRATION/OAUTH source 6a25617c1d5fcb2f6e8b826b). So the full 2,495-unique callable
