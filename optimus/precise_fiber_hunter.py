@@ -2189,39 +2189,72 @@ def safe_goto(page, url):
 
 
 def search_zip(page, zip_code):
-    """Type the ZIP into the AT&T map's search box and submit. Tries the
-    Mapbox geocoder input, visible text inputs, then the textbox role."""
+    """Type the ZIP into the AT&T map's search box, pick the first geocoder
+    suggestion, and fly the map there. Works for ANY market (OKC, Houston,
+    anywhere) -- not just the map's default view.
+
+    WHY suggestion-click, not just Enter: the Mapbox/MapLibre geocoder often
+    leaves a bare 5-digit ZIP unresolved when you only press Enter, so the map
+    never moves and the scan silently runs on the DEFAULT view (Texas). That
+    was the "entered OKC but scraped TX" bug. Clicking the first suggestion
+    forces the map to actually travel to the ZIP. Returns True only when a
+    location was entered; the caller must NOT silently scan on False."""
+    q = str(zip_code).strip()
     selectors = [".mapboxgl-ctrl-geocoder--input",
+                 ".maplibregl-ctrl-geocoder--input",
                  "input[placeholder*='Search' i]",
                  "input[placeholder*='address' i]",
+                 "input[placeholder*='ZIP' i]",
                  "input[type='search']",
-                 "input[type='text']",
-                 "input"]
+                 "input[type='text']"]
+    box = None
     for sel in selectors:
         try:
-            box = page.query_selector(sel)
-            if box and box.is_visible():
-                box.click()
-                box.fill("")
-                box.type(str(zip_code), delay=40)
-                time.sleep(0.6)
-                page.keyboard.press("Enter")
+            el = page.query_selector(sel)
+            if el and el.is_visible():
+                box = el
+                break
+        except Exception:
+            continue
+    if box is None:
+        try:
+            tb = page.get_by_role("textbox")
+            if tb.count() > 0 and tb.first.is_visible():
+                box = tb.first
+        except Exception:
+            box = None
+    if box is None:
+        return False
+    try:
+        box.click()
+        box.fill("")
+        box.type(q, delay=60)
+        time.sleep(1.2)
+    except Exception:
+        return False
+    # Prefer clicking the first geocoder SUGGESTION (reliable for any ZIP).
+    suggestion_sels = [".mapboxgl-ctrl-geocoder .suggestions li > a",
+                       ".maplibregl-ctrl-geocoder .suggestions li > a",
+                       ".suggestions li > a",
+                       ".mapboxgl-ctrl-geocoder--suggestion",
+                       "ul.suggestions li"]
+    for ss in suggestion_sels:
+        try:
+            page.wait_for_selector(ss, timeout=3500)
+            sug = page.query_selector(ss)
+            if sug and sug.is_visible():
+                sug.click()
                 time.sleep(3.5)
                 return True
         except Exception:
             continue
-    # last resort: any visible textbox by ARIA role
+    # Fallback: submit with Enter and give the map time to fly to the result.
     try:
-        tb = page.get_by_role("textbox")
-        if tb.count() > 0:
-            tb.first.click()
-            tb.first.fill(str(zip_code))
-            page.keyboard.press("Enter")
-            time.sleep(3.5)
-            return True
+        page.keyboard.press("Enter")
+        time.sleep(4.0)
+        return True
     except Exception:
-        pass
-    return False
+        return False
 
 
 # ----------------------------------------------------------------------------
@@ -3346,10 +3379,16 @@ def main():
             if args.zip and not searched[0]:
                 print("Searching area: %s" % args.zip)
                 if not search_zip(page, args.zip):
-                    if args.auto:
-                        print("Couldn't find the search box -- scanning the current view.")
-                    else:
-                        print("Couldn't find the search box -- pan to your area by hand.")
+                    print("\n" + "!" * 64)
+                    print("!! WARNING: could NOT enter ZIP %s into the map." % args.zip)
+                    print("!! The map is still on its DEFAULT area -- if you scan now")
+                    print("!! you will scrape the WRONG location (this is the OKC->TX bug).")
+                    print("!! Type the ZIP into the map's search box BY HAND, wait for it")
+                    print("!! to fly to %s, THEN let it scan." % args.zip)
+                    print("!" * 64 + "\n")
+                    time.sleep(6.0)
+                else:
+                    searched[0] = True
                 if args.zoom_in:
                     zoom(page, args.zoom_in, "in")
                 if args.zoom_out:
