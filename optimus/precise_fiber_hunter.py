@@ -2191,14 +2191,10 @@ def safe_goto(page, url):
 def search_zip(page, zip_code):
     """Type the ZIP into the AT&T map's search box, pick the first geocoder
     suggestion, and fly the map there. Works for ANY market (OKC, Houston,
-    anywhere) -- not just the map's default view.
-
-    WHY suggestion-click, not just Enter: the Mapbox/MapLibre geocoder often
-    leaves a bare 5-digit ZIP unresolved when you only press Enter, so the map
-    never moves and the scan silently runs on the DEFAULT view (Texas). That
-    was the "entered OKC but scraped TX" bug. Clicking the first suggestion
-    forces the map to actually travel to the ZIP. Returns True only when a
-    location was entered; the caller must NOT silently scan on False."""
+    anywhere). Pressing Enter alone often leaves a bare ZIP unresolved so the
+    map never moves and the scan runs on the DEFAULT view -- that was the
+    'entered OKC but scraped elsewhere' bug. Returns True only when a location
+    was entered."""
     q = str(zip_code).strip()
     selectors = [".mapboxgl-ctrl-geocoder--input",
                  ".maplibregl-ctrl-geocoder--input",
@@ -2212,8 +2208,7 @@ def search_zip(page, zip_code):
         try:
             el = page.query_selector(sel)
             if el and el.is_visible():
-                box = el
-                break
+                box = el; break
         except Exception:
             continue
     if box is None:
@@ -2226,40 +2221,26 @@ def search_zip(page, zip_code):
     if box is None:
         return False
     try:
-        box.click()
-        box.fill("")
-        box.type(q, delay=60)
-        time.sleep(1.2)
+        box.click(); box.fill(""); box.type(q, delay=60); time.sleep(1.2)
     except Exception:
         return False
-    # Prefer clicking the first geocoder SUGGESTION (reliable for any ZIP).
-    suggestion_sels = [".mapboxgl-ctrl-geocoder .suggestions li > a",
-                       ".maplibregl-ctrl-geocoder .suggestions li > a",
-                       ".suggestions li > a",
-                       ".mapboxgl-ctrl-geocoder--suggestion",
-                       "ul.suggestions li"]
-    for ss in suggestion_sels:
+    for ss in [".mapboxgl-ctrl-geocoder .suggestions li > a",
+               ".maplibregl-ctrl-geocoder .suggestions li > a",
+               ".suggestions li > a",
+               ".mapboxgl-ctrl-geocoder--suggestion",
+               "ul.suggestions li"]:
         try:
             page.wait_for_selector(ss, timeout=3500)
             sug = page.query_selector(ss)
             if sug and sug.is_visible():
-                sug.click()
-                time.sleep(3.5)
-                return True
+                sug.click(); time.sleep(3.5); return True
         except Exception:
             continue
-    # Fallback: submit with Enter and give the map time to fly to the result.
     try:
-        page.keyboard.press("Enter")
-        time.sleep(4.0)
-        return True
+        page.keyboard.press("Enter"); time.sleep(4.0); return True
     except Exception:
         return False
 
-
-# ----------------------------------------------------------------------------
-# scan: drain each viewport fully, THEN pan; snake across grid
-# ----------------------------------------------------------------------------
 def record_capture(ws, seen, area_label, dry, address, popup_status, ban,
                    dot_status, via, zone_label="WORKING", lat=None, lng=None):
     """Common writer for both the Mapbox fast path and the click path.
@@ -3188,6 +3169,27 @@ def main():
                          "instead of the separate write worker")
     args = ap.parse_args()
 
+    # If no ZIP was given, ASK for one so the map actually TRAVELS to the target
+    # city instead of scanning wherever it happens to be sitting. Entering a ZIP
+    # turns on --auto so search_zip() navigates there first. (Fixes "entered OKC
+    # but scraped elsewhere": the launcher runs with no --zip, so nothing ever
+    # moved the map.)
+    try:
+        _interactive = bool(getattr(sys, "stdin", None)) and sys.stdin.isatty()
+    except Exception:
+        _interactive = False
+    if (not args.zip and not args.login and not args.uploader
+            and not getattr(args, "clean_sheet", False) and _interactive):
+        try:
+            _z = input("\nEnter the 5-digit ZIP to scan (e.g. 73102 for OKC), "
+                       "or press Enter to scan the current map view: ").strip()
+        except EOFError:
+            _z = ""
+        if _z:
+            args.zip = _z
+            args.auto = True
+            print("  -> Will fly the map to %s before scanning." % _z)
+
     if args.uploader:
         uploader_main()          # write worker: no browser, no Playwright
         return
@@ -3381,10 +3383,9 @@ def main():
                 if not search_zip(page, args.zip):
                     print("\n" + "!" * 64)
                     print("!! WARNING: could NOT enter ZIP %s into the map." % args.zip)
-                    print("!! The map is still on its DEFAULT area -- if you scan now")
-                    print("!! you will scrape the WRONG location (this is the OKC->TX bug).")
-                    print("!! Type the ZIP into the map's search box BY HAND, wait for it")
-                    print("!! to fly to %s, THEN let it scan." % args.zip)
+                    print("!! The map is still on its DEFAULT area -- scanning now would")
+                    print("!! scrape the WRONG location. Type the ZIP into the map's search")
+                    print("!! box BY HAND, wait for it to fly to %s, then let it scan." % args.zip)
                     print("!" * 64 + "\n")
                     time.sleep(6.0)
                 else:
