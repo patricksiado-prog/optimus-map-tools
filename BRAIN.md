@@ -266,3 +266,27 @@ Read the connector source (patricksiado-prog/go-high-level-mcp-2026-complete):
   in desktop UI, Save+Publish the manual-call step (re-serializes it the way the engine needs),
   then bulk Add-To-Workflow the tag list. This is the only remaining step and requires UI.
 - Works-today alternative needing no workflow: Contacts → tag filter → tap-to-call.
+
+---
+## RUN-LOG 2026-08-03 — OKC/national fix pushed to the LAUNCHER SOURCE branch
+- **Where the desktop apps actually pull from** = `Go-High-Level-MCP-2026-Complete`
+  branch `claude/optimus-map-tools-setup-6dcl6o`, folder `optimus/` (RUN_HUNTER.bat /
+  RUN_SCRAPER.bat curl raw files from there each launch). The copy in
+  optimus-map-tools is a MIRROR — fixes must land on the MCP-repo setup branch or the
+  launchers never see them.
+- **Bug:** VA (Ara) entered OKC zips but scraped 480/540/510 numbers. Root cause:
+  `precise_fiber_hunter.py search_zip()` typed the ZIP + pressed Enter, but the
+  Mapbox/MapLibre geocoder leaves a bare 5-digit ZIP unresolved → map never moved →
+  scan ran on the DEFAULT view.
+- **Fix (commit 9c0f818 on setup-6dcl6o):** search_zip now clicks the first geocoder
+  SUGGESTION to force the map to fly to the ZIP; on failure it STOPS with a loud
+  banner instead of silently scanning the wrong area. Verified live at the raw URL
+  RUN_HUNTER pulls (154,103 bytes, fix present, old "scanning the current view" gone,
+  compiles clean).
+- **National status:** both tools already work anywhere — scraper via `nearby_zips()`
+  (SCF-geographic ZIP expansion, any US ZIP), hunter via the fixed search_zip. Enter
+  any city's ZIP → it works that metro + auto-advances outward. (Optional future: a
+  built-in top-100-metro list for hands-off national sweep.)
+- **Desktop icons:** newer = "Optimus Fiber Hunter" (orange, RUN_HUNTER, auto-updates
+  = precise hunter). Older = "Optimus Hunter V200K (June build)" static; slow_hunter =
+  old screen-grab. Use the orange one.
