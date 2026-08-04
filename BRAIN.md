@@ -436,3 +436,65 @@ real number. Until then: treat "matches" = **unique phones (~2.7k)**, not row co
   now that Patrick is the intended recipient, or keep it as a backup? (Not decided.)
 - If a reliable cron-usable Gmail connector becomes available, could rebuild the
   Routine to actively send to patricksiado@gmail.com instead of the SMTP file.
+
+---
+
+## Run log — 2026-08-04 — PERIODIC + STARTUP DEDUPE (shipped & verified live)
+
+Built into BOTH `precise_fiber_hunter.py` and `maps_scraper_standalone.py` (identical
+embedded block; gitignored nothing new). On program START it deletes duplicates on all
+shared tabs and prints totals; then a background thread re-runs every 30 min.
+- **Precise Fiber** → exact-duplicate address rows. **Maps Businesses** → same phone
+  (else name|address). **Fiber Green Biz / Upgrade Orange Biz** → same phone (else
+  name|address); keeps the row that has a call disposition. Collapses the ~8x
+  unit/spelling inflation. Verified read-only first: FG 21,662 → 4,105 rows, **0 unique
+  phones lost**; Precise Fiber −5,278; Maps −1,505.
+- Safety: deletes only specific duplicate row numbers from a snapshot, applied
+  BOTTOM-UP via one `batch_update` (live appends never disturbed); local CSV backup per
+  tab before delete; cross-machine advisory lock (`_Dedupe Lock` cell) so hunter+scraper
+  never dedupe at once; per-pass cap `_DEDUPE_MAXDEL`=6000; Precise Fiber cleaned every
+  6th pass. Startup shows: fiber-green addresses / scraped businesses / MATCHES-unique-
+  phone / FG rows. Off via `--no-dedupe` (hunter) or `SCRAPER_NO_DEDUPE=1` (scraper).
+- **LIVE PROOF (this session):** user ran the scraper; console showed
+  "Cleaning duplicates on startup ... [dedupe] Precise Fiber: removed 5278 duplicate
+  rows" — the EXACT predicted number. Feature works end to end.
+- Pushed to both branches (optimus-map-tools chat-repetitive-questions-9ex5h7 + MCP
+  Go-High-Level-...-setup-6dcl6o). Unit-tested selection + bottom-up delete with a mock.
+
+## Run log — 2026-08-04 — DIALER: what's live + THE bug blocking new-lead adds
+
+**Live dialer = "Optimus Dialer 2 — Zack Call Queue"** (`9d3c7d0c-8f6f-44a9-93f9-
+d55d78e3b4a8`, published v21). Proof: user's mobile Manual Action screen shows every
+lead labeled that workflow, "Assigned To: Zack Woodring." Its `manual-call` ("Fiber
+Call") IS correctly assigned to Zack via `attributes.assignedUser` /
+`standardAssignedUser` = `qOa2OVzPabolfU9xjVXM` (built in desktop UI — that's why it
+works; API-built manual-call comes out with empty attributes).
+- **Flow:** manual-call (assigned Zack) → wait 0.5 min → goto back to an if_else that
+  checks tag "not interested" (yes→remove, none→call again). Recycle loop.
+- **THE BUG (why new adds never stick):** the workflow's ENTRY action (order 0) is
+  `add_contact_tag` **"not interested"**, and the very next if_else removes anyone with
+  that tag. So every NEW enrollee is tagged not-interested and booted before reaching
+  the call. Leads already in the loop re-enter at the if_else (never hit the Add Tag),
+  so they keep calling — that's why "it's been working" yet nothing new gets in. Every
+  lead in the queue is dated 07/29 = nothing new added since.
+- **FIX:** delete the entry "Add Tag: not interested" step in the DESKTOP workflow UI.
+  Do NOT do it via API — `ghl_update_workflow_actions` replaces all actions and would
+  likely strip the manual-call's assignee (known quirk), un-assigning Zack's live queue.
+- Other "dialers" are dead: Dialer 3 (`b21e43bd`) and "Optimus Fiber Biz — Power Dialer
+  Queue" (`41e00387`) both have `manual-call` with empty attributes (unassigned →
+  invisible); `e88c6596` is literally named "[RETIRED — loop moved into Dialer 2]".
+- Tag `optimus-fiber-biz` = **2,281** contacts, assigned to Zack (some have broken
+  phones like +12913411 — clean later).
+- Call reporting/recordings endpoints 404 via API (`get_call_reports`,
+  `ghl_list_call_recordings`) — can't read call activity; use desktop Reporting.
+
+**PENDING — load the DealMachine list into the dialer:** user uploaded
+`dealmachinecontacts...csv` = skip-traced homeowners on **Dorrcrest Ln / Houston 77070**
+(the new-fiber block): 237 rows, **200 valid unique cell numbers** (37 no phone). Cleaned
+to `Dorrcrest_Fiber_77070_ready.csv` (scratchpad; sent to user), tag
+`dorrcrest-fiber-77070`. Plan agreed: (1) USER deletes the Add Tag entry step; (2) then
+CLAUDE creates the 200 contacts (name/cell/address, assigned Zack) + enrolls each into
+Dialer 2 via `add_contact_to_workflow` (no bulk API), OR user imports the CSV + Bulk
+Actions → Add to Workflow. Blocked on step 1 (the Add Tag deletion). These are
+RESIDENTIAL homeowners going into the "Fiber Biz" dialer — intentional (they're the
+new-fiber leads to call).
