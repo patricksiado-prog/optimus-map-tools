@@ -399,3 +399,40 @@ Dedup the match tabs by **last-10-digit phone** (dialer key), not raw address, o
 sides; collapse unit-level address variants to one business; optionally add phone-dedup
 to the hunter's `match_leads_to_biz`. Report/export the **unique-phone** count as the
 real number. Until then: treat "matches" = **unique phones (~2.7k)**, not row count.
+
+---
+
+## Run log — 2026-08-04 — NEW-FIBER alerts + email notify (partly DEFERRED)
+
+**Built + shipped (both branches):**
+- Hunter flags a **freshly-lit block** = a viewport that's mostly GREEN (fiber
+  eligible / NON-customer) with almost no grey (existing customers). Threshold
+  `NEW_FIBER_ALERT`=15 green AND green >= 4x grey. On a hit it: prints a banner,
+  writes a row to a **"New Fiber Alerts"** sheet tab, pushes to a public GitHub
+  file `optimus/_live/NEW_FIBER_ALERTS.txt`, and (if configured) sends a
+  real-time email. Legend confirmed from the AT&T map: green=eligible/non-customer,
+  gold=eligible/copper-upgrade, grey=existing fiber customer.
+- Real-time email path: `_email_alert()` sends via SMTP the moment a block is
+  found (10-min cooldown), reading login from a LOCAL `optimus_email.json`
+  (gitignored, never committed) in the same spots as github_token.txt. Recipient
+  defaults to **DEFAULT_ALERT_TO = patricksiado@gmail.com** (override via "to").
+- Daily digest Routine (trig_01MfufwTL7NxwKPW3tYiHNYy): once a day 13:00 UTC
+  (8am Central), fresh session reads the public NEW_FIBER_ALERTS.txt and emails
+  a digest — but the CCR notification email can only go to the ACCOUNT OWNER
+  (Brandon / BHOLLAND@thefiberplug.com), NOT an arbitrary address. Went hourly
+  briefly -> "too many junk emails" -> reverted to daily + "nothing new = don't send".
+
+**DEFERRED / TODO (user said "do this later"):**
+- Get new-fiber alerts to **patricksiado@gmail.com**. Blocker: the free CCR daily
+  email only reaches the account owner; Gmail MCP connector was NOT available to
+  the cron session. Two ways to finish:
+  1. **Real-time to Patrick (recommended):** drop `optimus_email.json` on the
+     hunter PC's Desktop = {"user":"patricksiado@gmail.com","password":"<gmail app
+     password>"} (16-char App Password from Google Account > Security > 2FA > App
+     passwords). Code already targets patricksiado@gmail.com, so nothing else
+     needed. Sends instantly on each block (10-min cooldown).
+  2. Or keep the daily email going to Brandon and forward to Patrick.
+- Open question for the user: **turn OFF the daily owner-email** (trig_01Mfuf...)
+  now that Patrick is the intended recipient, or keep it as a backup? (Not decided.)
+- If a reliable cron-usable Gmail connector becomes available, could rebuild the
+  Routine to actively send to patricksiado@gmail.com instead of the SMTP file.
