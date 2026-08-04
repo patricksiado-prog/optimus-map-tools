@@ -290,3 +290,54 @@ Read the connector source (patricksiado-prog/go-high-level-mcp-2026-complete):
 - **Desktop icons:** newer = "Optimus Fiber Hunter" (orange, RUN_HUNTER, auto-updates
   = precise hunter). Older = "Optimus Hunter V200K (June build)" static; slow_hunter =
   old screen-grab. Use the orange one.
+
+---
+
+## Run log — 2026-08-04 — "sheet writes 0" investigation + capture-robustness fix
+
+**User report:** hunter "used to get to 200k" but recent runs write 0 to the sheet.
+Insisted a functional version exists / something in the code changed.
+
+**Investigation (proved with git, not guesses):**
+- The address-CAPTURE engine is **byte-for-byte identical since the FIRST commit
+  (d30d5b7, 2026-07-26)** — verified `scan_net`, `sweep_continuous`, `sweep_grid`,
+  `scan`, `search_this_area`, `pan`, and the NetCapture path all unchanged. My only
+  earlier edits were `search_zip` + the launch prompt. **No code change explains
+  200k→0.**
+- The real signal is in the **Hunter Status** tab (per machine):
+  - `LAPTOP-RS9EHSLO` → 26,160 cells / **3,806 leads** (this box built the 200k)
+  - `DESKTOP-VCRE1E8`, `smallpc` → short runs, **0 leads**
+  So the big numbers came from ONE machine; the 0-runs are on different machines and
+  very short (15 cells). Points at login/session or map-not-showing-dots, OR AT&T
+  changing their serviceability payload (would hit every machine).
+
+**How capture actually works:** the continuous sweep does NOT click dots. It reads
+AT&T's `serviceability` JSON responses off the wire (`NetCapture.handle`), parses each
+with `lead_from_dict`, and `flush()`es GREEN/GOLD to the sheet (GREY = existing
+customer, skipped). `lead_from_dict` REQUIRED an inline street address — if AT&T's
+feed drops/renames the address field, every dot returns None → 0 written everywhere.
+
+**Fixes shipped (precise_fiber_hunter.py, both branches):**
+1. **Coordinate capture** — `lead_from_dict` now also captures a dot that has a fiber
+   STATUS + US lat/lng but NO street address, recording `(lat, lng)` as the address.
+   Tightly gated (US coord range + status/ban that classifies GREEN/GOLD) so junk
+   coordinate/UI JSON can't get in. Unit-tested: green-coord captures; grey/no-status/
+   non-US-coord all rejected. This is the prime fix for "map shows dots, sheet 0."
+2. **Zero-capture diagnostics** — `NetCapture` counts serviceability responses
+   (`svc_seen`) and leads (`svc_leads`); `.diag()` returns the reason. When a sweep is
+   still at 0 leads it writes that reason to the **Hunter Status** sheet, e.g.
+   "NO serviceability responses seen -> not logged in / map not loading" vs
+   "saw N responses but decoded 0 leads -> AT&T payload changed; top keys: ...".
+   A 200 svc reply that yields 0 leads dumps its top-level keys to the Drive log once.
+   => next run tells us the ACTUAL root cause remotely (readable from the sheet).
+
+**Gold-cluster alert (user request):** when >= `GOLD_CLUSTER_ALERT` (default 8) GOLD
+(copper→fiber UPGRADE) dots land in ONE viewport, it prints a loud banner, logs
+`GOLD-CLUSTER ...` to Drive, and writes a "GOLD CLUSTER" row to the Hunter Status
+sheet. Gold = hottest leads (existing copper customers eligible to upgrade). Tune the
+threshold via `GOLD_CLUSTER_ALERT` near the top of the file.
+
+**Next-run playbook:** relaunch on the 0-lead machine, log in, get green dots visible,
+press Enter, let it run. Then read the Hunter Status tab — `.diag()` will state whether
+it's a login/map issue (no svc responses) or an AT&T-format issue (responses but 0
+leads, keys shown), and we fix the confirmed cause precisely.
