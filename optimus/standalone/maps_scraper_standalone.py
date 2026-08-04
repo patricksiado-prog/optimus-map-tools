@@ -751,10 +751,10 @@ def _dd_keys():
 
 def dedupe_all_tabs(sh):
     if sh is None:
-        return
+        return 0
     lk = _dd_acquire_lock(sh)
     if lk is None:
-        return                             # another machine is deduping now
+        return 0                            # another machine is deduping now
     biz_key, biz_score, pf_key, maps_key = _dd_keys()
     _DD_PASS[0] += 1
     jobs = [("Maps Businesses", maps_key, None),
@@ -773,6 +773,57 @@ def dedupe_all_tabs(sh):
             print("  [dedupe] %s skipped: %s" % (tab, str(e)[:60]))
     if total:
         print("  [dedupe] cleaned %d duplicate rows this pass" % total)
+    return total
+
+
+def _dd_count_col(sh, tab, col=1):
+    try:
+        return max(0, len(sh.worksheet(tab).col_values(col)) - 1)
+    except Exception:
+        return 0
+
+
+def _dd_unique_phones(sh, tab):
+    try:
+        vals = sh.worksheet(tab).col_values(2)[1:]   # the Phone column
+    except Exception:
+        return 0
+    u = set()
+    for v in vals:
+        p = _dd_phone(v)
+        if p:
+            u.add(p)
+    return len(u)
+
+
+def startup_clean_and_counts(sh):
+    """Run at program START: delete the exact/phone duplicates NOW (looping until
+    it converges), then print the real total of every tab so you see the numbers
+    up front -- e.g. fiber addresses / scraped businesses / callable matches."""
+    if sh is None:
+        return
+    print("\n  Cleaning duplicates on startup (one time, then it stays clean)...")
+    _DD_PASS[0] = 0
+    for _ in range(8):                       # converge, but bounded
+        try:
+            if dedupe_all_tabs(sh) == 0:
+                break
+        except Exception as e:
+            print("  (startup dedupe stopped: %s)" % str(e)[:60])
+            break
+    pf  = _dd_count_col(sh, "Precise Fiber")
+    mb  = _dd_count_col(sh, "Maps Businesses")
+    fg  = _dd_count_col(sh, "Fiber Green Biz")
+    fgp = _dd_unique_phones(sh, "Fiber Green Biz")
+    og  = _dd_count_col(sh, "Upgrade Orange Biz")
+    print("\n  ================= TOTALS (deduped) =================")
+    print("   Fiber green addresses (Precise Fiber) : {:>9,}".format(pf))
+    print("   Scraped businesses (Maps Businesses)  : {:>9,}".format(mb))
+    print("   MATCHES - callable (unique phone)     : {:>9,}".format(fgp))
+    print("   MATCHES - Fiber Green Biz rows        : {:>9,}".format(fg))
+    if og:
+        print("   Upgrade Orange Biz matches            : {:>9,}".format(og))
+    print("  ===================================================\n")
 
 
 def start_periodic_dedupe(sh, every=_DEDUPE_EVERY):
@@ -941,9 +992,10 @@ def main():
     # on the biz tabs). Cross-machine locked so it never collides with the hunter.
     if sheet_ws is not None and os.environ.get("SCRAPER_NO_DEDUPE", "").strip() not in ("1", "true", "yes"):
         try:
-            start_periodic_dedupe(sheet_ws.spreadsheet)
+            startup_clean_and_counts(sheet_ws.spreadsheet)   # clean + show totals NOW
+            start_periodic_dedupe(sheet_ws.spreadsheet)      # keep it clean while running
         except Exception as e:
-            print("  (periodic dedupe off: %s)" % str(e)[:60])
+            print("  (dedupe off: %s)" % str(e)[:60])
     seen, total, sheet_added, stopped = set(), 0, 0, False
     csv_mode = "a" if (os.path.exists(OUT_PATH) and (qdone or zips_done)) else "w"
     with sync_playwright() as p:
