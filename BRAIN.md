@@ -498,3 +498,75 @@ Dialer 2 via `add_contact_to_workflow` (no bulk API), OR user imports the CSV + 
 Actions → Add to Workflow. Blocked on step 1 (the Add Tag deletion). These are
 RESIDENTIAL homeowners going into the "Fiber Biz" dialer — intentional (they're the
 new-fiber leads to call).
+
+---
+
+## Reference — 2026-08-04 — MAPBOX GL JS knowledge (the AT&T fiber map runs on it)
+
+AT&T's dealer fiber map (youachieve.att.com/yourefer/fiber) is a **Mapbox GL JS**
+map. This is the accumulated, sourced knowledge for anyone working the hunter.
+
+### How it renders (why the hunter works the way it does)
+- Mapbox GL JS draws vector tiles + a style on a **WebGL canvas = the GPU**. Data =
+  **Sources**; how it's drawn = **Layers**. AT&T's green/gold/grey dots are a point
+  Source rendered by a Layer.
+- The map object on AT&T's page is **hidden** (not on `window`), so the hunter hooks
+  `mapboxgl.Map`/`maplibregl.Map` at page-init (`MAPBOX_HOOK_JS`) and also scans globals.
+- **Dots come off AT&T's "serviceability" JSON endpoint** (response URL contains
+  "serviceability"); "Search this area" (appears only AFTER you pan) triggers that fetch.
+  Motion MUST be a **mouse DRAG** — arrow keys / `panBy` do nothing on the hidden map.
+
+### Reading features programmatically (what MAPBOX_DOTS_JS relies on)
+- `queryRenderedFeatures()` → features VISIBLE in the current viewport.
+- `querySourceFeatures(id)` → all features in a source's **currently-loaded tiles**
+  (incl. just off-screen), but NOT tiles outside the viewport. Behaves like
+  queryRenderedFeatures but also finds invisible-but-loaded ones.
+- `map.getSource(id)._data` → the raw GeoJSON for a geojson source (hunter reads this).
+- **Timing gotcha:** sources/layers are NOT queryable right after they're added — you
+  must wait for load/data. The hunter currently uses fixed `SEARCH_SETTLE` sleeps.
+  POSSIBLE FUTURE IMPROVEMENT (not done): wait on `map.on('sourcedata', e=>e.isSourceLoaded)`
+  or `map.once('idle')` instead of a fixed sleep -> more reliable capture, fewer 0-cells.
+
+### Source types (how the dots are served)
+- **Vector tiles** (.mvt/.pbf, pre-tiled, only visible tiles load) vs **GeoJSON** (raw,
+  client tiles it) vs a plain **JSON API** (AT&T's serviceability feed). Rule of thumb:
+  <5 MB GeoJSON, 20 MB+ vector tiles. Addresses ride in the serviceability JSON, geometry
+  in tiles — the hunter reads the JSON off the wire (tiles carry geometry only).
+
+### THE FREEZE — WebGL context loss (blank white, permanent) — root-caused 2026-08-04
+- WebGL runs on the GPU. On a low-RAM laptop the browser drops the map's GPU context —
+  console: **"Too many active WebGL contexts. Oldest context will be lost."** The canvas
+  goes **blank white and never re-renders**; our Python loop keeps sweeping a DEAD map,
+  so the motion watchdog never fires = looks permanent.
+- **Triggers:** other VRAM-heavy tabs (video/3D), Chrome Memory-Saver/tab-discard when the
+  tab is backgrounded, and software rendering (SwiftShader, when HW accel is off — it
+  drops contexts real GPUs survive).
+- **Detect:** the canvas fires a `webglcontextlost` event (`GL_WATCH_JS` listens; sets
+  `window.__optimusGLLost`). `_map_frozen()` reads it.
+- **Recovery is NOT automatic here:** a page reload lands back on AT&T's login/portal and
+  the map only returns after the manual log-in + "Fiber Availability Map" clicks — which
+  the hunter can't do. So on a detected freeze it **alerts + stops cleanly** (marks Hunter
+  Status "stopped", no auto-restart) instead of scanning a dead map. (`_handle_frozen_map`.)
+  Reopen the hunter, click the map on, press Enter to resume.
+- **Prevention (shipped, launch flags):** `--disable-background-timer-throttling`,
+  `--disable-renderer-backgrounding`, `--disable-backgrounding-occluded-windows`,
+  `--disable-features=CalculateNativeWinOcclusion,IntensiveWakeUpThrottling,HighEfficiencyModeAvailable`,
+  `--disable-dev-shm-usage` — keep the map rendering when the window is covered/backgrounded
+  and stop tab-discard mid-run.
+- **Operator mitigations:** close other tabs (frees VRAM), keep the Optimus window in
+  front, run one tool at a time on a weak PC. A general Mapbox recovery is `map.resize()`
+  when the container is shown/resized — but that doesn't fix a lost GPU context here.
+
+### The giant blue/white blob (fixed, cosmetic)
+- Mapbox **GeolocateControl** draws a "user-location accuracy circle" sized to the device's
+  geolocation accuracy (95% confidence). A laptop has no GPS -> IP/Wi-Fi accuracy is poor
+  (miles) -> the circle balloons into a blob covering the map and hiding dots. Real fix is
+  `showAccuracyCircle:false`, but it's AT&T's config, so the hunter hides
+  `.mapboxgl-user-location-accuracy-circle` via injected CSS (`GEO_HIDE_JS`). No dot affected.
+
+### Sources
+- Mapbox docs: queryRenderedFeatures example; Sources API; Events API (sourcedata/idle);
+  Improve performance / Working with large GeoJSON; Blank-tiles troubleshooting;
+  Locate-the-user (GeolocateControl).
+- GitHub issues: mapbox-gl-js #7332 (too many WebGL contexts), #3751 (query vs source
+  features), #2942 (blank on Chrome/Windows).
