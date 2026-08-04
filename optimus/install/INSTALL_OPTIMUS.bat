@@ -48,6 +48,7 @@ for %%F in (precise_fiber_hunter.py optimus_dot_detect.py optimus_api_capture.py
 powershell -NoProfile -Command "iwr '%RAW%/standalone/maps_scraper_standalone.py?cb=%CB%' -OutFile '%APP%\maps_scraper_standalone.py'"
 powershell -NoProfile -Command "iwr '%RAW%/install/RUN_PRECISE_HUNTER.bat?cb=%CB%' -OutFile '%APP%\RUN_PRECISE_HUNTER.bat'"
 powershell -NoProfile -Command "iwr '%RAW%/install/RUN_MAP_SCRAPER.bat?cb=%CB%'  -OutFile '%APP%\RUN_MAP_SCRAPER.bat'"
+powershell -NoProfile -Command "iwr '%RAW%/install/STOP_OPTIMUS.bat?cb=%CB%'      -OutFile '%APP%\STOP_OPTIMUS.bat'"
 
 echo [4/7] Python packages...
 py -m pip install --upgrade pip >nul 2>&1
@@ -62,6 +63,7 @@ powershell -NoProfile -Command "try{iwr '%CREDS%' -OutFile '%APP%\google_creds.j
 echo [7/7] Creating desktop icons...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$w=New-Object -ComObject WScript.Shell;$s=$w.CreateShortcut('%DESK%\Optimus Map Scraper.lnk');$s.TargetPath='%APP%\RUN_MAP_SCRAPER.bat';$s.WorkingDirectory='%APP%';$s.IconLocation='%SystemRoot%\System32\SHELL32.dll,18';$s.Description='Optimus Google Maps Scraper (OKC + everywhere)';$s.Save()"
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$w=New-Object -ComObject WScript.Shell;$s=$w.CreateShortcut('%DESK%\Optimus Precise Hunter.lnk');$s.TargetPath='%APP%\RUN_PRECISE_HUNTER.bat';$s.WorkingDirectory='%APP%';$s.IconLocation='%SystemRoot%\System32\SHELL32.dll,13';$s.Description='Optimus Precise Fiber Hunter (OKC + everywhere)';$s.Save()"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$w=New-Object -ComObject WScript.Shell;$s=$w.CreateShortcut('%DESK%\Stop Optimus.lnk');$s.TargetPath='%APP%\STOP_OPTIMUS.bat';$s.WorkingDirectory='%APP%';$s.IconLocation='%SystemRoot%\System32\SHELL32.dll,27';$s.Description='Turn OFF the Optimus Hunter + Scraper (and background workers)';$s.Save()"
 
 echo.
 echo  ================================================================
