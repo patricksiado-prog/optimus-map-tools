@@ -570,3 +570,63 @@ map. This is the accumulated, sourced knowledge for anyone working the hunter.
   Locate-the-user (GeolocateControl).
 - GitHub issues: mapbox-gl-js #7332 (too many WebGL contexts), #3751 (query vs source
   features), #2942 (blank on Chrome/Windows).
+
+---
+
+## Proposals backlog — 2026-08-04 — "detect more green" + "run longer" (researched, NOT built)
+
+Ideas with research backing, for when the operator green-lights them. Nothing here
+is implemented yet. Grouped by goal; each tagged effort/risk.
+
+### A) Detect NEW GREEN better
+1. **Event-gated capture (replace the fixed SEARCH_SETTLE sleep).** [med effort, low risk]
+   Read each viewport only after the dots finish loading, not after a fixed pause.
+   Pattern: after a pan, `map.on('moveend')` -> wait for `sourcedata` with
+   `e.isSourceLoaded === true` (or `map.once('idle')`), THEN read. CAVEATS from research:
+   the `idle` event has been flaky (reported not firing since GL 3.4, and it does NOT
+   fire in HEADLESS browsers -- issue #9920). The hunter runs HEADED so idle should work,
+   but ALWAYS add a max-wait timeout fallback so it never hangs waiting for idle. Net:
+   fewer greens read half-loaded, fewer false "0 leads" cells.
+2. **Auto-skip dead (all-grey) zones.** [low effort, low risk] If K cells in a row are
+   all grey / 0 green, grow the spiral step or jump farther so time is spent where green
+   is. More green captured per hour.
+3. **Wire the dormant FRESH-fiber weighting.** [low-med] BRAIN notes zone_label is
+   hardcoded "WORKING" so `--fresh` weighting never fires -> a just-lit all-green block is
+   treated like a mature one. Wiring it makes it linger/expand on new-fiber pockets.
+4. **Zoom guard.** [low] Dots only render within a zoom band; too far out = silent misses.
+   Check/nudge zoom into the dot-rendering range before scanning.
+5. **querySourceFeatures over just queryRenderedFeatures.** [low] Source features include
+   loaded-but-just-off-screen dots; already partly used in MAPBOX_DOTS_JS -- make sure the
+   source path is preferred so edge dots aren't missed.
+
+### B) Run LONGER (fewer freezes / less memory)
+1. **Cut screenshot/memory churn.** [low-med, low risk] The pixel path grabs a full-page
+   PNG per viewport, but addresses come off the wire (serviceability JSON), so most
+   screenshots are redundant VRAM/heap pressure that helps trigger the WebGL-context-loss
+   freeze on weak laptops. Gate screenshots to only when the backend read returns nothing.
+2. **Block junk network resources (NOT the map).** [med, MEDIUM risk] Research: blocking
+   resource types with no data cuts load 30-60% + memory. Use Playwright routing to abort
+   ads/analytics/trackers/unrelated media. HARD RULE: never block Mapbox tiles
+   (api.mapbox.com, *.pbf/.mvt), fonts/sprites the map needs, or AT&T's serviceability/api
+   calls -- blocking those breaks capture. Allow-list the map, block the rest.
+3. **Cap/trim NetCapture buffers.** [low] Long runs leak: `seen_urls` (debug dict),
+   `pending`, `endpoints` grow unbounded (research: response buffers accumulate). Periodically
+   trim the debug dict + drop already-flushed pending. The address `seen` set must stay (dedup).
+4. **Chromium memory flags.** [low] `--js-flags=--max-old-space-size=<MB>` bumps V8 heap so
+   GC has room. DO NOT use `--disable-gpu` (the map NEEDS WebGL/GPU) or `--single-process`
+   (unstable). `--disable-dev-shm-usage` already added.
+5. **Resume-where-it-stopped.** [med] Persist the grid `done` set / last center to disk so a
+   freeze-stop can resume the same area instead of re-covering. (No auto-reload -- still needs
+   the manual map-on clicks, but it resumes coverage.)
+6. **Auto-slow on weak PCs.** [low] Detect low RAM (psutil) -> gentler pacing = less churn.
+
+### Recommended first two (best value, contained)
+- A1 event-gated capture (with idle-timeout fallback) -> catches more green.
+- B1 cut screenshot churn -> runs longer.
+
+### Sources
+- Mapbox idle/until: mapbox-gl-js #10192, #13236, #12964, #9920 (idle not firing in headless).
+- Query features: docs queryRenderedFeatures / querySourceFeatures.
+- Playwright memory: microsoft/playwright #15400, #28942; WebScraping.AI memory best-practices.
+- Chromium flags: Puppeteer/headless memory guides (js-flags max-old-space-size; avoid
+  --disable-gpu for WebGL; --disable-dev-shm-usage).
