@@ -341,3 +341,61 @@ threshold via `GOLD_CLUSTER_ALERT` near the top of the file.
 press Enter, let it run. Then read the Hunter Status tab — `.diag()` will state whether
 it's a login/map issue (no svc responses) or an AT&T-format issue (responses but 0
 leads, keys shown), and we fix the confirmed cause precisely.
+
+---
+
+## Run log — 2026-08-04 — HOW THE COMBO MATCH WORKS (confirmed by reading both programs)
+
+**User's model (CONFIRMED correct):** precise hunter builds the green-dot list; map
+scraper writes business address+info; BOTH programs contain logic to match the two and
+write the combined result to the **Fiber Green Biz** tab (copper→fiber to **Upgrade
+Orange Biz**).
+
+### Two sources
+- **Precise Hunter** -> `Precise Fiber` tab: `Address | Dot Color(GREEN/GOLD) | Captured At`.
+- **Maps Scraper** -> `Maps Businesses` tab: `Name | Address | Phone | Website | Category`.
+
+### The join key (IDENTICAL `_norm_addr` in BOTH files)
+`address -> "HOUSE|STREET CORE"`: uppercase, take text before the first comma (drops
+city/state/zip), strip unit tokens (APT/STE/UNIT/#/BLDG/FL/RM/LOT...), standardize the
+street suffix (STREET->ST, AVENUE->AVE, ROAD->RD...), normalize directionals
+(NORTH->N). So `1524 SE 44th Street, OKC, OK 73129` and `1524 SE 44TH ST` both ->
+`1524|SE 44TH ST`. That normalized key is how a dot and a business are declared "the
+same address."
+
+### Matching lives in BOTH programs (bidirectional — whichever finds the pair 2nd writes it)
+- **Hunter side** — `init_bizmatch()` loads Maps Businesses into an index keyed by
+  `_norm_addr`; on every `flush()` of newly captured dots, `match_leads_to_biz()` looks
+  up each dot's address in that index and writes hits to Fiber Green Biz / Upgrade
+  Orange Biz. Also: `reload_biz_index()` re-reads Maps Businesses every ~20 flushes so
+  businesses the scraper adds mid-hunt get caught, and `_backlog_match()` matches prior
+  captures from `precise_addresses.jsonl` at startup.
+- **Scraper side** — `init_match()` loads Precise Fiber GREEN/ORANGE dots into a
+  `leads{normkey:color}` dict; as each business is scraped, `_match_new()` looks up its
+  address and writes hits to the SAME two tabs. Prints `COMBO MATCH ON ...` +
+  `MATCH +N green ... [total matches: X]` (the counter seen on screen).
+
+### Dedup lives in BOTH — but it is ASYMMETRIC (this is the important caveat)
+- **Scraper** dedups matches by **address AND phone** (`green_seen`/`orange_seen` +
+  `green_ph`/`orange_ph`, last-10-digit) — the stronger guard. Its Maps Businesses
+  write also dedups by `NAME|ADDRESS`.
+- **Hunter** dedups matches by **raw uppercase ADDRESS only** (`green_seen`) — NO phone
+  dedup. (BRAIN already flagged hunter dedups on raw string -> address drift.)
+- Both seed their seen-sets by reading the existing Fiber Green Biz/Orange tab (+ local
+  CSV) at startup, so they don't re-append rows already present.
+
+### CONSEQUENCE — why the row count is ~8x the real lead count (measured 2026-08-04)
+`Fiber Green Biz`: **21,660 rows / 21,656 unique addresses / only 2,719 unique phones /
+2,843 unique business names.** Dedup by ADDRESS passes (raw strings differ), but the
+SAME business gets matched to many address VARIANTS (unit/suite numbers and near-dupe
+spellings that all share one `_norm_addr`), so one phone repeats ~8x. **True callable
+list ≈ 2,719 businesses, not 21,660.** (Consistent with the earlier "18k rows vs ~2,495
+unique phones" note.) Two smaller gaps feed this: (1) hunter has no phone-dedup;
+(2) the two programs hold SEPARATE in-memory seen-sets, so running hunter + scraper at
+the SAME time can double-write a match until the other side reloads.
+
+### FIX DIRECTION (not yet done — needs sign-off)
+Dedup the match tabs by **last-10-digit phone** (dialer key), not raw address, on BOTH
+sides; collapse unit-level address variants to one business; optionally add phone-dedup
+to the hunter's `match_leads_to_biz`. Report/export the **unique-phone** count as the
+real number. Until then: treat "matches" = **unique phones (~2.7k)**, not row count.
