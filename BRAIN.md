@@ -656,10 +656,10 @@ switch") and (B) where new AT&T fiber just turned on / is being announced (aim t
    low grey) -> New Fiber Alerts tab + public GitHub file + optional email. Street-level.
    (NOTE: only fires on the UPDATED hunter; the machine seen 2026-08-04 was on old code, so
    the tab didn't exist yet.)
-2. **Daily web tracker Routine** `trig_01VxU7b3QKpshrfejvGVFP2M` ("Optimus — cable outages +
+2. **Daily web tracker Routine** `trig_01DfRVRoPajmieDYNfY1xtmQ` ("Optimus — cable outages +
    new fiber tracker (daily)"): fires a fresh session daily 14:00 UTC (9am Central), WebSearches
    for cable outages (Xfinity/Spectrum/Cox) TODAY in Houston TX, OKC metro, Warren/Detroit MI,
-   AND recent AT&T fiber expansion announcements; emails the owner a short digest (outages
+   AND recent AT&T fiber expansion announcements; emails + phone-pushes the owner a short digest, PRIVATE (outages
    first). Silent ("nothing new") when nothing real is found, so no junk email. Target markets
    are hardcoded in the prompt -> update via update_trigger if markets change.
 
