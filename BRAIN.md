@@ -702,3 +702,64 @@ User wants ACTUAL outage locations (all cable cos, not just Xfinity), not a bare
 **Method baked into the daily tracker (trig_01NogsAtWRVmMbFmpEj9VVLS):** WebSearch all 3
 providers (Spectrum, Cox, Xfinity) per market + Reddit; REPORT the actual provider+city+
 recency in the digest (never a bare link). Only "no active outage found" if search truly dry.
+
+---
+
+## SESSION — Aug 5 2026: Claude as sales manager / pipeline workhorse
+
+**Mandate from Patrick:** "turn yourself into a salesman / manager / IT consultant and
+workhorse — help me make $$. Follow up w everything, don't stop working." Also earlier:
+"ask before modifying CODE" (still holds — this section is ops/docs, not core code edits).
+
+**Where sales actually come from (from analyzing WhatsApp chats w/ Dave + Shika +63 936 334 6203):**
+- The engine is **setter → live 3-WAY call → Patrick closes.** NOT the text blast.
+- Real closes: **Shawarma Hub (CLOSED 7/27)**, business fiber deals ("closed at 2 on Mon"),
+  Anthony's Auto Sales + Olah Automotive (quotes out, near-close).
+- **Dave** = business appt setter (structured lead cards: Tacos Eliza, Hair&Beauty by Nikki,
+  Mauricio Coolshire 77070). **Shika** = dialer + inbox + 3-way workhorse (~20 biz appts:
+  Glovera, Elevate Architects, Chimney Lp, Nice Moves, Amanda Smith + Gigi Huang realtors,
+  Synchro, TPC, Olah...). Both now also running the Optimus scanner.
+- Texts = volume not sales ("most of it auto reply / reached vm"). Business setting converts.
+
+**3 leaks costing deals (documented for the daily):**
+1. **Missed 3-way windows** — setter has a live customer, Patrick busy ("on hold w/ bank") →
+   deal cools. Missing the window = #1 lost-deal cause. Rule: drop everything for a live 3-way.
+2. **Setters hand-checking fiber** — Shika asks "does he have fiber?" 5+ times. SOLVED by the
+   2,943 matches / Fiber Green Biz tab (pre-verified). Dial the tab, stop checking att.com.
+3. **Close→install→paid falls through** — Shawarma "scheduled" but nobody confirms install;
+   pay tied to install/funding → rep morale risk (Shika asked re: pay 6+ times, needs it for meds).
+
+**Sheet analysis (Aug 5, gspread on sheet 1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA):**
+- Precise Fiber: **372,827 dots, +35,196 in 24h, +40k in 7d** (hunter very productive; Dave ran overnight).
+- Fiber Green Biz: **4,427 callable matches.** Top ZIPs 77008(254) 77027(219) 77098(209)
+  77022(179) 77007(163) 77077(121).
+- Maps Businesses: 25,828 scraped. Enriched 1,310. **Upgrade Orange Biz (gold) = 0. Precise
+  Fiber is 100% GREEN — hunter writes NO gold dots** (gold pipeline/alerts never fire; needs
+  classifier fix, NOT yet done — awaiting go).
+- **BOTTLENECK = SCRAPING, not fiber.** 372k dots vs 25k businesses → only 4,427 overlap. To
+  mint more matches: point the Maps Scraper at dense-fiber uncalled ZIPs (77008/77027/77098).
+- Best-converting categories: auto repair, realtors, salons, restaurants, HVAC/electricians/contractors.
+
+**What I set up this session:**
+- **Money Board email** to Patrick (contact fP70IDZcCV2uaBbhmFSh, patricksiado@gmail.com):
+  deals-in-flight to close/confirm (Shawarma install!, Anthony Auto, Olah, Nice Moves quote,
+  Gigi Wed 3-way, Amanda/Elevate/TPC/Synchro), warm-yes list, where-to-dial, rep assignments.
+- **Daily trigger trig_01NogsAtWRVmMbFmpEj9VVLS renamed** "Where to Attack + Sheet Snapshot":
+  added STEP 0 self-healing creds (re-curl from installer Drive id 1upYH4h2VsmOwO82v9CVjMpE6IzV-5dIs)
+  + STEP 1e SHEET SNAPSHOT (dots +24h/+7d, matches, scraped, gold, bottleneck ZIP calc,
+  uncalled-by-ZIP, Warren). 8 AM CT, email only, contact fP70IDZcCV2uaBbhmFSh.
+- **Warm-yes chase (20 replied-yes)** analyzed but HELD from auto-texting — several (Gigi,
+  Glovera) already worked by Shika; blasting would step on reps. Plan: route to Shika/Dave, or
+  only text the non-assigned ones. Awaiting Patrick's call on which.
+
+**Dialer feed for reps:** power dialer runs off a GHL Smart List by tag. Reps dial the
+**Fiber Green Biz** tab / tag `fiber-green-biz` (pre-verified, deduped). Offered to build a
+clean Smart List (fiber-green-biz + uncalled + not-DND) — not yet built.
+
+**Security flag (repeat):** AT&T login (USarmy@@... / we1413) is sitting in BOTH WhatsApp
+threads (sent to Dave AND Shika). Advised Patrick to delete those messages.
+
+**Scraper control:** maps_scraper_standalone.py is interactive (input() for ZIPs, dest 1/2,
+depth 1/2/3), headless Chromium via Playwright, writes to sheet+CSV. Drivable non-interactively
+by piping stdin (e.g. printf "77008\n2\n2\n"). Trivial to LAUNCH from this container; the open
+risk is Google Maps throttling a datacenter/proxy IP vs reps' residential IPs.
