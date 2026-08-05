@@ -90,10 +90,41 @@ import threading
 
 from optimus_dot_detect import (GREEN_MIN, GREEN_MAX, GOLD_MIN, GOLD_MAX,
                                 GRAY_MIN, GRAY_MAX, classify_status,
+                                STATUS_LEAD, STATUS_CUSTOMER, STATUS_COPPER_UPGRADE,
                                 zone_freshness,
                                 ADDRESS_REGEX, STATUS_REGEX, BAN_REGEX,
                                 ELIGIBLE_REGEX, POPUP_READY_HINTS,
                                 find_dots_in_png_bytes)
+
+# Backend build-code classifier (copper=GOLD vs fiber=GREY). Optional import:
+# if it's unavailable for any reason we fall straight back to the legacy
+# text/ban classifier, so the hunter can never fail to start over this.
+try:
+    from backend_classifier import classify_lead as _classify_lead
+except Exception:
+    _classify_lead = None
+
+
+def _lead_status(ld):
+    """Classify a captured lead into lead/customer/copper_upgrade.
+
+    Uses AT&T's backend build code (curr_ntwrk_bld_type_cd on ld['raw']) so a
+    COPPER customer is recognized as GOLD (upgrade) instead of being lumped with
+    GREY existing-fiber customers and dropped. GREEN (empty subscriber_ban =
+    non-customer) is returned identically to the legacy path, so this can only
+    ADD gold; it can never change which dots count as green. Any error or missing
+    data falls back to the original classify_status(text, ban)."""
+    raw = ld.get("raw") if isinstance(ld, dict) else None
+    if _classify_lead is not None and isinstance(raw, dict):
+        try:
+            c = _classify_lead(raw)          # GREEN / GOLD / GREY / CUSTOMER
+            _m = {"GREEN": STATUS_LEAD, "GOLD": STATUS_COPPER_UPGRADE,
+                  "GREY": STATUS_CUSTOMER}
+            if c in _m:
+                return _m[c]
+        except Exception:
+            pass
+    return classify_status(text=ld.get("status"), ban=ld.get("ban"))
 
 # proven schema-tolerant JSON walker from the working pipeline -- the AT&T dot
 # layer is the 'serviceability' JSON endpoint; this extracts its addresses.
@@ -1189,7 +1220,7 @@ class NetCapture:
             if key in seen:
                 continue
             seen.add(key)
-            dot_status = classify_status(text=ld.get("status"), ban=ld.get("ban"))
+            dot_status = _lead_status(ld)
             if dot_color(dot_status) == "GREY":
                 grey_ct += 1
                 continue   # GREY = existing fiber customer -> leave out
@@ -1289,7 +1320,7 @@ class NetCapture:
             if key in seen:
                 continue
             seen.add(key)
-            dot_status = classify_status(text=ld.get("status"), ban=ld.get("ban"))
+            dot_status = _lead_status(ld)
             if dot_color(dot_status) == "GREY":
                 continue
             ts = time.strftime("%Y-%m-%d %H:%M:%S")

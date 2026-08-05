@@ -771,3 +771,18 @@ request failed net::ERR_TUNNEL_CONNECTION_FAILED → 0 businesses. The sandbox's
 can't tunnel through the agent proxy to the open web. CONCLUSION: scraping (and by extension
 the hunter's browser) MUST run on the reps' real-internet PCs; Claude cannot run it from the
 cloud. Claude's role = direct WHERE to scrape + analyze the sheet + manage pipeline, not scrape.
+
+**GOLD/GREY backend detection FIXED (Aug 5) — green untouched:**
+Root cause was 3-layer: (1) `curr_ntwrk_bld_type_cd` never read by the write path
+(not in NET_STATUS_KEYS → ld['status']=None); (2) so classify_status hit `if ban →
+CUSTOMER → GREY → skip`, i.e. EVERY copper customer mislabeled grey and dropped;
+(3) classify_lead (which DOES read the build code) was never called AND its code sets
+were empty though build_codes.json had them. Fix: (a) backend_classifier.py now loads
+the decoded codes (copper=fttn-bp/fttn/ip-rt/iprt/copper/ipbb/adsl/vdsl/dsl → GOLD;
+fiber=fttp-gpon/fttp/gpon/ftth → GREY), hardcoded defaults + build_codes.json extend;
+(b) hunter has `_lead_status(ld)` → uses classify_lead(ld['raw']) when available
+(GREEN→lead, GOLD→copper_upgrade/ORANGE, GREY→customer/skip), falls back to legacy
+classify_status on any error/missing → CANNOT break green or fail to start. Swapped both
+flush write sites. Unit-tested: green→GREEN (unchanged), copper→ORANGE (captured),
+fiber→skip, unknown→skip. Gold now flows to Upgrade Orange Biz. Applies on next hunter
+launch (auto-update). NOTE: did NOT touch the address MATCHING logic (user: leave it alone).

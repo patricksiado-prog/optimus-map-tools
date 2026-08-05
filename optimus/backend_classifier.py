@@ -53,8 +53,22 @@ import json
 # Once a customer-area capture reveals them, list the codes that mean an
 # existing FIBER subscriber (=> GREY) vs a COPPER/DSL account (=> GOLD).
 # Until then they stay empty and customers are reported as "CUSTOMER".
-FIBER_BUILD_CODES  = set()   # e.g. {"fiber", "ftth", "available_fiber"}
-COPPER_BUILD_CODES = set()   # e.g. {"copper", "ipbb", "dsl"}
+# Decoded from a 19,500-record Vintage Park capture (2026-07-01) and kept in
+# build_codes.json. Hardcoded here as defaults so gold/grey detection can NEVER
+# silently revert to "all green" if that JSON is missing at runtime; if the file
+# is present next to this module it EXTENDS these sets (future codes need no code edit).
+FIBER_BUILD_CODES  = {"fttp-gpon", "fttp", "gpon", "ftth"}
+COPPER_BUILD_CODES = {"fttn-bp", "fttn", "ip-rt", "iprt", "copper", "ipbb", "adsl", "vdsl", "dsl"}
+try:
+    import os as _os
+    _bc_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "build_codes.json")
+    if _os.path.exists(_bc_path):
+        with open(_bc_path) as _bc_f:
+            _bc = json.load(_bc_f)
+        FIBER_BUILD_CODES  |= {str(x).strip().lower() for x in _bc.get("fiber", []) if str(x).strip()}
+        COPPER_BUILD_CODES |= {str(x).strip().lower() for x in _bc.get("copper", []) if str(x).strip()}
+except Exception:
+    pass   # missing/corrupt JSON -> keep the hardcoded defaults; never crash
 
 
 # ── CORE CLASSIFIER ────────────────────────────────────────────────────────
