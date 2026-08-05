@@ -669,3 +669,36 @@ switch") and (B) where new AT&T fiber just turned on / is being announced (aim t
   caps).
 - New-fiber announcement -> point hunter + scraper at that new metro to build the match list
   before competitors.
+
+---
+
+## Skill update — 2026-08-04 — OUTAGE DATA: sources, vendors, method (researched)
+
+User wants ACTUAL outage locations (all cable cos, not just Xfinity), not a bare link.
+
+**Who SELLS outage data (not Google):**
+- **Downdetector — owned by Ookla** — the gold standard, user-report data, 12,000+ services,
+  has a COMMERCIAL API. Paid/enterprise.
+- **Cisco ThousandEyes (Internet Insights)** — real-time outage detection by provider +
+  geography, v7 API, alerts by geo/provider/severity. Paid SaaS, custom-quoted.
+- **Kentik / Catchpoint** — network intelligence. Paid.
+
+**FREE sources that actually work for us:**
+- **WebSearch is the tool** — WebFetch is BLOCKED (403) on downdetector.com AND
+  istheservicedown.com AND spectrumoutage.org (all bot-protect). But WebSearch READS their
+  content and returns real summaries. So the tracker must SEARCH, not fetch.
+- Best free pages (surface in search): **istheservicedown.com** has per-provider per-CITY
+  pages that LIST affected neighborhoods (e.g. Cox OKC, Spectrum/Charter Detroit);
+  spectrumoutage.org (Spectrum by state/city); Downdetector public map. Plus **Reddit**
+  (local subs r/houston r/Detroit r/okc + r/Comcast_Xfinity, r/Spectrum) and Twitter/X for
+  real-time complaints.
+
+**Real findings this session (proof the method works):**
+- **Spectrum/Charter — metro Detroit incl. WARREN MI**: recent outage hit Warren, Detroit,
+  Dearborn, Madison Heights, Southfield, Ferndale, Oak Park. KEY: Warren is a recurring
+  Spectrum trouble spot AND our new-fiber market = perfect same-day switch pitch.
+- **Cox — Oklahoma City / Del City**: reported ~40% node outage, "horrible service."
+
+**Method baked into the daily tracker (trig_01NogsAtWRVmMbFmpEj9VVLS):** WebSearch all 3
+providers (Spectrum, Cox, Xfinity) per market + Reddit; REPORT the actual provider+city+
+recency in the digest (never a bare link). Only "no active outage found" if search truly dry.
