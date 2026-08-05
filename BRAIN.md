@@ -763,3 +763,11 @@ threads (sent to Dave AND Shika). Advised Patrick to delete those messages.
 depth 1/2/3), headless Chromium via Playwright, writes to sheet+CSV. Drivable non-interactively
 by piping stdin (e.g. printf "77008\n2\n2\n"). Trivial to LAUNCH from this container; the open
 risk is Google Maps throttling a datacenter/proxy IP vs reps' residential IPs.
+
+**Scraper cloud-run TEST (Aug 5, PROVEN):** Ran maps_scraper_standalone.py from the CCR
+cloud container (Warren MI 48093, Light, CSV). Fixed a playwright/browser mismatch (need
+playwright==1.56.0 for the pre-installed chromium build 1194). Result: EVERY Google Maps
+request failed net::ERR_TUNNEL_CONNECTION_FAILED → 0 businesses. The sandbox's Chromium
+can't tunnel through the agent proxy to the open web. CONCLUSION: scraping (and by extension
+the hunter's browser) MUST run on the reps' real-internet PCs; Claude cannot run it from the
+cloud. Claude's role = direct WHERE to scrape + analyze the sheet + manage pipeline, not scrape.
