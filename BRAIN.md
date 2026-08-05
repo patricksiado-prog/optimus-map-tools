@@ -630,3 +630,42 @@ is implemented yet. Grouped by goal; each tagged effort/risk.
 - Playwright memory: microsoft/playwright #15400, #28942; WebScraping.AI memory best-practices.
 - Chromium flags: Puppeteer/headless memory guides (js-flags max-old-space-size; avoid
   --disable-gpu for WebGL; --disable-dev-shm-usage).
+
+---
+
+## Skill — 2026-08-04 — TRACKING cable outages + new fiber installs (built + scheduled)
+
+Goal: know (A) where cable internet is DOWN today (pitch "your cable's out, fiber's live,
+switch") and (B) where new AT&T fiber just turned on / is being announced (aim the hunters).
+
+### Best sources (researched)
+- **Cable outages (real-time):** Downdetector is the gold standard — detects outages from
+  user-report SPIKES before the ISP admits it, mapped by city. Alternatives: Outage.Report,
+  GeoBlackout, ISPDown. Plus **local news** and **Reddit** (r/Comcast_Xfinity, r/Spectrum,
+  local city subs) light up during outages. Downdetector has a paid API; the public pages +
+  web/news/Reddit search are enough for a daily scan.
+- **New fiber (street-level, most actionable):** OUR OWN HUNTER on the AT&T dealer map is the
+  most real-time, granular source. The public maps LAG MONTHS — FCC National Broadband Map's
+  current data is Dec 2025 (May 2026 release); BroadbandNow similar. So do NOT rely on FCC/
+  BroadbandNow for "just lit"; use the hunter + its New-Fiber Alerts.
+- **New fiber (new MARKETS to point the hunter at):** AT&T press releases + tech/business
+  news (Finviz/StockTitan/local) + Reddit r/ATTFiber announce expansions city-by-city.
+
+### What was built
+1. **Hunter New-Fiber Alerts** (already shipped): flags a freshly-lit block (dense green,
+   low grey) -> New Fiber Alerts tab + public GitHub file + optional email. Street-level.
+   (NOTE: only fires on the UPDATED hunter; the machine seen 2026-08-04 was on old code, so
+   the tab didn't exist yet.)
+2. **Daily web tracker Routine** `trig_01VxU7b3QKpshrfejvGVFP2M` ("Optimus — cable outages +
+   new fiber tracker (daily)"): fires a fresh session daily 14:00 UTC (9am Central), WebSearches
+   for cable outages (Xfinity/Spectrum/Cox) TODAY in Houston TX, OKC metro, Warren/Detroit MI,
+   AND recent AT&T fiber expansion announcements; emails the owner a short digest (outages
+   first). Silent ("nothing new") when nothing real is found, so no junk email. Target markets
+   are hardcoded in the prompt -> update via update_trigger if markets change.
+
+### The play
+- Outage digest hits inbox -> reps call that market SAME DAY: "your <cable co> is down, AT&T
+  fiber's live at your address, switch." Strongest vs Xfinity (worst-rated cable, 60/100, data
+  caps).
+- New-fiber announcement -> point hunter + scraper at that new metro to build the match list
+  before competitors.
