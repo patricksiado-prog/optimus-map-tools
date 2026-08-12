@@ -916,4 +916,23 @@ clean on its own — no rep PC needed.
   creds base64 is **embedded in the Routine's prompt** (private to Brandon's account; same key
   already sits in Drive/FIX_CREDS scripts). If that key is ever rotated, update this trigger's prompt.
 - To change: `update_trigger`/`delete_trigger` on `trig_0166v3uSachDJv8YtRbFqcSX`.
-- Real durable-er fix still open: make the hunter phone-dedup on append so dupes never accumulate.
+
+## RUN-LOG 2026-08-12 — CODE FIX: hunter now phone-dedups matches on write (root cause)
+
+Patrick approved the code edit. Root cause of the ~8x inflation: `match_leads_to_biz()` in
+`optimus/precise_fiber_hunter.py` deduped matches by **raw uppercase address** (`green_seen`/
+`orange_seen`), so the same business (same phone) matched via many address/unit/spelling variants
+wrote a new row each time. The scraper already deduped by phone; the hunter didn't.
+
+**Fix (this repo, branch chat-repetitive-questions-9ex5h7):** added `_biz_ph10()` (last-10-digit
+key, same as scraper), added `green_ph`/`orange_ph` sets to `_BIZ`, seeded them at
+`init_bizmatch()` from the existing tabs + CSVs (`_biz_seen_ph`/`_csv_seen_ph`), and changed
+`match_leads_to_biz()` to dedup by phone when present, falling back to the raw-address guard only
+for no-phone businesses. Compiles clean; unit-tested: 3 address-variants of one phone → 1 row,
+no-phone rows still dedup by address. So the hunter now writes ONE row per business — dupes stop
+accumulating at the source (the daily cloud dedupe becomes a backstop, not the fix).
+
+⚠️ **DEPLOY:** the desktop apps auto-pull from `Go-High-Level-MCP-2026-Complete` branch
+`claude/optimus-map-tools-setup-6dcl6o` (folder `optimus/`), NOT from this mirror repo. **This fix
+must ALSO be applied there** for reps' hunters to get it. Not yet done (that repo isn't in this
+session's scope) — needs add_repo + the same edit on that branch.
