@@ -1,8 +1,48 @@
 # OPTIMUS HOUSTON - PROJECT BRAIN
 
-Last updated: 2026-04-30
+Last updated: 2026-08-12
 
 Team's shared context. Stored in github.com/patricksiado-prog/optimus-map-tools
+
+---
+
+## UPDATE 2026-08-12 (Claude session review)
+
+### Field programs (the two desktop apps) — verified purpose + output
+- **Optimus Fiber Hunter** (`fiber_hunter.py`) — scans a seed ZIP on the AT&T map, drops a colored dot per address. GREEN = fiber lit/available. Writes: `Address | Dot Color | Captured At`.
+- **Optimus Maps Scraper** (`themapman.py`) — Playwright scrapes Google Maps businesses by category in the area (commercial leads). Writes: `Business Name | Phone | Address | Website | Category`.
+- Both write to sheet **ATT FIBER LEADS** = `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA` (NOT the old master `12PIIpl…`). This is the actively-written sheet.
+
+### Current sheet counts
+- Fiber Hunter: **310 GREEN matches** (fiber-available addresses), captured 2026-06-16/17 (Houston scan).
+- Maps Scraper: **~283 businesses** (landscaping, electricians, contractors, salons, roofing, etc.).
+- Control tab shows scanner re-seeded to **ZIP 37211 Nashville TN on Aug 5** — so sheet still shows the older Houston scan; newer Nashville results may not have written back yet. NEEDS a fresh re-pull to confirm live count.
+
+### GHL / account discrepancy — RESOLVE
+- Brain lists GHL Location **TXw28sw0Z2rl6tcCDhJY** ("Optimus Houston", 41,325 contacts).
+- All live outreach this session ran in a DIFFERENT sub-account: **xZj500PjsflIQg2j9f9D** (4,860 contacts, "AT&T Leads" pipeline, sending number +13466840331, source "Optimus Fiber Biz"/"T-OPTIMUS").
+- OPEN QUESTION: is xZj500 the current op, or a stray/child account? Confirm before scaling.
+
+### Live SMS campaign state
+- Running a GENERIC blast: "New fiber at your address, 10x faster, $30/mo, 2 free months, reply YES." Paced 30/shift x2/day (~60/day).
+- AT&T Leads pipeline: 100 open opps, ALL stuck in "Contacted" stage (no hot/cold separation).
+- AI responder replies as an AT&T rep, asks for address + # of lines, auto-creates opportunities.
+- **STRATEGY DRIFT:** none of the brain's outage-strike / battle-card / neighbor-proof scripts are in use. Generic blast likely drives the high opt-out.
+
+### Reply scan (149 inbound, Jul 31–Aug 11, 54 unique repliers)
+- **~52% opt-out (STOP)** — carrier spam-flag risk. Lower volume + tighten to residential.
+- 8 auto-responders (business missed-call bots — noise), 3 not-interested, ~7 junk.
+- Only **6 genuine warm humans** (hot list). Best: (804) 475-6410 replied YES "1 internet only"; Kevin Manuel (281) 414-3408 hot-lead but texted STOP → CALL ONLY.
+
+### Scraper → dialer gap
+- Scraper businesses in the sheet are largely NOT loaded into the GHL dialer (only a handful confirmed present in a 500-contact sample). Scraper is running ahead of the dialer — need an import/dedupe path.
+
+### Next actions (proposed, awaiting Patrick)
+1. Confirm which GHL account is the real op (41K vs 4,860).
+2. Re-pull live sheet for current Nashville green count.
+3. Swap generic SMS → battle-card/outage scripts to cut opt-out rate.
+4. Add auto-tag + hot-lead pipeline stage so the call list builds itself.
+5. Cross-match 310 green addresses × 283 scraped businesses → commercial fiber leads.
 
 ---
 
