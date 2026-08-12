@@ -822,3 +822,48 @@ out wrong. Fixed this session (docs/memory only — no code touched).
 **"Get back on track" for any future session:** read `CLAUDE.md` → read `BRAIN.md` (this file,
 newest run-log entries first) → then act. Rule already on record: REPO → LOG → BRAIN → THINK →
 ACT → RECORD, and *ask before modifying CODE.*
+
+---
+
+## RUN-LOG 2026-08-12 — WhatsApp-with-Dave review + GHL cross-check (setter insights)
+
+Read the full Dave thread (setter) and cross-referenced every lead in GHL (loc `xZj500…`).
+Dave = business appointment setter; he sends structured lead cards. All 3 cards are IN GHL.
+
+**Dave's 3 set appointments (status in GHL):**
+1. **Tacos Eliza Food Truck** — Victor, +18325714492, 902 St Emanuel St 77003. Appt 7/7 3pm.
+   GHL id `j81BQexIh5yoKtB8Rf0w`, tags optimus-fiber-biz/fiber-green/**food truck**, assigned
+   Zack, opp OPEN/**Contacted** (no movement since 7/29). ⭐ Asked if **Internet Air** can install
+   IN his truck → cross-sell signal (see below).
+2. **Hair & Beauty by Nikki L** — Nikki, +12817366652, 209 E 20th St 77008. Appt 7/8 9–10am.
+   GHL id `p0H7EimobqDIkNmFJLrJ`, tags **replied-yes** + **warm-chase-sent** + hair salon,
+   assigned Zack, opp OPEN/Contacted. Warm but never closed — worth a re-touch.
+3. **Fresh Choice Cafe** — Fahad Valliani, +17138191137, fahadvalliani@gmail.com, 1900 W Loop S
+   Ste B10 **77027**. Fresh **8/11**: agreed to an afternoon call re: pricing; Patrick asked Dave
+   to 3-way. GHL id `cZOPy3v7oeqEieacvQFy`, opp OPEN/Contacted BUT **assignedTo = null and NO
+   tags** → 🚨 it is NOT in any rep's dialer queue (untagged + unassigned = invisible). Hottest,
+   freshest lead is the one falling through. FIX: assign a rep + tag `optimus-fiber-biz` + book
+   the 3-way. (Not done — data change, awaiting Patrick's go.)
+
+**Pipeline-hygiene finding:** all 3 appts sit in **Contacted** with no Won/Lost disposition —
+set appointments aren't being advanced/closed in the pipeline, so status is invisible at a glance.
+
+**⭐ PRODUCT signal — AT&T Internet Air (fixed wireless):** Victor (food truck) asked for it;
+it's the answer for mobile / hard-to-wire businesses where fiber can't reach. Add Internet Air
+to the pitch/objection-handling as the fallback when an address isn't fiber-serviceable.
+
+**🔧 Dave's live field blockers (8/11 — costing setting time NOW):**
+- **"Autodialer is running through the same bush"** = the dialer keeps recycling the SAME stale
+  list, no fresh leads reaching him. Confirms the known dialer bug (queue dated 7/29; the entry
+  `add_contact_tag "not interested"` + if_else boots every NEW enrollee; nothing new sticks).
+  Reps are starving for fresh enrollments.
+- **"Most already with AT&T / owners not available"** = list saturation on the worked ZIPs.
+- **Scraper produces nothing for Dave** — "didn't find any results… isn't generating or showing
+  any Google Sheets." Either the scraper write-0 issue on his PC (login/map-not-loading) or he
+  wasn't shown where output lands. Patrick had to point him to the sheet + explain "2nd tab
+  Fiber Green Biz is the match" → **rep TRAINING GAP** on the tools + tooling reliability gap.
+
+**Actions this surfaces (awaiting go):** (1) rescue Fresh Choice — assign+tag+3-way; (2) unblock
+the dialer entry-tag bug so fresh leads enroll for Dave/Shika; (3) feed Dave a fresh uncalled-ZIP
+match list (77008/77046) so he stops re-dialing the same bush; (4) 1-page "how to read the sheet /
+run the scraper" for setters.
