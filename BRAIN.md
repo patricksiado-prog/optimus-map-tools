@@ -1017,3 +1017,25 @@ desktop Contacts → filter tag → Select All → Bulk Actions → Add To Workf
   authorized in this session** — needs auth via claude.ai connector settings / `claude mcp`; can't
   OAuth from here. Also per skill: the Railway GHL host is egress-blocked for direct curl — everything
   must go through the command_connector tools, one call at a time.
+
+## RUN-LOG 2026-08-12 — FULL dialer-workflow audit (all 47 workflows checked)
+
+Inspected every dialer-type workflow via ghl_get_workflow_full. **5 dialer workflows exist; only ONE
+is viable, and it's the buggy one. Clean up the rest.**
+
+| Workflow | ID | Ver / Status | manual-call assignee | Verdict |
+|---|---|---|---|---|
+| **Optimus Dialer 2 — Zack Call Queue** | `9d3c7d0c` | v21 published | ✅ Zack (`qOa2OVzPabolfU9xjVXM`) + recycle loop | **VIABLE but blocked** — order0 `add_contact_tag "not interested"` boots every NEW enrollee (see prior entry). Delete order0 in UI to unblock. |
+| Optimus Dialer 3 — Fiber Green Biz Auto Loop | `b21e43bd` | v3 published | ❌ `attributes:{}` (UNASSIGNED) | **DEAD** — call+wait2d+loop structure but no assignee → invisible in Manual Actions. |
+| Optimus Fiber Biz — Power Dialer Queue | `41e00387` | v8 published | ❌ `attributes:{}` (UNASSIGNED), no loop | **DEAD.** (This is the one the old handoff doc told people to enroll into — it does NOTHING.) |
+| Optimus Dialer 4 — Fiber Green Biz Auto Loop | `2ff813ca` | v1 (unpublished) | — 0 actions | **EMPTY shell.** |
+| Optimus Fiber Biz — Power Dialer Queue (LOOP) [RETIRED] | `e88c6596` | draft | — | **RETIRED.** |
+
+**Takeaways:**
+- Reps' live queue = **Dialer 2 only**. Dialers 3/4 + 41e00387 are dead (API-built manual-call comes
+  out with empty `attributes`; only Dialer 2's assignee works because it was set in the desktop UI).
+- **CLEANUP (recommended, awaiting go):** delete/rename Dialers 3, 4, 41e00387, e88c6596 so nobody
+  enrolls leads into a dead queue (the old handoff doc still points at the dead 41e00387 — correct it).
+- Best path forward still = either delete Dialer 2's order0 Add-Tag step (UI) so new leads flow, OR
+  switch reps to the **native list Power Dialer** (Contacts → tag filter → Start Power Dialer), which
+  needs no workflow at all and dodges every one of these broken workflows.
