@@ -1039,3 +1039,25 @@ is viable, and it's the buggy one. Clean up the rest.**
 - Best path forward still = either delete Dialer 2's order0 Add-Tag step (UI) so new leads flow, OR
   switch reps to the **native list Power Dialer** (Contacts → tag filter → Start Power Dialer), which
   needs no workflow at all and dodges every one of these broken workflows.
+
+## RUN-LOG 2026-08-12 — Built Dave's native-Power-Dialer import list
+
+Loaded the deduped Fiber Green Biz matches into a native-Power-Dialer import CSV (GHL has NO bulk
+contact-create API, so Contacts→Import is the correct bulk path; upsert-by-phone means re-imports
+add the tag without duplicating). Pulled live via gspread.
+- Fiber Green Biz (re-read live): **23,306 rows again → 3,284 unique callable** (⚠️ the tab reinflated
+  after this morning's cloud dedupe — the daily Routine test-fire likely didn't complete or a rep ran
+  a pre-fix hunter; the CSV dedupes on export so the list is clean regardless).
+- Removed **OKC/Oklahoma** (area codes 405/580/918/539 + OK addresses) = **−309** (mostly 405).
+- Removed **"not interested"** contacts (194 tagged in GHL; 77 overlapped this list) = **−77**.
+- **FINAL Dave list = 2,898 leads** → `scratchpad/fiber_green_dialer_Dave_FINAL.csv` (cols First Name=
+  business, Phone E.164, Address, Category, Tags=optimus-fiber-biz). Sent to Patrick.
+
+**How to load for Dave (native Power Dialer, no workflow):** Contacts → Import the CSV → map cols →
+in the wizard add tag `fiber-dave` (+ keep optimus-fiber-biz) and **Assign to Dave** → Finish (matches
+by phone, no dups). Dave dials: Contacts → filter tag `fiber-dave` → **Start Power Dialer** (GHL
+auto-skips DND). Business numbers = CALL/DOOR only.
+- NOTE: could not resolve Dave's GHL userId via API (`get_user_by_location` times out; `get_users`
+  needs companyId) — assignment is done by name in the UI, no userId needed.
+- Open: confirm the daily dedupe Routine actually runs (sheet reinflated same-day) + push the reps to
+  relaunch so the hunter phone-dedup fix takes hold.
