@@ -964,3 +964,56 @@ at that repo/branch. So:
 **Email feature: DROPPED.** Patrick decided he does NOT want scraped emails. (For the record: Maps
 has no email field; it'd require scraping each business website (~30-50% yield, slows the scrape) or
 a paid enrichment API. Not building it.)
+
+## RUN-LOG 2026-08-12 — GHL power-dialer research + LIVE setup audit + how to load new matches
+
+### Research (GHL power dialer, Aug 2026)
+- GHL now has a **NATIVE Power Dialer**: Contacts → select/saved list → **Start Power Dialer**, or
+  Conversations → Power Dialer. It dials a LIST sequentially — **no workflow/Manual-Action enrollment
+  needed.** This SIDESTEPS our buggy Manual-Actions workflow entirely.
+- Two dialing models exist: (a) native list Power Dialer (simple, list-based), (b) Manual-Action
+  workflow (what we built — `manual-call` step, more fragile). Our skill `.claude/skills/ghl-power-dialer`
+  documents (b) in depth.
+- Works well under **~150 calls/rep/day**; above that use PowerDialer.ai / PhoneBurner. Needs Twilio
+  (already connected); no extra GHL fee beyond Twilio usage. Record a <30s voicemail drop; on-screen
+  script; dispositions = No Answer/Busy/Voicemail/Completed.
+
+### LIVE audit of "Optimus Dialer 2 — Zack Call Queue" (9d3c7d0c, v21, published)
+Action graph (confirmed via ghl_get_workflow_full):
+- order0 `add_contact_tag` **"not interested"**  → order1 `if_else` (has tag "not interested"?)
+  - YES branch → `remove_from_workflow` (BOOTS them)
+  - NONE branch → `manual-call` "Fiber Call" (assignee = Zack `qOa2OVzPabolfU9xjVXM` ✓, GOOD) →
+    wait 0.5 min → `goto` back to the **if_else** (not to order0).
+- 🚨 **THE ENTRY-TAG BUG IS STILL LIVE.** Every NEW enrollee hits order0 first → gets tagged
+  "not interested" → if_else boots it before it ever calls. Leads already looping re-enter at the
+  if_else (skip order0) so they keep dialing — which is why "it works" yet nothing new sticks.
+- **FIX (UI-only, human):** in desktop workflow UI, DELETE the order0 "Add Tag: not interested" step.
+  Do NOT do it via `ghl_update_workflow_actions` — it strips the manual-call's assignee (known quirk)
+  and would break Zack's live queue.
+
+### Counts
+- Tag `optimus-fiber-biz` = **2,281 contacts** (was ~2,519; some cleaned). All assigned Zack. Some
+  have broken phones (e.g. `+12913411`) — clean later.
+- Fiber Green Biz (deduped today) = **~3,284 unique callable**. So there are matches NOT yet loaded
+  into the dialer tag → a real gap to close.
+
+### HOW TO ADD NEW MATCHES TO THE AUTODIALER — recommended path
+**Preferred (sidesteps the bug): native Power Dialer on the tag filter.**
+1. Claude upserts each NEW deduped Fiber Green Biz match as a contact (firstName=business,
+   phone E.164, tags `optimus-fiber-biz` + `green-houston`/`commercial`, assignedTo round-robin
+   across the 5 reps). `upsert_contact` dedupes by phone, so re-runs only add genuinely new ones.
+   **Claude CAN do this from the cloud** (GHL MCP works).
+2. Reps dial via **Contacts → filter Tag=optimus-fiber-biz + not-DND → Start Power Dialer** — no
+   workflow enrollment, so the entry-tag bug is irrelevant.
+**Alternative (keep the workflow):** first delete the order0 Add-Tag step (UI), THEN bulk-enroll via
+desktop Contacts → filter tag → Select All → Bulk Actions → Add To Workflow (API has no bulk enroll;
+`add_contact_to_workflow` is one-at-a-time).
+
+### "Busy Bee connector / Railway thing"
+- The **command_connector** MCP we use for all GHL calls = BusyBee3333's **Go-High-Level-MCP-2026-Complete**
+  (Patrick's fork `patricksiado-prog/go-high-level-mcp-2026-complete`), **hosted on Railway**. It is
+  WORKING this session (every GHL tool call routes through it).
+- The separate **"Railway" MCP connector** (to manage the Railway deployment itself) is **NOT
+  authorized in this session** — needs auth via claude.ai connector settings / `claude mcp`; can't
+  OAuth from here. Also per skill: the Railway GHL host is egress-blocked for direct curl — everything
+  must go through the command_connector tools, one call at a time.
