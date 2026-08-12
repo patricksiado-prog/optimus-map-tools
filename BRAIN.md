@@ -905,3 +905,15 @@ Verified post-write. Creds file deleted from scratchpad after (secret, never com
 Durable fix = a **daily cloud dedupe Routine** (gspread from CCR, proven this session) so it stays
 clean without depending on a rep launching the program. Also worth fixing the hunter write path to
 phone-dedup on append. Both awaiting Patrick's go.
+
+**DONE — daily auto-dedupe Routine created (`trig_0166v3uSachDJv8YtRbFqcSX`):** fresh CCR session
+every day at **11:00 UTC (6 AM CT)**, silent (no push/email). It dedupes **Fiber Green Biz** +
+**Upgrade Orange Biz** on sheet 1FhO by phone (else name|address), backs up each tab to CSV first,
+sets the `_Dedupe Lock` cell during the write, then deletes creds. So the matches tab now stays
+clean on its own — no rep PC needed.
+- ⚠️ **Mechanism note:** fired sessions get NO MCP connector tools (couldn't pass Google Drive
+  through), so the Routine can't download creds via the Drive tool. Workaround: the service-account
+  creds base64 is **embedded in the Routine's prompt** (private to Brandon's account; same key
+  already sits in Drive/FIX_CREDS scripts). If that key is ever rotated, update this trigger's prompt.
+- To change: `update_trigger`/`delete_trigger` on `trig_0166v3uSachDJv8YtRbFqcSX`.
+- Real durable-er fix still open: make the hunter phone-dedup on append so dupes never accumulate.
