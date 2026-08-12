@@ -333,8 +333,11 @@ def clear_progress():
 # it. It picks the list by the region of the FIRST ZIP you enter, so a market stays
 # in its own lane -- an OKC ZIP never rolls into Houston (which would mix cities in
 # the 'Maps Businesses' tab and pollute the Houston dialer).
-HOUSTON_ZIPS = ["77027", "77098", "77006", "77019", "77005", "77025", "77002", "77004",
-                "77003", "77007", "77008", "77009", "77030", "77023", "77046", "77056",
+# LEAD ZIPS (77008/77027/77046/77098) are the dense-fiber, under-scraped Houston
+# pockets -- most 417k fiber dots there have no matching business yet, so scraping
+# them first mints the most new callable matches. Keep these four at the front.
+HOUSTON_ZIPS = ["77008", "77027", "77046", "77098", "77006", "77019", "77005", "77025",
+                "77002", "77004", "77003", "77007", "77009", "77030", "77023", "77056",
                 "77057", "77081", "77401", "77055", "77024", "77018", "77020", "77026",
                 "77087", "77021", "77033", "77074", "77036", "77063", "77042", "77077",
                 "77079", "77080", "77043", "77092", "77017", "77011", "77012", "77051"]
