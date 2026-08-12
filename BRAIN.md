@@ -1090,3 +1090,18 @@ deliverability). All 100 returned success. Sent-list saved: `scratchpad/text100_
   sheet-based sent-log), or accept the small re-text risk.
 - Reminder: SMS pacing matters (prior business blast hit ~52% opt-out). 100 in one burst is at the
   edge of a safe daily volume for one number — watch for carrier filtering.
+
+## RUN-LOG 2026-08-12 — +36 more Houston texts + KEY finding: business SMS pool is drying up
+
+Patrick asked for "50 more Houston texts." Sent **36** (24 fresh from the optimus-fiber-biz tag + 12
+existing Fiber-Green-Biz contacts that were still SMS-reachable). **Could not reach 50** — and the
+reason matters: the remaining Houston fiber businesses are mostly **LANDLINES that can't receive SMS
+(Twilio error 30006 → GHL auto-sets SMS-DND after the failed send)** or already texted. The deep-
+scraped 77027 (River Oaks/Galleria) set is especially landline-heavy.
+- **Implication:** the textable-business pool is genuinely tapping out. `create_contact` also can't
+  add sheet-only matches (400 "location does not allow duplicated contacts" — they already exist;
+  and it requires an email field). `bulk_update_contact_tags` 404s.
+- **The real lever (again) = SCRAPE NEW ZIPs** for fresh, mobile-reachable businesses (77008/77046/
+  77098 dense-fiber + under-scraped). Texting the same 77027 set harder just hits landlines + STOPs.
+- Today's SMS total across the day is high (100 + 5 follow-ups + 36 = ~141) from one number — real
+  carrier-filtering risk; ease off tomorrow.
