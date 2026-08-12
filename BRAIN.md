@@ -879,3 +879,29 @@ His true output is larger. Other setter-set leads already on record (Aug 5 brain
 **FIX so we can actually track setters:** (a) tag every setter-sourced lead (`appt-set`,
 `setter-dave`/`setter-shika`) + move to a dedicated "Appointment Set" pipeline stage; (b) have Dave
 turn OFF disappearing messages so future exports are complete.
+
+---
+
+## RUN-LOG 2026-08-12 — Fiber Green Biz DEDUPED from the cloud (Patrick: "lots of duplicates")
+
+Patrick reported the matches tab was full of dupes. Measured it LIVE via the Sheets API (gspread
++ service-account creds `google_creds.json`, Drive id `1upYH4h2VsmOwO82v9CVjMpE6IzV-5dIs`, project
+fiberscanner-493900) — **NOT** the truncating MCP reader. **KEY DISCOVERY: gspread works fine from
+the CCR cloud container** (only the *browser* scrape/hunt is proxy-blocked). So Claude CAN read AND
+clean the sheet from the cloud, no rep PC needed.
+
+**State found:** Fiber Green Biz = **23,306 rows / only 3,284 unique phones → 18,280 duplicate rows
+(85% junk).** Worst phone repeated 282×. The embedded auto-dedupe only runs when a rep launches the
+hunter/scraper; it last cleaned to ~4,105 on Aug 4, then the hunter re-matched + re-appended every
+sweep (its write path has no phone-dedup) and reinflated to 23k in 8 days.
+
+**Action taken (approved by Patrick):** backed up the whole tab to CSV
+(`scratchpad/FiberGreenBiz_backup_20260812_145504.csv`, 23,307 rows), then deduped by phone
+(else name|address), keeping first occurrence. Set the `_Dedupe Lock` cell during the run.
+**Result: 23,306 → 5,026 rows (3,284 callable-with-phone + ~1,742 no-phone), −18,280 dups.**
+Verified post-write. Creds file deleted from scratchpad after (secret, never committed).
+
+**STILL OPEN — it will reinflate:** the hunter keeps re-appending, so this needs a recurring clean.
+Durable fix = a **daily cloud dedupe Routine** (gspread from CCR, proven this session) so it stays
+clean without depending on a rep launching the program. Also worth fixing the hunter write path to
+phone-dedup on append. Both awaiting Patrick's go.
