@@ -1105,3 +1105,11 @@ scraped 77027 (River Oaks/Galleria) set is especially landline-heavy.
   77098 dense-fiber + under-scraped). Texting the same 77027 set harder just hits landlines + STOPs.
 - Today's SMS total across the day is high (100 + 5 follow-ups + 36 = ~141) from one number — real
   carrier-filtering risk; ease off tomorrow.
+
+---
+### RUN-LOG 2026-08-12 — Pointed Maps Scraper at dense-fiber under-scraped ZIPs
+- **Lever:** bottleneck is business coverage, not fiber (417k dots vs ~26k businesses → only ~3,313 callable matches). Growing matches = scrape more businesses in dense-fiber pockets.
+- **Change:** reordered `HOUSTON_ZIPS` in `optimus/standalone/maps_scraper_standalone.py` so **77008 / 77027 / 77046 / 77098** lead the auto-advance queue. Committed 14173a1, pushed to `chat-repetitive-questions-9ex5h7` (this repo = the one RUN_MAP_SCRAPER.bat curls, so next rep run gets it).
+- **How the scraper picks ZIPs:** prompts rep for seed ZIP(s) → then auto-advances through curated `HOUSTON_ZIPS` in order, skipping any in local `maps_zips_done.json` (per-PC runtime file, NOT in repo — can't touch from cloud). So reorder controls priority; the done-file can still skip a ZIP a given PC already finished.
+- **Rep instruction:** to force these first regardless of done-file, TYPE the seed as `77008,77027,77046,77098` when the scraper asks for ZIPs. New businesses land in `Maps Businesses`; hunter re-match turns them into `Fiber Green Biz` on its next sweep.
+- **Cloud still can't run the scrape** (proxy blocks the browser) — this only stages *where* the next rep-run looks.
