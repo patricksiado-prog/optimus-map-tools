@@ -786,3 +786,39 @@ classify_status on any error/missing → CANNOT break green or fail to start. Sw
 flush write sites. Unit-tested: green→GREEN (unchanged), copper→ORANGE (captured),
 fiber→skip, unknown→skip. Gold now flows to Upgrade Orange Biz. Applies on next hunter
 launch (auto-update). NOTE: did NOT touch the address MATCHING logic (user: leave it alone).
+
+---
+
+## RUN-LOG 2026-08-12 — Context recovery + onboarding anchor (STOP the "starting over")
+
+**Problem Patrick flagged:** every session feels like "talking for the first time" — Claude
+re-finds the sheet, mis-counts matches, re-derives the pipeline. Root cause: nothing forced a
+new session to READ THE BRAIN first, and the MCP sheet-reader silently truncates so counts came
+out wrong. Fixed this session (docs/memory only — no code touched).
+
+**Fix shipped:**
+- Added a repo-root **`CLAUDE.md`** that Claude Code AUTO-LOADS every session — points here and
+  carries the critical facts, so a new chat can't start blind.
+- Reverted a stray edit that had gone to the wrong file (`brain.md`, lowercase April stub).
+  **Canonical brain = this file, `BRAIN.md` (uppercase). Do not write to lowercase `brain.md`.**
+
+**CORRECTED FACTS (supersede any mid-session guesses):**
+- **Pipeline:** Fiber Hunter (`precise_fiber_hunter.py`) → **`Precise Fiber`** tab (GREEN=lead +
+  GOLD=copper dots). Maps Scraper (`maps_scraper_standalone.py`) → **`Maps Businesses`** tab.
+  Hunter cross-matches dot-address vs business → **`Fiber Green Biz`** tab = **the money output**
+  (callable commercial leads). Copper → `Upgrade Orange Biz`.
+- **Sheet** = `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA` ("ATT FIBER LEADS").
+- **Dialer GHL location** = `xZj500PjsflIQg2j9f9D` (CONFIRMED correct; the `TXw28sw0Z2rl6tcCDhJY`
+  / 41k-contacts reference is stale — ignore for the dialer).
+- ⚠️ **THE GOTCHA that caused the re-derivation:** `read_file_content` / inline Drive reads
+  **TRUNCATE** (you get a few hundred of hundreds-of-thousands of rows). **NEVER count rows from
+  a Drive read.** For real counts use the **Sheets API** (service-account creds from Drive →
+  gspread → dedupe `Fiber Green Biz` by last-10-digit phone).
+- **Latest real counts (Aug 5, via Sheets API):** Fiber Green Biz **~4,427 unique matches** ·
+  Precise Fiber **372,827 dots** · Maps Businesses 25,828 · Gold/Orange 0.
+- **Business numbers = CALL/DOOR, never cold-text.** Sales come from setter → live 3-way →
+  Patrick closes, not the text blast.
+
+**"Get back on track" for any future session:** read `CLAUDE.md` → read `BRAIN.md` (this file,
+newest run-log entries first) → then act. Rule already on record: REPO → LOG → BRAIN → THINK →
+ACT → RECORD, and *ask before modifying CODE.*
