@@ -936,3 +936,30 @@ accumulating at the source (the daily cloud dedupe becomes a backstop, not the f
 `claude/optimus-map-tools-setup-6dcl6o` (folder `optimus/`), NOT from this mirror repo. **This fix
 must ALSO be applied there** for reps' hunters to get it. Not yet done (that repo isn't in this
 session's scope) — needs add_repo + the same edit on that branch.
+
+## RUN-LOG 2026-08-12 — LAUNCHER→SOURCE MAP (verified from the .bat files) + email dropped
+
+Patrick asked "you sure it's the right scraper?" — verified by reading the actual desktop
+launchers in `optimus/install/*.bat` (the real source of truth, not brain memory). Findings:
+
+**The Maps Scraper icon IS `optimus/standalone/maps_scraper_standalone.py`** — confirmed. And the
+deploy sources are **SPLIT across two repos** (this is the important discovery):
+- `RUN_MAP_SCRAPER.bat`  → **optimus-map-tools / chat-repetitive-questions-9ex5h7** / standalone/maps_scraper_standalone.py
+- `OPTIMUS_24_7_SCRAPER.bat` → **optimus-map-tools / chat-repetitive-questions-9ex5h7**
+- `RUN_PRECISE_HUNTER.bat` → **optimus-map-tools / chat-repetitive-questions-9ex5h7** / precise_fiber_hunter.py
+- `RUN_HUNTER.bat` (the "primary" orange hunter) → **Go-High-Level-MCP-2026-Complete / setup-6dcl6o**
+- `RUN_SCRAPER.bat` + `INSTALL_SCRAPER.bat` (first-time) → **Go-High-Level-MCP-2026-Complete / setup-6dcl6o**
+
+**Consequence / correction:** deploy is not "one repo." A push reaches only the launchers that point
+at that repo/branch. So:
+- Scraper changes pushed HERE (chat-repetitive-...9ex5h7) DO reach the Maps Scraper + 24/7 icons.
+- The hunter phone-dedup fix (this branch) reaches **RUN_PRECISE_HUNTER** users but **NOT RUN_HUNTER**
+  (orange) users until it's also pushed to `Go-High-Level-.../setup-6dcl6o`. So the fix is only
+  HALF-deployed.
+- **HAZARD:** a fix can look shipped yet only reach some reps depending on which icon they click.
+  RECOMMENDED CLEANUP (not yet done, awaiting go): point every launcher at ONE repo/branch so
+  "push once = everyone gets it," then finish deploying the hunter fix to the other repo.
+
+**Email feature: DROPPED.** Patrick decided he does NOT want scraped emails. (For the record: Maps
+has no email field; it'd require scraping each business website (~30-50% yield, slows the scrape) or
+a paid enrichment API. Not building it.)

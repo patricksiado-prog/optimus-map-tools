@@ -32,6 +32,10 @@ Google Sheet, which feeds the **GoHighLevel (GHL) power dialer**. Goal: 500 fibe
 - **`Fiber Green Biz` has ~8x duplicate rows** (hunter re-matches each sweep). Unique count = dedupe by phone.
 - **Business numbers = CALL/DOOR, never cold-text.** Sales come from setter → live 3-way → Patrick closes.
 - Programs must run on reps' real-internet PCs — the cloud container **cannot** scrape/hunt (proxy blocks it).
+- **Launchers pull from TWO repos** (verify in `optimus/install/*.bat` before assuming a fix is deployed):
+  Maps Scraper / 24-7 Scraper / RUN_PRECISE_HUNTER → **this repo** `chat-repetitive-questions-9ex5h7`;
+  RUN_HUNTER (orange) + first-time installers → **Go-High-Level-MCP-2026-Complete** `setup-6dcl6o`.
+  A push reaches only the icons pointing at that repo. gspread (Sheets API) DOES work from the cloud — only the browser scrape/hunt is blocked.
 
 ## Latest real counts (Aug 5 2026, via Sheets API — refresh before quoting)
 Fiber Green Biz **~4,427 unique matches** · Precise Fiber **372,827 dots** · Maps Businesses 25,828 · Gold 0.
