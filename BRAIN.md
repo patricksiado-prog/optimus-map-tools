@@ -932,10 +932,11 @@ for no-phone businesses. Compiles clean; unit-tested: 3 address-variants of one 
 no-phone rows still dedup by address. So the hunter now writes ONE row per business — dupes stop
 accumulating at the source (the daily cloud dedupe becomes a backstop, not the fix).
 
-⚠️ **DEPLOY:** the desktop apps auto-pull from `Go-High-Level-MCP-2026-Complete` branch
-`claude/optimus-map-tools-setup-6dcl6o` (folder `optimus/`), NOT from this mirror repo. **This fix
-must ALSO be applied there** for reps' hunters to get it. Not yet done (that repo isn't in this
-session's scope) — needs add_repo + the same edit on that branch.
+✅ **DEPLOY DONE (2026-08-12):** ported the identical fix to
+`Go-High-Level-MCP-2026-Complete` branch `claude/optimus-map-tools-setup-6dcl6o` (commit `f79fedc`,
+compiles clean). So the hunter phone-dedup fix is now on BOTH sources — RUN_PRECISE_HUNTER (this
+repo/branch) AND RUN_HUNTER (the orange icon → the other repo/branch). Every rep gets it on next
+hunter launch, regardless of which icon they use. Dupes now stop being created at the source.
 
 ## RUN-LOG 2026-08-12 — LAUNCHER→SOURCE MAP (verified from the .bat files) + email dropped
 
