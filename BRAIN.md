@@ -1061,3 +1061,9 @@ auto-skips DND). Business numbers = CALL/DOOR only.
   needs companyId) — assignment is done by name in the UI, no userId needed.
 - Open: confirm the daily dedupe Routine actually runs (sheet reinflated same-day) + push the reps to
   relaunch so the hunter phone-dedup fix takes hold.
+
+**Emailed Dave the Power-Dialer instructions (2026-08-12):** Gmail MCP was disconnected, so sent via
+GHL `send_email`. Created Dave as an internal contact `yQ3ar9Yx8yIsObv97pxP`
+(davebd0816@gmail.com, tags internal-staff + do-not-market so he's never dialed/texted). Email covers:
+find list by tag `fiber-dave` → Start Power Dialer → dispositions → call/door-only. Prereq still
+pending: Patrick must import the CSV with tag `fiber-dave` + assign to Dave, or his filter shows empty.
