@@ -867,3 +867,15 @@ to the pitch/objection-handling as the fallback when an address isn't fiber-serv
 the dialer entry-tag bug so fresh leads enroll for Dave/Shika; (3) feed Dave a fresh uncalled-ZIP
 match list (77008/77046) so he stops re-dialing the same bush; (4) 1-page "how to read the sheet /
 run the scraper" for setters.
+
+**⚠️ CAVEAT — the export is INCOMPLETE (Patrick: "should be more than 3"):** Dave's WhatsApp has
+**disappearing messages ON (24h timer)**, so the zip only preserved 3 cards (7/7, 7/8, 8/11).
+His true output is larger. Other setter-set leads already on record (Aug 5 brain session):
+- **Dave:** Mauricio Coolshire 77070 (+ the 3 above).
+- **Shika** (dialer / 3-way): Glovera, Elevate Architects, Chimney Lp, Nice Moves, Amanda Smith +
+  Gigi Huang (realtors), Synchro, TPC, Olah Automotive, Anthony's Auto. **CLOSED: Shawarma Hub (7/27).**
+- GHL has **NO `setter`/`appt-set` tag**, and the appointment-report + notes-search endpoints are
+  scope-blocked — so setter production **cannot be counted from the CRM today.**
+**FIX so we can actually track setters:** (a) tag every setter-sourced lead (`appt-set`,
+`setter-dave`/`setter-shika`) + move to a dedicated "Appointment Set" pipeline stage; (b) have Dave
+turn OFF disappearing messages so future exports are complete.
