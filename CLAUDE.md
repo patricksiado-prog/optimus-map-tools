@@ -30,7 +30,7 @@ Google Sheet, which feeds the **GoHighLevel (GHL) power dialer**. Goal: 500 fibe
   of rows. **NEVER count rows from a Drive read.** Real counts = Sheets API (creds → gspread →
   dedupe `Fiber Green Biz` by last-10-digit phone).
 - **`Fiber Green Biz` has ~8x duplicate rows** (hunter re-matches each sweep). Unique count = dedupe by phone.
-- **Business numbers = CALL/DOOR, never cold-text.** Sales come from setter → live 3-way → Patrick closes.
+- **Texting businesses is allowed** (randomized fiber offers). Calls + live 3-way with Patrick are what close deals. (An earlier "never cold-text businesses" rule was WRONG — removed per Patrick 2026-08-12; do not re-add it.)
 - Programs must run on reps' real-internet PCs — the cloud container **cannot** scrape/hunt (proxy blocks it).
 - **Launchers pull from TWO repos** (verify in `optimus/install/*.bat` before assuming a fix is deployed):
   Maps Scraper / 24-7 Scraper / RUN_PRECISE_HUNTER → **this repo** `chat-repetitive-questions-9ex5h7`;

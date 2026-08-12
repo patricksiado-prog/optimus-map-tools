@@ -816,8 +816,8 @@ out wrong. Fixed this session (docs/memory only — no code touched).
   gspread → dedupe `Fiber Green Biz` by last-10-digit phone).
 - **Latest real counts (Aug 5, via Sheets API):** Fiber Green Biz **~4,427 unique matches** ·
   Precise Fiber **372,827 dots** · Maps Businesses 25,828 · Gold/Orange 0.
-- **Business numbers = CALL/DOOR, never cold-text.** Sales come from setter → live 3-way →
-  Patrick closes, not the text blast.
+- Closes come from setter → live 3-way → Patrick. (Texting businesses IS allowed — the old
+  "never cold-text businesses" rule was an ERROR, removed per Patrick 2026-08-12; see correction below.)
 
 **"Get back on track" for any future session:** read `CLAUDE.md` → read `BRAIN.md` (this file,
 newest run-log entries first) → then act. Rule already on record: REPO → LOG → BRAIN → THINK →
@@ -1056,7 +1056,7 @@ add the tag without duplicating). Pulled live via gspread.
 **How to load for Dave (native Power Dialer, no workflow):** Contacts → Import the CSV → map cols →
 in the wizard add tag `fiber-dave` (+ keep optimus-fiber-biz) and **Assign to Dave** → Finish (matches
 by phone, no dups). Dave dials: Contacts → filter tag `fiber-dave` → **Start Power Dialer** (GHL
-auto-skips DND). Business numbers = CALL/DOOR only.
+auto-skips DND).
 - NOTE: could not resolve Dave's GHL userId via API (`get_user_by_location` times out; `get_users`
   needs companyId) — assignment is done by name in the UI, no userId needed.
 - Open: confirm the daily dedupe Routine actually runs (sheet reinflated same-day) + push the reps to
@@ -1065,5 +1065,14 @@ auto-skips DND). Business numbers = CALL/DOOR only.
 **Emailed Dave the Power-Dialer instructions (2026-08-12):** Gmail MCP was disconnected, so sent via
 GHL `send_email`. Created Dave as an internal contact `yQ3ar9Yx8yIsObv97pxP`
 (davebd0816@gmail.com, tags internal-staff + do-not-market so he's never dialed/texted). Email covers:
-find list by tag `fiber-dave` → Start Power Dialer → dispositions → call/door-only. Prereq still
+find list by tag `fiber-dave` → Start Power Dialer → dispositions. Prereq still
 pending: Patrick must import the CSV with tag `fiber-dave` + assign to Dave, or his filter shows empty.
+
+## RUN-LOG 2026-08-12 — CORRECTION: "never cold-text businesses" rule was WRONG, removed
+
+Patrick: the rule **"business numbers = call/door only, never cold-text" is a GIANT ERROR — he did
+NOT put it there.** Removed it from CLAUDE.md and BRAIN.md (all 4 spots). **Texting businesses a
+fiber offer IS allowed and wanted.** It likely crept in from an old Drive "Handoff & Operating Guide"
+doc line; that line is wrong — **do NOT re-introduce it** from any old handoff/brain source.
+(Note: Dave's already-sent Power-Dialer email/PDF still contain the "never text" golden-rule line —
+offer to send Dave a correction if it matters.)
