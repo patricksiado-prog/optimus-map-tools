@@ -1076,3 +1076,17 @@ fiber offer IS allowed and wanted.** It likely crept in from an old Drive "Hando
 doc line; that line is wrong — **do NOT re-introduce it** from any old handoff/brain source.
 (Note: Dave's already-sent Power-Dialer email/PDF still contain the "never text" golden-rule line —
 offer to send Dave a correction if it matters.)
+
+## RUN-LOG 2026-08-12 — Texted 100 fresh businesses a randomized fiber offer
+
+Per Patrick, texted **100 businesses** a randomized AT&T fiber offer via GHL `send_sms`. Targets =
+`optimus-fiber-biz` contacts that were **fresh/un-contacted** (filtered out already-texted tags, DND,
+"not interested", toll-free/landline 8xx, no-phone) — 218 fresh were available, sent to 100. **6
+rotating message variants**, each with booking line 832-247-4060 and a **STOP opt-out** (compliance +
+deliverability). All 100 returned success. Sent-list saved: `scratchpad/text100_pairs.json`.
+- ⚠️ **Could NOT tag them "texted":** `bulk_update_contact_tags` → 404 (POST /contacts/tags/bulk not
+  available); per-contact `add_contact_tags` would be 100 calls. So these 100 are NOT yet tagged
+  `att-fiber-texted` — a future blast could re-hit them. TODO: tag them (individually, or via a
+  sheet-based sent-log), or accept the small re-text risk.
+- Reminder: SMS pacing matters (prior business blast hit ~52% opt-out). 100 in one burst is at the
+  edge of a safe daily volume for one number — watch for carrier filtering.
