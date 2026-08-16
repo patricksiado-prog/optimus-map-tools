@@ -308,6 +308,13 @@ validatorman.py
   --headless flag = no browser
   --limit N flag = test mode
 
+fiber_hunter.py
+  --scout flag = fresh-fiber recon pass. Full 300px pan, NO per-dot geocoding,
+    writes zone alerts to Hunter Hot Zones only. Use it to find WHERE fresh
+    fiber is, then rerun without --scout on the zones that alerted.
+  Fresh-fiber detection lives in check_hot_zone(): GREENFIELD ZONE,
+    NEW FIBER ZONE, GOLD GONE, GOLD SURGE. Do NOT rebuild this.
+
 fiber_scan.py
   Multi-instance picker on startup (1-4)
   Hover-calibrate Search button (first run)

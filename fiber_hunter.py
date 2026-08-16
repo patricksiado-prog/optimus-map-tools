@@ -179,6 +179,25 @@ GREENFIELD_GREEN_MIN = 80
 GREENFIELD_GOLD_MAX = 20
 GREENFIELD_BLUE_MAX = 30
 
+# v5.8 SCOUT: zone thresholds in CLUSTER (real dot) units.
+# The v5.7 constants above are PIXEL totals. check_hot_zone was still being fed
+# pixel counts while comparing them against cluster-scale numbers, so with a dot
+# spanning MIN_DOT_PIXELS..MAX_DOT_PIXELS (3..800) a tile "had dots" at 15 px -
+# under one dot. `empty` was therefore almost never true and NEW FIBER ZONE
+# almost never fired. These are the cluster-unit replacements; the pixel
+# constants stay untouched for backward compat.
+ZONE_HAS_DOTS_MIN       = 3    # clusters before a tile counts as non-empty
+ZONE_GREENFIELD_GREEN   = 12   # green dots to call a tile greenfield
+ZONE_GREENFIELD_GOLD_MAX = 2   # gold dots allowed in a greenfield tile
+ZONE_GREENFIELD_BLUE_MAX = 3
+ZONE_GOLD_SURGE_DELTA   = 8    # gold dot jump that counts as a surge
+
+# v5.8 SCOUT MODE: reconnaissance pass. Detects fresh fiber at the ZONE level
+# and skips the per-dot geocode entirely (Nominatim at 1 req/sec is what makes
+# a full run slow). Set by --scout.
+SCOUT_MODE = False
+SCOUT_PAN_PIXELS = 300   # full pan; normal mode uses PAN_PIXELS=150 half pan
+
 MAP_LEFT, MAP_TOP, MAP_RIGHT, MAP_BOTTOM = 50, 100, 1350, 720
 MAP_CX = (MAP_LEFT + MAP_RIGHT) // 2
 MAP_CY = (MAP_TOP + MAP_BOTTOM) // 2
@@ -911,15 +930,18 @@ def save_history(h):
         json.dump(h, f, indent=2)
 
 
-# HOT-ZONE ALERTS (unchanged from v5.6 - still pixel-total based)
+# HOT-ZONE ALERTS
+# v5.8: now takes CLUSTER counts (real dots), not pixel totals. See the
+# ZONE_* constants for why - the old pixel/cluster mismatch meant a tile was
+# never "empty", so NEW FIBER ZONE effectively never fired.
 def check_hot_zone(zone_name, city, row, col, o, g, b, history, tabs, scan_num, instance):
     key = "%s_%d_%d" % (zone_name, row, col)
     now = now_str()
     inst = "Instance%d" % instance
     alerts = []
-    has = (o >= CLUSTER_THRESHOLD) or (g >= CLUSTER_THRESHOLD)
-    if (g >= GREENFIELD_GREEN_MIN and o <= GREENFIELD_GOLD_MAX
-            and b <= GREENFIELD_BLUE_MAX):
+    has = (o >= ZONE_HAS_DOTS_MIN) or (g >= ZONE_HAS_DOTS_MIN)
+    if (g >= ZONE_GREENFIELD_GREEN and o <= ZONE_GREENFIELD_GOLD_MAX
+            and b <= ZONE_GREENFIELD_BLUE_MAX):
         prev_gf = history.get(key, {}).get("greenfield", False)
         if not prev_gf:
             msg = ("GREENFIELD ZONE %s R%dC%d Green:%d Gold:%d Blue:%d"
@@ -937,7 +959,7 @@ def check_hot_zone(zone_name, city, row, col, o, g, b, history, tabs, scan_num, 
     if key in history:
         prev = history[key]
         was_empty = prev.get("empty", True)
-        if was_empty and has and b < CLUSTER_THRESHOLD:
+        if was_empty and has and b < ZONE_HAS_DOTS_MIN:
             alerts.append("NEW FIBER %s R%dC%d G:%d O:%d" %
                           (zone_name, row + 1, col + 1, g, o))
             log_sheet(tabs, "Hunter Hot Zones", [
@@ -945,14 +967,14 @@ def check_hot_zone(zone_name, city, row, col, o, g, b, history, tabs, scan_num, 
                 "Was empty now %dG+%dO" % (g, o),
                 str(scan_num), "PRIORITY 1 - TODAY",
             ])
-        elif prev.get("orange", 0) >= CLUSTER_THRESHOLD and o < CLUSTER_THRESHOLD:
+        elif prev.get("orange", 0) >= ZONE_HAS_DOTS_MIN and o < ZONE_HAS_DOTS_MIN:
             alerts.append("GOLD GONE %s R%dC%d" %
                           (zone_name, row + 1, col + 1))
             log_sheet(tabs, "Hunter Changes", [
                 now, "", "CONVERSIONS", "Gold dropped",
                 zone_name, city, inst, str(scan_num),
             ])
-        elif o > prev.get("orange", 0) + 300:
+        elif o > prev.get("orange", 0) + ZONE_GOLD_SURGE_DELTA:
             alerts.append("GOLD SURGE %s R%dC%d" %
                           (zone_name, row + 1, col + 1))
             log_sheet(tabs, "Hunter Hot Zones", [
@@ -1033,17 +1055,15 @@ class Processor:
                   (self.instance, zone_name, row + 1, col + 1))
             return
 
-        # Pixel totals retained for hot-zone alerts
-        o_px = count_color(img, ORANGE_MIN, ORANGE_MAX)
-        g_px = count_color(img, GREEN_MIN,  GREEN_MAX)
-        b_px = count_color(img, BLUE_MIN,   BLUE_MAX)
-
         # Real cluster counts gate row writes (3-color)
         o_clusters    = count_dot_clusters(img, ORANGE_MIN, ORANGE_MAX)
         g_clusters    = count_dot_clusters(img, GREEN_MIN,  GREEN_MAX)
         grey_clusters = count_dot_clusters(img, GREY_MIN,   GREY_MAX)
+        b_clusters    = count_dot_clusters(img, BLUE_MIN,   BLUE_MAX)
 
-        alerts = check_hot_zone(zone_name, city, row, col, o_px, g_px, b_px,
+        # v5.8: hot zones now get CLUSTER counts, matching the ZONE_* thresholds.
+        alerts = check_hot_zone(zone_name, city, row, col,
+                                o_clusters, g_clusters, b_clusters,
                                 self.history, self.tabs, self.scan_num, self.instance)
         self.counters["hot"] += len(alerts)
         for a in alerts:
@@ -1056,6 +1076,15 @@ class Processor:
             g_clusters    < MIN_DOT_CLUSTERS and
             grey_clusters < MIN_DOT_CLUSTERS):
             self.counters["park_skip"] += 1
+            return
+
+        # v5.8 SCOUT: stop here. Zone-level fresh-fiber alerts are already
+        # logged above; everything below is per-dot geocoding, which is the
+        # slow part (Nominatim 1 req/sec). Scout trades addresses for speed.
+        if SCOUT_MODE:
+            self.counters["scout_tiles"] = self.counters.get("scout_tiles", 0) + 1
+            self.counters["scout_dots"] = (self.counters.get("scout_dots", 0)
+                                           + o_clusters + g_clusters)
             return
 
         o_dots    = find_dots(shot, ORANGE_MIN, ORANGE_MAX)
@@ -1203,13 +1232,17 @@ def save_progress(p):
         json.dump(p, f)
 
 def pan(direction):
+    # v5.8: scout uses the full 300px pan (fewer, wider tiles). Normal mode
+    # keeps the 150px half pan for overlap. WORKING_PATTERNS: half pan is ~4x
+    # slower, and scout is trading that overlap for coverage speed.
+    step = SCOUT_PAN_PIXELS if SCOUT_MODE else PAN_PIXELS
     pyautogui.moveTo(MAP_CX, MAP_CY)
     if direction == "right":
-        pyautogui.dragRel(-PAN_PIXELS, 0, duration=0.2, button="left")
+        pyautogui.dragRel(-step, 0, duration=0.2, button="left")
     elif direction == "left":
-        pyautogui.dragRel(PAN_PIXELS, 0, duration=0.2, button="left")
+        pyautogui.dragRel(step, 0, duration=0.2, button="left")
     elif direction == "down":
-        pyautogui.dragRel(0, -PAN_PIXELS, duration=0.2, button="left")
+        pyautogui.dragRel(0, -step, duration=0.2, button="left")
     time.sleep(WAIT_AFTER_PAN)
 
 def upload_screenshot_to_drive(local_path):
@@ -1336,10 +1369,17 @@ def reprocess_screenshots(processor):
 
 # MAIN
 def main():
+    global SCOUT_MODE
+    SCOUT_MODE = "--scout" in sys.argv
+
     check_update()
     print("\n" + "#" * 60)
     print("  FIBER HUNTER v%s SHIP-WITH-FIX" % VERSION)
     print("  4-state Green/Gold/Grey/Blank + shape filter + lowercase dedup")
+    if SCOUT_MODE:
+        print("  SCOUT MODE - fresh-fiber recon, no geocoding, %dpx full pan"
+              % SCOUT_PAN_PIXELS)
+        print("  Writes zone alerts to Hunter Hot Zones only. No lead rows.")
     print("#" * 60)
     if PGEOCODE_OK:
         print("  ZIP lookup: pgeocode (offline) OK")
@@ -1403,6 +1443,11 @@ def main():
         c["new"], c["skip"], c["hot"], c["greenfield"]))
     print("Blank/timeout rejected: %d | Park/no-cluster rejected: %d" % (
         c["blank_skip"], c["park_skip"]))
+    if SCOUT_MODE:
+        print("SCOUT: %d tiles swept | %d dots seen | %d fresh-fiber alerts"
+              % (c.get("scout_tiles", 0), c.get("scout_dots", 0), c["hot"]))
+        print("       No addresses written - rerun without --scout on the"
+              " zones that alerted.")
     print("Grey social-proof rows: %d" % c["grey"])
     print("Green-over-Gold: %d | Green-over-Grey: %d | Gold-over-Grey: %d" % (
         c["green_over_gold"], c["green_over_grey"], c["gold_over_grey"]))
