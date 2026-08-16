@@ -4,7 +4,8 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 
 ## Active systems
 - GitHub repo: patricksiado-prog/optimus-map-tools
-- Active sheet: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+- Active sheet: 1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA ("ATT FIBER LEADS")
+  (old ID 12PIIplhq... does not resolve; themapman already uses open_by_key 1FhO - verified 2026-08-16)
 - GHL Houston Location: TXw28sw0Z2rI6tcCDhJY (~41,325 contacts)
   (12th char is capital i, not lowercase L - verified against live GHL API 2026-08-16)
 - Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com

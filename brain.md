@@ -28,7 +28,8 @@ GitHub: github.com/patricksiado-prog/optimus-map-tools
 GCP: project fiberscanner-493900, service account fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
 GHL: Optimus Houston, Location ID TXw28sw0Z2rI6tcCDhJY
      (12th char is capital i, not lowercase L - verified against live GHL API 2026-08-16)
-Sheets: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+Sheets: 1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA ("ATT FIBER LEADS")
+        (old ID 12PIIplhq... does not resolve - verified 2026-08-16)
 CRM: 41,325 contacts in GHL
 
 ---

@@ -207,8 +207,9 @@ Subsequent runs hit cache, way faster.
 ## SHEET WRITES - THE CONVENTIONS
 
 ### Sheet IDs
-Active: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
-Original: 15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA
+Active: 1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA ("ATT FIBER LEADS")
+Original: 15ymTkIGPWs6quB035l414ns5hkG9cQ5xr_W4ukd0OAA (still exists, last write 2026-07-02)
+Stale ID: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag - does NOT resolve, do not use
 
 ### The split logic (battle-tested)
   if property_type == "COMMERCIAL":
