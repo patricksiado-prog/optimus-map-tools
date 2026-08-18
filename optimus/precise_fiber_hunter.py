@@ -101,8 +101,16 @@ from optimus_dot_detect import (GREEN_MIN, GREEN_MAX, GOLD_MIN, GOLD_MAX,
 # text/ban classifier, so the hunter can never fail to start over this.
 try:
     from backend_classifier import classify_lead as _classify_lead
-except Exception:
+except Exception as _bc_err:
     _classify_lead = None
+    # Do NOT fail silently. Without this module the hunter still runs, but the
+    # richest GOLD signal is gone -- and you would never know. Say so, loudly.
+    print("!" * 68)
+    print("  WARNING: backend_classifier.py did not load (%s)." % _bc_err)
+    print("  GOLD (copper-upgrade) dots will be classified by build code only.")
+    print("  Re-download backend_classifier.py + build_codes.json next to this")
+    print("  script to restore full gold detection.")
+    print("!" * 68)
 
 
 def _lead_status(ld):
@@ -124,7 +132,19 @@ def _lead_status(ld):
                 return _m[c]
         except Exception:
             pass
-    return classify_status(text=ld.get("status"), ban=ld.get("ban"))
+    # Fallback: hand the AT&T build code to classify_status so a COPPER customer
+    # is still GOLD here. Without it the fallback could only ever return
+    # lead/customer, so every gold dot silently became grey and was dropped.
+    _build = ""
+    if isinstance(raw, dict):
+        for _k in ("curr_ntwrk_bld_type_cd", "currNtwrkBldTypeCd", "build_type",
+                   "buildType"):
+            if raw.get(_k):
+                _build = str(raw[_k])
+                break
+    if not _build and isinstance(ld, dict):
+        _build = str(ld.get("build") or ld.get("build_type") or "")
+    return classify_status(text=ld.get("status"), ban=ld.get("ban"), build=_build)
 
 # proven schema-tolerant JSON walker from the working pipeline -- the AT&T dot
 # layer is the 'serviceability' JSON endpoint; this extracts its addresses.
@@ -282,6 +302,12 @@ GOLD_CLUSTER_ALERT = 8
 # Alerts' tab so it can trigger a phone notification.
 NEW_FIBER_ALERT = 15
 NEW_FIBER_TAB = "New Fiber Alerts"
+# Dedicated tab for GOLD / copper-upgrade dots. They already go into the main
+# "Precise Fiber" tab as ORANGE, but mixed 1-in-80 with green they are
+# unworkable. This tab is gold ONLY, so a rep can open it and start dialling.
+GOLD_TAB = "Gold Upgrade Leads"
+GOLD_HEADER = ["Address", "Dot Color", "Captured At", "Business", "Phone", "Area"]
+_GOLD_WS = [None]        # resolved lazily, once, on first gold row
 
 # SLAM-TO-STOP: hold the mouse in the very top-left screen corner ~1s to stop the
 # hunt cleanly. The hunter pans from the CENTER of the screen and never parks the
@@ -895,6 +921,36 @@ def _is_vector_tile(url, ct):
     return base.endswith(".pbf") or base.endswith(".mvt")
 
 
+def _write_gold_rows(ws, new_rows, area_label):
+    """Append the GOLD (copper-upgrade) rows of this batch to their own tab.
+
+    new_rows carry the legend word from dot_color(), so gold rows read "ORANGE".
+    Does nothing when there are none. Never raises to the caller.
+    """
+    gold_word = DOT_COLOR.get("copper_upgrade", "ORANGE")
+    golds = [r for r in new_rows if len(r) > 1 and r[1] == gold_word]
+    if not golds or ws is None:
+        return 0
+
+    gws = _GOLD_WS[0]
+    if gws is None:
+        sh = ws.spreadsheet
+        try:
+            gws = sh.worksheet(GOLD_TAB)
+        except Exception:
+            gws = sh.add_worksheet(title=GOLD_TAB, rows="5000",
+                                   cols=str(len(GOLD_HEADER)))
+            gws.append_row(GOLD_HEADER)
+            print("   created '%s' tab" % GOLD_TAB)
+        _GOLD_WS[0] = gws
+
+    rows = [list(r[:5]) + [area_label] for r in golds]
+    for i in range(0, len(rows), 500):
+        gws.append_rows(rows[i:i + 500], value_input_option="RAW")
+    print("   +%d GOLD (upgrade) -> '%s'" % (len(rows), GOLD_TAB))
+    return len(rows)
+
+
 def decode_vector_tile(url, body):
     """Decode a Mapbox vector tile (protobuf bytes) into leads with exact
     lng/lat (and address/status when the tile carries them). Returns ([], keys)
@@ -1240,7 +1296,11 @@ class NetCapture:
         # GOLD CLUSTER ALERT: gold = copper-to-fiber UPGRADE prospects (hottest
         # leads). If an unusually dense pocket shows up in one viewport, call it
         # out loudly + log it to the status sheet + Drive so it's easy to work.
-        _golds = [r[0] for r in new_rows if r[1] == "GOLD"]
+        # rows carry the LEGEND word from dot_color(), which is "ORANGE" for a
+        # copper upgrade -- never the literal "GOLD". Comparing to "GOLD" here
+        # meant this alert could never fire. Match the legend word instead.
+        _GOLD_WORD = DOT_COLOR.get("copper_upgrade", "ORANGE")
+        _golds = [r[0] for r in new_rows if r[1] == _GOLD_WORD]
         if len(_golds) >= GOLD_CLUSTER_ALERT:
             print("\n" + "*" * 60)
             print("  ** GOLD CLUSTER: %d gold (upgrade) dots in ONE view **" % len(_golds))
@@ -1275,6 +1335,13 @@ class NetCapture:
                 _log_new_fiber_alert(ws, area_label, _greens, grey_ct)
             except Exception:
                 pass
+        # GOLD -> its own tab as well as the main sheet. Additive and fully
+        # guarded: any failure here is printed and swallowed, so a gold-tab
+        # problem can never stop the green capture that already works.
+        try:
+            _write_gold_rows(ws, new_rows, area_label)
+        except Exception as e:
+            print("   (gold tab skipped: %s)" % str(e)[:80])
         for rec in new_records:        # local backup (no quota)
             append_jsonl(rec)
         try:    # sample addresses to the Drive log so Claude can verify accuracy

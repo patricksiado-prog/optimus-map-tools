@@ -93,18 +93,46 @@ def zone_freshness(green, gold, gray):
     return "WORKING", gray_share
 
 
-def classify_status(text=None, ban=None, color=None):
+# AT&T build codes (curr_ntwrk_bld_type_cd), decoded 2026-07-01 from a live
+# 19,500-record Vintage Park capture. Kept HERE, in the low-level module, so a
+# copper customer is still recognised as GOLD when backend_classifier.py is
+# missing or failed to download. Before this, the legacy path could only spot
+# copper from the literal word "copper" in the popup text -- which the backend
+# JSON never contains -- so every copper customer fell through to CUSTOMER and
+# was dropped as grey. That is the bug that made GOLD dots vanish.
+FIBER_BUILD_CODES = {"fttp-gpon", "fttp", "gpon", "ftth"}
+COPPER_BUILD_CODES = {"fttn-bp", "fttn", "ip-rt", "iprt", "ip-co", "ipco",
+                      "copper", "ipbb", "adsl", "vdsl", "dsl"}
+
+
+def classify_status(text=None, ban=None, color=None, build=None):
     """Decide LEAD / CUSTOMER / COPPER_UPGRADE for one dot.
 
-    Priority: explicit dot color (the legend) > a status string from the
-    backend JSON > BAN presence. Defaults to LEAD only when nothing says
-    otherwise.
+    Priority: explicit dot color (the legend) > the AT&T build code > a status
+    string from the backend JSON > BAN presence. Defaults to LEAD only when
+    nothing says otherwise.
+
+    `build` is curr_ntwrk_bld_type_cd straight off the backend record. For a
+    CUSTOMER (ban present) it is what separates GOLD (copper, sellable upgrade)
+    from GREY (already on fiber, skip). Pass it whenever you have it.
     """
     if color and color.upper() in COLOR_STATUS:
         return COLOR_STATUS[color.upper()]
+
     low = (text or "").lower()
     if "copper" in low:
         return STATUS_COPPER_UPGRADE
+
+    # Build code beats every text heuristic -- it is AT&T's own field.
+    # Only meaningful for a customer: a non-customer has no network, so its
+    # build code is "unavailable" and says nothing about eligibility.
+    b = (build or "").strip().lower()
+    if ban and b:
+        if b in COPPER_BUILD_CODES:
+            return STATUS_COPPER_UPGRADE
+        if b in FIBER_BUILD_CODES:
+            return STATUS_CUSTOMER
+
     if "non-customer" in low or "noncustomer" in low or "eligible" in low:
         return STATUS_LEAD
     if "customer" in low or "subscriber" in low:
