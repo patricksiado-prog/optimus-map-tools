@@ -3884,9 +3884,36 @@ def _disable_quickedit():
         pass
 
 
+# Startup banner. Printed after self_update() so it always describes the code
+# that is ACTUALLY running, not the copy that was on disk before the update.
+GOLD_UPDATE_STAMP = "2026-08-18"
+
+
+def _print_gold_banner():
+    """Tell the operator, at a glance, that this PC is on the gold-capture code
+    and whether gold detection is at full strength."""
+    line = "=" * 68
+    print("")
+    print(line)
+    print("  GOLD CAPTURE UPDATE  --  %s" % GOLD_UPDATE_STAMP)
+    print("")
+    print("  Gold (copper-upgrade) dots are captured and written to their own")
+    print("  tab:  'Gold Upgrade Leads'")
+    print("")
+    print("  Gold also still lands in 'Precise Fiber' as ORANGE.")
+    print("  Green capture unchanged.  Grey dots are NOT written.")
+    if _classify_lead is not None:
+        print("  Backend classifier: LOADED  (full gold/grey split active)")
+    else:
+        print("  Backend classifier: NOT LOADED -- gold detected by build code only")
+    print(line)
+    print("")
+
+
 def main():
     self_update()
     _disable_quickedit()
+    _print_gold_banner()
     ap = argparse.ArgumentParser()
     ap.add_argument("--login", action="store_true", help="open browser to log in once, then quit")
     ap.add_argument("--zip", default=None, help="ZIP/area to search before scanning")
