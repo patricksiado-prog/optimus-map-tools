@@ -306,6 +306,16 @@ NEW_FIBER_TAB = "New Fiber Alerts"
 # "Precise Fiber" tab as ORANGE, but mixed 1-in-80 with green they are
 # unworkable. This tab is gold ONLY, so a rep can open it and start dialling.
 GOLD_TAB = "Gold Upgrade Leads"
+# Per-viewport dot census. GREY rows are deliberately never written to the lead
+# sheet (they are already-sold customers), but the GREY SHARE is the single
+# best signal for "is this fiber new?" -- Patrick's rule: lots of grey = older,
+# worked area; no grey with green+gold = brand new. Counting grey and throwing
+# it away meant that signal existed for one instant per viewport and was then
+# lost. This tab keeps the census so areas can be RANKED by freshness.
+CENSUS_TAB = "Zone Census"
+CENSUS_HEADER = ["Time", "Area", "Green", "Gold", "Grey", "Total",
+                 "Grey %", "Verdict", "Host"]
+_CENSUS_WS = [None]
 GOLD_HEADER = ["Address", "Dot Color", "Captured At", "Business", "Phone", "Area"]
 _GOLD_WS = [None]        # resolved lazily, once, on first gold row
 
@@ -921,6 +931,40 @@ def _is_vector_tile(url, ct):
     return base.endswith(".pbf") or base.endswith(".mvt")
 
 
+def _write_zone_census(ws, greens, golds, grey_ct, area_label):
+    """Record this viewport's green/gold/grey mix and its freshness verdict.
+
+    Written for EVERY viewport, not just ones that trip an alert -- a viewport
+    that is 90% grey is exactly as useful to know about (skip it) as one that is
+    all green. Uses the shared zone_freshness() thresholds so the hunter and the
+    scout always agree on what FRESH means. Never raises to the caller.
+    """
+    import socket
+    g, go = len(greens), len(golds)
+    total = g + go + grey_ct
+    if total == 0 or ws is None:
+        return
+    verdict, grey_share = zone_freshness(g, go, grey_ct)
+
+    cws = _CENSUS_WS[0]
+    if cws is None:
+        sh = ws.spreadsheet
+        try:
+            cws = sh.worksheet(CENSUS_TAB)
+        except Exception:
+            cws = sh.add_worksheet(title=CENSUS_TAB, rows="20000",
+                                   cols=str(len(CENSUS_HEADER)))
+            cws.append_row(CENSUS_HEADER)
+            print("   created '%s' tab" % CENSUS_TAB)
+        _CENSUS_WS[0] = cws
+
+    cws.append_row([time.strftime("%Y-%m-%d %H:%M:%S"), str(area_label),
+                    g, go, grey_ct, total, round(grey_share * 100, 1),
+                    verdict, socket.gethostname()], value_input_option="RAW")
+    print("   census: %s -> %d green + %d gold + %d grey (grey %.0f%%) = %s"
+          % (area_label, g, go, grey_ct, grey_share * 100, verdict))
+
+
 def _write_gold_rows(ws, new_rows, area_label):
     """Append the GOLD (copper-upgrade) rows of this batch to their own tab.
 
@@ -1342,6 +1386,10 @@ class NetCapture:
             _write_gold_rows(ws, new_rows, area_label)
         except Exception as e:
             print("   (gold tab skipped: %s)" % str(e)[:80])
+        try:
+            _write_zone_census(ws, _greens, _golds, grey_ct, area_label)
+        except Exception as e:
+            print("   (census skipped: %s)" % str(e)[:80])
         for rec in new_records:        # local backup (no quota)
             append_jsonl(rec)
         try:    # sample addresses to the Drive log so Claude can verify accuracy
