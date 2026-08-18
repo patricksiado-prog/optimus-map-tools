@@ -4,11 +4,23 @@ _Last updated: 2026-05-02 05:32:19 CDT_
 
 ## Active systems
 - GitHub repo: patricksiado-prog/optimus-map-tools
-- Active sheet: 12PIIplhqUuZWAfEUdJMP3J04nAyrsFsFB07bDDDV2Ag
+- **Active sheet: 1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA** ("ATT FIBER LEADS")
+  - This is what the code actually opens (8 refs across the .py files).
+  - Older IDs still referenced in code, do NOT use: 12PIIplhqUuZ... (4 refs),
+    15ymTkIGPWs6... (2 refs), 1qHWcGbfGZnL... (1 ref). Retire them.
 - GHL Houston Location: TXw28sw0Z2rl6tcCDhJY (~41,325 contacts)
 - Service account: fiberscanner@fiberscanner-493900.iam.gserviceaccount.com
-- Map Man v10
+- Map Man v11.2.5 (v11.3.0 self-healing sits unmerged on program-stopping-issue-2dqxko)
 - Drive mirror: 1u38EOzaGO7Sd5Y8ERqQoXeYZW5Pws8Z_
+- Railway: 2 projects (fulfilling-growth, loving-heart) each running one
+  Go-High-Level-MCP-2026-Complete service. Both last deployed 2026-06-30,
+  both SUCCESS. Two projects running the same service is duplication - pick one.
+
+## API keys - HARD RULE (added 2026-08-18)
+Never put a key in a .py file. All tools call `optimus_secrets.get_maps_api_key()`,
+which reads env var GOOGLE_MAPS_API_KEY or a gitignored `maps_api_key.txt`
+(next to the script, or /storage/emulated/0/Download/ on the phone).
+A key that was ever committed is burned - rotate it, do not just delete the line.
 
 ## Phase targets
 - Phase 1: 500 sales/week

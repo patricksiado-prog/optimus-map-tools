@@ -14,7 +14,8 @@ AUTO_UPDATE = True
 
 SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 DEFAULT_TAB_PREFIX = "Hunter"
-API_KEY = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
+from optimus_secrets import get_maps_api_key
+API_KEY = get_maps_api_key()
 
 PHONE_SOURCE_FOUND = "Google Maps"
 PHONE_SOURCE_EMPTY = "Google Maps (no biz)"
