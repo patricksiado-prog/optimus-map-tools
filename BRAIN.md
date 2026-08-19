@@ -881,3 +881,53 @@ the 18,030 remaining. Not more sweeps. Not more green.
    the writer drops them. Makes 459k rows filterable by area instead of unusable.
 3. **Resolve the gold tab drift** — code writes `Gold Upgrade Leads`, sheet has
    `Gold Dots`; pick one and make the header include Lat/Lng.
+
+---
+
+## 2026-08-19 (part 6) — CORRECTION: gold is 4x bigger than I said
+
+Exact COUNTIF over `Precise Fiber` column B, 2026-08-19:
+
+| Value | Count |
+|---|---|
+| GREEN | **450,972** |
+| **ORANGE (= gold / copper upgrade)** | **8,264** |
+| GOLD / YELLOW / GREY / GRAY | 0 |
+| Non-empty rows | 459,471 |
+
+**I previously wrote "1,984 gold (0.4%)". That was the `Gold Dots` tab row count, not
+the gold total.** The real figure is **8,264 orange in Precise Fiber — 1.8%**. `Gold Dots`
+holds only 1,984 of them, i.e. **~6,280 gold dots exist with NO lat/lng anywhere**, so
+they cannot be geo-targeted or handed to a rep by area.
+
+Growth check: the 2026-08-18 session log recorded ORANGE 5,593. It is now 8,264. **Gold
+is accumulating at roughly 2,700/day while the hunter runs.**
+
+GREY = 0 confirmed empirically, matching the `continue` in the writer. The grey-share
+signal genuinely does not exist in this tab.
+
+### The revised strategic read
+
+~8,264 pre-qualified copper-upgrade customers, all on the 2029 forced-migration clock,
+of which 7 have been contacted. The binding problem is not lead supply and not
+DealMachine credits — it is that **three quarters of the gold has no coordinates**, so
+it cannot be routed to a rep or a zone.
+
+Fixing the lat/lng writer is therefore worth more than any additional sweep: it converts
+~6,280 already-captured, highest-intent leads from unusable to workable.
+
+### Also confirmed this pass
+- `Fiber Scout` tab EXISTS and is already grey-share freshness scoring:
+  `Time | Host | Cell | Green | Gold | Grey | Grey% | Verdict` with verdicts
+  **SURVEY / WORKING / MATURE**. The `fiber-freshness` skill should read THIS tab —
+  `Zone Census` was never created and is not needed.
+- `Backend Capture` shows a real captured ratio: `green=0 gold=73 grey=264 cust=2
+  skip=661` — grey outnumbering gold ~4:1 in a mature area, the signal working.
+- `Fresh Leads` is header-only. Whatever writes to it is not firing.
+- `Backend Analysis` city tally: HOUSTON 81,843, JERSEY VILLAGE 23,657. No Brazoria
+  County anywhere — Angleton has never been swept (checked across all six candidate tabs).
+- **Railway: still two duplicate projects** — `fulfilling-growth`
+  (13c1661d-38da-468c-91b7-d8cf2d346952) and `loving-heart`
+  (0c52fac6-974c-4a5e-b2fb-3ce805b475ed), each running one
+  `Go-High-Level-MCP-2026-Complete` service. Flagged on 2026-08-18, still not
+  consolidated.
