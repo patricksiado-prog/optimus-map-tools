@@ -23,6 +23,29 @@ which reads env var GOOGLE_MAPS_API_KEY or a gitignored `maps_api_key.txt`
 (next to the script, or /storage/emulated/0/Download/ on the phone).
 A key that was ever committed is burned - rotate it, do not just delete the line.
 
+## SECURITY POSTURE - PATRICK'S CALL (2026-08-19)
+
+Patrick's decision, stated directly: he is NOT concerned about data exposure or
+public-repo visibility at this stage. Speed of building beats locking things
+down. Do not re-raise it.
+
+APPLIES TO:
+- optimus-map-tools being a public repo
+- the Maps API key committed in history
+- google_creds.json served from a public Drive link in INSTALL_OPTIMUS.bat
+- ATT FIBER LEADS readable by anyone with the link
+
+RULE FOR EVERY FUTURE SESSION:
+Do not open with security warnings. Do not repeat these items unprompted. Do not
+add caveats about exposure to unrelated answers. State facts only if Patrick asks
+directly, or if something is actively breaking or costing money right now.
+
+Only exception worth a single line, ever: a leaked Google Maps API key is
+BILLABLE. Bots scrape GitHub for keys and spend them. If Google billing ever
+spikes unexpectedly, that is the first place to look. Set a daily quota cap on
+the key and the issue is closed permanently. That is a cost control, not a
+security lecture - mention once if billing looks wrong, otherwise never.
+
 ## Phase targets
 - Phase 1: 500 sales/week
 - Phase 2: 1000/week
