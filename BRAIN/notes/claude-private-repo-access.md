@@ -1,7 +1,8 @@
 # Giving Claude Access to Private Repo Files
 
 ## The problem
-optimus-map-tools is a private GitHub repo. Claude cannot fetch files from it
+CORRECTION 2026-08-19: optimus-map-tools is PUBLIC (GitHub API: visibility=public).
+The text below is retained for history but its premise is WRONG. Claude cannot fetch files from it
 directly — even with a raw URL, GitHub blocks unauthenticated requests to
 private repos and Claude has no auth token on its side.
 

@@ -1,7 +1,7 @@
 # Claude Context via Drive Mirror
 
 ## Why this exists
-GitHub repo is private — Claude can't fetch from it. So BRAIN files and any
+CORRECTION 2026-08-19: the repo is PUBLIC, not private. So BRAIN files and any
 source Claude needs to debug are mirrored to a Drive folder Claude reads via
 the Google Drive connector. No public repo, no token exposure, no copy-paste.
 
