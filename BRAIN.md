@@ -757,3 +757,127 @@ The dialer side then only ever works rows where Status = REPLIED, which is the f
 - D2D fiber recruiting market rates: ziprecruiter.com, indeed.com, glassdoor.com,
   knockfiber.com, jobleads.com
 - All people/process observations: WhatsApp archives in Drive + Gmail threads Aug 16-17 2026
+
+---
+
+## 2026-08-19 (part 5) — WHAT A GOLD DOT ACTUALLY IS. Read this before prioritising work.
+
+Read from the source (`optimus/backend_classifier.py`, `optimus/build_codes.json`,
+`optimus/precise_fiber_hunter.py`), not from earlier notes. Two of my earlier claims were
+wrong and are corrected below.
+
+### 32. The dealer map only plots addresses where fiber is ALREADY available
+
+`backend_classifier.py`, verbatim:
+
+> "The map only plots eligible / customer dots anyway, so every record here is a real dot."
+
+Legend, from the same file:
+- **GREEN** = fiber eligible / NON-customer
+- **GOLD**  = fiber eligible / **COPPER customer**
+- **GREY**  = existing fiber customer
+
+Classification signal (corrected 2026-07-01 from a live 77027 capture, decoded from a
+19,500-record Vintage Park capture):
+- `subscriber_ban` empty = NOT a customer -> GREEN
+- `subscriber_ban` present + `curr_ntwrk_bld_type_cd` in
+  `{fttp-gpon, fttp, gpon, ftth}` -> GREY (existing fiber)
+- `subscriber_ban` present + code in
+  `{fttn-bp, fttn, ip-rt, iprt, copper, ipbb, adsl, vdsl, dsl}` -> **GOLD**
+- `curr_ntwrk_bld_type_cd = "unavailable"` does NOT mean dead. It is what a green
+  eligible non-customer looks like. Skipping it once threw away 100% of greens
+  (the "GREEN-0 bug").
+
+### 33. Therefore a gold dot means something much stronger than "copper customer"
+
+**Fiber is LIVE at that address, the household already pays AT&T, and they are still
+on DSL.**
+
+| | GREEN | **GOLD** |
+|---|---|---|
+| Fiber available | yes | yes |
+| Already an AT&T customer | no | **yes** |
+| The sale is | win them off Comcast/Spectrum | **upgrade an existing account** |
+| Friction | new provider, new bill, switching | none — same company, same bill |
+| Result for them | new cost | often **lower** bill, 10-100x speed |
+
+Green is competitive displacement. **Gold is an upsell to somebody who already trusts
+AT&T.** Gold is the easier sale by a wide margin.
+
+**Why gold is rare (1,984 of 459,472 captured = 0.4%):** most AT&T customers who had
+fiber made available already took it — those are the GREY dots. **Gold is the residue:
+people who do not know fiber arrived.** That profile matches what DealMachine returned on
+Broun St — 1968 construction, long-tenure owner-occupiers.
+
+**Copper retirement by 2029 makes every gold dot a forced migration.** AT&T moves them
+whether we call or not. The only question is whether we write the order or AT&T's own
+retention team does it for free.
+
+**A gold dot list is not a prospecting list. It is a book of business with an expiry
+date.**
+
+### 34. CORRECTION — the freshness skill cannot run today
+
+`fiber-freshness` scores zones on grey share. But the hunter **never writes grey**:
+
+```python
+if dot_color(ds) == "GREY":
+    continue          # precise_fiber_hunter.py, Precise Fiber writer
+```
+
+`CENSUS_TAB = "Zone Census"` was written specifically to preserve the grey counts before
+discarding the rows — and **that tab does not exist in the sheet.** Neither does
+`New Fiber Alerts`. So the grey-share signal is computed for one instant per viewport and
+thrown away. The skill's logic is sound; it has no data to run on until the census tab is
+actually created.
+
+### 35. CORRECTION — "Beaumont has zero grey, therefore virgin" was not a real finding
+
+Grey is zero **everywhere** in that sheet, by design (see above). Patrick's screenshot
+showing no grey on the live map is genuine evidence; my sheet-based version of it was an
+artifact of a filter and should not be repeated.
+
+### 36. What the software actually outputs (tab audit, 2026-08-19)
+
+| Tab | Rows | Schema / note |
+|---|---|---|
+| Precise Fiber | 459,472 | Address, Dot Color, Captured At, Business, Phone. **No lat/lng.** GREY dropped. |
+| Gold Dots | 1,984 | Address, Captured At, **Lat, Lng** — the only geo-filterable tab |
+| Fiber Green Biz | 6,131 | Business Name, Phone, Address, Website, Category |
+| Upgrade Orange Biz | 25 populated | same schema as above |
+| Maps Businesses | 32,172 | |
+| Hunter Status | 33,805 | run log |
+| Fiber Scout / Backend Capture / Backend Analysis / Fresh Leads | 3,000 each | exactly 3,000 — the backend returns "up to ~3000 leads" per search, so these look capped or single-capture |
+| Beaumont Gold — Aug 2026 | 238 | built today: + Cluster, Phone, Owner, Status, Worked By, Notes |
+| **Zone Census** | **missing** | freshness signal, never created |
+| **New Fiber Alerts** | **missing** | NEW_FIBER_ALERT=15 greens + little grey, never created |
+| Gold Upgrade Leads | **missing** | live code writes here; sheet has "Gold Dots" instead — tab drift |
+
+**Coverage: lat 30.06 to 32.81, lng -97.00 to -93.73.** SE Texas (Beaumont/Orange) plus
+North Texas. **Angleton (29.17, -95.43) has never been swept — 0 rows, confirmed twice.**
+
+### 37. The strategic read
+
+We have been treating this as a volume problem — more addresses, more enrichment, more
+texts. The data says otherwise.
+
+- 459,472 addresses captured; **1,984 are gold (0.4%)**
+- Gold is the lowest-friction sale in the business and is on a 2029 clock
+- **We have contacted 7 of them**
+- The pipeline is optimised around green, which is the hard sale
+
+The bottleneck was never lead volume. It is that the easiest 0.4% is buried in the other
+99.6% — which is exactly why `Gold Dots` was split out in the first place, and then not
+worked.
+
+**Highest-value available work: enrich all ~1,984 gold and call them on the
+copper-retirement line.** At the measured 2.83 credits/address that is ~5,600 credits of
+the 18,030 remaining. Not more sweeps. Not more green.
+
+### 38. Three code fixes that make everything after this cheap
+
+1. **Write grey counts to `Zone Census`** — one tab; restores freshness ranking permanently.
+2. **Add lat/lng to the Precise Fiber writer** — the JSONL already carries coordinates,
+   the writer drops them. Makes 459k rows filterable by area instead of unusable.
+3. **Resolve the gold tab drift** — code writes `Gold Upgrade Leads`, sheet has
+   `Gold Dots`; pick one and make the header include Lat/Lng.
