@@ -336,3 +336,138 @@ enrichment batch costing 476 credits.
 - SMS benchmarks + 10DLC: sendhub.com, messageiq.io, messageflow.com, nexdial.com
 - DealMachine: help.dealmachine.com, resimpli.com, realestateskills.com
 - GHL dialer/disposition: help.gohighlevel.com, ideas.gohighlevel.com
+
+---
+
+## RESEARCH 2026-08-19 (part 2) — freshness detection, AT&T pricing, the pitch
+
+### 8. NEW SKILL: `fiber-freshness`
+
+Created at `.claude/skills/fiber-freshness/SKILL.md`. Scores zones by grey-share.
+
+```
+FRESHNESS   = (1 - grey/(green+gold+grey)) * 100
+OPPORTUNITY = green + gold
+```
+Require total >= 15 per zone. 90-100 = VIRGIN (work now). <40 = picked over (skip).
+**Gold present + zero grey is the strongest signal we have** — copper customers exist,
+fiber is live, nobody has converted. That is Beaumont exactly.
+
+### 9. How to know where green is getting turned on — the detection stack
+
+Ranked by how early the signal arrives:
+
+1. **Yard flags / spray paint markings** — construction begins within ~1 week. Earliest
+   physical signal.
+2. **Door hangers + Nextdoor + HOA notices** — AT&T pushes pre-construction notice
+   through these channels specifically. Nextdoor is the highest-value social source, not
+   Reddit or FB.
+3. **Municipal permits** — AT&T must pull permits from city planning / DOT before
+   construction. Public record. Call the city or county engineering dept.
+4. **AT&T's own notify page** — `att.com/internet/fiber-is-coming/`. Enter an address,
+   AT&T tells you when it lights. Free, official, address-level.
+5. **AT&T Construction Helpdesk — 1-877-780-5422** (7a-3p ET).
+6. **OUR HUNTER, re-run on a schedule** — the `serviceability` endpoint flips to
+   fiber-eligible the moment a location is lit, which is BEFORE anybody buys and
+   therefore before any grey appears.
+
+**THE PATTERN — delta detection.** The signal is not a single scan, it is the *diff
+between two scans of the same zone*. Re-run the hunter weekly over known copper
+(gold-heavy) areas and watch for addresses flipping copper -> fiber-eligible. That
+transition, with grey still at zero, is a street that lit up in the last 7 days and has
+zero competitor presence. This is the highest-value automation we can build and we
+already own every piece of it.
+
+**Not yet done:** no historical scan snapshots are being retained, so no diffing is
+possible today. To enable this we must store dated snapshots per zone. TODO.
+
+### 10. AT&T pricing — VERIFY BEFORE QUOTING
+
+Current published pricing (Aug 2026):
+- **AT&T Fiber 300: $55/mo** — symmetrical, no data cap, no contract, no equipment fee.
+- New fiber customer promo: **-$15/mo for 12 months** (300Mbps+).
+- Autopay + paperless w/ bank account or AT&T Points Plus Citi card: **-$10/mo**.
+- Wireless bundle: **-$5/mo per AT&T phone line**, OR **20% off** internet with an
+  eligible unlimited wireless plan (not both).
+- New customers often get a **$150-200 Visa reward card**.
+
+**On the "$27" claim — DO NOT SAY IT AS A FLAT PRICE.**
+Best case stack: $55 - $15 (promo) - $10 (autopay) - $5 (one wireless line) = **$25/mo**,
+but only for 12 months, only with autopay off a bank account, and only if the promo and
+bundle discounts stack. I could NOT verify that all three stack — att.com is blocked by
+our egress proxy so I could not confirm against the official terms page.
+Also the $15 credit expires at 12 months, after which the same customer is at ~$40-45.
+Quoting "$27" and delivering $45 is how you generate cancellations and chargebacks.
+
+**Safe framing:** "in the $20s to $30s for the first year with autopay and your wireless
+discount — I'll confirm your exact price before anything is ordered."
+
+### 11. The copper-retirement lever — this is the real pitch
+
+**AT&T is retiring its copper network by 2029.** Phase 1 (no-fiber areas) moves to
+AT&T Phone Advanced / fixed wireless / satellite by end of 2027. Phase 2 (fiber-build
+areas) converts copper voice and DSL customers onto fiber by 2029. Copper customers do
+not get to keep copper.
+
+**Every gold dot is a household that must move within ~3 years.** That converts our
+pitch from a sales pitch into a heads-up:
+
+> "Your line is on the copper network AT&T is retiring. Fiber is already live on your
+> street. You can move now on the new-customer promo, or wait and move later without it."
+
+That is true, urgent, and gives a reason-why — which is exactly what the D2D research
+says lifts open rates. It is far stronger than a discount pitch.
+
+### 12. DealMachine has NO carrier data — the "AT&T cell" angle does not work
+
+Checked `dealmachine_fields` for people. There is **no carrier field**. It returns line
+TYPE, never the carrier. So we cannot identify who is an AT&T wireless customer, and the
+"hi Bob, you have AT&T cell and AT&T DSL" opener cannot be data-driven from DealMachine.
+Ask on the call instead — it is a good qualifying question, just not a targeting filter.
+
+**What DealMachine DOES give us (people fields, all filterable, checked live):**
+
+| Field | Use |
+|---|---|
+| `has_wireless_phone` | Pre-filter to textable BEFORE paying |
+| `has_non_dnc_phone` | Pre-filter out the ~29% DNC block BEFORE paying |
+| `has_landline_phone` | Route to voice, never SMS (Twilio 30006) |
+| `has_prepaid_phone` | Prepaid skews lower-income — price-led pitch |
+| `is_business_owner` | **Finds businesses in a fresh green zone** |
+| `has_home_business` | Home-based business = higher-value fiber need |
+| `residence_length` | Long tenure = still on original copper |
+| `has_likely_to_move` | Movers need new service — different pitch |
+| `homeowner_status` | Owner decides internet; renter often cannot |
+
+**BIG COST FIX:** `has_wireless_phone` and `has_non_dnc_phone` are **filterable**, so we
+can filter BEFORE spending credits instead of enriching then discarding. On Beaumont we
+paid for 29% DNC records we then threw away. Filtering first would have saved ~130
+credits on 238 addresses. Use `people_search` with these filters going forward.
+
+### 13. Beaumont enrichment — live results (OURS)
+
+7 parcels enriched, 14 credits, 2026-08-19:
+
+| Address | Owner | Cell | Result |
+|---|---|---|---|
+| 9725 Broun | Andrew Jones | 337-940-2055 | TEXTABLE |
+| 9690 Broun | Raymona Redd + Elaine Smith | 409-284-6252 / 409-998-0753 | TEXTABLE x2 |
+| 9785 Broun | Justin Loera | 409-728-7108 | TEXTABLE |
+| 9730 Broun | Julio Garcia | 409-225-2984 | TEXTABLE |
+| 9745 Broun | Tracey Lumpkin | - | all 3 DNC |
+| 9825 Broun | Guy Armstrong | - | wireless DNC |
+| 9755 Shepherd | - | - | no contact record |
+
+**Yield 5/7 parcels textable (71%)** — better than the 60% assumed. Extrapolates to ~170
+textable cells across all 238. **~29% carry a DNC flag** — on the full list that is ~69
+households we would have texted blind.
+
+**Every Broun St house is built 1968.** Copper-era construction, confirming the gold-dot
+thesis against county property records.
+
+### 14. Sources (part 2)
+- AT&T fiber pricing/promos: attsavings.com, internetproviders.ai, reviews.org,
+  highspeedinternet.com, broadbandnow.com
+- Copper retirement by 2029: telecompetitor.com, lightreading.com, att.com/support
+- Build detection channels: att.com/internet/fiber-is-coming, fishersin.gov,
+  wauconda-il.gov, vah.com, tellicovillagepoa.org
