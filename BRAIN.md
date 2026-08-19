@@ -589,3 +589,171 @@ skip tracing. Remaining after our 13 Beaumont enrichments: ~18,030.
 - Billing/cancellation complaints: Trustpilot (dealmachine.com), BBB Indianapolis
 - Skip-trace quality: r/WholesaleRealestate via realestateskills.com, resimpli.com
 - Competitor per-record pricing: propertyreach.com, goliathdata.com, resimpli.com
+
+---
+
+## WHATSAPP READ-THROUGH 2026-08-19 — people, process, and scaling observations
+
+Notes only. Nothing here is a rule — it is what the archives actually show, plus options.
+
+### 23. What was read
+
+| Chat | Messages | Range |
+|---|---|---|
+| Rea | **9,964** | 2025-08-28 -> 2026-01-21 |
+| Chrestian Estrera | **5,633** | 2025-11-21 -> 2026-04-10 |
+| AT&T LeadGen, Dave, AT&T, Support, Michael Angelo Pangilinan, Jay Dominican Call Center, Anna Grace, +63 936 334 6203 | archives located in Drive | not yet fully parsed |
+
+Rea + Chrestian = 15,597 messages read in full. The rest are downloaded and pending.
+
+### 24. People and contacts found
+
+| Name | Contact | Role seen in chats |
+|---|---|---|
+| Rea | +63 995 029 0946 | lead-gen manager, PH; ran hiring + dialing team |
+| Chrestian Estrera | (PH, via WhatsApp) | closer/lead-gen; relationship ended Apr 2026 |
+| Nate | +1 (480) 203-4949 | contact in Rea archive |
+| Tom "New Recruit" | +1 (972) 523-8826 | recruit, Sept 2025 |
+| Zack Woodring | GHL user `qOa2OVzPabolfU9xjVXM` | Frontline; described as "always a great recruiter" |
+| Ed Saldana | edsaldana08@gmail.com | agent; active reserve/chargeback dispute Aug 2026 |
+| Vanessa Nelson | vn.lvlupdirect@gmail.com | upline/admin — "Patrick is in charge of your reserves" |
+| Keely Denning | Keely.Denning@rsiinc.com | RSI — chargeback verification |
+| Kenny, Danny (AZ) | — | each built 10-man teams previously |
+| Michael Angelo Pangilinan, Anna Grace, Jay (Dominican call center), Junrey Atis | archives/vcards | offshore lead-gen contacts |
+| admin@attfiberhouston.com | — | our own domain address |
+
+**84 unique emails and 228 phone numbers appear in the Rea chat alone.** Most are prospects,
+not staff. That archive is an un-mined contact list — worth extracting properly into the
+sheet rather than leaving in a zip.
+
+### 25. Best day for leads (observed)
+
+Message volume by weekday across the Rea archive (proxy for activity, not a direct lead count):
+
+| Day | Messages |
+|---|---|
+| **Friday** | **2,645** |
+| Tuesday | 1,714 |
+| Monday | 1,675 |
+| Wednesday | 1,584 |
+| Thursday | 1,462 |
+| Saturday | 871 |
+| Sunday | 13 |
+
+**Friday runs ~60% hotter than any other weekday.** Sunday is effectively dead. Saturday is
+half a weekday. Caveat: this measures conversation, not closed leads — worth confirming
+against GHL message/call timestamps before betting the schedule on it.
+
+### 26. Process observations from the archives
+
+**What was tried:**
+- Aug 2025: plan was "20 people calling to generate leads, you a 10 man team," with Rea
+  hiring at ~$6/lead and monitoring dialing, confirming leads, tracking ROI.
+- Sept 2025: Indeed ad for Houston salespeople ("whatever the cheapest is"); Craigslist
+  Houston account already in use for hiring.
+- Prior track record: "I trained 26 people to earn 2k a week in an 18 month period w att."
+
+**What broke:**
+- **Pay opacity via a middle layer.** Chrestian was on $130/wk + $25/closed deal (₱7,500/wk),
+  did not know his commission package, and Rea controlled both pay and deal attribution
+  ("Rhea doesn't give a list of how many deals I've closed... isn't always transparent").
+  He also covered a lead-gen cost Rea was supposed to pay. Ended Apr 9-10 2026 in mutual
+  threats (extortion claims, Google reviews, AT&T complaints, FBI).
+- **Lead starvation is what actually caused churn.** 12/23/25: *"All the sales guys were
+  expecting leads and when they didn't get them they quit."*
+- **List quality, not copy, capped text results.** Chrestian, 4/2/26: *"Did she just scrape
+  the data and pick random numbers from DealMachine or did she filter for actual property
+  owners?"* Also *"Apollo has a lot of junk numbers"* and *"200 texts out and only bad
+  response from gala and the other scraper."* He identified our filtering problem four
+  months before we did.
+- **Offshore infrastructure is fragile** — 3 hours of mains electricity per day, generator
+  fuel paid out of pocket, CRM profile deleted by someone else.
+
+**The same reserve/attribution issue is live again.** Ed Saldana, Aug 16 2026: *"there
+seems to be a discrepancy with the way reserve has been handled... It should have never
+been a community pot for everyone."* Visible chargebacks: Jose Tumax $54 + $202.50
+(12/5/25), Don D Channel Migration 300Mbps (2/20/26), Joshua Velazquez $450 commission
+with $45 reserve withheld (5/19/26). Ed's actual production numbers are not yet pulled —
+that requires a GHL/pay-file query, not the chat archives.
+
+### 27. Finding more people like Chrestian
+
+What made him valuable, from the record: he closed deals, diagnosed data quality without
+being asked, took initiative on scraping, worked through power cuts, and stayed when he
+was unhappy rather than ghosting. What lost him was money opacity, not capability.
+
+Sourcing options seen working or available:
+- **Referral from existing performers** — Zack, Kenny and Danny have each built 10-man
+  teams. Cheapest and highest-quality channel available.
+- **Indeed / Craigslist Houston** — already have accounts. Market rate for US D2D fiber
+  reps in 2026 is commission-only, uncapped, weekly or biweekly pay on installs, top
+  performers $4-10k/wk; adjacent backgrounds (solar, alarms, pest, roofing, telecom)
+  convert best and no telecom experience is required if training exists.
+- **Offshore lead-gen (PH)** — proven cheap and capable, but needs power/internet backup
+  budgeted and pay stated in writing.
+
+### 28. Ideas toward 100 customers/day (biz + resi)
+
+Current reality for scale math: Deer Park resi 246 texted -> 9 positives (3.7%), 0 closed.
+ARA OKC commercial 838 -> 2 hot -> 1 closed (0.24%). WhatsApp scoreboard showed 130 deals
+/ 23 days / 11 reps ≈ 5.7 deals/day team-wide, best rep 10 in a day.
+
+100/day is roughly **17x** the best observed team output. Getting there is a throughput
+problem at four stages, and each has a different bottleneck:
+
+1. **List** — not the constraint. 456,341 rows captured, 963 gold dots. Constraint is
+   freshness ranking and enrichment, not volume.
+2. **Contact data** — DealMachine cap is 30,000 credits/mo at ~2.83 credits/address
+   ≈ **10,600 addresses/month**, ~350/day. That is the hard ceiling on new enriched leads
+   with the current plan. 100 customers/day is not reachable on this plan alone.
+3. **Outreach** — SMS throughput is carrier-limited and reputation-limited; dialer is
+   currently 1 line, and multi-line (WAVV/Hot Prospector) is ~3x.
+4. **Closing** — 11 reps produced 5.7/day. 100/day implies either ~200 reps at current
+   productivity, or a fundamentally different motion (property managers, apartment
+   complexes, business bulk deals) where one conversation carries many units.
+
+**The multi-unit angle is the only obvious non-linear lever we have found.** 8550 Phelan
+Blvd is 26 units behind one property manager. One conversation, 26 potential installs.
+Finding every apartment complex and MDU in a freshly-lit zone changes the arithmetic in a
+way that more doors does not.
+
+### 29. A process sketch that keeps everyone aligned
+
+Not a rule set — a proposed loop, to try and adjust:
+
+**Daily**
+1. Hunter re-scans a target zone; freshness scored via the `fiber-freshness` skill.
+2. Top zone deduped on lat/lng, pre-filtered on `has_wireless_phone` +
+   `has_non_dnc_phone`, then enriched.
+3. Enriched rows land in the sheet with Owner / Phone / Status / Worked By.
+4. VA sends the day's texts from that list only; logs count + responses in the sheet.
+5. Positive replies go straight to the dialer workflow (`add_contact_to_workflow`) and are
+   called the same day — the speed-to-lead research says the first responder wins ~50%.
+6. Dave dials the queue start-to-finish without stopping, so dispositions actually save.
+7. Day's numbers written to the LIFE!! Log sheet (Dials Made, Revenue) so every chat and
+   person sees the same scoreboard.
+
+**What makes it hold together:** one sheet is the single source of truth, the VA and the
+dialer read the same rows, and "Worked By" makes attribution visible to everyone — which
+is precisely what was missing with Rea and Chrestian, and what Ed is disputing now.
+
+### 30. VA instruction sketch (pull leads -> text -> hand to dialer)
+
+Automatable today: enrichment, filtering, sheet writes, GHL upsert, dialer enrollment.
+Needs a human/VA: sending within compliance limits, reading replies, judgment on tone.
+
+Draft VA daily task:
+1. Open the sheet tab for today's zone. Work only rows where Status = TEXTABLE.
+2. Send the approved message, personalised with Owner first name. One message per contact.
+3. Mark Status = TEXTED and put your name in Worked By.
+4. Any reply that is not STOP -> set Status = REPLIED and flag it immediately.
+5. Never text a row marked DNC - SKIP or NO CONTACT.
+6. At end of shift, log texts sent / replies / STOPs in the Log sheet.
+
+The dialer side then only ever works rows where Status = REPLIED, which is the fix for the
+22 replied-yes contacts that went unworked.
+
+### 31. Sources (part 4)
+- D2D fiber recruiting market rates: ziprecruiter.com, indeed.com, glassdoor.com,
+  knockfiber.com, jobleads.com
+- All people/process observations: WhatsApp archives in Drive + Gmail threads Aug 16-17 2026
