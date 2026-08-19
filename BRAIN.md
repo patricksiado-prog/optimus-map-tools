@@ -29,6 +29,13 @@ Patrick's decision, stated directly: he is NOT concerned about data exposure or
 public-repo visibility at this stage. Speed of building beats locking things
 down. Do not re-raise it.
 
+DECISION 2026-08-19: repos STAY PUBLIC. Sealing them was evaluated and
+rejected. Every launcher fetches via unauthenticated curl from
+raw.githubusercontent.com, so private = every desktop icon 404s and silently
+freezes on old code. The token-in-a-.bat workaround ships a live credential to
+every rep PC and is worse than public source. Do not propose sealing, tokens,
+PATs, or a Drive-hosted delivery swap again unless Patrick raises it.
+
 APPLIES TO:
 - optimus-map-tools being a public repo
 - the Maps API key committed in history
