@@ -471,3 +471,121 @@ thesis against county property records.
 - Copper retirement by 2029: telecompetitor.com, lightreading.com, att.com/support
 - Build detection channels: att.com/internet/fiber-is-coming, fishersin.gov,
   wauconda-il.gov, vah.com, tellicovillagepoa.org
+
+---
+
+## RESEARCH 2026-08-19 (part 3) — DealMachine economics, and what Claude changes
+
+### 15. The plan question, settled
+
+Published tier table (Aug 2026):
+
+| Price/mo | Exports (credits)/mo | Users |
+|---|---|---|
+| $119 | 10,000 | 1 |
+| **$179** | **30,000** | **3** |
+| $279 | 60,000 | 6 |
+| $699 (Teams) | 150,000 | 10 |
+
+Our account (`whoami`, live): **DealMachine Pro Classic, 30,000 cap, 0 additional balance.**
+
+**$179-180 buys exactly 30,000. There is no 50,000 tier at any price** — it jumps 30k to
+60k. So we are getting precisely what we pay for and the "50k/month for $180" belief is
+wrong. Probable source of the confusion: **REsimpli** advertises "10,000-50,000 free
+credits per month" — that is a competitor's number, not ours. Do not open a support
+ticket on this; we are provisioned correctly.
+
+Note the wording: DealMachine calls credits **"exports."** Credits = records pulled OUT.
+
+### 16. "Unlimited skip tracing" is marketing, and it matters
+
+DealMachine markets **"unlimited skip tracing, no per-lookup cost"** on all plans. That is
+true and irrelevant to us. There is no per-skip *fee*, but there IS a hard **export cap**
+(30,000/mo for us). The moment data leaves the app — API, CLI, webhook, CSV — it is
+metered.
+
+**Therefore: viewing contacts one at a time inside the app is effectively free.
+Pulling them programmatically is not.**
+
+### 17. WITH vs WITHOUT Claude connected — the real comparison
+
+**WITHOUT Claude (DealMachine app / driving-for-dollars):**
+- Skip tracing is unlimited and free-feeling. No credit burn for on-screen viewing.
+- Built for field use — the mobile app locks to your location, tap a house as you pass it,
+  skip trace on the spot. That is the product's actual design centre.
+- Cost is your TIME. One address at a time, manual copy-out, no filtering at scale.
+- Nothing flows to our sheet or GHL without hand work.
+
+**WITH Claude (MCP/API):**
+- **Free reconnaissance.** `property_count`, `filters`, `fields`, `usage`, `whoami` all
+  cost ZERO credits. Verified: counting 77707 returned 7,616 properties / 6,604 people
+  for free. We can scope, filter and size a campaign before spending anything.
+- **Pre-filtering before payment.** `has_wireless_phone` and `has_non_dnc_phone` are
+  filterable, so we buy only records we can actually use. Without this we pay for the
+  ~29% DNC block and bin it.
+- **Straight into the pipeline** — enrich, filter, write to the sheet, upsert to GHL,
+  enroll in the dialer, all in one pass.
+- **BUT every enrichment is an export and burns the 30,000.** Automation makes it trivial
+  to spend the month in an afternoon.
+
+**The honest trade:** the app is cheaper per record and slower. Claude is faster and
+metered. Use the app for one-off curiosity; use Claude for campaigns, and always
+`property_count` first.
+
+### 18. Real cost per usable lead (OURS)
+
+Credits are NOT 2 per address. DealMachine charges 1 property credit + 1 per PERSON
+returned, and it frequently returns duplicate owner records:
+
+- 1370 Shakespeare Dr -> **6 credits** (5 contact records, same two people duplicated)
+- 6865 Shanahan Dr -> 3 credits
+- Typical single-owner -> 2 credits
+- No contact found -> 1 credit
+
+**Measured average: 2.83 credits/address**, not 2. Budget ~40% above the naive estimate.
+
+At $179 / 30,000 credits = **$0.006/credit**, so ~**$0.017 per address enriched**.
+After the ~29% DNC loss and multi-owner waste, **~$0.03 per usable textable lead.**
+That is cheap — the constraint is the monthly cap, not the money.
+
+Benchmarks: BatchSkipTracing $0.10-0.20/record, PropStream $0.12, REISkip $0.15. Our
+effective rate beats all of them, PROVIDED we stay under the cap.
+
+### 19. Customer-experience warnings (external, take seriously)
+
+- **Billing is the #1 complaint theme.** Trustpilot and BBB reports include charges well
+  over the agreed plan (customers reporting $300+/mo), a $627.76 annual charge without
+  confirmation, cancellation flows erroring out and requiring a rep, and a customer
+  LOSING a bank dispute after DealMachine produced a 15-page T&C defence.
+- Reports of auto-enrollment into add-on services with refusal to refund.
+- Reviews are allegedly incentivised with $11-22 in marketing credits, so the headline
+  Trustpilot score is not trustworthy.
+- **ACTION: watch the card.** Never let overage auto-purchase turn on. We have
+  `additional_credit_balance: 0` and it must stay 0. If we hit the cap, STOP — do not
+  let it buy more. Screenshot the plan page. Cancel in writing, keep the record.
+
+### 20. Data-quality warning — DNC is not the same as connected
+
+Reddit (r/WholesaleRealestate) reports DealMachine skip tracing yields "mostly
+disconnects." Industry phone-match rates run 70-80%; DealMachine claims 96.5% owner
+accuracy but independent reviews report roughly **19 usable contacts per 100** records.
+
+**Critical gap: DealMachine tells us line TYPE and DNC status. It does NOT tell us
+whether a number is still connected.** Our 71% Broun St "textable" rate is 71% *passing
+the DNC/wireless filter* — not 71% reachable. Expect real deliverability to be lower and
+measure it on the first Beaumont send before scaling.
+
+### 21. The other 11,900 credits (OURS, unresolved)
+
+At session start the cycle showed **11,939 credits used — 11,934 on properties, 5 on
+people** — none of it ours. Something ran ~11,900 property-only lookups (a bulk search or
+export) and pulled almost no contact data. That is **40% of the monthly cap consumed with
+nothing to show**. Find out what job did that; if it recurs it will starve the actual
+skip tracing. Remaining after our 13 Beaumont enrichments: ~18,030.
+
+### 22. Sources (part 3)
+- Tiers/pricing: resimpli.com, realestatebees.com, dealrun.ai, ballpointmarketing.com,
+  dealmachine.com/features/api-cli
+- Billing/cancellation complaints: Trustpilot (dealmachine.com), BBB Indianapolis
+- Skip-trace quality: r/WholesaleRealestate via realestateskills.com, resimpli.com
+- Competitor per-record pricing: propertyreach.com, goliathdata.com, resimpli.com
