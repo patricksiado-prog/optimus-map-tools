@@ -120,18 +120,28 @@ def classify_status(text=None, ban=None, color=None, build=None):
         return COLOR_STATUS[color.upper()]
 
     low = (text or "").lower()
-    if "copper" in low:
-        return STATUS_COPPER_UPGRADE
 
-    # Build code beats every text heuristic -- it is AT&T's own field.
+    # Build code beats every text heuristic -- it is AT&T's own field. This MUST
+    # be consulted before the "copper" word-match below. It used to run after,
+    # which meant any status string merely MENTIONING copper (AT&T's copper
+    # retirement notices do) turned an existing FIBER customer into a GOLD
+    # upgrade lead. Patrick caught it on the map: sheet said gold, map said grey.
     # Only meaningful for a customer: a non-customer has no network, so its
     # build code is "unavailable" and says nothing about eligibility.
     b = (build or "").strip().lower()
     if ban and b:
+        if b in FIBER_BUILD_CODES:
+            return STATUS_CUSTOMER          # on fiber already -> GREY, never gold
         if b in COPPER_BUILD_CODES:
             return STATUS_COPPER_UPGRADE
-        if b in FIBER_BUILD_CODES:
-            return STATUS_CUSTOMER
+
+    # Word-match on the status text is a LAST resort and is only allowed to
+    # create a gold dot when the record is NOT a known customer. A customer
+    # whose build code we cannot decode is far more likely to be already-fiber
+    # than copper, and a false GREY costs us nothing (grey is skipped) while a
+    # false GOLD poisons the call list.
+    if "copper" in low and not ban:
+        return STATUS_COPPER_UPGRADE
 
     if "non-customer" in low or "noncustomer" in low or "eligible" in low:
         return STATUS_LEAD

@@ -126,8 +126,18 @@ def _lead_status(ld):
     if _classify_lead is not None and isinstance(raw, dict):
         try:
             c = _classify_lead(raw)          # GREEN / GOLD / GREY / CUSTOMER
+            # "CUSTOMER" = has an account but the build code is not in either
+            # code set. It maps to GREY on purpose. It used to be absent from
+            # this table, so it fell through to the status-text heuristic below
+            # and any mention of "copper" made it GOLD -- which is how existing
+            # FIBER customers ended up on the gold call list. An undecodable
+            # customer is far more likely already on fiber; grey is the safe
+            # default because grey is simply skipped. Unknown codes are logged
+            # so they can be added to build_codes.json.
             _m = {"GREEN": STATUS_LEAD, "GOLD": STATUS_COPPER_UPGRADE,
-                  "GREY": STATUS_CUSTOMER}
+                  "GREY": STATUS_CUSTOMER, "CUSTOMER": STATUS_CUSTOMER}
+            if c == "CUSTOMER":
+                _log_unknown_build_code(raw)
             if c in _m:
                 return _m[c]
         except Exception:
@@ -145,6 +155,39 @@ def _lead_status(ld):
     if not _build and isinstance(ld, dict):
         _build = str(ld.get("build") or ld.get("build_type") or "")
     return classify_status(text=ld.get("status"), ban=ld.get("ban"), build=_build)
+
+try:
+    from optimus_api_capture import compose_address as _compose_address
+except Exception:                                     # keep the hunter standalone
+    def _compose_address(street, city="", state="", zipc=""):
+        street = (street or "").strip()
+        tail = " ".join(x for x in ((state or "").strip(), (zipc or "").strip()) if x)
+        parts = [p for p in (street, (city or "").strip(), tail) if p]
+        return ", ".join(parts[:2]) + ((" " + tail) if tail and len(parts) > 2 else "")
+
+
+_UNKNOWN_BUILD_CODES = {}
+
+
+def _log_unknown_build_code(raw):
+    """Record a customer build code we cannot decode, once per distinct code.
+
+    Every code that lands here is a dot we are calling GREY without proof. If a
+    code shows up in volume it is worth a live check -- it may be a new copper
+    designation, i.e. real gold we are throwing away. Add confirmed codes to
+    optimus/build_codes.json under "fiber" or "copper".
+    """
+    try:
+        code = str((raw or {}).get("curr_ntwrk_bld_type_cd") or "").strip().lower()
+        if not code:
+            return
+        _UNKNOWN_BUILD_CODES[code] = _UNKNOWN_BUILD_CODES.get(code, 0) + 1
+        if _UNKNOWN_BUILD_CODES[code] == 1:
+            print("[classify] UNKNOWN build code %r -> defaulting to GREY. "
+                  "Add it to build_codes.json once confirmed." % code)
+    except Exception:
+        pass
+
 
 # proven schema-tolerant JSON walker from the working pipeline -- the AT&T dot
 # layer is the 'serviceability' JSON endpoint; this extracts its addresses.
@@ -858,7 +901,18 @@ def lead_from_dict(d):
     # subscriber_ban + curr_ntwrk_bld_type_cd off ld["raw"] to score GREEN/GOLD/
     # GREY per cell; without this the backend path never fires and every cell
     # silently falls back to pixel detection.
-    return {"address": " ".join(addr.split())[:160], "lat": lat, "lng": lng,
+    # City / state / ZIP ride along in the same backend record. Without them the
+    # sheet gets a street-only address that cannot be skip-traced and cannot be
+    # told apart from the same street name in another metro.
+    _b = base if isinstance(base, dict) else {}
+    _city = str(_b.get("city") or "").strip()
+    _state = str(_b.get("state") or "").strip()
+    _zip = str(_b.get("zip") or _b.get("zipcode") or "").strip()
+    _street = " ".join(addr.split())
+    return {"address": _compose_address(_street, _city, _state, _zip)[:160],
+            "street": _street[:160],
+            "city": _city, "state": _state, "zip": _zip,
+            "lat": lat, "lng": lng,
             "status": status if isinstance(status, str) else None,
             "ban": _pick(low, NET_BAN_KEYS),
             "raw": base if isinstance(base, dict) else None}
