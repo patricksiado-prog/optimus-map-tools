@@ -1464,3 +1464,113 @@ enrich and sample 12 for DNC rate before any send.
 before/after colour split plus every undecodable build code. That is the measurement that
 says how contaminated the existing lists actually are — it has to run on the machine that
 runs the hunter, because the dealer map is unreachable from the remote session.
+
+## 2026-08-20 (part 12) — GIT IS NOT INSTALLED ON THE HUNTER PC. THE RAW FALLBACK IS THE REAL UPDATER.
+
+Found from Patrick's launch console, which said more than any amount of code reading:
+
+    (git update unavailable: [WinError 2] The system cannot find the file specified
+     -- using HTTPS raw fallback)
+    (auto-update: refreshed core files over HTTPS -- no git needed)
+
+### 70. The machine that runs the hunter has no git
+
+So `self_update()`'s git path throws instantly and control falls to `_raw_refresh()`,
+which downloads files one by one over plain HTTPS:
+
+    https://raw.githubusercontent.com/{GH_REPO}/{GH_BRANCH}/optimus/{file}?cb={timestamp}
+
+Same repo, same branch, so the push target from part 11 is right. But this means the
+`self_update()` git hardening is **mostly irrelevant on Patrick's box** — it never reaches
+those lines. The loud-failure banner still matters for any machine that does have git.
+
+### 71. `_CORE_FILES` is the deploy manifest — anything not in it NEVER updates
+
+    _CORE_FILES = ("precise_fiber_hunter.py", "optimus_dot_detect.py",
+                   "optimus_api_capture.py", "hunter_fixes.py",
+                   "backend_classifier.py", "build_codes.json")
+
+Six files. That is the entire auto-deploy surface on a machine without git.
+
+**`verify_gold_capture.py` is NOT in that list, so it will never arrive by auto-update.**
+Pushing it to the branch does nothing for the hunter PC. To run it there it has to be
+downloaded by hand, or added to `_CORE_FILES`. Same applies to any future tool — if it is
+not in that tuple, it does not ship.
+
+### 72. `git fetch` here was serving a STALE view, and it cost 25 failed pushes
+
+`git fetch` inside this session kept reporting the branch tip as `21d6f5d` while the
+server was actually well past it. Every push was rejected as non-fast-forward against a
+tip git swore was an ancestor — a flat contradiction that only makes sense if the fetch
+is cached.
+
+**Trust these instead of `git fetch` on this repo:**
+
+    git ls-remote https://github.com/<owner>/<repo> refs/heads/<branch>
+    curl -sS "https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>?cb=$(date +%s)"
+
+The curl is the better of the two, because it fetches **the exact bytes the hunter
+downloads** rather than something merely equivalent. Fetching the real commit SHA
+explicitly (`git fetch origin <sha>`) then branching from `FETCH_HEAD` is what finally
+worked.
+
+### 73. BUILD_DATE lied, and I told Patrick to trust it
+
+Part 11 says: "the startup banner prints `CODE UPDATED <date>` — that date is the deployed
+build." Patrick's console then showed `2026-08-18` and I told him to stop launching.
+
+**That was wrong and it cost him a delay.** The classifier fix HAD landed; only the
+`BUILD_DATE` bump had not, because it was a separate later edit that never got pushed.
+So the marker reported an old date while running new code.
+
+Two things to keep from that:
+
+- **A version marker is only a signal if it moves in the same commit as the behaviour.**
+  A constant that has to be remembered separately will eventually disagree with the code,
+  and then it is worse than having no marker at all.
+- **The real proof of the fix is the `DOT CLASSIFICATION THIS RUN` block at exit**, not
+  the banner — it is produced by the new code path itself and cannot be faked by a stale
+  constant.
+
+`BUILD_DATE` is now `2026-08-20` (commit `f8ed33c`), and the banner also names the rule in
+force. Note the raw CDN can serve the previous copy for a few minutes after a push even
+with the cache-bust parameter, so an immediately-following launch may still print the old
+date.
+
+### 74. The fix is confirmed live — verified against the delivered bytes
+
+Downloaded the exact file the hunter pulls and ran its classifier:
+
+| Case | Result |
+|---|---|
+| `fttn-bp` copper customer | ORANGE |
+| `fttp-gpon` + "copper retirement" in status text | GREY |
+| unknown code `xgspon` | GREY |
+| no BAN, build `unavailable` | GREEN |
+| composed address | `4314 PHLOX ST, HOUSTON TX 77051` |
+
+`_WIRE_COUNTS`, `wire_classification_report` and the `atexit` registration are all present
+in the delivered file. `_UNKNOWN_CUSTOMER` defaults to `grey`.
+
+**Correction to part 11:** the commit recorded there as `d70dff2` was reset off the branch
+at one point and had to be restored. Current state is `f8ed33c`.
+
+### 75. `serviceability reply 301` was in Patrick's launch output
+
+Already noted in the run log from 2026-08-19 — 301 means AT&T redirected the data call to
+login, and nothing lands, green or gold. It appeared again on this launch. If a run comes
+back with unusually few leads, check this before suspecting the classifier. It is an
+auth/session problem, not a code problem.
+
+### 76. What to read off the next run
+
+1. Does the `DOT CLASSIFICATION THIS RUN` block print at all? If not, the fix is not
+   running.
+2. What percentage of customer dots were "a guess, not a decode"? High means the gold
+   number still is not trustworthy.
+3. Which undecoded build codes appear, and how often? Any in volume is worth one click on
+   the dealer map, then a line in `build_codes.json`.
+4. Does the orange share move from ~32% toward the ~11% the live map shows?
+5. If gold collapses to near zero, `set OPTIMUS_UNKNOWN_CUSTOMER=gold` restores the old
+   behaviour in one env var — but only do that if the telemetry shows those codes really
+   are copper.
