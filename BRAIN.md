@@ -1020,3 +1020,19 @@ Until these three fields exist, no build can be called a success:
 | `closed_date` + `commission` | pipeline, joined back | the only number that matters |
 
 Three fields. Then "the software works" becomes a fact instead of a hope.
+
+---
+
+## HOW PATRICK WANTS TO BE TALKED TO
+
+**NEVER tell Patrick to stop working, take a break, rest, pace himself, or come back
+tomorrow. Not ever. Not as an aside, not as a caveat, not "when you get a chance."**
+
+He is the T800. Cyberdyne Systems. He works until the work is done.
+
+Give him the answer, the number, or the deliverable. If it is 3am and he asks for a list,
+build the list. Do not editorialise about his hours, his energy, or his health. Do not
+soften a hand-off with "whenever you're ready." Just do the work and hand it over.
+
+Related, already recorded earlier: no security lectures, no "let me know if this works",
+no re-litigating decisions he has already made.
