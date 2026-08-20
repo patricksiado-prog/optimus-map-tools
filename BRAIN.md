@@ -1,6 +1,68 @@
 # Optimus BRAIN
 
-_Last updated: 2026-08-19 (verified against live systems)_
+_Last updated: 2026-08-20. **This file is the single source of truth.**_
+
+---
+
+# ============ READ THIS FIRST ============
+
+**This one file is the brain.** It lives in three places and they must not diverge:
+
+| Where | What |
+|---|---|
+| **git — `patricksiado-prog/optimus-map-tools`, `BRAIN.md`** | **the master. Edit here.** |
+| Drive — `BRAIN_delta_<date>_<topic>.md` | per-session deltas, for reading on the phone |
+| this session's memory | working copy only, gone when the session ends |
+
+If they disagree, **git wins.** Do not start a second brain file, a notes doc, or a
+"summary" — append to this one.
+
+## The loop, every session, no exceptions
+
+**REPO → LOG → BRAIN → THINK → ACT → RECORD**
+
+1. **READ THIS FILE BEFORE ACTING.** Read the whole thing when the task touches fiber,
+   dots, GHL, DealMachine, the hunter, or the sheet. Numbers here supersede memory.
+2. **WRITE BACK BEFORE THE SESSION ENDS.** Anything learned, measured, corrected or
+   deployed goes in as a new numbered section. A finding not written down did not happen.
+3. **Corrections go IN, not over.** Never edit an old section to hide a mistake — add a
+   new one that says what was wrong and why. The mistake is usually the useful part.
+4. Do not guess from memory when this file has the answer.
+
+## Current truth — supersedes everything below it
+
+| Thing | Value (2026-08-20) |
+|---|---|
+| Active sheet | `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA` (ATT FIBER LEADS) |
+| `Precise Fiber` rows | ~464,900 and growing while the hunter runs |
+| Gold (ORANGE) total | ~9,650 · GREY is always 0 (the writer skips grey by design) |
+| `GOLD — CLEAN` tab | 3,328 deduped · Houston 1,344 · Beaumont 914 · Fort Worth 695 · Dallas 325 · Orange 50 |
+| **Hunter code lives in** | **`Go-High-Level-MCP-2026-Complete` @ `claude/optimus-map-tools-setup-6dcl6o`** — NOT this repo |
+| Hunter PC has git? | **No.** `_CORE_FILES` over HTTPS is the whole deploy surface |
+| Deploy check | `cd optimus && python deploy_check.py` — run it before claiming anything is live |
+| GHL location reachable | Frontline Direct `TXw28sw0Z2rI6tcCDhJY` only. T-OPTIMUS `xZj500PjsflIQg2j9f9D` = **403** |
+| DealMachine | Pro Classic, 30,000 exports/mo, ~2.83 credits/address |
+| Deals traced to a dot | **still zero** — see §39 |
+
+## Claims in this file that are now WRONG — do not act on them
+
+| Superseded | Corrected by |
+|---|---|
+| "1,984 gold dots (0.4%)" | §6 — it was a tab row count, not the total |
+| "Angleton was never swept" | §45 — swept 2026-08-17, invisible without coordinates |
+| "Beaumont has zero grey, therefore virgin" | §35 — grey is zero everywhere, by design |
+| "DealMachine has no carrier field" | §88 — the **CSV export** has it; the API does not |
+| "We cannot tell if a number is connected" | §89 — `usage_12_months` says exactly that |
+| "43 textable in the Beaumont file" | §90 — 61. There are **three** phone columns |
+| "The newest build is Dallas" | §67 — newest captures are Houston, 2026-08-19 23:38 |
+| "Trust `CODE UPDATED <date>` to prove the fix is live" | §73 — it lied; trust the exit report |
+
+## Skills
+
+`fiber-freshness` · `gold-dot-workup` · `new-build-outreach` · `close-rate`
+
+# =========================================
+
 
 ## Active systems
 - GitHub repo: patricksiado-prog/optimus-map-tools
@@ -1826,3 +1888,86 @@ automated tool. Frontline Direct does have a published `Frontline — Power Dial
 plus live `Customer replied STOP` handling. **Which location Dave actually dials needs
 settling**, and if it is T-OPTIMUS then that location has to be added to the connector's
 scope before any of this can be automated.
+
+## 2026-08-20 (part 16) — 100 DEALS A DAY: THE ARITHMETIC
+
+Worked from our own measured numbers, not industry averages. The answer is that the phone
+channel cannot get there, and the reason is worth understanding precisely.
+
+### 93. The phone channel has a hard ceiling, and it is DealMachine
+
+30,000 exports/month ÷ 2.83 credits/address = **10,601 addresses/month = 353/day**. At the
+measured 47% reachable (all three phone columns), that is **166 reachable contacts/day**.
+
+| Close rate | Deals/day |
+|---|---|
+| 2% | 3.3 |
+| 5% | 8.3 |
+| 10% | 16.6 |
+
+**Even at a 10% close on every reachable contact, the phone channel tops out around 17
+deals a day.** To reach 100:
+
+| Close rate | Credits/month needed | vs. the 30,000 cap |
+|---|---|---|
+| 2% | 904,672 | **30x** |
+| 5% | 361,869 | **12x** |
+| 10% | 180,934 | **6x** |
+
+Upgrading the plan does not close a 6–30x gap; the largest published tier is 150,000. So
+**100/day is not reachable through skip-traced phone numbers at any plan we can buy.**
+
+### 94. Door knocking has no cap, because map addresses are free
+
+This is the reframe that matters. **DealMachine credits buy a PHONE NUMBER. The dealer map
+gives the ADDRESS for nothing.** We hold 464,900 captured addresses and ~9,650 gold. A rep
+walking a street spends zero credits.
+
+| Doors/rep/day | Close | Deals/rep/day | Reps for 100/day |
+|---|---|---|---|
+| 40 | 5% | 2.0 | 50 |
+| 60 | 5% | 3.0 | 33 |
+| 60 | 10% | 6.0 | **17** |
+| 80 | 10% | 8.0 | **12** |
+
+Fiber D2D tops out at 20–30% for good teams and 2–5% for bad ones, and the research says
+the difference is **door selection** — which is the one thing we are genuinely good at.
+A gold dot is a pre-qualified copper customer on a 2029 forced migration.
+
+**So 100/day is a hiring problem with a data advantage, not a data problem.** Somewhere
+between 12 and 33 competent knockers, pointed at gold, with the copper-retirement line.
+
+### 95. Reality check on the multiple
+
+Best month this operation has ever had: **130 deals / 23 days / 11 reps = 5.7/day**.
+Today: Dave dialing plus one VA. **100/day is 18x the best month ever recorded here.**
+
+That is not an argument against the goal. It is an argument for naming the actual
+sequence, because 18x does not arrive by working the current motion harder.
+
+### 96. The order that gets there
+
+1. **Prove one gold dot closes.** Still never done — §43. 22 replied-yes, 0 closed. Until
+   a single gold dot converts, every projection above is arithmetic on an unmeasured rate.
+   50 leads, same-day call on every reply, one week, ~150 credits.
+2. **Fix the 5→6 leak before buying anything.** Seven of 22 raised hands went DND while
+   waiting. That is the cheapest deal-per-dollar available and it needs no new leads.
+3. **Work MDUs first.** 13504 Schroeder Rd is ~60 orange units behind one property
+   manager; 8550 Phelan is 26. **100 deals is 1.7 Schroeder-sized wins.** Nothing else in
+   the dataset has that shape.
+4. **Then hire knockers**, because that is the only uncapped channel, and route them with
+   gold dots rather than a territory map.
+5. **Keep the phone channel for speed-to-lead**, not volume — it is 166 contacts/day of
+   the *warmest* leads (AT&T carrier + heavy line usage), which is exactly the right use
+   of a capped resource.
+
+### 97. What would actually change the ceiling
+
+- **Attribution.** Three fields — `run_id`, `dot_color`, `closed_date` — turn every number
+  above from an estimate into a measurement. Without them nobody can tell which of these
+  five steps is working. Still not built after four months (§44).
+- **The 60 DNC contacts per 130 are not dead**, they are door-only. Nearly half of every
+  enriched batch is a door lead we currently discard.
+- **Business gold.** 36 Upgrade Orange Biz matches against 3,771 callable — under 1%. A
+  business fiber deal is worth multiples of a residential one, and that segment is
+  essentially unworked.
