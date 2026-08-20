@@ -2080,3 +2080,44 @@ a cold gold dot:
 **500 newly-lit addresses/day at even a 10% same-week close is 50 deals/day from one
 data feed.** That is the closest thing to a 100/day path in this entire file, and the only
 missing piece is re-sweeping ground we have already covered.
+
+## 2026-08-20 (part 18) — THE DAILY BRIEF
+
+Patrick: *"add that to my daily."* The newly-lit feed is the lead item, not an extra.
+
+### 104. What goes in, in this order
+
+**1. NEW FIBER TODAY — the lead item.**
+Run `optimus/new_fiber_today.py`. Report:
+- addresses newly lit since the last brief, split by colour
+- the top streets by count
+- how many are on already-known streets (**HIGH/MEDIUM confidence**) vs new ground
+- **whether any ground was actually re-swept.** If nothing was, say so plainly — the
+  count is zero because we did not look, not because nothing lit up. Never let a zero
+  read as "the market is dry."
+
+**2. Unworked positives, by name.** Anyone who replied and has not been called back.
+This is the 5→6 leak (§39) and it outranks every new lead in the brief.
+
+**3. Yesterday's numbers.** Sent / delivered / replied / STOP / closed, per `close-rate`.
+Flag it loudly if STOPs cross 20% of inbound — that is a burning number, not a slow day.
+
+**4. Hunter health.** Did it run? Did `DOT CLASSIFICATION THIS RUN` print? What share of
+customer dots were a guess rather than a decode? Any 301s in `Backend Comm`?
+
+**5. Everything else** — fitness/calories from the LIFE!! sheet, verse, AA, quote.
+
+### 105. Why the fiber item leads
+
+It is the only item that is **perishable**. A newly-lit address is worth multiples on day
+one and decays as AT&T's own funnel reaches them. Yesterday's opt-out rate will still be
+true next week; today's newly-lit list will not.
+
+### 106. Honest constraint on scheduling
+
+A cron created inside a Claude session is **session-only and expires after 7 days**. It is
+not a daily email. Anything that must survive belongs in the hunter's own scheduler or a
+Task Scheduler entry on the machine that runs it, calling `new_fiber_today.py --write`.
+
+Until that exists, the brief is: run the script, read the `New Fiber Today` tab, write the
+summary. Do not describe a session cron to Patrick as if it were durable infrastructure.
