@@ -1574,3 +1574,76 @@ auth/session problem, not a code problem.
 5. If gold collapses to near zero, `set OPTIMUS_UNKNOWN_CUSTOMER=gold` restores the old
    behaviour in one env var — but only do that if the telemetry shows those codes really
    are copper.
+
+## 2026-08-20 (part 13) — THE THREE UPDATE ERRORS, AND THE ONE COMMAND THAT PREVENTS ALL OF THEM
+
+Three times in one day a fix was believed live when it was not. Same class of mistake
+each time: **trusting a local view of the code instead of the delivered bytes.**
+
+### 77. Error 1 — pushed to the wrong repo
+
+A full session of fixes went to `patricksiado-prog/optimus-map-tools`. The hunter pulls
+`patricksiado-prog/Go-High-Level-MCP-2026-Complete`. `git log` was clean, the push
+succeeded, the tests passed — and nothing reached the machine doing the work.
+
+**Why it happened:** the working directory was the wrong repo, and nothing in the normal
+git workflow says "this is not the repo that runs."
+
+### 78. Error 2 — the commit was reset off the branch, and `git fetch` lied about it
+
+Commit `d70dff2` landed, then the branch was reset back past it. Worse, `git fetch` in
+this environment kept reporting the tip as `21d6f5d` while the server was well past that.
+25 pushes were rejected as non-fast-forward against a tip git itself insisted was an
+ancestor — a flat contradiction that only makes sense if the fetch is cached.
+
+**Why it happened:** `git fetch` / `origin/<branch>` was treated as ground truth. It is
+not, in this environment.
+
+Reliable instead:
+
+    git ls-remote https://github.com/<owner>/<repo> refs/heads/<branch>
+    git fetch origin <full-sha> && git checkout -B work FETCH_HEAD
+
+### 79. Error 3 — BUILD_DATE reported old code while running new code
+
+The banner printed `CODE UPDATED 2026-08-18` after the classifier fix had shipped, because
+the `BUILD_DATE` bump was a separate later edit that had not been pushed. Patrick was told
+to stop launching on the strength of that marker. He had the fix the whole time.
+
+**Why it happened:** a version marker that has to be remembered separately from the change
+it describes will eventually disagree with it — and a marker that disagrees is worse than
+no marker, because it is trusted.
+
+Related: `_CORE_FILES` is the **entire** deploy manifest on a machine without git, and the
+hunter PC has none. `verify_gold_capture.py` sat outside that tuple, so pushing it did
+nothing for the one machine that needed it. Both audit tools are now in the list.
+
+### 80. THE PREVENTION — `deploy_check.py`
+
+    cd optimus && python deploy_check.py
+
+Downloads every core file from the exact raw URL the hunter downloads, and diffs it
+against the local copy.
+
+    FILE                         STATUS     NOTE
+    precise_fiber_hunter.py      IN SYNC    a91c3f0be2d1
+    verify_gold_capture.py       IN SYNC    c895430f41e6
+    deploy_check.py              NO REMOTE  HTTP 404
+
+`IN SYNC` on every row means a launch runs exactly the local code. Anything else means it
+does not, **whatever git says**. `--show BUILD_DATE` prints the matching line from the
+remote copy so the marker can be read without launching.
+
+It catches all three errors at once: wrong repo shows as universal drift, a reset branch
+shows as drift on the reset files, and a stale marker is visible in the `--show` line.
+
+**One caveat that is not a bug:** `raw.githubusercontent.com` serves the previous copy for
+a few minutes after a push even with a cache-bust parameter. A `*DRIFT*` immediately after
+pushing usually means the CDN, not a failed push. Re-run after a minute; if it persists,
+the push genuinely did not land.
+
+### 81. The habit worth keeping
+
+Push, then run `deploy_check.py`, then tell Patrick it is live. Never in the other order.
+"I pushed it" and "it is running on your machine" are different claims, and this session
+proved the gap between them three separate times.
