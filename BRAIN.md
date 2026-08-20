@@ -1297,3 +1297,77 @@ before believing it. The numbers must add up or the census is wrong, not the dat
   youachieve.att.com), so classification can only be proven here against records shaped
   like AT&T's payload. Proving it on live data means running `verify_gold_capture.py` on
   the machine that runs the hunter.
+
+## 2026-08-20 (part 10) — THE HUNTER RUNS FROM A DIFFERENT REPO
+
+### 61. Fixes to `optimus-map-tools` do not reach the running hunter
+
+The hunter self-updates on every launch from:
+
+    GH_REPO     = "patricksiado-prog/Go-High-Level-MCP-2026-Complete"
+    REPO_BRANCH = "claude/optimus-map-tools-setup-6dcl6o"
+
+That is **not** `patricksiado-prog/optimus-map-tools`. A whole session of fixes was
+committed and pushed to the wrong repo and never touched the machine doing the work. The
+two copies have also drifted — the deployed `precise_fiber_hunter.py` is ~200 lines
+*longer* than the one in `optimus-map-tools`, so they cannot be copied over each other.
+Port changes across surgically, file by file, and check which variant is actually live
+before assuming a bug is fixed.
+
+Quick way to tell what is really running: the hunter prints `CODE UPDATED <date>` and a
+`GOLD CAPTURE ON` line at startup. That date is the deployed build.
+
+### 62. The real live bug was NOT the one found by reading `optimus-map-tools`
+
+The deployed `classify_wire()` called every customer GOLD unless it could confirm fiber:
+
+    if code and any(c in code for c in _BLD_CODES["fiber"]):
+        return "customer"          # GREY
+    return "copper_upgrade"        # GOLD -- everything else
+
+So a customer became gold whenever the build code was **missing entirely** or was any
+value not in the fiber list. Every new AT&T fiber designation lands there.
+
+That default was deliberate. It replaced an older rule that required an explicit copper
+code and produced *zero* gold — the pendulum swung from missing all gold to inventing it.
+The fix keeps confirmed-copper as gold, confirmed-fiber as grey, and sends undecodable
+customers to grey, with `OPTIMUS_UNKNOWN_CUSTOMER=gold` to swing it back if the telemetry
+shows those codes really are copper.
+
+**Lesson worth keeping:** when a classifier is wrong, check which direction it was last
+"fixed" in. This one had been over-corrected, not under-corrected.
+
+### 63. The map is the ground truth, and it is one click away
+
+Patrick's photo of the live Houston map: roughly 170 green, 20 orange, 16 blue-grey — so
+orange is about **11%** of dots. Our captures for the same period: **32.2%** (Aug 18) and
+**31.3%** (Aug 19). Three times too much gold, which is what sent us looking.
+
+Counting dots off a photo is rough, but it was accurate enough to point at a real defect
+and it cost nothing. Clicking a single dot and reading the popup settles any individual
+case outright.
+
+### 64. Telemetry beats archaeology
+
+Every customer dot is now counted by branch and printed at exit (`atexit`, so it survives
+the Ctrl-C that normally ends a sweep): green / confirmed-fiber / confirmed-copper /
+unknown-code / no-code, the undecoded codes themselves, and what share of customers were a
+guess rather than a decode. If that share is high the gold number is not trustworthy.
+
+This is the thing that would have caught the defect on day one instead of after
+thousands of contaminated rows.
+
+### 65. Silent failure is the recurring theme this session
+
+Three separate instances, same shape:
+
+- `self_update()` ran `git fetch` and `git reset` with `capture_output=True` and never
+  checked either exit code — a wrong branch or expired credential left the hunter running
+  old code while printing nothing.
+- A Sheets helper column filled ~13k of 459k rows and produced a confident, fabricated
+  census with no error anywhere.
+- `classify_lead()` returning `"CUSTOMER"` was absent from a lookup table and fell through
+  to a text heuristic instead of raising.
+
+None of them threw. All three produced plausible-looking wrong answers. Where something
+can fail quietly, make it say so.
