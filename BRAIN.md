@@ -1971,3 +1971,100 @@ sequence, because 18x does not arrive by working the current motion harder.
 - **Business gold.** 36 Upgrade Orange Biz matches against 3,771 callable — under 1%. A
   business fiber deal is worth multiples of a residential one, and that segment is
   essentially unworked.
+
+## 2026-08-20 (part 17) — THE MISSION, STATED PROPERLY
+
+Patrick, verbatim: *"find the 6000 new fiber addresses that are getting turned on each
+day, notify them and give them fiber. lots of customers are just waiting for it. we can
+sign them up very easily."*
+
+**This is the actual business, and it is a better motion than anything else in this file.**
+Everything above — gold dots, enrichment, DNC filtering, the dialer — is machinery in
+service of it. Write it at the top of every plan from here.
+
+### 98. Why "waiting for it" changes the sale completely
+
+Every other play here is an interruption. This one is a **delivery**.
+
+A household that watched the orange conduit go in, checked availability, got told "not
+yet," and then waited — that person is not a prospect being pitched. They are a customer
+whose order has been sitting unplaced. The research supports it: AT&T takes **30%+ within
+12 months** in new fiber markets, well above the 9-19% industry norm, and roughly
+three-quarters of a neighbourhood's lifetime penetration happens in year one.
+
+**The whole advantage is being there on day one, before AT&T's own retention team gets to
+them for free.** Speed here is not a nicety, it is the entire edge.
+
+### 99. Is 6,000/day the right number? Roughly, nationally — and it does not matter
+
+| Source | Passings/yr | Per day |
+|---|---|---|
+| AT&T 2026 build guidance | 4,000,000 | 10,959 |
+| AT&T steady-state target | 5,000,000 | 13,699 |
+
+So **6,000/day is conservative nationally** — about half AT&T's own run rate. Our
+footprint is the fraction that matters: Houston metro at a rough 4% share works out to
+**400-550 new addresses lighting up per day**, and that is the number to chase. It is also
+a much friendlier number: 500/day is one VA and a text template, not an army.
+
+### 100. THE MECHANISM — we already have it and are not using it
+
+**The dealer map only plots addresses where fiber is AVAILABLE.** That single fact makes
+the newly-lit list computable without any new data source:
+
+> **An address that appears in today's sweep but did NOT appear in the previous sweep of
+> the same ground is an address that lit up in between.**
+
+First-seen timestamp ≈ light-up date, bounded by how often we re-sweep. This is delta
+detection, flagged back in §9 as the highest-value automation available, and still not
+built.
+
+**The blocker is not capability, it is that we never re-sweep the same ground.** The
+hunter goes somewhere new each run, so almost every row is a first sighting and "new to
+us" cannot be told apart from "new to the world."
+
+### 101. What has to be built — smallest version that works
+
+1. **A zone registry.** `zone_key (lat/lng rounded) | first_swept | last_swept | sweeps |
+   address_count`. Without it there is no way to know which ground qualifies for a delta.
+2. **Re-sweep on a cadence.** Weekly over ground already swept once. Only the second and
+   later passes produce the signal.
+3. **A `New Fiber Today` tab.** Addresses whose first-seen date is today AND whose zone
+   was swept at least once before. That tab IS the product.
+4. **Same-day outreach.** A newly-lit address is worth multiples of a week-old one.
+   Anything that sits gets worked by AT&T's own funnel first.
+
+Also worth measuring on the first re-sweep, because nobody knows it yet: **how many
+addresses actually appear per re-sweep of the same ground.** That number tells us whether
+this is 500/day in our footprint or 5. Everything else in this section is arithmetic on an
+unmeasured rate until then.
+
+### 102. The pitch writes itself, and it is not a pitch
+
+> "Fiber went live on your street this week. You'd checked before and it wasn't
+> available yet — it is now. Want me to get you set up?"
+
+True, timely, and it lands as news rather than a sales call. It also side-steps the price
+trap entirely: nobody haggles over a thing they have been waiting for. Still never quote a
+flat figure — "in the $20s to $30s for the first year, I'll confirm your exact price
+before anything is ordered."
+
+**Green dots matter here in a way they do not elsewhere.** For the copper-upgrade play
+gold is the easy sale. For *this* play a green dot is somebody with no AT&T account who
+now has fiber available — exactly the person who was waiting. The newly-lit list will be
+mostly green, and that is correct, not a defect.
+
+### 103. Why this beats the 100/day plan in part 16
+
+Part 16 concluded 100/day needs 12-33 knockers because the phone channel is capped. This
+changes that arithmetic, because a newly-lit address is a *fundamentally warmer* lead than
+a cold gold dot:
+
+- It needs **no DealMachine credits to find** — the map is the source.
+- It converts at a rate closer to AT&T's own 30% first-year take than to our measured 3.7%
+  on cold residential text.
+- It is **self-replenishing daily**, so it is a standing route, not a list that depletes.
+
+**500 newly-lit addresses/day at even a 10% same-week close is 50 deals/day from one
+data feed.** That is the closest thing to a 100/day path in this entire file, and the only
+missing piece is re-sweeping ground we have already covered.
