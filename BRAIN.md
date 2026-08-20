@@ -1165,3 +1165,135 @@ lat/lng in the response — so it doubles as a way to backfill coordinates.
   (`1sZZdiPj5SseoV3BonAI3tfYHg8KIuJsjTb9bpwlN0Es`) — 11 dialable numbers
 - Skill `.claude/skills/fiber-freshness`
 - Skill `.claude/skills/gold-dot-workup`
+
+## 2026-08-20 (part 9) — THE CLASSIFIER WAS LYING. Grey dots were being sold as gold.
+
+Patrick caught this by clicking a dot. The sheet said GOLD; the map popup said existing
+fiber customer. He was right, and it had been wrong for as long as the code has existed.
+
+### 53. What actually broke
+
+Two paths, same destination.
+
+**Path one — a word beat AT&T's own data.** `classify_status()` in
+`optimus/optimus_dot_detect.py` checked for the string "copper" anywhere in the status
+text *before* it looked at `curr_ntwrk_bld_type_cd`:
+
+    low = (text or "").lower()
+    if "copper" in low:
+        return STATUS_COPPER_UPGRADE     # fired first, won every time
+
+AT&T's copper-retirement messaging mentions copper in the status of accounts that are
+**already on fiber**. Every one of those became a gold dot.
+
+**Path two — an unhandled return value.** `classify_lead()` returns `"CUSTOMER"` when a
+customer's build code is in neither the fiber nor the copper set. That value was missing
+from the hunter's status map in `precise_fiber_hunter.py`, so it fell straight through
+into path one.
+
+Fixed 2026-08-20: build code is consulted first and a fiber code returns GREY
+unconditionally; the text word-match can now only produce gold when there is no account
+attached; `CUSTOMER` maps to GREY.
+
+### 54. Why GREY is the right default for an unknown code
+
+An undecodable customer is more likely already on fiber than on copper. A false grey costs
+nothing — grey is skipped anyway. A false gold puts a rep on the phone with somebody who
+already buys the product, which burns the number and makes us look like we don't know our
+own service.
+
+But this cuts both ways and it is worth watching: if AT&T introduces a new *copper*
+designation, we are now silently discarding real gold. That is why unknown codes are
+logged once each. `optimus/verify_gold_capture.py` counts them from a real capture. Any
+code showing up in volume is worth one click on the map to settle it, then a line in
+`build_codes.json`.
+
+### 55. Addresses were street-only, and it cost us a whole market
+
+`extract_features()` never read `city`, `state` or `zip` — even though they sit in the
+same backend record as the street:
+
+    {"zip":"77598","address":"558 TRESVANT DR","city":"WEBSTER","state":"TX", ...}
+
+So every captured lead was `5415 GURLEY AVE` with no city. Not skip-traceable, and
+impossible to tell apart from the same street name in another metro. That is exactly how
+the 2026-08-19 sweep nearly got worked as Houston when it was **Old East Dallas**
+(32.79, -96.75), 240 miles away. Both extractors now carry city/state/zip and compose a
+full address.
+
+### 56. Where the gold actually is — 8,264 dots across four metros, not one
+
+Clustering `Gold Dots` coordinates to 1 decimal place:
+
+| Coords | Dots | Market |
+|---|---|---|
+| 30.1, -94.2 | 902 | Beaumont |
+| **29.7, -95.4** | **769** | **Houston** — Cullen / Reed / Maggie |
+| **29.7, -95.3** | **570** | **Houston** — Panay / Jutland |
+| 32.8, -97.0 | 381 | Fort Worth |
+| 32.7, -97.0 | 314 | Fort Worth / Arlington |
+| 32.8, -96.8 and -96.7 | 325 | Dallas |
+| 30.1, -93.7 | 50 | Louisiana edge |
+
+The newest captures in the entire file — 2026-08-19 23:38 to 23:55 — are the two Houston
+clusters, 1,339 dots. Newer than the Dallas sweep that happened earlier the same morning.
+Checking coordinates before spending credits is now a step in the skill, because the sweep
+runs off whatever seed the hunter was pointed at, which is not necessarily our market.
+
+### 57. Gold detection only started 2026-08-17
+
+All 8,264 gold dots come from three sweeps: Aug 17 (4,042), Aug 18 (3,202), Aug 19 (1,020).
+Every sweep before that reads 100% GREEN across roughly 450,000 rows.
+
+That is the classifier not running yet — **not** evidence those markets have no gold. An
+unknown share of that green is copper customers that were never scored. Worth a re-sweep
+of the older markets, and worth never saying "that area has no gold" about anything
+captured before Aug 17.
+
+### 58. Two Google Sheets traps that produce confident wrong answers
+
+Both cost real time this session.
+
+**`Precise Fiber` column C is TEXT, not a date.** Date-range `COUNTIFS(">="&DATEVALUE(...))`
+returns 0 — numbers never match text. And a literal date spine typed into column A gets
+auto-converted by Sheets into date serials, so `A2&"*"` becomes `"46174*"` and matches
+nothing either. The formula that survives both:
+
+    =COUNTIF('Precise Fiber'!$C:$C, TEXT($A2,"yyyy-mm-dd")&"*")
+
+**Helper columns silently under-fill.** Filling `=LEFT('Precise Fiber'!C2,10)` down 459k
+rows populated only ~13k and produced a fabricated census — two dates, zero gold — with no
+error anywhere. Always reconcile a census against `COUNTA` and `COUNTIF` on the source
+before believing it. The numbers must add up or the census is wrong, not the data.
+
+### 59. What got built
+
+- `optimus/test_gold_pipeline_e2e.py` — 27 assertions through the real capture chain
+  (`lead_from_dict` → `_lead_status` → `dot_color` → sheet row), asserting on the row that
+  lands rather than an intermediate value
+- `optimus/verify_gold_capture.py` — audits a real saved AT&T response
+  (`serviceability_raw.json`, written by the hunter once per run) and reports the
+  before/after colour split, the false-gold list, and undecodable build codes
+- Skill `.claude/skills/new-build-outreach` — newest-sweep census, geography check, batch
+  sizing with an opt-out gate, follow-up cadence, reply playbook
+- Sheet tab `HOUSTON UNVERIFIED — Aug 19` — 1,339 rows, full addresses, labelled unverified
+  because it was written by the pre-fix classifier
+
+### 60. Open, and worth remembering
+
+- **Nothing has been texted from these lists.** Everything currently on the sheet came out
+  of the buggy classifier, so it is unverified until a re-sweep or until
+  `verify_gold_capture.py` runs against a real capture.
+- **The Frontline number is running hot.** A slice of 100 recent unread conversations in
+  Frontline Direct (`TXw28sw0Z2rI6tcCDhJY`) had 76 inbound messages, 72 of them a bare
+  STOP. That is the most recent slice, not full throughput, but a ratio that lopsided is a
+  deliverability problem. Live leads with open opportunities were sitting unanswered
+  underneath the pile — Bruce Johnson, Brian Ferguson, Dawn Tester, Brian Allendale,
+  Eugene Sandberg, Donald Denham.
+- **T-OPTIMUS (`xZj500PjsflIQg2j9f9D`) is outside the connector's location scope** —
+  users list fine via the agency endpoint, but `get_location` returns 403. All seven of its
+  users are admin; nobody is on role `user`.
+- **The live AT&T map is unreachable from the remote session** (proxy 403s
+  youachieve.att.com), so classification can only be proven here against records shaped
+  like AT&T's payload. Proving it on live data means running `verify_gold_capture.py` on
+  the machine that runs the hunter.
