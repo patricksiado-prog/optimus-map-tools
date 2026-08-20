@@ -1739,3 +1739,90 @@ hot path:
 
 Both would have corrupted precisely the data being collected. Telemetry added to a hot
 path needs the same review as the code it measures.
+
+## 2026-08-20 (part 15) — THE CSV EXPORT CARRIES CARRIER AND USAGE. TWO BRAIN ENTRIES WERE WRONG.
+
+A DealMachine contacts export (130 Beaumont contacts, 2026-08-20) settles two things this
+file previously recorded incorrectly, and exposes a mistake in how I read it.
+
+### 88. CORRECTION to §12 — DealMachine DOES give us carrier
+
+§12 says: *"DealMachine has NO carrier data — the 'AT&T cell' angle does not work... There
+is no carrier field."* That was checked against the **API** `fields` endpoint.
+
+**The CSV export has `phone_1_carrier`, `phone_2_carrier`, `phone_3_carrier`.** Values are
+real: `AT&T Mobility`, `Verizon Wireless`, `T-Mobile`, `Metro PCS`.
+
+So the pitch Patrick asked for months ago — *"hi Bob, you have AT&T cell and AT&T DSL,
+upgrade to fiber"* — **is data-driven after all.** Just export the list rather than pulling
+it through the API.
+
+On this file: **23 of 61 reachable contacts are on AT&T Mobility.** An AT&T wireless
+customer at a fiber-eligible copper address is the warmest combination in the dataset —
+already paying AT&T for phone, already on AT&T copper internet, fiber live on the street,
+and the bundle discount is real (−$5/line, or 20% off).
+
+### 89. CORRECTION to §20 — we CAN tell whether a line is alive
+
+§20 says: *"DealMachine tells us line TYPE and DNC status. It does NOT tell us whether a
+number is still connected."*
+
+The export carries `phone_N_activity_status` and `phone_N_usage_2_months` /
+`phone_N_usage_12_months`. Usage values are graded:
+`Very Heavy Usage`, `Heavy Usage`, `Moderate Usage`, `Light Usage`, `Minimal Usage`,
+`No data available or no usage in the last 2 months`.
+
+On the 61 reachable: **31 are Heavy or Very Heavy** — those are demonstrably live lines,
+not just DNC-clear ones. That closes the exact gap §20 flagged as the reason our "textable"
+percentages overstated real deliverability.
+
+`phone_N_prepaid_indicator` is also present (`PREPAID`), which §12 correctly listed as a
+filter — prepaid skews lower income, so lead with price rather than speed.
+
+### 90. MY MISTAKE — there are THREE phone columns and I read one
+
+I analysed `phone_1` only and reported 43 textable. Patrick sent a screenshot of columns
+U–Y showing `phone_2_carrier` populated, which is what caught it.
+
+Reading all three:
+
+| | present | wireless | DNC | clear wireless |
+|---|---|---|---|---|
+| phone_1 | 129 | 103 | 60 | 43 |
+| phone_2 | 95 | 47 | 24 | 23 |
+| phone_3 | 51 | 22 | 9 | 13 |
+
+**Contacts with at least one clean wireless number: 61 of 130, not 43.** Eighteen people
+were rescued purely by looking past the first column — a **42% larger working list** from
+data already paid for.
+
+**A contact is only unreachable when ALL THREE numbers fail.** Never judge one on
+`phone_1` alone. The same almost certainly applies to every earlier enrichment batch in
+this file, so the historical "textable %" figures are understated.
+
+### 91. The ranking that comes out of it
+
+1. **AT&T cell + Heavy/Very Heavy usage** — 10. Warmest in the file.
+2. **AT&T cell**, any usage — 13
+3. **Heavy usage**, other carrier — 21
+4. Clean wireless, everything else — 17
+
+Also in the file: 26 landline DNC-clear (call only, never text — Twilio 30006) and 60
+where every number is DNC (door knock / CREATE REFERRAL only; DNC blocks calls too).
+
+All 130 **property** addresses are Beaumont 77706, mostly Ivanhoe Ln and Afton Ln. The
+Edmond OK / Austin / Baton Rouge / Arizona entries are landlord **mailing** addresses — a
+reminder to segment on `associated_property_address_full`, never on
+`primary_mailing_city`.
+
+### 92. Where they were loaded, and the open question
+
+Contacts are being created in **Frontline Direct (`TXw28sw0Z2rI6tcCDhJY`)** tagged
+`beaumont fresh` / `att cell` / `textable` / `gold dot`, because the connector token
+**cannot reach T-OPTIMUS** (`xZj500PjsflIQg2j9f9D` returns 403 on both `get_location` and
+`ghl_list_workflows`). The Active Systems block at the top of this file says to use
+T-OPTIMUS and not Frontline Direct — that instruction cannot currently be followed by any
+automated tool. Frontline Direct does have a published `Frontline — Power Dialer Queue`
+plus live `Customer replied STOP` handling. **Which location Dave actually dials needs
+settling**, and if it is T-OPTIMUS then that location has to be added to the connector's
+scope before any of this can be automated.
