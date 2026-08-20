@@ -91,6 +91,30 @@ door-knock. Check the coordinates first, every time.
 
 Delete the temp tab when done reading it. Never pull 459k rows into context.
 
+## Step 1c — verify the color before you trust it
+
+**A dot's color is a claim made by our classifier, not a fact from AT&T.** The
+classifier has been wrong in the expensive direction — calling existing FIBER
+customers (grey, already sold) GOLD.
+
+The mechanism, fixed 2026-08-20 but worth understanding because it will recur:
+`curr_ntwrk_bld_type_cd` is AT&T's own field and is authoritative. Anything that
+decides color *before* consulting it — a word-match on the status text, a fallback
+default — is a bug. AT&T's copper-retirement notices mention "copper" in the status
+string of accounts that are **already on fiber**.
+
+Two rules that keep this from coming back:
+
+- **An undecodable customer defaults to GREY, never GOLD.** If a customer's build code is
+  in neither the fiber nor the copper set, call it grey. Grey is skipped, so a false grey
+  costs nothing. A false gold puts a rep on the phone with someone who already buys fiber.
+- **Spot-check before dialing.** Pull 5 dots off any new list, look them up on the dealer
+  map, and confirm the popup says *Existing Copper Customer*. Five clicks. Do it every
+  time the classifier changes or a new market opens.
+
+If a list was generated before a classifier fix, it is **unverified** — label it that way
+on the sheet and re-sweep rather than dialing it.
+
 ## Step 2 — build the list
 
 Hand off to `gold-dot-workup`. Non-negotiables from that skill that this loop depends on:
@@ -99,6 +123,10 @@ Hand off to `gold-dot-workup`. Non-negotiables from that skill that this loop de
   Textable share has measured anywhere from 17% to 71% depending on home value.
 - Dedupe on address/coordinate first — apartment buildings burn credits and return one LLC.
 - Budget **2.83 DealMachine credits per address**, not 2.
+- **The address must carry city, state and ZIP.** A street-only address ("5415 GURLEY AVE")
+  cannot be skip-traced and cannot be told apart from the same street name in another
+  metro. If the captured rows are street-only the capture dropped the fields — fix the
+  capture, don't paper over it downstream with an AI guess.
 
 ## Step 3 — size the batch
 
