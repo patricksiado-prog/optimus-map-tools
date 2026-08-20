@@ -1647,3 +1647,95 @@ the push genuinely did not land.
 Push, then run `deploy_check.py`, then tell Patrick it is live. Never in the other order.
 "I pushed it" and "it is running on your machine" are different claims, and this session
 proved the gap between them three separate times.
+
+## 2026-08-20 (part 14) — THE ~3000 CAP IS THE REAL LIMIT ON COVERAGE, NOT ZOOM
+
+### 82. How far out can we zoom? Until a viewport holds ~3000 addresses. No further.
+
+AT&T's serviceability reply carries **at most ~3000 leads** per "Search this area"
+(documented in `backend_classifier.py`; four tabs in the sheet — `Fiber Scout`,
+`Backend Capture`, `Backend Analysis`, `Fresh Leads` — sit at exactly 3,000 rows, which is
+the fingerprint of a truncated reply, not a coincidence).
+
+**That cap, not the zoom control, is what limits coverage.** Past the point where a
+viewport contains ~3000 addresses the response silently truncates and the rest of that
+ground is never captured. Nothing errors. The sweep looks healthy and just quietly misses
+houses.
+
+So zooming out past that point **covers more map with fewer addresses per acre** — worse
+than covering less ground properly. `--zoom-out` and `--survey-out` already exist; the
+question was never whether we can zoom out, it is where the ceiling sits.
+
+**The tuning procedure:** zoom out while `Radius mi` grows and `Leads` stays clear of the
+cap. Stop the moment rows start flagging `NEAR THE 3000 CAP`. That is the widest useful
+viewport, and it will differ between dense Houston blocks and sparse rural grid.
+
+### 83. `miles_from_claim` measures coverage directly
+
+Every lead in the payload carries `miles_from_claim` — its distance from the search
+centre. The **max** across a reply is therefore the actual radius that one search covered.
+Now logged as `Radius mi` in `Backend Comm`, so how much ground a viewport buys is
+measured rather than inferred from zoom presses.
+
+Two numbers together tell the whole story: **radius up + leads below cap = good, cover
+more. Radius up + leads at cap = losing addresses.**
+
+### 84. Backend Comm tab — final schema
+
+`Time | Host | Area | Kind | Status | Bytes | ms | Leads | Green | Gold | Grey |
+Radius mi | URL | Content-Type | Note`
+
+Rows written for every reply the sniffer treats as data, **including the non-200s that
+used to be printed and discarded** — which is how `serviceability reply 301` stayed
+invisible for so long. 301 = AT&T bounced the data call to login and nothing lands, green
+or gold. Also logs a 200 that decodes to zero leads (payload shape changed, top-level keys
+attached) and one row per distinct endpoint on first sight.
+
+### 85. Console readings from the 2026-08-20 launch
+
+    Fiber green addresses (Precise Fiber) : 464,899
+    Scraped businesses (Maps Businesses)  :  32,615
+    MATCHES - callable (unique phone)     :   3,771
+    MATCHES - Fiber Green Biz rows        :   6,150
+    Upgrade Orange Biz matches            :      36
+    (serviceability reply 301 -- skipping, map keeps moving)
+
+**36 gold businesses against 3,771 callable — under 1%.** Worth re-measuring once the
+fixed classifier has run, because the old classifier was inflating gold, not suppressing
+it, so the true figure may be lower still.
+
+The 301 appeared again on this launch. The map was visibly loading dots, so it is likely a
+pre-login call rather than a broken session — but that is exactly the guess the tab now
+replaces with a fact.
+
+### 86. Efficiency observations, not yet acted on
+
+- **Both extractors run on every payload.** `extract_leads_from_json(data)` runs, then
+  `_extract_features(data)` runs over the same object and appends to the same list, so
+  every lead is built twice and deduped later. The `ms` column measures the cost.
+- **The raw JSON is rewritten to disk on every capture** — a synchronous multi-megabyte
+  `json.dump` in the hot path, every viewport that yields leads. Deliberate (so the file
+  reflects the current area) but it does not need to be every time.
+- Writes are already off the motion (a separate worker ships to the sheet, panning never
+  waits), so sheet latency is not the bottleneck. The remaining costs are the pacing
+  sleeps and the double extraction.
+- **Mapbox angle, unproven:** if the dots ride in vector tiles, `querySourceFeatures` can
+  read loaded features in-page — including ones hidden by styling — with no network wait
+  and no panning. The endpoint-discovery rows will show whether tiles carry dot data or
+  whether the serviceability JSON is the only source. Do not act on this until the tab
+  says which.
+
+### 87. Do not let observability change what it observes
+
+Two defects were caught in pre-flight review of the telemetry itself, both in the capture
+hot path:
+
+- Counting the colour split for the log called the same classifier the writer calls, so
+  every dot was tallied **twice** in `_WIRE_COUNTS` and the exit report would have come
+  out doubled. Now snapshotted and restored around the logging pass.
+- Endpoint de-duplication keyed on base URL, but tiles are addressed `/z/x/y`, so every
+  tile was a distinct path and would have logged as a new endpoint — hundreds of rows a
+  sweep. `_endpoint_key()` collapses the numeric segments so a whole tile layer is one row.
+
+Both would have corrupted precisely the data being collected. Telemetry added to a hot
+path needs the same review as the code it measures.
