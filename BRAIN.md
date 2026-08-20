@@ -1371,3 +1371,96 @@ Three separate instances, same shape:
 
 None of them threw. All three produced plausible-looking wrong answers. Where something
 can fail quietly, make it say so.
+
+## 2026-08-20 (part 11) — WHAT SHIPPED, WHAT THE NUMBERS ARE NOW, AND WHAT IS STALE
+
+### 66. The deployment record
+
+Fix for the grey-as-gold defect shipped to the repo the hunter actually pulls from:
+
+| | |
+|---|---|
+| Repo | `patricksiado-prog/Go-High-Level-MCP-2026-Complete` |
+| Branch | `claude/optimus-map-tools-setup-6dcl6o` |
+| Commit | `d70dff2` |
+| Takes effect | next hunter restart (it self-updates on launch) |
+
+Files touched: `optimus/precise_fiber_hunter.py`, `optimus/optimus_api_capture.py`, and
+`optimus/verify_gold_capture.py` added.
+
+**Confirming it is actually live** — the startup banner prints `CODE UPDATED <date>`, and
+a run now ends with a `DOT CLASSIFICATION THIS RUN` block. If that block does not appear,
+the fix is not running.
+
+**Rollback, no code edit needed:** `set OPTIMUS_UNKNOWN_CUSTOMER=gold` restores the old
+"every undecodable customer is gold" behaviour. Only worth doing if gold collapses AND the
+telemetry shows the undecoded codes really are copper.
+
+`OPTIMUS_REPO_BRANCH` now overrides which branch the hunter self-updates from.
+
+The same fixes exist in `optimus-map-tools` on `claude/lead-gen-software-research-brho9a`
+(`18558bc`, plus `test_gold_pipeline_e2e.py`), but that repo is **not** what runs.
+
+### 67. Numbers as of 2026-08-20, superseding earlier figures in this file
+
+| | |
+|---|---|
+| `Precise Fiber` rows | **464,082** (was 459,471 at session start — the hunter is live) |
+| Total ORANGE | **9,652** (part 6 said 8,264 — that was hours ago) |
+| Total GREY | **0** — by design, the writer never writes grey rows |
+| `Gold Dots` rows | **3,328** |
+
+Daily split for the three most recent sweeps:
+
+| Date | Total | Green | Orange | Orange share |
+|---|---|---|---|---|
+| 2026-08-18 | 9,942 | 6,740 | 3,202 | 32.2% |
+| 2026-08-19 | 7,646 | 5,252 | 2,394 | 31.3% |
+| 2026-08-20 | 96 | 82 | 14 | 14.6% |
+
+**Two corrections to things written earlier today:**
+
+- Part 8 recorded the 2026-08-19 sweep as 3,131 rows / 1,020 orange. The sweep kept
+  running after that count. It is **7,646 / 2,394**. Any figure taken from a live tab is a
+  snapshot, not a total.
+- I called the newest build "Dallas". Wrong — the newest captures in the file are
+  **2026-08-19 23:38–23:55, both Houston clusters**. The Dallas sweep ran earlier the same
+  morning (09:31). Sort by timestamp, not by whichever sweep you looked at first.
+
+The 14.6% for today is **96 rows — one or two viewports.** It is not evidence the fix
+landed, and it cannot be: the fix was not deployed when those rows were captured.
+
+### 68. `GOLD — CLEAN` — the working gold list
+
+Built from `Gold Dots`, deduped, static values. `Gold Dots` itself left untouched as the
+raw feed. Columns: `Full Address | Street | Market | Home Turf | Latitude | Longitude |
+Captured At | Status`. Reconciles exactly: 3,328 source = 3,328 clean + 0 dupes + 0 bad
+coords, zero blank markets.
+
+| Market | Dots | Home turf |
+|---|---|---|
+| HOUSTON TX | 1,344 | yes |
+| BEAUMONT TX | 914 | yes |
+| FORT WORTH TX | 695 | no |
+| DALLAS TX | 325 | no |
+| ORANGE TX | 50 | yes |
+
+**2,308 of 3,328 are workable turf.** The other 1,020 are DFW — real dots, nobody to knock
+them. Market is derived from coordinate bands, not from AT&T, because the captured
+addresses were street-only.
+
+### 69. Everything built today is UNVERIFIED
+
+Every row on `GOLD — CLEAN`, `HOUSTON UNVERIFIED — Aug 19` (1,339 rows) and
+`NEW BUILD 2026-08-19` was written by the pre-fix classifier. The tabs are labelled that
+way on the sheet. **Nothing has been texted from any of them.**
+
+What turns them into a real call list, in order: restart the hunter so the fix is live,
+re-sweep the Houston clusters, check the classification report's guess percentage, then
+enrich and sample 12 for DNC rate before any send.
+
+`optimus/verify_gold_capture.py` reads the raw AT&T response the hunter saves
+(`serviceability_raw.json`, written once per run, sits next to the script) and prints the
+before/after colour split plus every undecodable build code. That is the measurement that
+says how contaminated the existing lists actually are — it has to run on the machine that
+runs the hunter, because the dealer map is unreachable from the remote session.
