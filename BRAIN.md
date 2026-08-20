@@ -1036,3 +1036,132 @@ soften a hand-off with "whenever you're ready." Just do the work and hand it ove
 
 Related, already recorded earlier: no security lectures, no "let me know if this works",
 no re-litigating decisions he has already made.
+
+---
+
+## 2026-08-19/20 (part 8) — ANGLETON, THE TIMESTAMP TRICK, AND REAL ENRICHMENT DATA
+
+### 45. CORRECTION — Angleton WAS swept. I said "never" three times and was wrong.
+
+Angleton, TX was captured **2026-08-17, 15:03-20:52**. Every street from Patrick's live map
+screenshot is in `Precise Fiber`: E Miller, N Arcola, N Chenango, N Velasco, E Cedar,
+E Myrtle, N Downing. Roughly **70 ORANGE (gold) dots in downtown Angleton**, E Miller being
+the densest — nearly half the street is copper.
+
+**Why I kept saying zero:** I searched by coordinate box against `Gold Dots`, the only tab
+with lat/lng. The Angleton sweep wrote to `Precise Fiber`, which has **no coordinates**, so
+it was invisible to every geographic query. Six searches, three wrong answers, one wasted
+day. This is the lat/lng gap costing real money, not a theoretical concern.
+
+### 46. THE TIMESTAMP TRICK — how to find a sweep without coordinates
+
+`Precise Fiber` has no city and no lat/lng, but it HAS `Captured At`. The hunter sweeps one
+area at a time, so **a capture window IS a geography**. Filter by timestamp prefix and you
+recover the whole sweep:
+
+```
+=COUNTIFS('Precise Fiber'!C:C,"2026-08-17*",'Precise Fiber'!B:B,"ORANGE")
+=QUERY('Precise Fiber'!A:C,"select A,C where B='ORANGE' and C starts with '2026-08-17'",0)
+```
+
+This is the workaround for 8,264 gold dots with no coordinates. Use it until the writer is
+patched.
+
+**2026-08-17 alone: 14,116 rows — GREEN 10,074, ORANGE 4,042.** Three areas in one day:
+- 13:22-13:26 NW Houston / Tomball (Schroeder Rd, Wimbledon, Camborne, Hwy 249, Vintage Park)
+- 14:03-14:04 Palmer Springs / Bonnabel / Tomball Pkwy
+- 15:03-20:52 **Angleton**
+Plus an East Houston green block (Bucroft, Fillmore, Cargill, Munn, Pillot, Chadwick).
+
+**4,042 gold from one day = half the entire gold inventory. Twelve have been worked.**
+
+### 47. MDU clusters found in the Aug 17 capture — the non-linear lever
+
+- **13504 Schroeder Rd** — ~60 ORANGE units at one address (units 1101-5311, plus OFC and
+  FITNESS). One property manager.
+- **19401 Tomball Pkwy** — another orange apartment cluster.
+- **8550 Phelan Blvd, Beaumont** — 26 units, one lat/lng.
+
+One property-manager conversation beats fifty doors. Both Houston clusters are ~20 minutes
+from Patrick's own address in 77070.
+
+### 48. Real enrichment results — 18 addresses, ~44 credits (OURS)
+
+**BEAUMONT — Broun St (working-class, 1968 builds, ~$170k)**
+
+| Address | Owner | Wireless, DNC-clear |
+|---|---|---|
+| 9725 Broun | Andrew Jones | 337-940-2055 |
+| 9690 Broun | Raymona Redd | 409-284-6252 |
+| 9690 Broun | Elaine Smith | 409-998-0753 |
+| 9785 Broun | Justin Loera | 409-728-7108 |
+| 9730 Broun | Julio Garcia | 409-225-2984 |
+| 9745 Broun | Tracey Lumpkin | all 3 DNC |
+| 9825 Broun | Guy Armstrong | wireless DNC |
+| 9755 Shepherd | — | no contact record |
+
+**ANGLETON — E Miller St (1950s builds, $185k-308k)**
+
+| Address | Owner | Phone |
+|---|---|---|
+| 617 E Miller | Bradley Bergerson | 713-419-7892 + 979-583-7087 both clear |
+| 708 E Miller | David Dittrich | 979-587-0384 clear — Dow employee, LANDLORD not resident |
+| 715 E Miller | Ricky Price | 979-665-9538 clear |
+| 603 E Miller | Raul + Veronica Hernandez | 979-864-4698 landline clear — **RAUL6526@ATT.NET** |
+| 525 E Miller | Alicia Quintanilla | 979-849-4660 landline clear |
+| 404 / 509 / 510 / 713 E Miller | Pousson / Sturdivant / Cato / Simpson | all DNC |
+| 201 / 325 E Miller | — | no contact record |
+| 606 E Miller | "Thomas Selleck" | 3 conflicting records, out-of-state area codes — BAD MATCH |
+
+**LEAGUE CITY** — Beveridge Roofing LLC, 281-508-2405, 1640 E Main St. Only south-Houston
+gold business in the data.
+
+### 49. Market-by-market DNC pattern (OURS, measured)
+
+| Market | Home value | Textable |
+|---|---|---|
+| Beaumont / Broun St | ~$170k | **5 of 7 = 71%** |
+| Angleton / E Miller | $185-308k | **5 of 12 = 42%** |
+| Beaumont / Westgate-Shakespeare | $260-306k | **1 of 6 = 17%** |
+
+**DNC registration rises with home value.** Working-class 1960s housing is reachable by
+phone; $300k subdivisions are not. Do not assume a market is a text market — measure ~6
+addresses first, then decide text vs door.
+
+Caveat on the earlier "Angleton is 17%, door-only" call: that was a 6-address sample and it
+was wrong. The next 6 gave 3 clean wireless. **Sample at least 12 before calling a market.**
+
+### 50. Enrichment cost reality (OURS)
+
+`enrich_address` charges **1 property credit + 1 per PERSON returned**:
+- no contact record -> 1 credit
+- single owner -> 2 credits
+- multi-owner / duplicate records -> 3-6 credits (1370 Shakespeare cost 6)
+
+**Measured average 2.83 credits/address.** Budget ~40% above the naive 2/address estimate.
+**Do NOT pass the `fields` parameter to `enrich_latlng` — it fails with "Reverse geocode
+enrichment failed."** Omit it.
+
+`enrich_address` works when there are no coordinates (which is most of the gold) and returns
+lat/lng in the response — so it doubles as a way to backfill coordinates.
+
+### 51. Warmest-lead signals worth filtering on
+
+- **Email domain @att.net** — already an AT&T customer. Raul Hernandez is the clearest
+  example in the whole dataset.
+- **owner_occupied = true** — the resident decides the internet; a landlord often does not.
+- **year_built pre-1970** — copper-era wiring, long-tenure owners.
+- **100% equity + long tenure** — owned outright, been there decades, never switched.
+- **Landlord flag** (owner_occupied false + is_resident false) — different pitch, and they
+  may own multiple units. David Dittrich at 708 E Miller is one.
+
+### 52. Deliverables built this session
+
+- Sheet tab `Beaumont Gold — Aug 2026` — 238 addresses, lat/lng, cluster
+- Sheet tab `Angleton Call List — Aug 2026` — 20 E Miller addresses
+- Sheet tab `WORK LIST — Beaumont + Angleton` — 29 rows, priority-sorted
+- Sheet tab `MASTER LEAD SHEET` — 30 rows, 18 columns, full detail + legend
+- Standalone Google Sheet `OPTIMUS PHONE NUMBERS — Beaumont + Angleton`
+  (`1sZZdiPj5SseoV3BonAI3tfYHg8KIuJsjTb9bpwlN0Es`) — 11 dialable numbers
+- Skill `.claude/skills/fiber-freshness`
+- Skill `.claude/skills/gold-dot-workup`
