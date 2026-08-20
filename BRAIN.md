@@ -57,6 +57,18 @@ If they disagree, **git wins.** Do not start a second brain file, a notes doc, o
 | "The newest build is Dallas" | §67 — newest captures are Houston, 2026-08-19 23:38 |
 | "Trust `CODE UPDATED <date>` to prove the fix is live" | §73 — it lied; trust the exit report |
 
+## THE MISSION — everything below serves this
+
+**Find the addresses lighting up each day. Get there before AT&T's own retention team.**
+
+The dealer map only plots addresses where fiber is already available, so an address in
+today's sweep that was absent from the previous sweep of the same ground **lit up in
+between**. That is the product. Full reasoning in §98-103.
+
+Blocker: the hunter never re-sweeps the same ground, so "new to us" cannot be told apart
+from "new to the world". Needs a zone registry + a weekly re-sweep. Nothing else in this
+file is worth more.
+
 ## Skills
 
 `fiber-freshness` · `gold-dot-workup` · `new-build-outreach` · `close-rate`
