@@ -1908,6 +1908,10 @@ channel cannot get there, and the reason is worth understanding precisely.
 
 ### 93. The phone channel has a hard ceiling, and it is DealMachine
 
+> **SUPERSEDED 2026-08-21 — see §107.** The 2.83 credits/address below is WRONG; the
+> measured figure with contacts is ~6. Every number in this section is roughly 2x too
+> generous. The conclusion (phone cannot reach 100/day) holds and gets stronger.
+
 30,000 exports/month ÷ 2.83 credits/address = **10,601 addresses/month = 353/day**. At the
 measured 47% reachable (all three phone columns), that is **166 reachable contacts/day**.
 
@@ -2121,3 +2125,233 @@ Task Scheduler entry on the machine that runs it, calling `new_fiber_today.py --
 
 Until that exists, the brief is: run the script, read the `New Fiber Today` tab, write the
 summary. Do not describe a session cron to Patrick as if it were durable infrastructure.
+
+## 2026-08-21 (part 19) — OUTSIDE RESEARCH: WHAT THE INDUSTRY ACTUALLY DOES, AND THE ONE NUMBER IN PART 16 THAT WAS WRONG
+
+Everything below is sourced from outside this operation and cross-checked against our own
+measurements. Where the two disagree, both are shown. Read §107 first — it changes the
+arithmetic in part 16.
+
+### 107. CORRECTION: enrichment costs ~6 credits/address, not 2.83
+
+Measured today via `estimate_cost=true` on a real query (Beaumont 77706, senior +
+owner-occupied, `contact_audience: owners`):
+
+```
+25 properties  ->  150 credits   =  25 property credits + 125 people credits
+```
+
+**That is 6 credits per address, not 2.83.** The 2.83 figure counted property credits and
+under-counted people credits; senior households carry ~5 people on record apiece.
+
+Consequences, all of which make part 16's conclusion *more* true, not less:
+
+| | Old (2.83) | Real (~6) |
+|---|---|---|
+| Addresses per 30,000/month | 10,601 | **~5,000** |
+| Addresses/day | 353 | **~166** |
+| Reachable contacts/day @47% | 166 | **~78** |
+| Phone-channel ceiling @10% close | ~17/day | **~8/day** |
+
+**The phone channel tops out near 8 deals/day, not 17.** Every credit budget quoted in
+this session before this entry was roughly half what it should have been.
+
+Two live examples of the real cost, both priced free before spending:
+
+| Cut | Properties | Credits | % of the 14,241 remaining |
+|---|---|---|---|
+| Beaumont 77706 senior + owner-occupied | 2,322 | **13,932** | 98% — would zero the account |
+| + free and clear | 1,244 | **7,464** | 52% |
+| One page (25 addresses) | 25 | 150 | 1% |
+
+### 108. `estimate_cost=true` makes paid calls free. Use it every time.
+
+`dealmachine_property_search`, `dealmachine_people_search` and `dealmachine_enrich_name`
+return a full cost estimate and result count for **zero credits** when `estimate_cost=true`
+is passed. There is now no excuse for guessing a batch size or discovering the price after
+spending it. **Price first, spend second, every time.**
+
+Also free and previously under-used: `property_count`, `people_count`, `filters`,
+`fields`, `location_search`, `usage`, `whoami`.
+Also credit-saving: `contact_audience: "none"` skips people credits entirely when only
+property data is wanted; `enrich=false` makes `property_get` free.
+
+### 109. Credits are TWO pools, and we have been spending only one
+
+`dealmachine_usage` breakdown, 2026-08-21:
+
+```
+properties: 15,719      people: 40      companies: 0
+```
+
+**99.7% of spend has gone to property data and essentially nothing to people.** That is
+backwards for a business that dials. Property rows do not answer a phone. Worth watching
+whether the balance shifts once we start pulling contact-enriched lists deliberately.
+
+### 110. Credits deduplicate per billing cycle
+
+Straight from DealMachine's MCP docs: *"one per unique record, deduplicated per cycle."*
+**Re-pulling an address already pulled this cycle is FREE.** Overlapping sweeps are not
+the waste previously assumed, and re-running a list to refresh it costs nothing until the
+cycle rolls (ours: the 2nd of each month).
+
+### 111. The copper retirement is a TWO-PHASE, dated, federally-approved event
+
+This is the single most useful outside fact found. Our pitch has been "copper dies 2029."
+The reality is sharper and more urgent:
+
+- **Phase 1 — to 2027.** Areas AT&T will NOT build fiber to. Those customers get moved to
+  wireless/satellite. Not our sale.
+- **Phase 2 — to 2029.** Areas AT&T WILL migrate to fiber. **This is exactly our gold dot:
+  fiber live at the address, customer still on copper.**
+- The FCC has already **approved full copper discontinuance in ~500 wire centers (~10% of
+  AT&T's footprint)**, and AT&T is approved to discontinue service at **30%+ of its copper
+  footprint this year.**
+- **March 2026:** the FCC removed network-change disclosure requirements and streamlined
+  discontinuance approvals — the process got faster, not slower.
+- **California is exempt** and still under negotiation. Irrelevant to Texas, but do not
+  repeat the 2029 line to anyone in CA.
+
+**Pitch upgrade:** "by 2029" is true but soft. "AT&T has already been approved to shut off
+copper in about 500 exchanges, and yours is on the fiber-migration list" is true, specific,
+and materially more urgent. Verify the wire-center claim per market before using it on a
+specific address — do not assert an address is in the approved 500 without checking.
+
+### 112. Industry benchmarks for D2D fiber — what a rep is actually expected to do
+
+| Metric | Industry figure |
+|---|---|
+| Doors per rep per day | **50–70** (65 commonly quoted as the floor) |
+| Take-rate lift in a NEWLY-LIT neighborhood | **+20–30%** for trained teams |
+| Commission per residential install | **$100–$300** (multi-gig at the top) |
+| Manager span of control | **8–10 reps per manager** |
+| Annual rep turnover | **30%+** |
+| Manager earnings | $125k–$150k/yr |
+
+Two things to take from this:
+
+1. **Our 60-doors/day assumption in part 16 was right.** 40 was pessimistic, 80 optimistic.
+2. **The "+20–30% take rate in newly-lit areas" is the entire thesis of this company,
+   independently confirmed by the industry.** Our software's only job is to find newly-lit
+   neighborhoods before anyone else. That is precisely the lift the industry says exists.
+
+### 113. What DealMachine users consider a GOOD result — and why we should beat it badly
+
+Published DealMachine economics for the ordinary driving-for-dollars investor:
+
+- **1 deal per ~1,000 properties mailed.**
+- ~$125 for the list + ~$790 per mail drop; three drops = **~$2,495 to make one $10k deal**
+  (400% ROI, and they are happy with it).
+- Response rate around **6 callbacks per 50 postcards (~12%)**.
+
+Ours should be far better and it is worth being explicit about why: their list is "houses
+that looked distressed from a car." **Ours is "fiber is live here AND they already pay
+AT&T AND they are still on copper."** That is a three-condition pre-qualification against
+their one weak visual signal. If we ever measure a conversion rate WORSE than 1-in-1,000,
+the problem is the follow-up, not the list.
+
+### 114. Our GHL connector is far bigger than HighLevel's official one
+
+HighLevel's own MCP server ships **36 tools**, with a published roadmap to 250+. Ours
+exposes several hundred already. Practical read: do not migrate to the official server to
+"be standard" — we would lose most of the surface we use. Revisit only if they pass us.
+
+How agencies actually use MCP + GHL, which matches what we built by accident: **workflows
+for production automation, MCP for one-off operations, prototyping and reporting.** Named
+use cases in the wild are stale-lead audits, pipeline cleanup and client reporting — the
+stale-lead audit being exactly our §39 leak. We are not doing anything exotic; we are
+doing the standard thing, earlier.
+
+### 115. Mapbox: the zoom floor is enforced SERVER-SIDE, so zooming in is not optional
+
+Confirmed from Mapbox's own docs: when a style is supplied with a tile request, the
+source's `minzoom`/`maxzoom` and filters are analysed and **data that would not be visible
+is stripped out of the vector tile before it is sent.**
+
+So "zoom in until dots appear" is not a UI quirk or a rendering delay — **below the layer's
+minzoom the data is not in the payload at all.** No amount of waiting, panning or clever
+querying recovers it. This closes the question for good.
+
+Corollary worth remembering: this is exactly why the `--net` path (reading AT&T's
+`fiberMap.cfc` JSON directly) is the better capture route — it bypasses the rendering layer
+entirely. The 500-per-search cap is AT&T's own API limit, NOT a Mapbox limit, and no zoom
+change will move it. Small overlapping searches remain the only answer.
+
+### 116. THE LEAD SUPPLY CONSTRAINT NOBODY HAS NAMED
+
+Part 16 concluded "100/day is a hiring problem, not a data problem." That is true today and
+**stops being true at scale.** The arithmetic:
+
+- 100 deals/day at a 10% close on gold = **1,000 gold leads consumed per day.**
+- Current gold inventory: **9,652 ORANGE rows** in Precise Fiber (measured 2026-08-21).
+- **That is 9.6 days of supply.**
+
+At 100/day the operation eats its entire gold inventory in under two weeks. So:
+
+**The classifier under-call is not a data-quality annoyance. It is the binding constraint
+on the business at target scale.** Gold is landing at 2.05% of captures (9,652 of 470,200)
+against 9–11% visible on the map. Fixing it does not improve a report — it multiplies the
+sellable inventory by roughly 4–5x, which is the difference between 9 days of runway and
+45 at 100/day.
+
+**Priority order changes accordingly:** the classifier fix now ranks above hiring, because
+hiring into a 9-day lead supply produces idle reps.
+
+### 117. Group work — the structure the industry uses, and what we have
+
+Standard telecom D2D org: **MDU account management · D2D account executives · third-party
+contract sales · sales operations · sales enablement.** Manager carries 8–10 reps and
+usually still sells.
+
+Where Optimus actually is (2026-08-21): Patrick, Dave (PH, hunter + lists), Ed and Zack
+(each running people), Ara (sheet/lists), Daniel (phone/CRM). That is **one pod, not five
+divisions** — which is correct for this size. The gap is not headcount, it is that
+**sales operations and enablement do not exist as roles**; they are being done ad hoc by
+Patrick and by this system.
+
+What was shipped 2026-08-21 to make group work possible at all:
+
+- **Operator tagging** — every captured row now carries WHO scanned it, so "your sweeps
+  are the good ones" and "your machine stopped working" become answerable questions for
+  the first time. Before today all five people's work was indistinguishable in the sheet.
+- **`Group Info Comm` tab** — one place for questions/blockers/wins instead of five private
+  text threads to Patrick. The 30%+ industry turnover figure is the argument for this:
+  knowledge that lives only in Patrick's texts leaves when a rep does.
+
+**The turnover number should shape how we onboard.** At 30%+ annual churn, anything that
+takes a week of Patrick's attention to teach will be taught repeatedly and forever. That
+is what the written brief, the installer doc and the prompt packs are for.
+
+### 118. Revised answer to "how do I get to 100 deals a day"
+
+Same shape as part 16, corrected and sharpened by the research:
+
+1. **Fix the classifier.** Now the top item, not a cleanup task — §116. 9 days of gold
+   inventory does not support the target no matter how many people are hired.
+2. **Close one gold dot.** Still never measured (§43, §96). Every projection here rests on
+   an unmeasured close rate. 25 addresses = 150 credits = one afternoon.
+3. **Fix the follow-up leak.** 22 replied-yes, 0 closed, 7 went DND waiting. Costs nothing
+   and is the highest-return work available.
+4. **Work MDUs.** 100 deals ≈ 1.7 Schroeder-sized wins. Nothing else in the dataset has
+   that shape, and the industry treats MDU as its own division for exactly this reason.
+5. **Hire knockers, in pods of 8–10 under one manager**, routed by gold dot rather than
+   territory. At 60 doors/day and a 5–10% close that is **17–33 reps** for 100/day.
+6. **Keep the phone for speed-to-lead, not volume** — the ceiling is ~8/day (§107), which
+   is a rounding error against 100, but it is the fastest path to the warmest leads.
+
+**The honest summary:** 100/day needs roughly 20–35 knockers, a working classifier, and a
+measured close rate. Two of those three we can fix this week without hiring anyone. The
+hiring is the slow part and it should start AFTER the classifier, or the reps arrive to an
+empty pipeline.
+
+### 119. Sources for part 19
+
+Copper retirement: Fierce Network, Broadband Breakfast, Ooma AirDial, DataRemote.
+D2D benchmarks: SPOTIO (2026 State of Field Sales), Sequifi, Lightning Leads, Miller Bros.
+DealMachine economics: DealMachine help centre + blog case studies, ListWithClever review.
+GHL MCP: netpartners.marketing, aiworkflows.studio, autogencrm.
+Mapbox: docs.mapbox.com vector-tiles and queryRenderedFeatures references.
+DealMachine MCP contract: DealMachine MCP Server docs (pasted to Drive 2026-08-21 19:10).
+
+Treat the industry figures as ranges from vendor-adjacent sources, not gospel. Our own
+measured numbers (§107, §116) outrank them wherever the two disagree.
