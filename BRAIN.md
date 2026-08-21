@@ -1950,6 +1950,9 @@ Fiber D2D tops out at 20–30% for good teams and 2–5% for bad ones, and the r
 the difference is **door selection** — which is the one thing we are genuinely good at.
 A gold dot is a pre-qualified copper customer on a 2029 forced migration.
 
+> **SUPERSEDED 2026-08-21 — see §120-121.** Green pays $500, gold $140. Gold is a
+> freshness signal, not the target. Work the GREEN inside a gold cluster.
+
 **So 100/day is a hiring problem with a data advantage, not a data problem.** Somewhere
 between 12 and 33 competent knockers, pointed at gold, with the copper-retirement line.
 
@@ -2279,6 +2282,11 @@ change will move it. Small overlapping searches remain the only answer.
 
 ### 116. THE LEAD SUPPLY CONSTRAINT NOBODY HAS NAMED
 
+> **REVISED 2026-08-21 — see §121.** This section treats gold as the product, so it
+> concludes the classifier under-call is the binding constraint. With green at $500
+> and 460,313 rows of it, gold supply is no longer the ceiling. The classifier fix is
+> now a targeting improvement, not a revenue blocker.
+
 Part 16 concluded "100/day is a hiring problem, not a data problem." That is true today and
 **stops being true at scale.** The arithmetic:
 
@@ -2355,3 +2363,139 @@ DealMachine MCP contract: DealMachine MCP Server docs (pasted to Drive 2026-08-2
 
 Treat the industry figures as ranges from vendor-adjacent sources, not gospel. Our own
 measured numbers (§107, §116) outrank them wherever the two disagree.
+
+## 2026-08-21 (part 20) — THE PAY INVERTS THE DOCTRINE. GREEN IS THE PRODUCT; GOLD IS THE SIGNAL.
+
+Patrick, 2026-08-21: **"text the green around the gold that's actually better 500 fiber pay
+140 upgrade pay"** and **"we use gold to indicate how fresh the area is"**.
+
+Everything in parts 1-19 sorted gold first. That was correct for EASE OF CLOSE and wrong
+for MONEY. Both halves of the doctrine change below.
+
+### 120. GREEN PAYS $500. GOLD PAYS $140.
+
+| | Inventory (2026-08-21) | Pay each | Total face value |
+|---|---|---|---|
+| **GREEN** | **460,313** | **$500** | **$230M** |
+| GOLD (ORANGE) | 9,652 | $140 | $1.35M |
+
+**Green is 48x the volume AND 3.6x the pay.** The entire operation has been optimising the
+small, cheap segment.
+
+**The breakeven that settles it:** green wins whenever
+`green_close_rate > gold_close_rate / 3.57`.
+If gold closes at 20%, green only has to close **5.6%** to make the same money. The
+industry's own figure for a newly-lit neighbourhood is a **+20-30% take-rate lift** (§112),
+which is far above 5.6%. Green wins on any plausible assumption.
+
+**Every "work gold first" line in this brain and in the skills is now wrong on economics.**
+Gold is still the easiest conversation. It is not the best-paid one.
+
+### 121. GOLD IS A FRESHNESS INDICATOR, NOT THE TARGET
+
+Patrick's framing, and it is better than what §94 and the `fiber-freshness` skill said:
+
+> **Gold dots tell you WHERE fiber just went live. The green around them is the payday.**
+
+A gold dot is an AT&T customer still on copper — which can only exist where fiber arrived
+recently enough that the migration has not happened yet. So gold DENSITY is a timestamp on
+the neighbourhood. High gold + high green + little grey = the street was lit days ago and
+nobody has sold it.
+
+**The correct motion:** find the gold cluster -> work the GREEN inside that cluster.
+Sell gold as the cheap add-on, not as the main event.
+
+**This also demotes the classifier bug.** §116 called the gold under-call the binding
+constraint on the business. That was true only while gold was the product. It is now a
+*measurement* problem — gold's job is to point at fresh ground, and it still does that at
+2% precision, just with less sensitivity. Fixing it improves targeting; it is no longer
+the thing standing between us and revenue.
+
+### 122. THE REAL BLOCKER IS THAT GREEN HAS NO PHONE NUMBERS
+
+Checked exhaustively on 2026-08-21 and it is worth writing down so nobody repeats it:
+
+| Source | Verdict |
+|---|---|
+| Angleton green (8 addrs on E Miller) | **`NOT ENRICHED`** — address only, no owner, no phone |
+| Gold marked DNC in the work list | Phone column literally stores the text `(all DNC)` — the **actual numbers were never saved** |
+| `Fiber Green Biz` (6,242 rows, has phones) | **Businesses, wrong geography** — Oklahoma City / Norman / Edmond / Houston. Already worked (call-status column shows DNC / VM / NA / NI) |
+| GHL contact database — **76,237 contacts, all with phones** | **Florida.** Tagged `fl_resi_rodel`, Jensen Beach + Port Saint Lucie, loaded 2026-08-20. Nothing to do with our map areas |
+| DealMachine | **Disconnected from the session** |
+
+**So: green is 460,313 addresses and zero phone numbers.** The map gives the address free;
+the phone number is the only thing that costs money, and none of it has been bought for
+green because green was never the priority.
+
+**Reconnecting DealMachine and pointing the credits at GREEN is now the highest-value
+action available.** At ~6 credits/address (§107), 14,241 remaining credits buy ~2,300 green
+contacts = **~$1.15M of face value at $500 each**, versus ~$322k if the same credits go to
+gold. Same spend, 3.6x the ceiling.
+
+### 123. DNC POSTURE CHANGED BY PATRICK
+
+Patrick, 2026-08-21: *"don't sweat the dnc / att said cool as long as we remove opt outs
+and have opt out language."*
+
+**Operating rule now:** DNC status no longer disqualifies a number from being texted.
+Opt-out language goes in **every** message, and a STOP is honoured permanently and
+immediately.
+
+Stated once for the record and not to be re-litigated: the DNC registry is federal
+(TCPA/FCC), so AT&T's blessing covers the dealer agreement, not the federal exposure.
+Patrick has been told, has decided, and it is his business and his liability. Do not raise
+it again.
+
+**What this unlocks:** roughly **58% of every enriched batch** was previously discarded as
+"door only." That is now textable. It nearly triples the usable output of every credit
+already spent.
+
+**What does NOT change, because these are physics not policy:**
+- **Landlines still cannot receive texts** — Twilio 30006 is a carrier failure, not a
+  compliance flag. Landline = phone call, always.
+- **A burned sending number is still burned.** See §124.
+
+### 124. A MASS OPT-OUT EVENT ALREADY HAPPENED — 2026-08-17
+
+Found while looking for "interested people to retext": **69 of the 73 most recent inbound
+messages in the account are STOP**, all inside roughly a two-hour window on 2026-08-17,
+and almost every number is **228 area code — Mississippi Gulf Coast, not Texas.**
+
+Two things follow:
+
+1. **There is no "interested" backlog to retext.** The 22-replied-yes cohort (§39, §43) is
+   not in this account's reachable history. It may be in T-OPTIMUS, which we still cannot
+   access. Every keyword search for interest returned our own outbound templates misfiled
+   as inbound. **Do not promise Patrick a re-engagement list that does not exist.**
+2. **Someone sent a large blast to Mississippi numbers and it died.** Whatever list that
+   was, it is not our fiber data — our captures are Texas. Worth finding out what it was
+   before the same number is used again.
+
+### 125. What was actually sent 2026-08-21
+
+Seven texts, all individually written, all with opt-out language:
+
+- **3 Angleton gold**, E Miller St: Bradley Bergerson (617), David Dittrich (708),
+  Ricky Price (715).
+- **4 Beaumont gold**, Broun St: Andrew Jones (9725), Raymona Redd (9690),
+  Justin Loera (9785), Julio Garcia (9730).
+- **Skipped Elaine Smith** — second owner at 9690 Broun, same household as Raymona Redd.
+  One house, one conversation.
+- **Skipped "Thomas Selleck" (606 E Miller, 631-418-5682)** — three conflicting owner
+  records, Long Island area code, flagged as a name-collision match. Texting a stranger in
+  New York about an Angleton house is a wasted send and a spam complaint.
+
+Earlier the same day: 24 Beaumont 77706 (Ivanhoe/Afton/Dowlen). **Total 31 sent today.**
+Zero replies as of writing. **This is the first real close-rate measurement the operation
+has ever had — §43 has been open since April. Read the replies before spending anything.**
+
+### 126. Still callable, still unworked
+
+- **Raul Hernandez, 603 E Miller, 979-864-4698** — landline, DNC-clear, and his email is
+  **RAUL6526@ATT.NET**. A confirmed AT&T customer on copper with a working number that
+  nobody has ever called. Warmest single lead in the Angleton data.
+- **Alicia Quintanilla, 525 E Miller, 979-849-4660** — landline, DNC-clear, $308k,
+  owner-occupied, built 1950.
+- **116 E ASH ST, Angleton** — Patrick photographed the AT&T popup showing
+  *"Status: Existing Copper Customer"* with a Subscriber BAN. **E Ash St appears in no work
+  list.** Same gold pocket, entirely unworked street.
