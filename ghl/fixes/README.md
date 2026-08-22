@@ -36,7 +36,7 @@ and the loop ejects them. The Add Tag node at the top is the mistake.
 The loop waits **0.5 minutes** before the `goto` sends the contact back to the
 condition. Fix the entry bug alone and every untagged contact re-queues a call
 task roughly every 30 seconds — about 2,880 tasks per contact per day straight
-into Zack's queue. `dialer2_corrected_actions.json` sets that wait to **2 days**.
+into Zack's queue. `dialer2_corrected_actions.json` sets that wait to **1 day** (Patrick's call, 2026-08-22).
 
 ## Scope note
 
@@ -55,3 +55,9 @@ the connector does not currently expose.
 `ghl_update_workflow_actions` replaces the whole actions array and does save
 reliably. (`triggers` on that same endpoint returns success and writes nothing —
 triggers still have to be set in the UI.)
+
+## Status
+
+**Not applied.** Patrick's call 2026-08-22: leave Dialer 2 alone for now, keep the
+corrected array staged. Loop cadence set to 1 day per his answer. Applying it is
+one `ghl_update_workflow_actions` call with `dialer2_corrected_actions.json`.

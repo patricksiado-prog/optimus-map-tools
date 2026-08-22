@@ -1,5 +1,5 @@
 {
-  "_note": "Corrected actions for Optimus Dialer 2. Two changes vs v21: (1) removed the Add Tag \"not interested\" node that ran at entry and ejected every contact via the very condition meant to catch rep-tagged rejections; (2) loop wait 0.5 minutes -> 2 days so the goto re-queues a call every other day instead of every 30 seconds.",
+  "_note": "Corrected actions for Optimus Dialer 2. Two changes vs v21: (1) removed the Add Tag \"not interested\" node that ran at entry and ejected every contact via the very condition meant to catch rep-tagged rejections; (2) loop wait 0.5 minutes -> 1 day so the goto re-queues a call once a day instead of every 30 seconds.",
   "workflowId": "9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8",
   "actions": [
     {
@@ -125,7 +125,7 @@
         "type": "time",
         "startAfter": {
           "type": "days",
-          "value": 2,
+          "value": 1,
           "when": "after"
         },
         "name": "Wait",
