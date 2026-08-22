@@ -3237,3 +3237,185 @@ so the plugin cannot drift from the repo.
 
 **The brain belongs on `main`.** A 3,110-line brain on a research branch is why it took a
 whole session to find.
+
+---
+
+## 2026-08-22 (part 24) — THE DEALER PORTAL, PHOTOGRAPHED: THE DOTS VANISH WHEN YOU ZOOM IN
+
+Ten screenshots from Patrick's HP, 2026-08-22 ~2:43 PM. Everything below is read off
+those photos. Where a photo cannot settle something, it says so.
+
+### 24.1 The nav path has not changed since 2026-07-01
+
+Global Logon (`oidc.idp.elogin.att.com`) → **you Refer** home
+(`youachieve.att.com/yourefer/`) → **AT&T Fiber** tile → fiber page → **Fiber
+Availability Map** button → the dot map at `youachieve.att.com/yourefer/fiber`.
+Identical to the sequence recorded from the July screenshots. `open_map_view()` is
+still pointed at the right doors.
+
+The you Refer top nav is **Home / My Referrals / Reports / Promotions**. `Reports` has
+never been opened by anyone here. Referral status — what actually got installed and
+paid — lives behind it, and every commission question so far has been answered by
+guessing instead.
+
+### 24.2 A second dealer UserID exists: `we1413`
+
+The Global Logon shot shows **UserID `we1413`**. Every prior record in this brain and
+in the archived CLAUDE.md says **`zg431x`**.
+
+That matters beyond bookkeeping. **Phase 3 — the direct backend HTTP reader, the
+end-state that drops the browser entirely — has `attuid=zg431x` written into the
+endpoint:**
+
+```
+youachieve.att.com/yourefer/api/fiberMap.cfc?method=getMapData&lon=&lat=&attuid=zg431x&csrfToken=
+```
+
+If the session that is actually authorised now is `we1413`, that attuid is stale and
+Phase 3 would authenticate as a user the cookie does not belong to. **Ask Patrick which
+account is live before building against that URL.** Two dealer logins for two people is
+just as likely as one having replaced the other; the photo cannot tell which.
+
+**Do not chase the error string in that URL.** The address bar carries
+`ERROR_TEXT=HPDBA0521|` with `ERROR_CODE=0x00000000` and `USERNAME=unauthenticated`.
+It is present in the shot *before* the password is typed and unchanged in the shot
+where it is being submitted. That is the ordinary unauthenticated-redirect querystring,
+not a failed login. `ERROR_CODE` is zero.
+
+### 24.3 ★ THE DOTS ONLY RENDER INSIDE A ZOOM BAND
+
+Two views of **the same ZIP, 77706 Beaumont**, minutes apart:
+
+| View | What the map shows |
+|---|---|
+| Wide (ZIP-level) | dots across the whole frame |
+| Zoomed to street level | **not one dot.** Basemap, street labels, the blue location pin, nothing else |
+
+The street-level shots are legible — Dowlen Rd, Charleston Ln, Whittaker Ln, Claybourn
+Dr, Bankston Ln — and they are empty. The fiber did not go away in ninety seconds. **The
+dot layer stops rendering past a zoom threshold.**
+
+Two consequences, both expensive:
+
+1. **Zooming in for precision returns fewer dots, not finer ones — it returns zero.**
+   Any "zoom in / zoom out / restart" auto-hunt loop has to treat zoom as a *band to
+   stay inside*, not a dial to turn up. A loop that zooms in to resolve a dense pocket
+   will read that pocket as empty and move on. This is the mechanism that would silently
+   skip the best territory.
+2. **A human doing the same thing draws the same wrong conclusion.** Anyone who zooms in
+   to read a street name sees a blank map and reports no fiber there. Tell the team: if
+   the dots disappear, you zoomed too far — zoom back out, the dots are the data.
+
+The exact threshold is not in these photos. **Finding it is one measurement**: load a
+known-dense ZIP, step the zoom one level at a time, record the level where the dots stop.
+Then pin the sweep to that band. Until somebody does that, the hunter's coverage has an
+unmeasured hole in it.
+
+This sits next to part 14 (the ~3,000-row cap is the real limit on coverage, not zoom).
+Both say the same thing from different directions: **coverage is bounded by things
+nobody has measured, and zoom is not the free lever it looks like.**
+
+### 24.4 The live offer, in AT&T's own words
+
+From `/yourefer/fiber`, verbatim, 2026-08-22:
+
+> **Now delivering speeds up to 5 Gigs!**
+>
+> New and existing customers can get a 20% discount on either their wireless or internet
+> account when ordering and activating at least one new qualifying service. Customer must
+> have both services to qualify for the discount.
+
+**This offer names existing customers, which is the definition of a gold dot.** Gold is
+already an AT&T customer sitting on copper. The 20% is off an account they already pay.
+That is a materially stronger opener than anything currently in the message copy, and it
+is AT&T's own published wording, not a number invented here.
+
+It also **does not break the never-quote-a-flat-price rule** — a percentage off their
+existing bill is not a price quote. It stays inside doctrine.
+
+Carry the qualifier or the message is false: **they must end up holding both wireless and
+internet.** A fiber-only order does not earn the discount.
+
+### 24.5 Streets and anchors captured, 77706 Beaumont
+
+For cluster work later: Dowlen Rd, Delaware St, Charleston Ln, Claybourn Dr, Whittaker
+Ln, Bankston Ln, Gracemount Ln, Heights Ave, Colton Ln, Madera Ln, Benton Ln, Ellington
+Ln, Prescott Dr, Windrose Dr, Titan Dr, Barrington Ave, Turning Leaf, Savannah Trace.
+
+Commercial anchors on Dowlen Rd: **H-E-B Plus + H-E-B Pharmacy, CVS Pharmacy, Exxon,
+James Avery Jewelry.** A retail strip inside a residential grid — the shape that carries
+small business alongside houses. `77067` (north Houston / Greenspoint) was also open and
+visibly dense.
+
+### 24.6 Colour read off a phone photo is not evidence — again
+
+The wide views show bright green, pale periwinkle-blue and a darker green. It is
+tempting to derive a legend from that. **Do not.** A phone camera pointed at an LCD
+shifts hue, and a whole session has already been lost to pixel analysis of a photo of
+this map that returned 227 clusters and classified every one of them wrong.
+
+The authority is unchanged and it is the wire, not the picture: `classify_wire()` on
+`subscriber_ban` + `curr_ntwrk_bld_type_cd` against `build_codes.json`. Photos are good
+for nav paths, offer text, street names and **whether dots render at all** — which is
+exactly what part 24.3 got out of them. They are not good for colour.
+
+### 24.7 WHY the dots vanish — answered. It is a declared Mapbox threshold, and the hunter already reads it.
+
+Researched 2026-08-22 against the Mapbox style spec. This is not a load failure, not
+throttling, and not AT&T hiding data.
+
+**A Mapbox style layer declares `maxzoom`, and the spec is explicit: at zoom levels
+*equal to or greater than* the maxzoom, the layer is hidden.** It is an optional number
+0–24. Zoom to that level and the layer stops drawing — instantly, completely, with no
+error. That is exactly the behaviour in the 77706 screenshots: full dots at ZIP level,
+absolute zero at street level, same page, ninety seconds apart.
+
+**The distinction that pins it to the layer and not the data:** if the *source* tileset
+ran out of tiles at some zoom, Mapbox **overzooms** — it scales the last available parent
+tile up and keeps drawing. You would see the same dots, slightly imprecise, not none.
+Dots going to exactly zero is the signature of a **layer** `maxzoom`, not missing tiles.
+(Mapbox's own docs: "if you zoom in past a layer's maxzoom, the layer with that maxzoom
+value will disappear.")
+
+**The hunter has been measuring this since 2026-08-20 and nobody has read the output.**
+`MAPBOX_VIEW_JS` walks `m.getStyle().layers`, keeps the circle/symbol layers whose id
+contains dot/fiber/elig/serv/addr/point, and records each one's `minzoom`, `maxzoom` and
+live `queryRenderedFeatures().length`. `read_map_view()` prints it once per run:
+
+```
+  DOT LAYERS (the zoom range where dots exist):
+    <layer id>                     min=...  max=...  rendered now=N
+```
+
+**That block is the answer. Read it on the next run and the exact band is known** — no
+experiment needed. Same failure pattern as `wire_classification_report()`: the software
+already answers the question and the printout goes unread.
+
+**One real gap in it.** The advice line under that block reads:
+
+```
+    -> zooming out below the highest 'min' shows NO dots at all.
+```
+
+It only warns about the **minzoom** end. Patrick's screenshots are the **maxzoom** end —
+zooming *in*. The value is captured, the warning is not. Worth extending to name both
+ends; it is a print string, nothing structural.
+
+**The sweep is fenced on both sides, for two unrelated reasons:**
+
+| Direction | What stops you | Symptom |
+|---|---|---|
+| Zoom **out** too far | layer `minzoom` — layer not drawn | no dots |
+| Zoom **out** too far | the ~3,000-row backend cap (part 14) | dots, but the reply silently truncates and ground is missed |
+| Zoom **in** too far | layer `maxzoom` — layer hidden | no dots |
+
+The usable sweep zoom is the intersection of those, and only the middle one has ever been
+quantified. **An auto-hunt loop that treats zoom as a dial to turn up will drive itself
+out of the band and read live territory as empty.** Zoom is a band to stay inside.
+
+Tell the team the same thing in one sentence: **if the dots disappear when you zoom in,
+you zoomed too far — back out. The dots are the data, and a blank map is not an answer.**
+
+Sources: Mapbox Style Spec — Layers (`maxzoom`: "At zoom levels equal to or greater than
+the maxzoom, the layer will be hidden"); Mapbox Help — "Adjust the zoom extent of your
+tileset" (overzooming, and layer-maxzoom disappearance).
