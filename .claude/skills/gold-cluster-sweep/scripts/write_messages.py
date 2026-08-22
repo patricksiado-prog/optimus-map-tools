@@ -14,23 +14,28 @@ optionally absentee (1/0). Output CSV adds `message` and `chars`.
 
     python3 write_messages.py leads.csv out.csv --seed 7
 """
-import argparse, csv, hashlib, random, sys
+import argparse, csv, hashlib, random, re, sys
 
 GHL_APPEND = 27          # "\nReply STOP to unsubscribe."
 ONE_SEGMENT = 160
 MAX_BODY = ONE_SEGMENT - GHL_APPEND      # 133
 
 # Shapes, not scripts. {n}=name {s}=street {a}=address {c}=city
+# AREA shapes: fiber is live in the AREA and we offer to CHECK the address.
+# Never assert a specific address qualifies unless it came off a verified dot --
+# DealMachine-sourced leads are not fiber-verified and the claim would be unbacked.
 GREEN = [
-    "Hi {n} - Patrick with AT&T Fiber. Fiber just went live on {s}. Your address qualifies. Want me to send what's available?",
-    "{n} - Patrick with AT&T Fiber. AT&T fiber is now live on {s} in {c}. Want me to check what your address can get?",
-    "Hi {n}, Patrick with AT&T Fiber. Fiber went live on {s} this month. {a} is covered. Want the details?",
+    "Hi {n} - Patrick with AT&T Fiber. Fiber just went live on {s}. Want me to check if your address can get it?",
+    "{n} - Patrick with AT&T Fiber. AT&T fiber is now live in your part of {c}. Want me to check what your address can get?",
+    "Hi {n}, Patrick with AT&T Fiber. Fiber reached {s} this month. Want me to look up what you qualify for?",
     "{n} - Patrick with AT&T Fiber. {s} just got fiber. Copper is being retired, so worth knowing your options. Interested?",
-    "Hi {n} - Patrick with AT&T Fiber. We lit fiber on {s} in {c}. Your place is in the footprint. Want me to look it up?",
-    "{n}, Patrick with AT&T Fiber here. Fiber is live at {a} now. Happy to check what speeds you can get. Interested?",
+    "Hi {n} - Patrick with AT&T Fiber. We lit fiber near {s} in {c}. Want me to check your address?",
+    "{n}, Patrick with AT&T Fiber here. Fiber is live around {s} now. Happy to check what speeds you can get. Interested?",
     "Hi {n} - Patrick with AT&T Fiber. Fiber just reached {s}. Want to know what you qualify for?",
     "{n} - Patrick with AT&T Fiber. Fiber is live on {s} now. Want me to check your address?",
     "Hi {n}, Patrick with AT&T Fiber. {s} has fiber now. Want the speeds and options?",
+    "{n} - Patrick with AT&T Fiber. Fiber went live near you in {c}. Want me to check your street?",
+    "Hi {n}, Patrick with AT&T Fiber. AT&T just lit fiber on {s}. Worth checking your address?",
 ]
 GREEN_ABSENTEE = [
     "{n} - Patrick with AT&T Fiber. Fiber is now live at {a} in {c}. Want me to check the options for that address?",
@@ -115,13 +120,19 @@ def audit(rows):
         m = r["message"]
         if len(m) > MAX_BODY:
             bad.append("over %d chars: %s" % (MAX_BODY, m[:50]))
-        if "stop" in m.lower():
+        # Match opt-out PHRASING, not the bare substring: "Christopher" contains
+        # "stop", and a naive check silently blocks every Christopher forever.
+        if re.search(r"\b(reply|text|send)\s+stop\b|\bstop\s+to\s+(opt|unsub)|"
+                     r"\bunsubscribe\b|\bopt[\s-]?out\b", m, re.I):
             bad.append("contains opt-out language: %s" % m[:50])
         for brand in ("optimus", "frontline"):
             if brand in m.lower():
                 bad.append("names the dealer brand: %s" % m[:50])
         if "$" in m:
             bad.append("price in first text: %s" % m[:50])
+        for claim in ("address qualifies", "is covered", "you qualify for it"):
+            if claim in m.lower():
+                bad.append("unbacked per-address fiber claim: %s" % m[:50])
     return bad
 
 
