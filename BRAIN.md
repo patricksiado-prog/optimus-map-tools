@@ -2887,3 +2887,224 @@ Fix it at capture. Do not paper over it downstream.
 3. **Fix street-only capture.** It is corrupting the best tab and blocking enrichment.
 4. **Add city+ZIP to the combo matcher's join key.** One-line class of bug, silently wrong.
 5. **Try `OPTIMUS_UNKNOWN_CUSTOMER=gold` once**, read the telemetry, revert.
+
+---
+
+## 2026-08-22 (part 22) — THE PIECES PART 21 LEFT OUT: SCRAPER, MAPBOX, RAILWAY, EMAIL, RECRUITING
+
+Patrick, 2026-08-22: *"does the brain now about mapbox deal machine map scraper att emails etc."*
+
+I audited BRAIN.md by keyword count before answering. Honest result:
+
+| Topic | Mentions before this entry | Verdict |
+|---|---|---|
+| DealMachine | 48 | well covered |
+| GHL | 49 | well covered |
+| DNC | 38 | well covered |
+| Mapbox | 11 | covered, but the *limit* was the only angle |
+| AT&T / att.com | 7 | covered |
+| Maps scraper | 2 | **thin — internals undocumented** |
+| Railway | 3 | **thin — no IDs, no URLs** |
+| Gmail / email | 3 | **thin — no outbound infrastructure at all** |
+| TCPA | 1 | thin |
+| **OnlineJobs / applicants** | **0** | **completely absent** |
+
+This entry fills the four real gaps.
+
+### 22.1 The Google Maps scraper — `maps_scraper.py`, 195 lines
+
+Self-contained Playwright scraper. **No API key, no Places API, no Docker** — it drives the
+same browser the hunter already installs.
+
+```
+queries.txt  ->  maps_scraper.py  ->  businesses.csv  ->  commercial_split.py
+```
+
+`queries.txt` is one line per search, in the form `"restaurants in 77027"`. The category is
+parsed straight back out of the query string for the Category column:
+
+```python
+def _category_of(query):
+    """'restaurants in 77027' -> 'restaurants' (for the Category column)."""
+    return query.split(" in ")[0].strip() if " in " in query else query.strip()
+```
+
+That is why `Fiber Green Biz` column E holds values like `electrician`, `house cleaning`,
+`hair salon` — they are the search terms, not anything Google classified. **Category is our
+label, not Google's.** Do not treat it as authoritative — it is why an auto-repair shop
+came back tagged `electrician` and a grocery store came back `pest control`.
+
+Constants:
+
+```python
+FIELDS        = ["name", "address", "phone", "website", "email", "category"]
+PER_QUERY_MAX = 120     # Google caps a search at ~120 results anyway
+SCROLL_ROUNDS = 18
+THROTTLE      = 0.8     # human pace between listings
+PROFILE_DIR   = "maps_profile"   # accept Google's consent page once, reuse
+```
+
+**THE ANTI-BLOCK DESIGN — this is the part worth preserving.** From the source header:
+
+> Block-resistant by design (the MapMan lesson): bulk CATEGORY searches (a few hundred), a
+> real HEADED browser on the user's own connection, human pacing, and a saved profile so
+> Google's consent page is accepted once. It is NOT 20k one-by-one lookups — that's what
+> gets blocked.
+
+So: **do not** convert this to headless at scale, **do not** parallelise it, **do not**
+switch it to per-address lookups. `--headless` exists and the docstring itself calls it
+"more block-prone." The 0.8s throttle and the headed window are load-bearing.
+
+**Note the `email` field.** The scraper has an email column and we have never used it. Every
+business row could carry an email we are not collecting or not sending to. Worth checking
+whether it is populated before spending DealMachine credits on contact discovery.
+
+### 22.2 Mapbox — what the brain said vs. what actually matters
+
+Prior entries covered exactly one Mapbox fact: below-layer-minzoom data is stripped
+server-side, so zooming in is required rather than a workaround, and AT&T's 500-per-search
+cap is AT&T's, not Mapbox's.
+
+Part 21 added the mechanism. The short version to hold in mind:
+
+- The AT&T dots are **Mapbox vector tiles (protobuf)**, fetched as `.pbf` / `.mvt`.
+- We decode them with `mapbox_vector_tile` and convert tile-local coordinates to lng/lat.
+- **Mapbox also serves its own basemap tiles** (streets, terrain). Those decode into street
+  names that read like addresses. `_is_basemap_tile()` filters them. If garbage
+  street-name rows ever appear in `Precise Fiber`, that filter is the first suspect.
+- The tile path is the **only** source of lat/lng. That is the whole reason `Gold Dots` has
+  coordinates and `Precise Fiber` does not.
+
+### 22.3 Railway — the connector stack, with real IDs
+
+Verified live 2026-08-22.
+
+**Workspace:** `patricksiado-prog's Projects` — `23db8fa6-cb4d-4d2a-bb06-91d32f465451`
+
+| Project | Project ID | Service ID | Domain |
+|---|---|---|---|
+| **`fulfilling-growth`** | `13c1661d-38da-468c-91b7-d8cf2d346952` | `1cba30cf-bf3a-4475-83e1-321c8aa42621` | `go-high-level-mcp-2026-complete-production-711a.up.railway.app` |
+| **`loving-heart`** | `0c52fac6-974c-4a5e-b2fb-3ce805b475ed` | `87e27a89-ec4d-49b7-95ff-e24f66c6b33d` | `go-high-level-mcp-2026-complete-production-46d1.up.railway.app` |
+
+Both created within three minutes of each other on 2026-06-04. **Both run a service with
+the identical name `Go-High-Level-MCP-2026-Complete`, both on port 8080, both in a
+`production` environment, neither with a custom domain.** They are duplicates.
+
+This is the "delete the duplicate Railway project" task that has been open since 2026-08-19.
+**Before deleting `loving-heart`, confirm which domain the installed connector actually
+points at** — the two URLs differ only in the trailing `711a` vs `46d1`. Deleting the live
+one silently breaks the connector for the whole team.
+
+**What the connector is:** our own GoHighLevel MCP server. Several hundred tools, versus 36
+in HighLevel's official MCP. **No API key in the URL** — credentials live server-side, which
+is why the setup instructions for the team are just a URL. Free Claude plans allow one
+custom connector (I told Daniel otherwise on 2026-08-21 and corrected it within the hour).
+
+### 22.4 Email and outbound comms — the infrastructure, which was undocumented
+
+**Patrick's addresses:** `BHOLLAND@thefiberplug.com` (the account this runs under) and
+`patricksiado@gmail.com` (owns the Drive files and the sheet).
+
+**Three separate outbound channels, easy to confuse:**
+
+| Channel | Tool | Sends from | Use for |
+|---|---|---|---|
+| Gmail MCP | `mcp__Gmail__send_message` | Patrick's own inbox | Team, applicants, anything personal |
+| GHL SMS | `command_connector send_sms` | The CRM's number | Lead outreach. Needs `contactId`, so `upsert_contact` first. |
+| GHL email | `command_connector send_email` | The CRM | Bulk/lead email. Rarely used. |
+
+**The SMS pattern, every time:**
+
+```
+upsert_contact(firstName, lastName, phone, email, source, tags)
+    -> returns contact.id
+send_sms(contactId, message)
+    -> returns messageId + conversationId
+```
+
+`source` should carry the address and dot colour, e.g.
+`"AT&T Fiber Map - GREEN - 512 E Miller St Angleton TX 77515"`. Tags should carry
+`green-dot`/`gold-biz`, market, street, and pay tier. That is what makes the CRM queryable
+later — untagged contacts are unfindable at 76,000 rows.
+
+**Two GHL locations. Do not mix them up:**
+
+- `xZj500PjsflIQg2j9f9D` — **T-OPTIMUS Houston**. Everything sent 2026-08-21 went here.
+- `TXw28sw0Z2rI6tcCDhJY` — **Frontline Direct**. Older `harvey.resi` campaign lives here,
+  the one that measured 72 bare STOPs out of 76 inbound.
+
+**The CRM also holds 76,237 contacts that are a Florida residential list** (`fl_resi_rodel`,
+Jensen Beach / Port St Lucie, loaded 2026-08-20). Nothing to do with our markets. Do not
+mistake that pile for reachable inventory — it cost an hour on 2026-08-21.
+
+**Compliance posture, in Patrick's words:** *"don't sweat the dnc / att said cool as long as
+we remove opt outs and have opt out language."* So: opt-out language on every message, STOP
+honoured permanently. Noted once and not raised again that AT&T cannot waive TCPA on our
+behalf; that is Patrick's call and it is made.
+
+### 22.5 Recruiting — was entirely absent from the brain
+
+Zero prior mentions of OnlineJobs.ph or applicants. It is the constraint on everything else,
+so it belongs here.
+
+**The failure, and the actual cause.** A commission-only listing was posted 2026-06-30.
+**OnlineJobs.ph rejected it — the platform does not permit commission-only. A base salary is
+mandatory; commission on top of a base is fine.** Result: zero hires in roughly seven weeks,
+and **Claimar quit over the pay structure.** Patrick, 2026-08-22: *"that was ed being
+cheap."* Ed's call, not his.
+
+**Market rates, checked 2026-08-22:**
+
+| Benchmark | Rate |
+|---|---|
+| OnlineJobs.ph's own published guidance | $4–$7/hr |
+| Entry-level admin VA | $640–$960/mo |
+| **Cold caller / appointment setter — average** | **$5.81/hr (~$930/mo)** |
+| Cold caller — full range | $3.75–$15.00/hr |
+| Experienced US-outreach specialist | $7–$11/hr |
+
+**The role we are hiring is NOT admin-tier.** Running the hunter, skip tracing, CRM work,
+writing outreach and taking calls is the cold-caller/appointment-setter tier, where the
+average is $5.81. Patrick offered $5.00/hr flat (~$867/mo at 40 hrs). That is inside the
+platform's recommended band but **below the average for this specific role**, and
+**applicants on OnlineJobs.ph filter by the salary number before reading the description** —
+so a $5.00 headline is invisible to anyone screening at $6.
+
+**The ad as written** (Drive: *OPTIMUS — OnlineJobs.ph Ad v2*) posts **$5.00–$6.50/hr** with
+tiers: $5.00 no background, $5.75 has run a CRM or done skip tracing, $6.50 has done US
+outreach and can show results. You can still hire at $5.00; the range only widens the funnel.
+Plus $20/week when all five scorecard markers are green, $25 per green close, $10 per gold
+close, $100 at ten closes. Realistic $950–$1,350/mo.
+
+**Still undecided:** flat hourly vs. hybrid ($3/hr floor + $0.40/lead — identical total at
+target) vs. a **two-week paid trial at $75 for 200 verified leads**. The trial is the better
+answer to "I don't want to pay $867 to someone useless": exposure drops from $867 to $75 and
+the headline rate never moves.
+
+**Arithmetic worth keeping:** at 200 verified leads/week and 40 hrs/week, $1.00/lead and
+$5.00/hr are *the same money*. Per-task only saves anything if the person underperforms —
+and that is a firing problem, not a pay-structure problem.
+
+**The five productivity markers** (tab `Operator Scorecard`, auto-scores GREEN/MISS and the
+bonus): leads produced 200/wk · outreach sent 40/day · opt-out under 5% · speed-to-lead
+under 15 min · zero data-integrity errors. **Markers 3 and 5 are quality gates, not volume
+targets** — deliberately, so volume is worthless unless it is clean. None of this scores
+without the operator stamp shipped 2026-08-21 (part 21.9).
+
+**Open people items:** Melvin Agsalud needs a start date. Claimar needs a pay answer.
+
+### 22.6 What is still NOT in the brain
+
+Stated plainly so the next session does not assume coverage:
+
+- **`enrich_phones.py` (590 lines) and `dialer_loader.py` (357 lines) internals.** Named in
+  part 21's file table, contents unread.
+- **`commercial_split.py` (546 lines)** — the residential/commercial split rules. Only its
+  role is documented, not its logic.
+- **`backend_classifier.py`** — a second copy of the wire classifier. Unknown whether it has
+  drifted from the one in `precise_fiber_hunter.py`. **Two copies of the classifier is a
+  real risk** and nobody has diffed them.
+- **The GHL workflow/dialer wiring** beyond what the `new-build-outreach` skill records
+  (`Optimus Fiber Biz — Power Dialer Queue` works; `Optimus Dialer 2` is broken — Add Tag
+  sits at node position 0, so every contact gets tagged "not interested" and ejected on
+  entry).
