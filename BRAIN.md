@@ -2499,3 +2499,391 @@ has ever had — §43 has been open since April. Read the replies before spendin
 - **116 E ASH ST, Angleton** — Patrick photographed the AT&T popup showing
   *"Status: Existing Copper Customer"* with a Subscriber BAN. **E Ash St appears in no work
   list.** Same gold pocket, entirely unworked street.
+
+---
+
+## 2026-08-22 (part 21) — HOW THE SOFTWARE ACTUALLY WORKS. THE FULL ARCHITECTURE, WITH CODE.
+
+Patrick, 2026-08-22: *"can u tell the next chat how the software works in heavy detail
+code and all put in brain."*
+
+Everything below was read out of the live source, not remembered. File paths are relative
+to `optimus/` in the **`Go-High-Level-MCP-2026-Complete`** repo, branch
+`claude/optimus-map-tools-setup-6dcl6o`. **That is not this repo.** See part 10.
+
+### 21.1 The shape of it
+
+`precise_fiber_hunter.py` is **5,127 lines / 233 KB** and is the whole product. Everything
+else in `optimus/` is a satellite: 12,229 lines of Python total across 19 modules.
+
+| File | Lines | Job |
+|---|---|---|
+| **`precise_fiber_hunter.py`** | **5,127** | The hunter. Browser, capture, classify, write. |
+| `fiber_scout.py` | 759 | Older standalone scanner, superseded |
+| `fiber_precise_pipeline.py` | 661 | Batch pipeline variant |
+| `enrich_phones.py` | 590 | DealMachine enrichment worker |
+| `commercial_split.py` | 546 | Splits business vs residential captures |
+| `optimus_summary.py` | 384 | Console/Drive run summary |
+| `dialer_loader.py` | 357 | Pushes leads into the GHL dialer workflow |
+| `zip_reader.py` | 307 | ZIP plan / auto-advance |
+| `backend_classifier.py` | 302 | Standalone copy of the wire classifier |
+| `ghl_loader.py` | 292 | Contact upsert into GoHighLevel |
+| `maps_scraper.py` | 195 | Google Maps business scrape |
+| **`optimus_operator.py`** | **191** | Who-is-scanning identity (shipped 2026-08-21) |
+
+### 21.2 Where the dots actually come from — this is the non-obvious part
+
+The hunter does **not** scrape the page. It does not read pixels (that path exists but is
+OFF by default). It **sits on the network and decodes Mapbox vector tiles.**
+
+```python
+MAP_URL = "https://youachieve.att.com/yourefer/fiber"
+```
+
+Playwright opens the dealer map with a persistent profile (`att_profile/`, so the AT&T
+login survives). Then `NetCapture.handle` is attached to `page.on('response')` and every
+response the map fetches gets inspected.
+
+Two capture paths run at once:
+
+**Path A — JSON serviceability responses.** Ordinary AT&T API JSON. `extract_leads_from_json()`
+walks the object recursively to any depth pulling out lead dicts.
+
+**Path B — Mapbox vector tiles (protobuf).** This is where the actual dots live. A tile URL
+looks like `.../14/3824/6915.pbf`. The code pulls z/x/y out of it and converts tile-local
+pixel coordinates into real lng/lat with the standard Web Mercator inverse:
+
+```python
+def _tilepoint_to_lnglat(z, x, y, px, py, extent):
+    n = 2.0 ** z
+    lon = (x + px / extent) / n * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * (y + py / extent) / n)))
+    return lon, math.degrees(lat_rad)
+```
+
+That is why `Gold Dots` has real coordinates while `Precise Fiber` does not — coordinates
+only exist on the tile path.
+
+**THE BASEMAP TRAP, and why it matters.** Mapbox also serves its own street/terrain tiles.
+Decoding those yields *street names that look like addresses* — pure garbage leads. There
+is an explicit guard:
+
+```python
+def _is_basemap_tile(url):
+    """Mapbox's own street/terrain BASEMAP tiles -- roads & place names, NOT the
+    AT&T fiber dots. Decoding these yields street names that look like addresses
+    (bogus leads), so skip them."""
+    u = url.lower()
+    return ("api.mapbox.com" in u and
+            ("mapbox-streets" in u or "mapbox-terrain" in u or "/v4/mapbox." in u))
+```
+
+If bogus street-name rows ever reappear in `Precise Fiber`, this filter is the first place
+to look.
+
+### 21.3 THE CLASSIFIER — the most important 60 lines in the codebase
+
+Every dot is GREEN, GOLD or GREY. That decision is made by exactly two fields:
+**`subscriber_ban`** and **`curr_ntwrk_bld_type_cd`**.
+
+```python
+DOT_COLOR = {"lead": "GREEN", "copper_upgrade": "ORANGE", "customer": "GREY"}
+```
+
+The build code is pulled tolerantly, because AT&T's key formatting is inconsistent:
+
+```python
+def _bld_code(raw):
+    for k, v in raw.items():
+        nk = re.sub(r"[^a-z0-9]", "", str(k).lower())
+        if "bldtype" in nk or ("ntwrk" in nk and "typecd" in nk):
+            return str(v or "").strip().lower()
+    return ""
+```
+
+The lookup table is `build_codes.json`, decoded 2026-07-01 from a live 19,500-record
+Vintage Park capture:
+
+```json
+{
+  "fiber":  ["fttp-gpon", "fttp", "gpon", "ftth"],
+  "copper": ["fttn-bp", "fttn", "ip-rt", "iprt", "copper", "ipbb", "adsl", "vdsl", "dsl"]
+}
+```
+
+Meaning: `fttp-gpon` = fiber-to-the-premises = already on fiber = **GREY, skip**.
+`fttn-bp` = fiber-to-the-node with a **copper last mile** = **GOLD, the upgrade lead**.
+`ip-rt` = legacy copper terminal = **GOLD**.
+
+And the decision itself:
+
+```python
+def classify_wire(status, ban, raw):
+    if ban:
+        code = _bld_code(raw)
+        if not code:
+            _WIRE_COUNTS["no_code"] += 1
+            return _unknown_customer_status()
+        if any(c in code for c in _BLD_CODES["fiber"]):
+            _WIRE_COUNTS["fiber"] += 1
+            return "customer"            # GREY -> confirmed fiber customer, skip
+        if any(c in code for c in _BLD_CODES["copper"]):
+            _WIRE_COUNTS["copper"] += 1
+            return "copper_upgrade"      # GOLD dot -> ORANGE row -> upgrade lead
+        _WIRE_COUNTS["unknown"] += 1
+        _UNKNOWN_CODES[code] = _UNKNOWN_CODES.get(code, 0) + 1
+        return _unknown_customer_status()
+    _WIRE_COUNTS["green"] += 1
+    return classify_status(text=status, ban=ban)   # no ban -> GREEN (eligible)
+```
+
+**Read the logic as:** no BAN → not a customer → GREEN. BAN + confirmed fiber → GREY.
+BAN + confirmed copper → GOLD. BAN + anything we can't decode → the fallback.
+
+**THE FALLBACK IS THE WHOLE BALLGAME:**
+
+```python
+_UNKNOWN_CUSTOMER = (os.environ.get("OPTIMUS_UNKNOWN_CUSTOMER") or "grey").strip().lower()
+
+def _unknown_customer_status():
+    return "copper_upgrade" if _UNKNOWN_CUSTOMER == "gold" else "customer"
+```
+
+Default is **grey**. The reasoning in the source comment: *"a false grey costs nothing,
+because grey is skipped anyway"* — whereas a false gold puts a rep on the phone with
+someone who already buys fiber. That is the bug from part 9, and this default is the fix.
+
+**BUT — this default is also the leading suspect for gold reading 2.05% when the map shows
+9–11%.** Every customer whose build code we cannot decode is being called grey and thrown
+away. To test the hypothesis:
+
+```
+set OPTIMUS_UNKNOWN_CUSTOMER=gold
+```
+
+Do not leave it there. Run it once, read the telemetry, then decide.
+
+### 21.4 The telemetry that makes the classifier auditable
+
+`wire_classification_report()` prints at the end of every run:
+
+```
+DOT CLASSIFICATION THIS RUN
+  GREEN  non-customers               123456
+  GREY   confirmed fiber customer      2345
+  GOLD   confirmed copper               456   <- real upgrade leads
+  ?      customer, code unknown         789   -> CUSTOMER
+  ?      customer, NO build code         12   -> CUSTOMER
+  62.1% of customer dots were a guess, not a decode.
+  undecoded build codes seen:
+     <code>                   431
+```
+
+**This is the single most valuable diagnostic in the program and nobody has read it yet.**
+That "% of customer dots were a guess" line answers the 2% vs 10% question directly. And
+the undecoded-codes list is literally a to-do: confirm one on the dealer map, add it to
+`build_codes.json`, gold count jumps.
+
+### 21.5 Sheet layout — every constant
+
+```python
+SHEET_ID   = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
+OUT_TAB    = "Precise Fiber"
+GOLD_TAB   = "Gold Dots"
+STATUS_TAB = "Hunter Status"
+MAPS_TAB   = "Maps Businesses"
+RUN_ID     = time.strftime("%Y%m%d-%H%M%S")
+
+OUT_HEADER     = ["Address", "Dot Color", "Captured At", "Business", "Phone",
+                  "Run ID", "Operator"]
+_GOLD_HEADER   = ["Address", "Captured At", "Lat", "Lng", "Business", "Phone",
+                  "Run ID", "Operator"]
+BACKEND_HEADER = ["Time", "Host", "Area", "Kind", "Status", "Bytes", "ms", ...,
+                  "Operator"]
+```
+
+**`Gold Dots` has NO header row in practice** — data starts at row 1. Any query against it
+must not skip a header.
+
+### 21.6 The header bug, and the guard that now prevents it
+
+`Precise Fiber`'s header was 3 columns wide while `flush()` wrote 6 values and the uploader
+path wrote 5. Columns silently misaligned. The fix is `_ensure_header()`:
+
+> empty tab → write header; header wide enough → do nothing; too short → write **ONLY the
+> missing cells at the end of row 1**. Never rewrites existing labels, never touches row 2+.
+
+That last sentence is the important one. A naive "just write the header" would have
+destroyed live data.
+
+### 21.7 Why gold silently didn't exist for weeks
+
+From the source comment on `_ensure_gold_tab()`:
+
+> WAS: this opened/created a SEPARATE spreadsheet ("OPTIMUS GOLD DOTS"). That could never
+> work. **The service account has ZERO Drive storage quota** — it can READ and UPDATE files
+> already shared with it, but it cannot CREATE a new file. So `client.create()` always
+> threw, `write_gold_dots()` swallowed the exception and returned 0, and gold silently
+> never appeared anywhere while green kept writing fine.
+>
+> NOW: the tab lives in `sh` — the main sheet, which already exists and is already shared.
+> `add_worksheet()` on an existing spreadsheet needs no Drive quota, so this works.
+
+**Rule that came out of it:** a failure that returns 0 instead of raising is worse than a
+crash. The code now prints `(GOLD TAB FAILED: ...)` because *"this failing quietly is
+exactly what hid the bug for weeks."*
+
+**Consequence still outstanding:** `Gold Dots` was created 2026-08-18. Every gold dot
+captured before that was classified correctly and then dropped on the floor.
+**`--backfill-gold` recovers them from the ORANGE rows already in `Precise Fiber`** — worth
+roughly 6,324 rows, tripling the tab. Still not run.
+
+### 21.8 Dedupe and crash resume
+
+```python
+def already_seen(ws):
+    """Resume: read existing addresses so a re-run skips them (survives crashes)."""
+    rows = ws.get_all_values()
+    return set(r[0].strip().upper() for r in rows[1:] if r and r[0].strip())
+```
+
+Address, uppercased, stripped. That is the dedupe key everywhere — main tab and gold tab
+both. Plus a local `precise_addresses.jsonl` write-ahead log, and `backfill_jsonl()` to
+replay anything captured locally but never written (which is how captures survived the
+period when the old sheet was full).
+
+Background dedupe also runs every 30 minutes in-process.
+
+### 21.9 Operator identity — shipped 2026-08-21
+
+`optimus_operator.py`, 191 lines. Resolution order, first hit wins:
+
+1. `--operator "Dave"` on the command line
+2. `OPTIMUS_OPERATOR=Dave` environment variable
+3. `operator.json` next to the code (what you answered last time)
+4. an interactive numbered menu, asked **once**, then remembered
+5. the machine hostname, as `PC:<hostname>`
+
+**The rule that matters most:** step 4 must never hang an unattended run. A scheduled sweep
+or the uploader subprocess has no human at the keyboard, so a prompt there would block
+forever and the sweep would silently never start.
+
+```python
+def _can_prompt(auto=False):
+    if auto:
+        return False
+    if "--uploader" in sys.argv or "--auto" in sys.argv:
+        return False
+    try:
+        return bool(sys.stdin and sys.stdin.isatty())
+    except Exception:
+        return False
+```
+
+Name normalisation has one deliberate quirk:
+
+```python
+if s.islower() or (s.isupper() and len(s) > 3):
+    s = s.title()
+```
+
+Short all-caps is left alone — **"JD" is a real person here (JD Dunn) and "Jd" is just
+wrong.**
+
+This is what makes `Operator Scorecard` possible. Without a name stamped on every row there
+is no way to score one person separately from another.
+
+### 21.10 Alert thresholds
+
+```python
+GOLD_CLUSTER_ALERT = 8    # this many GOLD dots in ONE viewport = dense upgrade pocket
+NEW_FIBER_ALERT    = 15   # this many GREEN + very little grey = freshly-lit street
+NEW_FIBER_TAB      = "New Fiber Alerts"
+```
+
+The `New Fiber Alerts` tab is the automated version of the freshness question. It is
+already wired and writing.
+
+### 21.11 The CLI, complete
+
+| Flag | Effect |
+|---|---|
+| `--login` | open browser to log into AT&T once, then quit |
+| `--zip 77070` | search a ZIP before scanning |
+| `--cols N` / `--rows N` | sweep grid size (default 3×3) |
+| `--zoom-in N` / `--zoom-out N` | zoom presses after load |
+| `--fresh` | only newly-seen dots |
+| `--net` | network-capture mode (the good path) |
+| `--grid` | force grid sweep |
+| `--dry` | classify and print, write nothing |
+| `--auto` | unattended; never prompts |
+| `--loop SECS` | run forever on an interval |
+| `--fast` / `--slow` | pacing |
+| `--no-update` | skip self-update on start |
+| **`--backfill-gold`** | **seed `Gold Dots` from existing ORANGE rows. STILL NEEDS RUNNING.** |
+| `--clean-sheet` | dedupe/compact the sheet |
+| `--probe` | frame diagnostic |
+| `--allow-click` | re-enable pixel clicking (OFF by default, see below) |
+| `--no-enrich` / `--no-match` / `--no-dedupe` / `--no-split` | disable stages |
+| `--uploader` | headless write worker subprocess |
+| `--operator NAME` | set identity |
+| `--whoami` | re-ask identity |
+
+**`--allow-click` is off for a reason:** clicking "dots" detected on a transitioning page
+lands on nav buttons and flips the view. The backend read replaced it.
+
+### 21.12 Self-update, and the trap
+
+```python
+REPO_BRANCH = (os.environ.get("OPTIMUS_REPO_BRANCH")
+               or "claude/optimus-map-tools-setup-6dcl6o")
+
+_CORE_FILES = ("precise_fiber_hunter.py", "optimus_operator.py", ...)
+```
+
+On each start the hunter pulls itself from GitHub. **Git is not installed on the hunter PC**
+(part 12) — `_raw_refresh()` is the real updater, fetching raw files over HTTPS. Any new
+module must be added to `_CORE_FILES` or it will never reach the field machine. That is why
+`optimus_operator.py` was added to that tuple when it shipped.
+
+### 21.13 The version stamp problem, solved properly
+
+`BUILD_DATE` is typed by hand and once reported 08-18 while running 08-20 code. From the
+source:
+
+> a version marker that is typed by hand WILL eventually disagree with the code, and a
+> marker that disagrees is worse than none because it gets trusted.
+
+So the console now also prints values **derived from the file itself** — the mtime the
+updater actually wrote, and a fingerprint of the bytes. Neither can go stale because neither
+is maintained by anyone. **Trust `_file_stamp()`, not `BUILD_DATE`.**
+
+### 21.14 The business match path
+
+`maps_scraper.py` scrapes Google Maps by ZIP × category. `commercial_split.py` splits
+captures into residential vs commercial. The combo matcher joins scraped businesses against
+captured fiber addresses and writes:
+
+- `Maps Businesses` — everything scraped (34,410)
+- `Fiber Green Biz` — business at a GREEN address (6,242)
+- `Upgrade Orange Biz` — business at a GOLD address (41)
+
+**KNOWN BUG, unfixed:** `Upgrade Orange Biz` addresses are **street-only** — "708 W MAIN ST",
+no city, no ZIP. Two consequences, both real:
+
+1. **DealMachine `enrich_address` hard-fails without a ZIP.** Cannot enrich that tab at all
+   without supplying ZIPs by hand.
+2. **The matcher joins on street name without a city.** Confirmed damage: "Main Street
+   Donuts" on a Texas "W MAIN ST" carrying a **405 Oklahoma area code**. Wrong-state
+   businesses are entering the highest-value tab.
+
+Fix it at capture. Do not paper over it downstream.
+
+### 21.15 What I would change first
+
+1. **Read `wire_classification_report()` on the next run.** It already answers the 2%-vs-10%
+   question and no one has looked.
+2. **Run `--backfill-gold`.** Free, recovers ~6,324 rows, already written and tested.
+3. **Fix street-only capture.** It is corrupting the best tab and blocking enrichment.
+4. **Add city+ZIP to the combo matcher's join key.** One-line class of bug, silently wrong.
+5. **Try `OPTIMUS_UNKNOWN_CUSTOMER=gold` once**, read the telemetry, revert.
