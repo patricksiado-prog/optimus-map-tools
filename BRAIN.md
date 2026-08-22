@@ -3509,3 +3509,52 @@ Two things caught in test that would have bitten:
   happens anyway.
 - **Place extraction stays conservative.** An unparseable headline yields no target
   rather than a guessed one. A wrong city sends somebody to the wrong state for a day.
+
+### 24.10 The Aug 22 batch: 100 sent from DealMachine data, and what it actually measured
+
+Sent 2026-08-22, 16:49–17:37 Central. 100 texts, 0 send failures, 0 Twilio 30006.
+
+**Sourcing changed.** Gold Dots was unreadable (Autosheet out of credits), so the
+list came from **DealMachine property search** instead: owner-occupied single-family
+in 77706 Beaumont, 77571 La Porte, 77515 Angleton. 135 properties → **350 credits**
+(2.8/property, not the 6/property the estimator quoted) → 116 textable after dropping
+**13 landline-only (9.6%, close to the 12% rule of thumb)** and 6 with no contact.
+
+**This is a different kind of list and the copy had to change to match.** DealMachine
+knows nothing about fiber, so these are homes in a fiber ZIP, not verified dots. Every
+message was rewritten to claim fiber **on the street or in the area** and offer to
+check the address — never that the address qualifies. The gold "you're on copper"
+angle was dropped entirely: without a dot we do not know who is an AT&T customer.
+
+**The result, stated plainly: 8 opt-outs from 100. 8%.** Under the 20% rotate-the-
+number line, but four times the rate at the 25-message mark, and the genuinely
+interested replies were **zero**.
+
+**The comparison that matters, and it is not the flattering one:**
+
+| | Aug 21 | Aug 22 |
+|---|---|---|
+| Sent | 100+ | 100 |
+| Replies | 0 | ~2 |
+| Opt-outs | **0** | **8** |
+
+It is tempting to read Aug 21's zero opt-outs as the better batch. It is more likely
+the opposite: a 388-character, three-segment message with a doubled STOP line got
+**ignored**, and nobody bothers opting out of a text they never read. The Aug 22 copy
+was read — and 8% of the people who read it said no. **Zero opt-outs is not a sign of
+good copy. It is a sign of no attention at all.**
+
+What that leaves: the one-segment rewrite fixed *delivery into the reader's head*, and
+did not fix *the offer*. A cold text saying "fiber is on your street, want me to
+check?" gets read and declined. The next lever is not more texts.
+
+**A conversation AI in the location auto-replies to every inbound**, and it is
+actively hostile to the funnel. On Celia's thread it pushed after she declined twice,
+published Patrick's personal cell to her, told her twice to "reply STOP anytime" when
+she asked where her data came from, and then placed a voice call she declined. She
+opted out. **Any measurement of opt-out rate here is contaminated by that agent** —
+some unknown share of the 8 were manufactured by the bot, not by the copy.
+
+Before the next batch: turn that agent off or rewrite its script, and answer the data
+provenance question honestly ("public property records, matched to a fiber build")
+rather than "I don't have access to those details."
