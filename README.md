@@ -35,6 +35,35 @@ It is deliberately short. A very large file loaded on every session burns
 context and gets skimmed rather than read, so `CLAUDE.md` carries the operating
 facts and points at `BRAIN.md` for depth.
 
+## Keeping every surface on the same brain
+
+Claude Code reads `CLAUDE.md` automatically, but only inside this repo. Cowork and
+claude.ai load your **account's plugins** instead. So the brain ships as a plugin, and
+this repo is its marketplace.
+
+**One-time setup, per person:**
+
+```
+/plugin marketplace add patricksiado-prog/optimus-map-tools
+/plugin install optimus
+```
+
+That installs two skills — `optimus-brain` (the context) and `gold-cluster-sweep` (the
+lead loop) — and they then load in Cowork, claude.ai and Claude Code alike.
+
+**Updating, from then on:**
+
+1. Edit `CLAUDE.md` (short facts) or `BRAIN.md` (depth)
+2. `python3 scripts/build_brain_skill.py` — regenerates the `optimus-brain` skill
+3. Commit and push
+
+Everyone picks the change up on their next plugin refresh. Nobody re-installs anything,
+and nobody hand-copies a `.skill` file.
+
+`optimus-brain/SKILL.md` is **generated** from `CLAUDE.md` and carries a do-not-edit
+header. Editing it directly gets overwritten on the next build and lets the plugin drift
+from the repo — which is the whole failure this setup exists to prevent.
+
 ## Keeping the brain alive
 
 When something is learned that would change what a future session does:

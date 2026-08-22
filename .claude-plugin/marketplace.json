@@ -1,0 +1,34 @@
+{
+  "name": "optimus",
+  "owner": {
+    "name": "Patrick Siado",
+    "url": "https://github.com/patricksiado-prog"
+  },
+  "description": "Optimus — the operating brain and lead loop for an authorized AT&T fiber dealership in Houston, Beaumont and Brazoria County. One plugin, two skills: optimus-brain (context) and gold-cluster-sweep (the work).",
+  "homepage": "https://github.com/patricksiado-prog/optimus-map-tools",
+  "repository": "https://github.com/patricksiado-prog/optimus-map-tools",
+  "metadata": {
+    "description": "Installing this once keeps Cowork, claude.ai and Claude Code on the same brain. optimus-brain is generated from CLAUDE.md by scripts/build_brain_skill.py, so the plugin and the repo brain cannot drift apart.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "optimus",
+      "source": "./",
+      "description": "The Optimus operating brain and the full lead loop. optimus-brain carries the dot legend and what each colour pays, the sheet and GoHighLevel IDs, which tabs the hunter owns, and the texting, DealMachine and data-integrity facts that cost real time to learn. gold-cluster-sweep runs the loop: dig the backlog first, find a dense gold pocket, pull the green, gold and small businesses on those streets, skip-trace for cells, text/email/dial, book the visit, follow up.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Patrick Siado"
+      },
+      "keywords": [
+        "att",
+        "fiber",
+        "sales",
+        "lead-generation",
+        "gohighlevel",
+        "dealmachine",
+        "optimus"
+      ]
+    }
+  ]
+}

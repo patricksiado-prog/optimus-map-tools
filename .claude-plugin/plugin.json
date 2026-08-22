@@ -1,0 +1,16 @@
+{
+  "name": "optimus",
+  "description": "The Optimus operating brain and lead loop for Patrick Siado's AT&T fiber dealership. Carries the green/gold/grey dot legend and what each pays, the master sheet and GoHighLevel IDs, the texting, DealMachine and data-integrity facts learned the expensive way, and the full gold-cluster sweep — backlog dig, cluster, enrich, text/email/dialer, book, follow up. Install this so Cowork, claude.ai and Claude Code all work from the same brain.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Patrick Siado",
+    "url": "https://github.com/patricksiado-prog"
+  },
+  "homepage": "https://github.com/patricksiado-prog/optimus-map-tools",
+  "repository": "https://github.com/patricksiado-prog/optimus-map-tools",
+  "license": "UNLICENSED",
+  "skills": [
+    "./.claude/skills/optimus-brain",
+    "./.claude/skills/gold-cluster-sweep"
+  ]
+}
