@@ -1,0 +1,18 @@
+{
+  "_note": "Exact live state of 'Optimus Dialer 2 — Zack Call Queue' as read 2026-08-22, version 21, status published, triggers []. Restore by passing this actions array back through ghl_update_workflow_actions.",
+  "id": "9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8",
+  "name": "Optimus Dialer 2 — Zack Call Queue",
+  "status": "published",
+  "version": 21,
+  "triggers": [],
+  "actions": [
+    {"id":"c2ac183a-178c-4a3c-8c6d-e477e98be164","order":0,"attributes":{"tags":["not interested"]},"name":"Add Tag","type":"add_contact_tag","next":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5"},
+    {"id":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","order":1,"name":"yes","type":"if_else","cat":"conditions","nodeType":"condition-node","parentKey":"c2ac183a-178c-4a3c-8c6d-e477e98be164","next":["cd664fe9-47bf-44e2-a943-d0a1483f0907","bed98210-a393-4e78-bd5b-4bd3e770b690"],"attributes":{"currentRecipeType":"CUSTOM","operator":"and","if":true,"conditionName":"Condition","version":2,"noneBranchName":"None","branches":[{"id":"cd664fe9-47bf-44e2-a943-d0a1483f0907","name":"Branch","operator":"and","segments":[{"__segmentId":"c56c5e47-fc28-4865-a770-3e26e726667c","operator":"and","conditions":[{"conditionType":"contact_detail","conditionSubType":"tags","conditionOperator":"index-of-true","conditionValue":["not interested"],"__conditionId":"171181fe-680d-49c0-a761-671d3ef4450f","ifElseNodeId":"","__customFieldType__":"standard","isWait":false}]}]}]}},
+    {"id":"cd664fe9-47bf-44e2-a943-d0a1483f0907","parent":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","parentKey":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","order":2,"name":"Branch","type":"if_else","cat":"conditions","nodeType":"branch-yes","next":"721a3060-5c18-474d-9d63-5cc95112d473","sibling":["bed98210-a393-4e78-bd5b-4bd3e770b690"],"attributes":{"if":false,"conditionName":"Condition","operator":"and","branches":[]}},
+    {"id":"721a3060-5c18-474d-9d63-5cc95112d473","parent":"cd664fe9-47bf-44e2-a943-d0a1483f0907","parentKey":"cd664fe9-47bf-44e2-a943-d0a1483f0907","order":0,"name":"Remove from Workflow","type":"remove_from_workflow","attributes":{"type":"remove_from_workflow","workflow_id":["9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8"]}},
+    {"id":"bed98210-a393-4e78-bd5b-4bd3e770b690","parent":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","parentKey":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","order":2,"name":"None","type":"if_else","cat":"conditions","nodeType":"branch-no","next":"06ecb548-93f4-4443-91f6-a710c5190d10","sibling":["cd664fe9-47bf-44e2-a943-d0a1483f0907"],"attributes":{"else":true}},
+    {"id":"06ecb548-93f4-4443-91f6-a710c5190d10","parent":"bed98210-a393-4e78-bd5b-4bd3e770b690","parentKey":"bed98210-a393-4e78-bd5b-4bd3e770b690","order":0,"name":"Fiber Call","type":"manual-call","next":"c7efa7f2-040a-4164-b99b-63b12f6933bd","attributes":{"assignedUser":"qOa2OVzPabolfU9xjVXM","standardAssignedUser":"qOa2OVzPabolfU9xjVXM"}},
+    {"id":"c7efa7f2-040a-4164-b99b-63b12f6933bd","parent":"bed98210-a393-4e78-bd5b-4bd3e770b690","parentKey":"06ecb548-93f4-4443-91f6-a710c5190d10","order":1,"name":"Wait","type":"wait","next":"f3445773-0175-4aa6-8701-183c9904995f","attributes":{"type":"time","startAfter":{"type":"minutes","value":0.5,"when":"after"},"name":"Wait","cat":"","timePeriodInputMode":"standard","unitInputMode":"standard","isHybridAction":true,"hybridActionType":"wait","convertToMultipath":false,"transitions":[]}},
+    {"id":"f3445773-0175-4aa6-8701-183c9904995f","parent":"bed98210-a393-4e78-bd5b-4bd3e770b690","parentKey":"c7efa7f2-040a-4164-b99b-63b12f6933bd","order":2,"name":"Go to","type":"goto","attributes":{"targetNodeId":"65f5a6ff-3cd2-43e1-8ad0-052ea705f1f5","type":"goto"}}
+  ]
+}
