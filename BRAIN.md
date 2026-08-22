@@ -3419,3 +3419,45 @@ you zoomed too far — back out. The dots are the data, and a blank map is not a
 Sources: Mapbox Style Spec — Layers (`maxzoom`: "At zoom levels equal to or greater than
 the maxzoom, the layer will be hidden"); Mapbox Help — "Adjust the zoom extent of your
 tileset" (overzooming, and layer-maxzoom disappearance).
+
+### 24.8 The banner now reads the web, because two of the three tabs it read do not exist
+
+Audited the master sheet 2026-08-22. **`Outage Signals` and `Fiber Zones` are not
+tabs and never have been.** So the banner's two intel lines were reading nothing and
+reporting "none open" and "no zone scans", which reads as *we checked and there is
+nothing* when the truth was *nothing was ever checked*. `Enriched Leads` and `New
+Fiber Alerts`, both named in `CLAUDE.md`, are not real either.
+
+`Gold Dots` **is** real: **3,328 rows, latitude and longitude both populated in C and
+D.** So the gold-pocket fallback has data and was still coming back empty — cause not
+yet identified, and the banner will now name which of three steps loses it (0 rows
+read / rows but no usable coordinates / coordinates but no cell with 4+).
+
+Shipped `optimus_web_intel.py` (deploy `92a128a`, **in `_CORE_FILES`** — without that
+it reaches no field PC). Google News RSS, Bing News RSS and Reddit r/ATT, filtered to
+Houston metro / Beaumont / Brazoria, with any Texas ZIP pulled out of the headline and
+printed as somewhere to scan.
+
+Three properties worth keeping if this is ever rewritten:
+
+- **One six-second wall-clock budget for all six sources.** Past it nothing further
+  starts. Intel must never delay a sweep, and the import is guarded so a PC that
+  failed to download the new module still scans.
+- **Items are bucketed by their own words, not by the query that found them.** News
+  search is fuzzy and both queries return each other's stories. Outage words win
+  ties — calling a cut "a new build" sends a rep to the wrong street for a day, the
+  reverse costs a glance.
+- **An empty result never overwrites a good cache.** One offline launch used to throw
+  away yesterday's intel for every launch after it. An expired cache is now shown as
+  a fallback shouting **STALE** and its age rather than passed off as current.
+
+**The feeds could not be live-verified** — the sandbox blocked every outbound host. The
+source list is therefore *data*, and every parser is defensive. `python
+optimus_web_intel.py` on a real machine prints which sources answered, how many items
+each yielded and why any failed. **Prune the list from that output, not from
+guesswork.**
+
+**Autosheet is out of credits** (`dashboard.gptforwork.com` → billing) and a run died
+mid-query, leaving a temp tab **`ZZ_TMP_GRID`** (~3,300 rows of formulas) in the master
+sheet. Delete it. The cause was a prompt that pushed the agent into reading `Gold Dots`
+wholesale — the exact thing this brain already warns about.
