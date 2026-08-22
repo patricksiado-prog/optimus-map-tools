@@ -116,7 +116,7 @@ unverified assumption. State the concern once, then do what he decides.
 - **`.claude/skills/gold-cluster-sweep/`** — the full lead loop: backlog dig →
   cluster → enrich → text/email/dialer → book → follow up. Invoke it whenever
   the work is finding or working leads.
-- **`brain.md`** (lowercase) and **`BRAIN/notes/`** — older material, superseded.
+- **`docs/archive/`** — older material, superseded. Do not act on it.
 
 ## Keeping this file useful
 
