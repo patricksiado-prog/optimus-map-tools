@@ -188,3 +188,48 @@ below the headline number.
   hunter PC.
 - Sheet tabs: `Warm Backlog — Replied YES` (15 workable, 7 lost, 7 open quotes)
   and the enriched `Devonwood Campaign — Aug 21` (20 READY, 5 BLOCKED).
+
+## 22.11 Sending numbers — the real ceiling on volume
+
+The location owns **three** numbers, and all outbound has been going out on one:
+
+| Number | Title | Use |
+|---|---|---|
+| `+1 361 301 9563` | Patrick's number 2 | Every send — Aug 21 batch AND the Aug 22 batch |
+| `+1 346 536 3161` | Patrick's number 4 | Idle |
+| `+1 346 615 4219` | Patrick's number 3 | Idle |
+
+100/day from a single 10DLC is where carrier filtering starts; split across the
+three it is ~33 each and unremarkable. Spreading the load is the cheapest thing
+available to make a 100/day target actually deliver.
+
+Observed 2026-08-22: a manual batch of ~30 went out in **116 seconds** from that
+one number, all with the same body and only a rotating opener. Identical bulk
+text at burst rate is the pattern carriers filter on.
+
+## 22.12 GHL workflow API — actions save, triggers do not
+
+`ghl_create_workflow` with a trigger fails with a Firestore error
+(`5 NOT_FOUND: No document to update: .../triggers/<id>`) and leaves an empty
+workflow shell behind. `ghl_update_workflow_actions` saves **actions** fine —
+including a `wait` with a `window` (days + start + end), which is how a send is
+held until a time of day — but passing `triggers` returns "updated successfully"
+and writes nothing. Verified by reading the workflow back: `triggers: []`.
+
+So a scheduled auto-sender can be built through the API right up to the trigger,
+and the trigger has to be added by hand in the GHL UI. Always read a workflow
+back after writing it; the success message is not evidence.
+
+## 22.13 Home-based business categories are the enrichable ones
+
+The Maps scraper's combo match (317,084 captured fiber leads vs 34,410 scraped
+businesses) yields 6,242 green biz rows, 41 orange, and **3,850 callable matches
+with a unique phone**.
+
+The categories that matter are the home-based trades and services — home
+daycare, notary, maid service, window cleaning, lawn mowing, gutter cleaning,
+chimney sweep, tutoring, home organizer, carpenter, masonry, septic, insulation.
+Those skip-trace to a real owner record with a cell for ~2 credits. Office-tower
+and LLC-held businesses return `contacts: []` and are where credits get wasted;
+an 80-row sample of the "untapped Houston" pool was mostly apartment complexes,
+national chains, toll-free numbers and Greenway Plaza suites.
