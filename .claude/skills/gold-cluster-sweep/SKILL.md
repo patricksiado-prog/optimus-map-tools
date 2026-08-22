@@ -1,6 +1,6 @@
 ---
 name: gold-cluster-sweep
-description: Find a dense gold-dot cluster from the ATT FIBER LEADS sheet, pull the green and gold addresses in that pocket, skip-trace them for cell numbers with DealMachine, write a campaign tab, and send individually-written texts through GoHighLevel. Use this whenever Patrick asks to work a gold cluster, find where the gold is thick, build or fire a text campaign off the fiber map, get cell numbers for an area or street, run a neighborhood or corridor sweep, or says anything like "grab the cells around X and text them" — including when he names only a street, ZIP, or neighborhood and not the word "cluster".
+description: Run the full Optimus lead loop off a gold-dot cluster — find the dense pocket (gold means newly lit fiber nobody has worked), pull the green and gold addresses plus the small businesses on those streets, skip-trace cell numbers with DealMachine, send individually-written texts through GoHighLevel, then book the calls and door-knocks as assigned tasks and keep following up until every lead is closed or dead. Use this whenever Patrick asks to work a gold cluster, find where the gold is thick or where new fiber is, enrich an area, pull cell numbers for a street or ZIP or neighborhood, build or fire a text campaign off the fiber map, line up sales calls or in-person visits, hand leads to reps, or chase follow-ups — including when he names only a street or neighborhood, and including when he asks to keep it running in the background.
 ---
 
 # Gold Cluster Sweep
@@ -138,6 +138,48 @@ held the literal text `(all DNC)` where the digits belonged — the numbers were
 fetched and thrown away, and gold could not be texted for a day. Digits, stored
 as plain text, or a truly empty cell.
 
+### 4b. Small businesses on those same streets
+
+A pocket of new fiber contains businesses as well as houses, and they are worth
+more per door. Once you have the cluster's street names, check them against:
+
+| Tab | What it is |
+|---|---|
+| `Upgrade Orange Biz` | **GOLD businesses — copper business customers. The highest-value slice we have.** |
+| `Fiber Green Biz` | Green businesses (fiber live, not an AT&T customer) |
+| `Maps Businesses` | Everything scraped from Google Maps: name, address, phone, website, category |
+
+Gold businesses come first, always. A business already paying AT&T for copper is
+an upgrade conversation with no competitor in it, and business fiber is worth
+far more than a single residential line.
+
+Two cautions that have already cost real money here:
+
+- **Column F in `Fiber Green Biz` is a hand-typed call-status field, not a DNC
+  check.** The Maps scraper never queries the DNC registry, so DNC status on
+  those rows is genuinely unknown. Do not read "only 3 DNC" as a clean list.
+- **Business addresses in these tabs are frequently street-only, with no city or
+  ZIP.** That breaks `enrich_address`, and it has already produced a bad match —
+  an Oklahoma 405 number joined onto a Texas "W Main St". Supply the ZIP from the
+  cluster before enriching, and if a returned area code does not belong to the
+  market, throw the row out rather than texting it.
+
+**Getting a business owner's cell — the chain that works:**
+
+1. **Home-based business?** `enrich_address` on the business address returns the
+   owner: name, cell, line type, DNC. ~2 credits. The Google Maps business
+   number is often the owner's personal cell already.
+2. **Commercial building?** DealMachine returns `contacts: []` for LLC-owned
+   property — it will not skip-trace an LLC. Go to the **free Texas Comptroller
+   franchise tax search** (or SOSDirect at $1) for officers and their addresses,
+   then `enrich_address` on the officer's **home** address.
+3. **Never** run a name-only DealMachine search to find them. "BEVERIDGE"
+   statewide is 141 people and 141 credits. Narrow by ZIP or use the home
+   address.
+
+Chains and franchises with a switchboard have no local telecom decision-maker.
+Drop them rather than burning a message.
+
 ### 5. Write the campaign tab
 
 New tab, named for the pocket and date (`Grant Rd Cluster — Aug 24`). Columns:
@@ -208,6 +250,91 @@ waiting.
 Beware false positives when reading replies: business missed-call autoresponders
 ("Sorry we missed your call…") look like engagement and are not. Read the actual
 message before counting it.
+
+### 9. Turn interest into a booked visit, and hand it to a person
+
+A text that gets a reply is not a sale — it is a lead with a clock on it. Every
+lead needs an owner and a next action with a date, or it evaporates. Patrick's
+own standing rule: **any reply gets a call the same hour.** People have opted out
+while waiting for a callback.
+
+**Track the lead.** `upsert_opportunity` into the right pipeline:
+
+| Pipeline | ID | Stages |
+|---|---|---|
+| AT&T Leads (residential) | `2V9thfxQpuhn6ZP0Peqt` | Lead → Contacted → Closed/Won → Lost |
+| AT&T Commercial (business) | `trc5dwodtc1LBYHikmiK` | Leads → DND → Closed/WON → Closed/LOST |
+
+**Assign the work.** `create_contact_task` with `assignedTo`, a real `dueDate`,
+and a title that says exactly what to do — "Call back: replied YES, wants
+pricing" or "Door knock: 10519 Grant Rd, gold biz, copper upgrade". A task with
+no assignee and no due date is a note, and notes do not get worked.
+
+Route by what the lead needs:
+- **Replied / warm** → call task, due within the hour.
+- **Landline-only or no cell** → call task. These are not dead, they are just
+  not textable.
+- **Gold business** → in-person visit task. Businesses close in person far more
+  than over SMS, and a gold business is the easiest conversation on the list.
+- **No answer after the call** → door knock task in the same pocket, batched by
+  street so one trip covers many addresses. This is the whole point of working a
+  *cluster* rather than scattered leads.
+
+**Booking an actual calendar appointment does not work right now.** All 27
+calendars in the location are inactive, so `create_appointment` has nothing to
+book into. Until somebody activates one, tasks with due dates are the scheduling
+mechanism — say so plainly rather than reporting a booking that did not happen.
+Once a calendar is active, use `get_free_slots` then `create_appointment` with
+`assignedUserId`.
+
+Dave is the one who dials. Do not invent rep assignments beyond what Patrick has
+said — if you do not know who covers a pocket, leave the task unassigned and
+flag it for him rather than guessing.
+
+### 10. Follow up relentlessly — but not by text
+
+"Follow up like crazy" is right, and the channel matters. Repeat texting is the
+one thing that reliably destroys a sending number: opt-outs spike hard on message
+two to someone who never answered message one. So the follow-up pressure goes
+into **calls and doors**, not more SMS.
+
+A cadence that fits the evidence:
+
+| When | Action |
+|---|---|
+| Reply comes in | Call within the hour. Always. |
+| Day 1, no reply | Call. |
+| Day 3 | Call at a different time of day. |
+| Day 5-7 | Door knock, batched with the rest of the pocket. |
+| After that | One final call, then mark it Lost and stop. |
+
+Marking it Lost matters. A pipeline clogged with leads nobody will ever reach
+hides the ones that are live.
+
+Every touch gets logged against the contact so the next person can see what
+already happened. And when reading replies, check the actual message before
+counting it — business missed-call autoresponders ("Sorry we missed your
+call…") look like engagement and are not.
+
+### 11. Keep it running
+
+Work pockets one at a time and keep a **`Cluster Queue`** tab so the loop has a
+memory: pocket name, centroid lat/lng, date worked, counts of green / gold /
+business, how many were textable, sent, replies, opt-outs, and status
+(`QUEUED` / `WORKING` / `SENT` / `EXHAUSTED`).
+
+Without that tab every run re-finds the same dense pocket, because it is still
+the densest. Check it first and skip what is already worked.
+
+Each cycle: pick the next unworked pocket → enrich → stage → send inside the
+window → book the calls and doors → work the follow-up cadence on everything
+already out → log results back to the queue.
+
+Two things stay human decisions no matter how automatic the rest becomes: **the
+go on a send batch**, and **anything that would widen the blast radius** — a new
+sending number, a much larger batch, or dropping the measurement gate. Staging,
+enriching and queueing are safe to run unattended. Sending is not, because it
+cannot be taken back.
 
 ## Checks worth running before you send
 
