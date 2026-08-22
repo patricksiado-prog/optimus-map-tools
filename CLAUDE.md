@@ -69,6 +69,18 @@ whole tabs.
 ## Things that cost real time to learn
 
 **Texting**
+- **Identify as "Patrick with AT&T Fiber." Never name the dealer brand in a
+  customer text.** Patrick, 2026-08-22: *"don't say optimus / we're att."* The
+  customer is buying AT&T Fiber and has never heard of the dealership.
+- **Never write opt-out language — GoHighLevel appends its own.** Verified: the
+  Aug 21 batch shipped `Reply STOP to opt out.` followed by GHL's
+  `Reply STOP to unsubscribe.` on every send. A doubled STOP line is the
+  clearest tell that no human wrote the message.
+- **One SMS segment: 160 characters INCLUDING GHL's 27-character append**, so
+  ~130 of body. The Aug 21 message ran 388 characters and three segments.
+  Keeping price out of the first text buys most of that back.
+- Read the contact tags before writing. `absentee-owner` means they do not live
+  there — ask about the property, never "your address".
 - Never text a landline — Twilio 30006, and it counts against the sending number.
   About **12% of residential skip-trace rows are landline-only**.
 - Quiet hours **8am–9pm Central**. Check `America/Chicago` before sending.
