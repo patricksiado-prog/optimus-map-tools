@@ -3461,3 +3461,51 @@ guesswork.**
 mid-query, leaving a temp tab **`ZZ_TMP_GRID`** (~3,300 rows of formulas) in the master
 sheet. Delete it. The cause was a prompt that pushed the agent into reading `Gold Dots`
 wholesale — the exact thing this brain already warns about.
+
+### 24.9 The ZIP suggestion is a DISPATCH now, not a report
+
+Patrick, verbatim: *"if I scanned a bunch of gold in Beaumont that's mine. I don't
+want zack to go there. I want the zip suggestion to tell him where to go."*
+
+That reframes what the suggestion is for. It is not a summary of what we captured.
+It is **an area, claimed by a named operator, at a time.** Deployed `c2df228`.
+
+**Announcements went nationwide.** New-build stories are now searched across the
+21-state AT&T fiber footprint, not filtered to Houston and Beaumont. That filter was
+backwards for this job: an announcement exists to say where to send the scanner
+**next**, which is by definition somewhere nobody has been. Outages stayed local —
+an outage is a selling event where reps are already standing, and a cut in Ohio is
+not our problem.
+
+**`optimus_territory.py` holds the ledger**, on a `Territory Claims` tab the banner
+creates on first run:
+
+```
+Claimed At | Operator | Machine | Area | State | ZIP | Source | Status | Released At
+```
+
+Once Patrick holds Beaumont it leaves everyone else's go-list and shows to them as
+*held by Patrick since …* — visible rather than silently missing, so nobody wonders
+where a market they saw in the news went. A second claim on a held area is refused
+and the refusal names the holder. Release writes `RELEASED` instead of deleting, so
+who worked what survives. **A claim expires after 21 days** — somebody who claimed a
+market and never went must not lock it forever.
+
+Identity needed no new plumbing: `OPERATOR()` and `optimus_operator.py` have been
+stamping every captured row for months.
+
+**Captured data and dispatch are now separate sections.** Our gold pockets still
+print, relabelled `ALREADY WORKED BY US -- captured gold, NOT a suggestion`. The count
+is worth seeing; mixing it with where-to-go is what made the old banner useless.
+
+Flags: `--claim "Beaumont, TX"`, `--release`, `--territory`. Claiming runs before the
+browser opens and quits, so taking or handing back a market does not cost a launch.
+
+Two things caught in test that would have bitten:
+
+- **Area keys must normalise.** `"Beaumont, TX"`, `"beaumont tx"` and
+  `("Beaumont", "TX")` have to collapse to one key or the same market gets claimed
+  twice under two spellings and the collision the whole module exists to prevent
+  happens anyway.
+- **Place extraction stays conservative.** An unparseable headline yields no target
+  rather than a guessed one. A wrong city sends somebody to the wrong state for a day.
