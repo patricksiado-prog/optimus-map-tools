@@ -3108,3 +3108,132 @@ Stated plainly so the next session does not assume coverage:
   (`Optimus Fiber Biz — Power Dialer Queue` works; `Optimus Dialer 2` is broken — Add Tag
   sits at node position 0, so every contact gets tagged "not interested" and ejected on
   entry).
+
+---
+
+## 2026-08-22 (part 23) — WHAT AN OVERNIGHT SESSION MEASURED: TOOL LIMITS, THE SENDING CEILING, AND A LEAD THAT WAS NEVER ASKED
+
+Everything here was measured on 2026-08-22, not recalled. It is the residue of a long
+session; the parts already covered in 21 and 22 are deliberately left out.
+
+### 23.1 The 331 "not interested" may not be rejections at all
+
+Part 22 records that `Optimus Dialer 2` is broken — Add Tag sits at node position 0, so
+every contact entering gets tagged and ejected. Independently, a tag census on the same
+day found **331 contacts carrying `not interested`** — and `interested` returns the exact
+same 331, because `search_contacts`'s `query` is substring matching and "not interested"
+contains "interested". The `interested` tag has **zero** contacts on it.
+
+Those two facts belong together. If the broken dialer stamped `not interested` on entry,
+an unknown share of those 331 were never actually asked. **Nobody should be written off
+on that tag until it is checked against whether the contact ever had a real conversation.**
+That is potentially the largest single pool of recoverable leads in the system, and it
+costs nothing but a query to size.
+
+### 23.2 Tag search cannot see the intent that matters
+
+`replied-yes` is applied by a workflow that fires on a literal "YES". Anyone who answered
+anything else was never tagged and is invisible to every tag search. Confirmed in raw
+message text on the same day: a contact who replied `77659` then `223 pinemont` (their ZIP,
+then their street address), M & W Painting replying `1 internet only`, and two separate
+`Please text me.` None are tagged. Estimated 40–70 genuinely interested contacts across all
+history versus the 22 tagged — tens, not hundreds.
+
+`lastMessageBody` holds only the most recent message, so anyone who replied and then got
+answered shows as outbound-last. Scanning last messages will never find them; tags and
+pipeline stage are the instrument, and both are incomplete.
+
+Beware autoresponders when counting replies. Business missed-call bots read as engagement
+and are not — one spa's AI receptionist alone produced 16 near-identical inbound messages.
+
+### 23.3 The sending ceiling is one number, not lead supply
+
+The location owns **three** numbers and every send has gone out on one:
+
+| Number | Title | Use |
+|---|---|---|
+| `+1 361 301 9563` | Patrick's number 2 | Aug 21 batch AND Aug 22 batch |
+| `+1 346 536 3161` | Patrick's number 4 | idle |
+| `+1 346 615 4219` | Patrick's number 3 | idle |
+
+On 2026-08-22 a manual batch of ~30 went out in **116 seconds** from that one number, all
+with the same body and only a rotating opener. 100/day from a single 10DLC is where carrier
+filtering starts; across three it is ~33 each. Spreading the load is the cheapest available
+change to make a volume target actually deliver.
+
+That batch also quoted a flat **"$30s/mo"** on business fiber, which the doctrine says not
+to do — business is priced by speed tier — and promised "up to a $500 Visa reward card and
+up to $750 in switching credits".
+
+### 23.4 Tool limits found the hard way
+
+- **`official_conversations_export_messages_by_location`** works at 1000/page but
+  `nextCursor` comes back **static**, so paging loops on page 3. Use `startDate`/`endDate`
+  windows instead. The location holds 11,650 SMS, ~7.9% inbound.
+- **`get_sms_reports`** 404s — `/reporting/sms` is not available here.
+- **`search_conversations`** caps at 100, no offset, sorted last-message descending.
+- **`search_contacts`** has no tag filter and its `query` is substring matching.
+- **`get_users`** needs a companyId; `search_users` returns 401.
+- **GHL holds 0 estimates**, so no quote lives there.
+- **The GHL workflow API saves actions but silently drops triggers.**
+  `ghl_create_workflow` with a trigger fails with a Firestore
+  `5 NOT_FOUND: No document to update` and leaves an empty shell;
+  `ghl_update_workflow_actions` returns "updated successfully" and writes nothing.
+  Verified by reading the workflow back: `triggers: []`. A scheduled sender can be built
+  through the API right up to the trigger, which must be added in the UI.
+  **Always read a workflow back after writing it — the success message is not evidence.**
+
+### 23.5 Calendars: none were bookable
+
+All **27** pre-existing calendars were inactive, so no appointment could be booked at all.
+Created **`Optimus Fiber Appointments`** — `jSOOC383RNxHIRwo6zV8`, active, 30-minute slots.
+
+**It still cannot be booked until open hours are set in the GHL UI.** Tested rather than
+assumed: with no availability, `get_free_slots` returns nothing and `create_appointment`
+fails with "The slot you have selected is no longer available" **even with
+`ignoreDateRange: true`**. The MCP `update_calendar` has no open-hours parameter.
+
+### 23.6 DealMachine, measured
+
+`enrich_address` really costs **1–2 credits per address**, not the ~6 in older notes — 25
+Devonwood addresses cost **39 credits** at a 100% match rate. Neither `enrich_address` nor
+`enrich_latlng` has an `estimate_cost` flag, so probe one and read `credits.used` before
+committing a batch. **`enrich_latlng` needs no ZIP**, which is how gold dots get enriched
+despite street-only addresses.
+
+About **12% of residential rows come back landline-only** with no wireless alternative.
+Those are call leads, not dead leads. (Cross-check §1873: judge reachability across all
+three number columns, not `phone_1` alone.)
+
+### 23.7 The updater lied, and now it cannot
+
+`_raw_refresh()` — the real updater on the field PCs, which have no git — swallowed every
+failure in a bare `except: continue` and printed a success line driven by `got_main`, so it
+announced "refreshed core files" even when eight of nine had failed. Nothing validated a
+download, so a captive-portal or proxy login page returning HTTP 200 was written straight
+over a working `.py`.
+
+Fixed and deployed 2026-08-22: every download is parsed before it lands (`compile()` for
+`.py`, `json.loads()` for `.json`) and anything that does not parse is refused with the
+working copy kept; writes go through a temp file and `os.replace`; every file reports
+updated / already current / FAILED with a reason. `_deploy_manifest()` prints the mtime and
+byte fingerprint of every core file actually on disk, plus `MISSING` for any core file
+absent from that PC. **That block is the answer when somebody says the update didn't take.**
+
+### 23.8 Where the brain lives, and why this was nearly written twice
+
+This file was not findable from `optimus-map-tools` at the start of the session: `main`
+carried a 50-line stub last touched 2026-05-02, and the real brain sat on
+`claude/lead-gen-software-research-brho9a`. A Part 22 was very nearly appended to the stub,
+which would have produced two files both called the brain with no way to tell which was
+current.
+
+`CLAUDE.md` now exists at the root of `optimus-map-tools` and loads automatically in Claude
+Code. The repo is also a **plugin marketplace** — `/plugin marketplace add
+patricksiado-prog/optimus-map-tools` then `/plugin install optimus` — so Cowork and
+claude.ai load the same brain, and a push updates everyone without anyone re-installing.
+`optimus-brain/SKILL.md` is generated from `CLAUDE.md` by `scripts/build_brain_skill.py`
+so the plugin cannot drift from the repo.
+
+**The brain belongs on `main`.** A 3,110-line brain on a research branch is why it took a
+whole session to find.
