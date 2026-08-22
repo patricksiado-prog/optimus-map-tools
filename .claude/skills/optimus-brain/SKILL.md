@@ -63,9 +63,17 @@ next launch, so a push there is a deploy, not a commit.
 ## Sheet tabs
 
 **Hunter-owned — do not edit, do not read wholesale:** `Precise Fiber` (~474k
-rows), `Gold Dots` (no header row: A=Address, B=Captured At, C=Lat, D=Lng),
-`Maps Businesses`, `Fiber Green Biz`, `Upgrade Orange Biz`, `Enriched Leads`,
-`Hunter Status`, `Backend Comm`, `New Fiber Alerts`, `_Dedupe Lock`.
+rows), `Gold Dots` (no header row: A=Address, B=Captured At, C=Lat, D=Lng —
+**3,328 rows, lat and lng both populated**, verified 2026-08-22),
+`Maps Businesses`, `Fiber Green Biz`, `Upgrade Orange Biz`, `Backend Capture`,
+`Backend Analysis`, `Hunter Status`, `Backend Comm`, `_Dedupe Lock`, `_dispatch`.
+
+**Three tabs this file used to name do not exist.** `Enriched Leads` and
+`New Fiber Alerts` were never real. `Fiber Zones` and `Outage Signals` are read
+by the hunter's opening-intel banner and are absent too, which is why that banner
+prints nothing every launch. Do not write code against a tab without checking the
+live tab list first — the full verified list as of 2026-08-22 is in `BRAIN.md`
+part 24.
 
 For anything big: make ONE temp tab, put bounded QUERY/COUNTIF formulas in it,
 read the small result, delete the temp tab. Autosheet has died twice pulling

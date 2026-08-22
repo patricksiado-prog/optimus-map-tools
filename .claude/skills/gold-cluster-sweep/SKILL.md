@@ -243,6 +243,30 @@ Personalize each message individually. No two contacts may receive identical
 text; duplicates get detected and do not count on the Operator Scorecard, and
 identical bulk text is what gets a number flagged.
 
+**Identity: "Patrick with AT&T Fiber." Never name the dealer brand.** Patrick,
+2026-08-22, on seeing "Patrick with Optimus, an AT&T authorized dealer in
+Brazoria County": *"eww fix this message / don't say optimus / we're att."* The
+customer is buying AT&T Fiber and has never heard of the dealership; leading
+with a company they do not recognise reads as a telemarketer. If a compliance
+line is ever wanted back, "with AT&T Fiber (authorized dealer)" is three words,
+not a clause.
+
+**NEVER write opt-out language. GoHighLevel appends its own.** Verified against
+the stored body of the Aug 21 send to Bartlett Ramsey: it ends
+`Reply STOP to opt out.\nReply STOP to unsubscribe.` — ours, then GHL's. Every
+message in that batch shipped a doubled opt-out, which is the single clearest
+tell that a human did not write it. Write the message and stop; the STOP line
+appears by itself.
+
+**Keep the whole thing inside ONE SMS segment — 160 characters INCLUDING the
+27 GHL appends.** So the body budget is ~130 characters. The Aug 21 message ran
+388 characters, three segments, triple cost, and read as a brochure. Length is
+not thoroughness; it is the thing that gets it ignored.
+
+**No price in the first text.** Price turns a heads-up into a pitch and is most
+of what made the old message long. Lead with availability; give the range when
+they reply and ask.
+
 What actually works:
 
 - **Lead with copper retirement, not the promo.** AT&T is retiring copper —
@@ -259,7 +283,22 @@ What actually works:
   will confirm the real number first.
 - Name something concrete about them — the street, the trade, what fiber upload
   actually fixes for that kind of work.
-- End with opt-out language.
+- **Check the tags before writing.** `absentee-owner` means they do not live
+  there — do not write "your address". Ask about the property, not their home.
+  The Aug 21 message asked an absentee owner "if you've got someone in that
+  house", which is nobody's idea of a friendly opener.
+
+**Worked examples — all one segment, no opt-out line, no brand name:**
+
+| Segment | Message |
+|---|---|
+| Green, absentee owner | `Bartlett - Patrick with AT&T Fiber. Fiber is now live at 508 E Miller in Angleton. Want me to check the options for that address?` |
+| Green, owner-occupied | `Hi Maria - Patrick with AT&T Fiber. Fiber just went live on Whittaker Ln. Your address qualifies. Want me to send what's available?` |
+| Gold, copper customer | `Hi Ray - Patrick with AT&T Fiber. You're on our copper line at 214 Dowlen. Copper is being retired and fiber is live there now. Want the upgrade details?` |
+| Gold business | `Hi Dana - Patrick with AT&T Fiber. Fiber is live at your Dowlen Rd shop and you're still on copper. Upload speed is the big change. Worth a look?` |
+
+These are shapes, not scripts — every message still has to differ from every
+other one.
 
 ### 7. Send
 
@@ -446,7 +485,10 @@ cannot be taken back.
 
 - Is every number in the send list `wireless`?
 - Is every message different from every other?
-- Does every message carry opt-out language?
+- Does every message OMIT opt-out language? (GHL appends it — writing your own
+  ships a doubled STOP line.)
+- Is every message one segment: body under ~130 characters?
+- Does any message name the dealer brand instead of AT&T Fiber? Fix it.
 - Is it between 8am and 9pm Central?
 - Does the phone column hold digits only — no labels, no parentheticals?
 - Did you touch only your own tab?
