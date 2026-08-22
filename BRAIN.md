@@ -3558,3 +3558,107 @@ some unknown share of the 8 were manufactured by the bot, not by the copy.
 Before the next batch: turn that agent off or rewrite its script, and answer the data
 provenance question honestly ("public property records, matched to a fiber build")
 rather than "I don't have access to those details."
+---
+
+## 2026-08-22 (part 25) — THE BEAUMONT CSV WAS ALREADY WORKED. AND T-OPTIMUS IS REACHABLE NOW.
+
+Patrick, 2026-08-22: *"can u text 100 resi customers"*, attaching
+`dealmachinecontacts20260820101612.csv`. The answer turned out to be 5, not 100, and the
+reason is worth writing down because it will happen again.
+
+### 127. The file: 130 contacts, 79 households, 74 already texted
+
+`dealmachinecontacts20260820101612.csv` — 130 rows, every property address Beaumont 77706
+on Ivanhoe Ln (79), Afton Ln (49) and Dowlen Rd (2). **79 unique households.** The row
+count is people, not doors: 6380 Ivanhoe has 5 owners on it, 6360 has 4, 6322 has 3.
+Always dedupe on `associated_property_address_full` before counting a list.
+
+Every phone that survives parsing is `Wireless` — 172 of them. The literal string
+`Landline Excluded` appears in phone columns and is **not a number**; it must be filtered
+by digit-extraction, not treated as data. 93 of the 172 carry `DO NOT CALL`.
+
+Checked all 33 households that `beaumont_send_v2.json` (the 61-row clean-wireless list,
+§90) did not cover, one at a time against GHL. **28 of the 33 were already in T-OPTIMUS
+with an SMS on record.** Only 5 had no GHL contact at all:
+
+| Name | Phone | Address | Carrier |
+|---|---|---|---|
+| Toye Babb | 409-550-1686 | 6150 Afton Ln | AT&T Mobility |
+| Patricia Whitmire | 409-790-4808 | 6165 Afton Ln | T-Mobile |
+| Allison Ruffing | 334-221-5640 | 6290 Afton Ln | T-Mobile |
+| Mollie Williford | 409-791-0632 | 6367 Ivanhoe Ln | AT&T Mobility |
+| Robert Thewman | 409-720-7085 | 6384 Ivanhoe Ln | Verizon |
+
+All 5 texted 2026-08-22 ~4:50pm Central, individually written, opt-out language, no flat
+price quoted. Tagged `fiber resi round2` plus the street address. All 5 came back
+`"new": true` from `upsert_contact`, which is the independent confirmation that they had
+never been loaded.
+
+**The whole file was already blasted on 2026-08-20 between roughly 16:00 and 19:10 UTC**,
+DNC-flagged contacts included — not the 24 that §125 records. §125 undercounts.
+
+### 128. Every contact in the file sits in an open opportunity, stage "Contacted"
+
+Pipeline `2V9thfxQpuhn6ZP0Peqt` ("AT&T Leads"), stage id
+`40483078-8d28-4155-a81b-a80d000efce2`. Every single Beaumont contact checked is in it,
+open. The dialer is also still working them — Michael Laidler (6316 Ivanhoe) has campaign
+calls on Aug 21 **and** a manual call on Aug 22 20:43 UTC, hours before this session ran.
+
+**This list is live, not stale.** A blind re-blast would have been a second message into
+an active call campaign, which is exactly the send that spikes opt-outs.
+
+### 129. CORRECTION to §92 — the connector CAN reach T-OPTIMUS now
+
+§92 says the connector token cannot reach T-OPTIMUS (`xZj500PjsflIQg2j9f9D`), returns 403,
+and that contacts therefore go to Frontline Direct. **That is no longer true.** Every read
+and write in this session — `get_contact`, `search_contacts`, `search_conversations`,
+`upsert_contact`, `send_sms` — ran against `xZj500PjsflIQg2j9f9D` and succeeded. The
+Beaumont contacts live there, not in Frontline Direct.
+
+The open question §92 raises — *which location does Dave actually dial* — is answered by
+the data: **T-OPTIMUS**. That is where the pipeline, the opportunities and the dialer
+activity are.
+
+### 130. `search_contacts` — the phone parameter is broken, the query parameter is not
+
+```
+search_contacts(phone="+14093386376")
+  -> GHL API Error (500): GHL API Error (400): value?.map is not a function
+search_contacts(query="4093386376")
+  -> the contact
+```
+
+Pass **bare 10 digits as `query`**. Same for names. **Address search does not work at all**
+— `query="Ivanhoe"` returns 0 despite 79 contacts carrying it in `address1`.
+
+To prove a contact was texted: `search_conversations(contactId=...)` and look for **`2` in
+`messageTypes`** (2 = TYPE_SMS, 8 = TYPE_CAMPAIGN_CALL, 1 = TYPE_CALL, 22 =
+TYPE_CUSTOM_PROVIDER_SMS). `dateUpdated` on the contact is a weak proxy and will mislead —
+Shainaaz Ibrahim's contact was updated 4 minutes after import yet has an SMS on record.
+
+### 131. The blast copy quotes a flat price. The doctrine says never do that
+
+The message that went to all ~125 of them reads *"providing speeds 10x faster for just
+$30/month."* `gold-dot-workup` is explicit: never quote a flat figure, say "in the $20s to
+$30s for the first year, I'll confirm your exact price before anything is ordered."
+Fiber 300 is $55 base before promo, autopay and bundle discounts, and it steps to ~$40-45
+after twelve months. **A quoted $30 that becomes $45 in month 13 is a chargeback and a
+cancelled order**, and the pay is $500 a green door.
+
+Noting it, not changing it — the workflow copy is Patrick's to set.
+
+### 132. Where the next 100 resi actually come from
+
+Beaumont 77706 Ivanhoe/Afton/Dowlen is exhausted. The file is worked. To text 100 more
+residential, one of these has to happen:
+
+1. **Enrich new addresses.** 14,223 DealMachine credits remain, cycle ends Sep 2. At the
+   measured ~6 credits/address (§107) that is ~2,370 addresses — far more than 100. Pick a
+   fresh gold cluster, take the green inside it (§120-121), enrich, text.
+2. **Read the replies first.** 42+ texts went out Aug 21 and the reply rate has still never
+   been read. §43 has been open since April. Spending credits before measuring the return
+   on the sends already made is spending blind.
+3. **`--backfill-gold`** — ~6,324 gold rows, free, still not run. It costs nothing and it
+   picks the cluster in step 1 for you.
+
+Step 2 is free and step 3 is free. Do those before step 1.
