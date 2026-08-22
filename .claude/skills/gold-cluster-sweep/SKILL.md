@@ -44,6 +44,54 @@ formulas in it, read the small result, delete the temp tab.
 `Backend Comm`, `New Fiber Alerts`, `_Dedupe Lock`. The hunter writes to these
 constantly and your edit will collide with a live sweep. Make your own tab.
 
+## Step 0: work the backlog before hunting anything new
+
+Do this first, every time. The warmest leads in this business are already in the
+CRM, not out on the map, and they cost nothing to find.
+
+**People who already said yes.** Search contacts for the tag `replied-yes`, plus
+`interested`, `client is interested`, `hot lead`, `hot-lead`, `warm`,
+`commercial-warm`, `callback`, `call back`, `callback-scheduled`, `appt booked`,
+`appt-was-set`, `needs-followup`. Exclude `not interested`,
+`wavv-not-interested`, and the closed family (`sold`, `sold-won`, `command-sold`,
+`command-won`, `fiber-won`, `mobility-sold`) so nobody re-pitches won business.
+
+Then check whether each one is still reachable, because this is where the money
+leaks: look at `dndSettings`. `SMS.status = "permanent"` with `STOP_KEYWORD`
+means they opted out and are gone. `SMS.status = "active"` set by the STOP
+workflow means the same thing in practice. A contact can be tagged both
+`hot-lead` and opted-out at once — that combination is the sound of a lead dying
+in the queue.
+
+Measured on 2026-08-22: **22 contacts carried `replied-yes`. 7 were already
+unreachable** — 3 hard opt-outs and 4 DND'd — and two of those seven had also
+been tagged `hot-lead`. The other 15 had never been closed, the oldest sitting
+since June 30. Nobody had looked. This is why Patrick's rule is *any reply gets a
+call the same hour*, and why the backlog dig comes before new prospecting.
+
+**Quotes that were sent and never closed.** A quote is the strongest buying
+signal there is — they asked for a number. Search email for quotes sent to
+customers. Search the *whole mailbox*, not just sent mail, because a quoting
+system may copy him rather than send as him. Also check GHL `list_estimates` and
+`list_invoices`.
+
+Two things learned doing this: searching only `from:` his own address misses
+system-generated quotes entirely, and a customer question left unanswered in a
+thread is worth more than any cold lead on the map — one 2025 thread had a
+customer asking twice for a full quote with no reply after.
+
+Re-quote at today's pricing. Never resend an old number: promo windows move, and
+device offers go stale within months.
+
+**Contacts who replied but were never dispositioned.** `lastMessageBody` only
+holds the most recent message, so anyone who replied and got answered shows as
+outbound-last — scanning last messages will not find them. Use tags and pipeline
+stage instead. And read replies before counting them: business missed-call
+autoresponders read as engagement and are not.
+
+Everything found here goes into a backlog tab with an owner, an action and a due
+date, and gets worked before the next cluster.
+
 ## The sweep
 
 ### 1. Find the cluster
