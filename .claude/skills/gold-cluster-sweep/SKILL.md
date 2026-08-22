@@ -299,6 +299,52 @@ Beware false positives when reading replies: business missed-call autoresponders
 ("Sorry we missed your call…") look like engagement and are not. Read the actual
 message before counting it.
 
+### 8b. Hit every channel the lead gave you, not just SMS
+
+A cell number is one channel. DealMachine usually returns **emails too** — often
+two or three per owner — and the dialers are already built. A lead worked on
+three channels converts far better than the same lead texted once, and it costs
+nothing extra because the enrichment already paid for the data.
+
+**Email.** `send_email` with `contactId`, a subject and a body. Worth it because
+email carries what SMS cannot: the copper-retirement explanation, the speed
+tiers, a real comparison. It also reaches the landline-only rows that SMS can
+never touch, which is roughly 12% of any residential batch.
+
+Keep it plain text and personal, not a marketing blast — a short note from
+Patrick reads as a heads-up, an HTML template reads as spam and lands in
+Promotions. Include an unsubscribe line: commercial email needs one, and the
+same opt-out discipline that protects the sending number protects the domain.
+
+**Dialer.** Loading a contact into a dialer workflow is `add_contact_to_workflow`
+with `contactId` and `workflowId`:
+
+| Workflow | ID |
+|---|---|
+| Optimus Dave | `4985f898-4015-4da2-acd3-fabb963b15eb` |
+| Optimus Dialer 2 — Zack Call Queue | `9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8` |
+| Optimus Dialer 3 — Fiber Green Biz Auto Loop | `b21e43bd-75ee-45a1-8764-bce4f3ab0771` |
+| Optimus Fiber Biz — Power Dialer Queue | `41e00387-a766-4975-bbcd-627c684a3ee1` |
+
+`Optimus Dave` has **no trigger** — it only ever runs on contacts you enroll
+deliberately, and its call windows are Mon–Fri 09:00–17:00. That makes it safe to
+load a batch into: nothing fires on its own, and nothing dials outside hours.
+
+Load the landline-only rows and every gold business into a dialer rather than
+dropping them. They were never dead leads, only un-textable ones.
+
+### 8c. Which ZIPs to scan next
+
+The hunter's opening banner reads `Fiber Zones` and prints the ZIPs turning up
+the most NEW green, so the next sweep aims itself. If that tab is empty the
+banner says so — run `fiber_zone_scanner.py` to populate it.
+
+When picking between ZIPs, gold density is the signal: lots of gold and little
+grey means fiber was lit recently and nobody has converted it. Public AT&T
+announcements are not useful for this — they report at the level of "725,000
+locations across 38 neighborhoods", which cannot aim a sweep at a street. Our own
+gold data is finer-grained than anything published.
+
 ### 9. Turn interest into a booked visit, and hand it to a person
 
 A text that gets a reply is not a sale — it is a lead with a clock on it. Every
@@ -328,12 +374,24 @@ Route by what the lead needs:
   street so one trip covers many addresses. This is the whole point of working a
   *cluster* rather than scattered leads.
 
-**Booking an actual calendar appointment does not work right now.** All 27
-calendars in the location are inactive, so `create_appointment` has nothing to
-book into. Until somebody activates one, tasks with due dates are the scheduling
-mechanism — say so plainly rather than reporting a booking that did not happen.
-Once a calendar is active, use `get_free_slots` then `create_appointment` with
-`assignedUserId`.
+**Booking a calendar appointment — read this before promising one.**
+
+There is now an active calendar for this: **`Optimus Fiber Appointments`**, id
+`jSOOC383RNxHIRwo6zV8`, 30-minute slots, auto-confirm. It was created on
+2026-08-22 because all 27 pre-existing calendars were inactive and nothing could
+be booked at all.
+
+**It still needs open hours set in the GoHighLevel UI before booking works.**
+This was tested, not assumed: with no availability configured, `get_free_slots`
+returns nothing and `create_appointment` fails with *"The slot you have selected
+is no longer available"* — even with `ignoreDateRange: true`. The MCP's
+`update_calendar` has no parameter for open hours, so this is a one-time manual
+step: open the calendar in GHL and set availability (Mon–Fri business hours).
+
+Once hours exist: `get_free_slots` to find a real opening, then
+`create_appointment` with `calendarId`, `contactId`, `startTime`, and
+`assignedUserId`. Until then, use tasks with due dates and say plainly that a
+task was created rather than reporting a booking that did not happen.
 
 Dave is the one who dials. Do not invent rep assignments beyond what Patrick has
 said — if you do not know who covers a pocket, leave the task unassigned and
