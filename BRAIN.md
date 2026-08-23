@@ -233,3 +233,71 @@ Those skip-trace to a real owner record with a cell for ~2 credits. Office-tower
 and LLC-held businesses return `contacts: []` and are where credits get wasted;
 an 80-row sample of the "untapped Houston" pool was mostly apartment complexes,
 national chains, toll-free numbers and Greenway Plaza suites.
+
+## 22.14 Gold Dots audit — what the tab is actually made of (2026-08-23)
+
+Patrick: *"I wanna clean up our gold dot list make sure it's accurate so verify
+pleaee / im suspicious of it / don't mind if we have to rescan but want good data
+accurate data."* He is right to be. Six findings, all reproducible from the repo.
+
+**1. The gold rule changed mid-history, and the tab holds rows from both rules.**
+`classify_wire()` in `precise_fiber_hunter.py` used to send a customer with an
+*unrecognised* build code to GOLD. It now sends that customer to GREY. Rows
+captured before the change are therefore contaminated with existing fiber
+customers — the exact thing Patrick hit when he clicked a gold dot and got a
+customer already on fiber. The tab has no column that says which rule wrote a
+row, so the bad ones cannot be picked out in place.
+
+**2. The docstring above `classify_wire()` still describes the OLD rule.** It
+says "every other customer is a copper-upgrade GOLD" directly above code that
+returns grey for that case. Anyone reading it will re-introduce the bug. Fix the
+comment, not the code — the code is right.
+
+**3. `backend_classifier.py` ships with EMPTY code tables.**
+`FIBER_BUILD_CODES = set()` and `COPPER_BUILD_CODES = set()`, and nothing in that
+file ever reads `build_codes.json`. Every customer comes back `CUSTOMER`, so that
+module **can never emit GOLD**. `fiber_scout.py`, `zip_reader.py` and
+`verify_gold_capture.py` all import it. Proof: running
+`verify_gold_capture.py _live/serviceability_raw.json` reports `fttp-gpon` as an
+"undecodable" build code — a code that is sitting in `build_codes.json`. The
+hunter has its own classifier that does load the JSON, so Gold Dots itself is not
+zeroed; but any gold figure produced by the scout path is fiction.
+
+**4. `IP-CO` is a live build code in neither list.** 9 of 105,500 records in
+`_live/backend_analysis.txt`. Real gap, negligible volume — it cannot explain any
+gold shortfall. Confirm one on the map before adding it; guessing into the money
+path is how the last bug happened.
+
+**5. The dedupe skips row 1.** `_ensure_gold_tab()` seeds its `seen` set with
+`gw.col_values(1)[1:]`, which assumes a header row. The live tab has **no header
+row** (verified 2026-08-22). So row 1 is a real address that is never in `seen`
+and gets re-appended on every run that captures it.
+
+**6. The writer and the tab disagree on shape.** `write_gold_dots()` writes eight
+columns — Address, Captured At, Lat, Lng, Business, Phone, Run ID, Operator — and
+expects a header. The live tab has four populated columns and no header. The
+existing 3,328 rows therefore carry **no Run ID and no Operator**: there is no
+provenance on any of them.
+
+**The volume check says the same thing.** In the 105,500-record capture in
+`_live/backend_analysis.txt`: 62,942 non-customers (green) and 42,558 customers,
+of which 42,456 are FTTP-GPON (99.76% already on fiber → grey) and 93 are copper
+(gold). Gold is 0.088% of dots; green:gold is about 677:1. Against 481,576 green
+in Precise Fiber the current rule predicts roughly **711** gold. The tab holds
+**3,328** — about 4.7x more. That over-count is consistent with finding 1 and is
+the quantified version of Patrick's suspicion.
+
+**Error runs both ways.** `BACKEND_LEAD_CAP = 3000`: AT&T silently truncates a
+"Search this area" reply at ~3,000 leads, so dense viewports lose addresses with
+no error raised. Gold is over-counted historically and under-captured in dense
+ground at the same time.
+
+**Conclusion: the 3,328 rows cannot be audited in place** — no provenance, no
+rule stamp, no header. They can only be re-verified against AT&T. Rebuild beats
+clean-up.
+
+**Also true, and separate from any bug: the scanned territory is genuinely
+fiber-saturated.** 99.76% of AT&T customers in the captured data are already on
+FTTP-GPON. Gold really is rare where we have been scanning. 77019 (River Oaks) is
+long-converted ground — matching the team's own guidance: lots of grey = old
+area, already worked over, move on.
