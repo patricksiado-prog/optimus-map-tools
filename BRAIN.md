@@ -1116,3 +1116,73 @@ especially, a claim that agrees with you.
 
 Every item above is verified by unit test, not by a field run. **No sweep has
 completed.** Until one does, none of this is known to work on live data.
+
+## 22.24 The session was the bug, all day (2026-08-23, evening)
+
+**A 150-cell sweep captured nothing, and the reason was not in our code.**
+
+The console said it outright once the reporting was good enough to show it:
+
+```
+!! AT&T REPLIED 301 -- NOTHING CAN LAND THIS RUN
+!! REDIRECTED TO LOGIN -- not logged in, nothing lands
+!! AT&T SENT 200 BUT THE BODY IS NOT DATA:
+!! NOT JSON -- First 120 chars: <!DOCTYPE html> <html lang="en">
+```
+
+Every cell panned, pressed *Search this area*, and received a login page.
+150 times. Every cell scored `+0`.
+
+### The trap: a half-dead session looks perfectly healthy
+
+The cookie still authenticated the page shell. **The map kept showing dots** —
+green, gold and grey, thick across Devonwood — because those were fetched
+*before* the session went stale. So the screen looked right while the data path
+was shut. That is why this read as a code bug for hours: the evidence a human
+looks at first was lying.
+
+Patrick, reasonably: *"how did u break the green too!!"* — and the check that
+settles it is worth recording. **Nothing in the decode path changed all day.**
+Every one of the 28 commits was reporting, the login gate, or the writer. Green
+scored zero for exactly the same reason gold did: there is no green in a login
+page. Verify before you defend, and verify before you accept blame.
+
+### What was built in response
+
+- **`recover_session()`** — three consecutive auth failures stop the sweep,
+  clear the cookies so AT&T must present a real login, wait for the sign-in,
+  and **resume where it left off**. Telling the operator to log out by hand
+  afterwards is not a fix; it is a chore handed back. Any real reply clears the
+  streak, so one blip never interrupts a healthy sweep.
+- **Crash capture** — an unhandled exception or a non-zero `sys.exit` now
+  publishes its type, message and traceback.
+- **Per-run heartbeats** — a second launch used to overwrite the shared
+  breadcrumb, and did: the trail of the run that was working was erased by the
+  one that died in 1.5 seconds.
+- **`_as_spreadsheet()`** — three opening-intel lines were failing with
+  `'Worksheet' object has no attribute 'add_worksheet'`, one of them reading
+  *"could not read 'Gold Dots'"*. That is a banner error that looks exactly like
+  gold capture being broken. All 15 sheet entry points now normalise the
+  argument instead of trusting the caller.
+
+### Process hygiene is a real failure mode
+
+Three separate runs today were killed by **two hunters sharing one Chromium
+profile**, and a **zombie run from 15:17** surfaced at 18:08 having sat open for
+three hours, overwriting the shared report with zeros. One window at a time is
+not a style preference; it is a correctness requirement.
+
+### The idea that should have come first
+
+Gold and grey are identical on the wire except `curr_ntwrk_bld_type_cd`, and
+`unavailable` — the most common value — is in neither list. Every classification
+of those dots has been reverse-engineered from captures, and both guesses have
+been wrong in production.
+
+**But AT&T's own map paints them correctly from that same payload.** The rule is
+in their JavaScript, already sitting in the browser profile. `decode_gold.py`
+now reads it out of the cache.
+
+That was available from the first hour. Instead the day went to inferring a rule
+that was sitting on disk the whole time. **When a system demonstrably already
+knows the answer, read its answer before deriving your own.**
