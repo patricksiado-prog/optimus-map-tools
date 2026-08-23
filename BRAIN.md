@@ -301,3 +301,90 @@ fiber-saturated.** 99.76% of AT&T customers in the captured data are already on
 FTTP-GPON. Gold really is rare where we have been scanning. 77019 (River Oaks) is
 long-converted ground — matching the team's own guidance: lots of grey = old
 area, already worked over, move on.
+
+## 22.15 The day capture died silently — what broke, what I got wrong (2026-08-23)
+
+A full day was spent chasing a gold-classification bug that was not a
+classification bug. Writing the whole thing down, including the wrong turns,
+because the wrong turns cost more hours than the fix did.
+
+### The actual defect: two paths that threw AT&T's answer away without a word
+
+`precise_fiber_hunter.py`, the serviceability response handler:
+
+1. **Non-200 replies** logged one console line and returned. A 301 bounce to
+   login printed `(serviceability reply 301 -- skipping, map keeps moving)`,
+   which scrolls past in a fast sweep and is persisted nowhere. The file's own
+   comment had predicted this exact failure and it happened anyway.
+
+2. **A 200 whose body is not JSON** hit a bare `except Exception: return`.
+   Nothing counted, nothing logged, nothing said.
+
+AT&T's login page returns **200 with an HTML body**. So `json.loads` threw, the
+response evaporated, `svc_seen` never incremented, and every cell reported
+`+0 (total 0)`. The run then reported "no serviceability responses seen".
+
+**The tell was that GREEN and GOLD died together.** A classifier fault produces
+one colour or the wrong colour. Losing every colour at once means nothing is
+reaching the classifier at all — the failure is upstream, in delivery.
+
+### Why it looked like a classification problem
+
+The map kept drawing green and orange dots the whole time. That is not proof the
+feed is alive: dots already rendered stay on screen, and a fresh
+`Search this area` can fail without clearing them. **Seeing dots proves nothing
+about whether capture works.**
+
+### Wrong turns, so nobody repeats them
+
+* **"The dots come from Mapbox tiles, the API is separate."** Wrong. The July
+  endpoint inventory (`_live/net_endpoints.txt`) lists only Mapbox *base map*
+  tiles — terrain and streets. The dots are drawn client-side from
+  `fiberMap.cfc` JSON. One source, not two.
+* **"The response is too small, it must be an error page."** Wrong reasoning.
+  The working July run returned **5,713 bytes** and decoded **500 leads** — the
+  bodies are gzipped, so byte size says almost nothing. Today's failing response
+  was 7,593 bytes, i.e. *larger* than a known-good one.
+* **"83d2137e is not one of my builds."** Wrong: compared with sha1 when
+  `_file_stamp()` uses **sha256**. Always hash the way the tool hashes.
+* **Predicted the row-1 dedupe bug would show as duplicate rows in Gold Dots.**
+  It did not — the exported 3,328 rows contain **zero** duplicates. The code
+  defect was real; the damage was not there.
+
+### What the session token research says
+
+`_live/backend_exchange.txt` holds the real request:
+
+```
+GET /yourefer/api/fiberMap.cfc?method=getMapData&lon=..&lat=..
+    &attuid=zg431x&csrfToken=CD619C0F...
+RESP: 200  text/html;charset=UTF-8
+```
+
+Every call carries a **csrfToken** and an **attuid**, both session-bound. When
+they go stale AT&T answers 200 with a login page rather than an error code. The
+endpoint is declared `text/html` but really serves JSON, so content-type sniffing
+cannot tell data from a login wall — **parse it as JSON first, then decide.**
+
+### Fixed
+
+* Both silent paths now print a loud banner naming the cause and the remedy, and
+  publish it to the feed.
+* `optimus_feed.py` — every run pushes counts, undecoded build codes with sample
+  addresses, dedupe/verification totals, and up to 300 records **with their
+  build code** to `optimus/_feed/latest.json`. Screenshots of a console can not
+  carry `curr_ntwrk_bld_type_cd`; this can. The subscriber BAN is published as a
+  boolean only, never the account number.
+* `diagnose()` returns a plain-English verdict for six cases: login page,
+  `success:false`/403, valid-but-empty, renamed fields, records that *do* parse,
+  and not-JSON-at-all.
+
+### Standing rules this produced
+
+* **A silent zero is a bug, not a result.** Any path that drops a response must
+  say so on the console AND in the feed.
+* **Never diagnose from a console photograph.** Push the evidence to GitHub and
+  read it.
+* **Dots on screen are not proof of capture.** Only a non-zero `+N` is.
+* **Before blaming classification, check whether anything arrived.** Green and
+  gold failing together always means delivery, never classification.
