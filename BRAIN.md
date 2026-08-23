@@ -800,3 +800,79 @@ field. First completed run is the first real evidence — and it should answer,
 in one shot, whether the Mapbox hook is alive, whether the map sits in a usable
 zoom band, what the dot layers are named, what properties their features carry,
 and whether AT&T's API answered at all.
+
+## 22.20 It was the login page. Eight empty reports, one cause (2026-08-23)
+
+**The answer, confirmed from the field.** A photo of the hunter's own browser
+showed `youachieve.att.com/yourefer/fiber/` sitting on **"Choose your method of
+access — AT&T Employee / AT&T Retiree/Affiliate with login / without login."**
+
+Not the fiber map. The access chooser. The session was logged out.
+
+Everything follows from that. The hunter loaded the URL, got a 200, carried on
+as though it were on the map, never issued a `fiberMap.cfc` request, captured
+nothing, and reported a clean zero. Eight runs today, eight identical empty
+reports, one cause — and none of the eight said the word "login."
+
+### What the reports were actually telling me
+
+Every run today published this:
+
+```
+delivery      null      raw_features  null      rendered  null
+classified    0         written       0         diag      {}
+```
+
+`null` is not `0`. `null` means **never measured**. Every boundary counter I
+built lives INSIDE the sweep, so a run that dies before the sweep starts trips
+none of them. The reports were not describing a broken sweep — they were the
+sound of no sweep at all, and I read them for hours as if they were data.
+
+Worse, `first_failure()` returned **`classified`** on every one of them, because
+`classified=0` was the first measured value and nothing upstream contradicted
+it. The tool I built to stop me guessing pointed confidently at the wrong file.
+A diagnostic that answers when it has no evidence is worse than one that stays
+quiet: I trusted it.
+
+### The three fixes
+
+1. **`_logged_in(page)` — refuse to sweep a login page.** Checked positively
+   (is the map canvas there?) and then negatively (does the body carry
+   `choose your method of access`, `at&t employee`, `global logon`, `user id`?).
+   Either test alone is fooled: the portal landing page has no map but is not a
+   login, and a slow map render is not a logout. A logged-out run now prints the
+   problem in block capitals, waits **10 minutes** for the sign-in (password plus
+   MFA on a phone is not a 60-second job), and **stops** rather than sweeping a
+   login page and reporting zero. Tested against the exact chooser text from the
+   photo, a Global Logon form, a live map, the portal landing, and an unreadable
+   page — 5/5.
+
+2. **A phase breadcrumb, pushed live.** `optimus_feed.phase()` stamps every
+   startup milestone — `start, browser_up, page_loaded, sheet_open,
+   resume_loaded, wait_done, diag_done, sweep_start, pass_done, exit` — and
+   pushes each one to `optimus/_feed/heartbeat.json` as it happens. Pushed, not
+   buffered: the whole point is to survive a run that never reaches its own exit
+   report. A hung or force-quit run now names the last thing it did. The exit
+   report also lists what was **NEVER REACHED**.
+
+3. **The diagnostic stops guessing.** `first_failure()` will not blame a
+   boundary when nothing upstream was ever measured, and `truth_report()` now
+   calls an all-null run **"THE SWEEP NEVER RAN"** instead of **"HEALTHY."**
+   Seven scenarios tested, including today's — it no longer accuses the
+   classifier.
+
+### The lesson, and it is not the one from 22.18
+
+22.18 said silence is the disease. This is the sequel and it is nastier: I
+replaced the silence with a **confident wrong answer**. Three separate times
+today I reasoned from an all-zero report toward a bug in the classifier, the
+writer, the zoom band — and the run had never opened the map.
+
+So: **a measurement that was never taken must never be reported as a
+measurement.** `null` and `0` are different facts and code that conflates them
+will send the next person to the wrong file, fast and with conviction. Check
+liveness before correctness — before debugging what a tool produced, prove it
+ran at all.
+
+And the cheap check I skipped for a full day: **look at the screen.** One photo
+of the browser answered what eight telemetry reports could not.
