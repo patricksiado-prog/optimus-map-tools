@@ -388,3 +388,168 @@ cannot tell data from a login wall — **parse it as JSON first, then decide.**
 * **Dots on screen are not proof of capture.** Only a non-zero `+N` is.
 * **Before blaming classification, check whether anything arrived.** Green and
   gold failing together always means delivery, never classification.
+
+## 22.16 Five candidate solutions, written for outside review (2026-08-23)
+
+Written to be argued with. Each option states what it is, the evidence behind
+it, what it costs, how it fails, and how we would know it worked. They are not
+mutually exclusive; the recommended order is at the end.
+
+Shared facts every option has to respect:
+
+* The dealer map is **Mapbox GL JS**. The dots are GeoJSON features inside the
+  page's map object. The hunter already hooks `mapboxgl.Map` at page-init
+  (v0.5) and can call `queryRenderedFeatures()`. Pixel detection exists only as
+  a fallback and is OFF (`ALLOW_CLICK = False`).
+* The address data comes from `GET /yourefer/api/fiberMap.cfc?method=getMapData
+  &lon=..&lat=..&attuid=..&csrfToken=..`, declared `text/html` but serving JSON.
+* AT&T caps a reply at **500 records** (measured; the code carried 3000 for
+  months and the truncation guard therefore never fired).
+* The classifying field is `curr_ntwrk_bld_type_cd`. `fttp-gpon` = fiber/GREY,
+  `fttn-bp`/`ip-rt` = copper/GOLD, `unavailable` is extremely common and decodes
+  to neither.
+* A live popup on a confirmed gold dot reads
+  `Status: Existing Copper Customer`. That string does **not** appear anywhere
+  in the wire payload — it is rendered client-side.
+
+---
+
+### Solution 1 — Make the session self-healing
+
+**What.** Detect a dead API session and recover without a human. Watch for the
+three signatures — non-200 redirect, `success:false`, and a 200 whose body is
+HTML — and on any of them re-navigate the login flow, let the page mint a fresh
+`csrfToken`, then resume the sweep from the cell that failed.
+
+**Evidence.** `backend_exchange.txt` proves every call is session-bound. Today
+every cell returned `+0` while the map still showed dots, which is what a dead
+session plus a live tile cache looks like.
+
+**Cost.** Small. The detection already exists as of `cb915e1d`; this adds the
+recovery arm.
+
+**How it fails.** If AT&T requires interactive MFA the re-login cannot be
+automated, and the honest outcome is a loud stop rather than a silent one. Also
+risks a login loop if the failure is not actually auth — needs a hard cap of one
+retry per run.
+
+**Verified when.** A run that hits a stale session recovers and continues, and
+the feed shows a resume rather than a zero.
+
+---
+
+### Solution 2 — Second capture path via `queryRenderedFeatures()`
+
+**What.** Read the dots from the map object instead of the network. Promote the
+existing v0.5 hook to a first-class path: on each viewport call
+`queryRenderedFeatures()`, take each feature's geometry (exact lng/lat) and
+properties, and emit records without touching `fiberMap.cfc`.
+
+**Evidence.** The hook is already written and has ~20 call sites. The map cannot
+draw a dot it does not have, so **anything visible on screen is queryable.** This
+is the only option that is immune to a stale API session.
+
+**Cost.** Medium. The hook exists; what is unproven is whether the features carry
+usable properties.
+
+**How it fails.** The features may carry only a colour and a geometry with no
+address and no `curr_ntwrk_bld_type_cd`. Then it yields position and colour but
+not the classifying field — useful for *finding* gold pockets, not for building
+a callable list. Also bounded by `maxzoom`: above the layer's max the layer is
+hidden and returns nothing.
+
+**Verified when.** One run dumps the property keys of a single dot feature. That
+single dump decides whether this is a full replacement or only a locator.
+**This is the cheapest unknown to close and should be done first.**
+
+---
+
+### Solution 3 — Call the API directly, drop the browser button
+
+**What.** Harvest `csrfToken` + `attuid` + cookies once from the live session,
+then issue `fiberMap.cfc` requests ourselves over a lat/lng grid. No
+"Search this area", no panning, no waiting on the map to paint.
+
+**Evidence.** `backend_exchange.txt` documents the exact request. Every failure
+today was in the browser-driven path: the button not being found, cells panning
+over empty ground, responses cancelled mid-pan.
+
+**Cost.** Medium. The request shape is known; the work is grid planning, cookie
+handling and pacing.
+
+**How it fails.** Rate limiting (the code already knows 429), and the 500-record
+cap means the grid must subdivide wherever a reply comes back at exactly 500 or
+ground is silently lost. It also drops any evidence that only exists in the
+rendered popup. Tokens still expire, so it depends on Solution 1 for longevity.
+
+**Verified when.** A scripted grid over Prestonwood Forest returns the same
+addresses as a manual sweep, with no reply landing exactly on 500.
+
+---
+
+### Solution 4 — Store observations, classify separately
+
+**What.** The hunter writes an immutable observation per dot — address, lat, lng,
+captured_at, ban_present, raw build code, run_id, scanner_version,
+classifier_version — and classification becomes a separate pass over that store.
+
+**Evidence.** The 3,328 gold rows cannot be audited because they carry no build
+code and no rule stamp. The rule changed on Aug 20 and there is no way to tell
+which rows came from which rule. When `IP-CO` or `unavailable` is finally
+decoded, this is the difference between reprocessing a file and re-driving half
+a million addresses.
+
+**Cost.** Medium-high, and it touches the sheet schema — the highest-risk edit.
+
+**How it fails.** The sheet is the team's UI; a schema change that breaks their
+view is worse than the problem. Mitigation: additive columns only, written by
+name against the live header (already implemented in `cb915e1d`), never by
+position.
+
+**Verified when.** A build code can be reclassified and the existing rows update
+without a single new AT&T request.
+
+---
+
+### Solution 5 — Re-verify the existing 3,328 by coordinate
+
+**What.** Do not rescan and do not discard. Every legacy gold row has lat/lng.
+Push those coordinates back through AT&T and re-read each one, writing
+VERIFIED_GOLD / GREY / UNKNOWN into a fresh output while `GOLD_UNVERIFIED_LEGACY`
+is preserved untouched.
+
+**Evidence.** 3,328 rows, **zero duplicates**, **100% carry lat/lng** — verified
+against the export. Two of two spot-checked rows came back customers with no
+copper status, and the one confirmed gold dot found by hand (8211 Coolshire) is
+**not in the list at all**. So the list is both contaminated and incomplete.
+
+**Cost.** Low relative to a rescan — 3,328 lookups against ~500 per reply.
+
+**How it fails.** Depends on a working API path, so it is gated on 1 or 3. And
+if `unavailable` is never decoded, a large share lands in UNKNOWN and the
+exercise only partly pays.
+
+**Verified when.** Every legacy row carries a verdict and a build code, and the
+gold count agrees with what is visibly orange on the map.
+
+---
+
+### Recommended order, and why
+
+1. **Solution 2's property dump** — one run, closes the biggest unknown, decides
+   whether an API-independent path exists at all.
+2. **Solution 1** — nothing else survives a session that dies mid-sweep.
+3. **Solution 3** — only if the browser path stays unreliable after 1.
+4. **Solution 4** — before any large rescan, or the same un-auditable data is
+   simply regenerated at scale.
+5. **Solution 5** — last, because it consumes whichever capture path wins.
+
+### The question none of the five answers
+
+**What build code does a confirmed copper customer return?** 8211 Coolshire
+reads `Status: Existing Copper Customer` in its popup. Until its
+`curr_ntwrk_bld_type_cd` is known, `unavailable` cannot be judged — and
+`unavailable` is the most common value in the data. Called gold it produces the
+contaminated 3,328; called grey it may be discarding every real upgrade lead.
+**One captured record from that address settles it, and every option above is
+worth more after that answer than before it.**
