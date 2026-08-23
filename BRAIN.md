@@ -876,3 +876,73 @@ ran at all.
 
 And the cheap check I skipped for a full day: **look at the screen.** One photo
 of the browser answered what eight telemetry reports could not.
+
+## 22.21 Gold capture — the fix, and why green never had this problem (2026-08-23)
+
+**The asymmetry, stated plainly.** Green is detected by an **absence**: no
+`subscriber_ban` means a non-customer, and that test never fails. Gold is
+detected by a **match**: `curr_ntwrk_bld_type_cd` has to appear in the copper
+list in `build_codes.json`. So green captures ~496k rows and gold captures
+almost nothing — not because the sweep misses gold dots, but because it cannot
+name what it caught.
+
+**The hinge is one value: `unavailable`.** It is AT&T's most common build code
+and it is in **neither** list. Every customer carrying it falls through to a
+guess, and both guesses have now failed in production:
+
+| Guess | What it did |
+|---|---|
+| `gold` | Put existing FIBER customers on the call list. Patrick clicked a gold dot and got somebody already on fiber. Produced the contaminated 3,328 rows. |
+| `grey` | Deleted them. Grey never reaches the sheet, so real $140 upgrades vanished with no trace. |
+
+Two wrong answers to a question nobody had actually looked up.
+
+### What was built
+
+1. **`Gold Recheck` tab.** A real CUSTOMER on an undecodable build code is now
+   **written**, with its build code, instead of dropped. Its own tab — so
+   `Gold Dots` stays confirmed-only and nothing unconfirmed can reach a rep.
+   It also touches nothing on the live headerless 3,328-row tab: adding a header
+   there would shift every existing row, and writing unconfirmed rows without a
+   Tier column would recreate the exact defect that made those rows unauditable.
+   Dave works `Gold Dots`. `Gold Recheck` is a review queue, not a call list.
+
+2. **`Tier` + `Build Code` on the Gold Dots header.** A row now records **why**
+   it was called gold. Not recording that is precisely why the existing 3,328
+   rows cannot be told apart — `VERIFIED_GOLD` vs `NEEDS_RECHECK` is
+   reconstructable going forward, never backward.
+
+3. **Customer specimens in the feed.** The full record for CUSTOMER dots
+   (BAN redacted to a boolean, capped at 40, spread across build codes rather
+   than first-come). **The field that separates a DSL customer from a fiber one
+   is already in the payload and has never been looked at** — `speed` is the
+   obvious candidate; the sample record shows `"speed":""` on a non-customer.
+   One sweep over a customer pocket should decode `unavailable` from data.
+   When it does, every `Gold Recheck` row carrying that code promotes to real
+   gold in a single move — which is the whole reason the build code is stored
+   on the row.
+
+### The identity bug the tests caught
+
+Writing tests for the recheck tab surfaced a live defect in `keys_for()`:
+**AT&T geocodes neighbouring townhouses to a single point**, and the coordinate
+key merged them. 8231 and 8233 Devonwood arrived on the same lat/lng and
+collapsed into one row — a $140 lead gone silently. Same class as the Wenda St
+cross-city merge and the apartment-unit merge before it; the third time this
+key has lost a lead.
+
+The coordinate key now carries the **street number and unit**, so two doors at
+one point stay two rows, while the same door written two ways
+(`5309 WENDA ST` vs `5309 WENDA ST, HOUSTON TX 77016` — the legacy-format split
+the key exists for) still collapses to one. Six identity cases tested.
+
+**The lesson:** a positional key is not an identity. Coordinates say *where*,
+not *who*, and AT&T's geocoder is coarser than its address list. Any dedupe that
+can merge two distinct doors will eventually delete a sale, and it will do it
+without a message.
+
+### Still open
+
+`unavailable` is **recorded, not decoded**. Nothing here decides it — the point
+is to stop destroying the evidence while we find out. It needs one completed
+sweep over a pocket with customers in it.
