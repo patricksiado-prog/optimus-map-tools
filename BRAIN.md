@@ -553,3 +553,79 @@ reads `Status: Existing Copper Customer` in its popup. Until its
 contaminated 3,328; called grey it may be discarding every real upgrade lead.
 **One captured record from that address settles it, and every option above is
 worth more after that answer than before it.**
+
+## 22.17 The UNKNOWN bucket — Patrick's proposal, and why it beats all five above (2026-08-23)
+
+Patrick, after reading 22.16: *"that doesn't make sense — u can detect green,
+can u detect gold? why can't u print them to sheet"*
+
+He was right and 22.16 was overbuilt. The answer is one paragraph, not five
+options.
+
+### Why green never fails and gold does
+
+They come from the same response, the same code, the same instant. They are not
+detected the same way:
+
+* **GREEN is detected by ABSENCE.** `subscriber_ban` empty -> green. Nothing has
+  to match anything. It essentially cannot fail.
+* **GOLD is detected by a MATCH.** Customer AND `curr_ntwrk_bld_type_cd` must
+  appear in the copper list (`fttn-bp`, `ip-rt`, ...). Miss, and it falls
+  through.
+
+AT&T's most common build code is **`unavailable`**. It is in neither list. So a
+customer carrying it matched nothing and was filed GREY — **and grey is dropped
+before the write path, so it never reached the sheet at all.**
+
+That is the whole asymmetry. Green survives because it is defined by a missing
+field. Everything ambiguous was deleted.
+
+### The proposal: stop deleting what we cannot decode
+
+A customer whose build code we cannot decode is **not** a confirmed fiber
+customer. Calling it GREY asserts something we do not know, and the assertion
+costs the row its existence. So:
+
+| Dot | Before | Now |
+|---|---|---|
+| No BAN | GREEN -> sheet | GREEN -> sheet |
+| Customer, `fttp-gpon` | GREY -> deleted | GREY -> deleted (correct) |
+| Customer, `fttn-bp` | ORANGE -> gold tab | ORANGE -> gold tab |
+| **Customer, `unavailable`** | **GREY -> deleted** | **UNKNOWN -> sheet** |
+| Customer, `ip-co` | GREY -> deleted | UNKNOWN -> sheet |
+
+`UNKNOWN` rows land in Precise Fiber with `UNKNOWN` in the Dot Color column.
+They are **not** on the call list and **not** in the Gold Dots tab. They are
+visible, countable, and inspectable.
+
+Implemented as `OPTIMUS_UNKNOWN_CUSTOMER`, now defaulting to `unknown`:
+`gold` = the original rule that produced the contaminated 3,328;
+`grey` = the rule that silently deleted them; `unknown` = write them out.
+
+### Why this is better than any of 22.16's five
+
+Every option in 22.16 was a way to get *more* data. This is about not throwing
+away the data already arriving. Three consequences:
+
+1. **`unavailable` becomes measurable.** Right now nobody knows whether it means
+   copper or fiber. Once the rows exist, clicking ten of them settles it — and
+   if they are copper, one line in `build_codes.json` converts the whole bucket
+   to gold retroactively.
+2. **It removes the guess.** Both prior settings asserted something unproven:
+   gold-by-default put fiber customers on the call list, grey-by-default may be
+   discarding every real upgrade lead. UNKNOWN asserts nothing.
+3. **A category that gets deleted can never be debugged.** That is the general
+   lesson and it is worth more than the specific fix.
+
+### The standing rule
+
+**Never delete a record to express uncertainty.** Write it with an honest label.
+Deletion is a claim of knowledge — it says "this is worthless" — and here that
+claim was wrong for the most common value in the dataset.
+
+### Open question for review
+
+Does `unavailable` mean copper, fiber, or "AT&T does not know"? 8211 COOLSHIRE
+LN reads `Status: Existing Copper Customer` in its popup and is **not** in the
+gold list, which suggests at least some `unavailable` rows are real copper. Not
+proven. The UNKNOWN bucket is what makes it provable.
