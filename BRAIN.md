@@ -946,3 +946,98 @@ without a message.
 `unavailable` is **recorded, not decoded**. Nothing here decides it — the point
 is to stop destroying the evidence while we find out. It needs one completed
 sweep over a pocket with customers in it.
+
+## 22.22 An outside review, the right bug in the wrong file (2026-08-23)
+
+A detailed external review landed. Its **headline finding is a real bug**, and
+it is **not in the program that is running** — a distinction worth recording,
+because the mix-up is now built into the repo layout and will happen again.
+
+### The two-hunter trap, from the outside
+
+The reviewer inspected `optimus-map-tools/main/fiber_hunter.py`, found v5.27,
+pixel-based, with `ImageGrab` / `GREEN_MIN` / `count_dot_clusters()` and no
+trace of `queryRenderedFeatures`, `curr_ntwrk_bld_type_cd`, or `BUILD_DATE` —
+and correctly concluded that this could not be the architecture we were
+discussing. That was the right call from the evidence available.
+
+Then it reported this, from that file:
+
+```python
+try:
+    tabs[tab].append_rows(buf)
+except Exception as e:
+    print("  write err %s: %s" % (tab, e))
+_buffers[tab] = []          # cleared whether the write worked or not
+```
+
+**Verified: that bug is real and still sits in `fiber_hunter.py` line 886.** It
+is also in a tool nobody is running. The live hunter has no `_buffers` and no
+`_flush` at all.
+
+The lesson is not "the reviewer was wrong" — it read the only code it could
+reach. It is that **a public repo holding a stale copy of a differently-named
+tool will burn anyone who looks, including a careful reader.** Hence
+`print_identity()`: every run now states its file, BUILD_DATE, fingerprint,
+repo, branch and self-update URL, and names the other hunter explicitly as
+*not* the one running.
+
+### The same defect was live, wearing different clothes
+
+Checking the live writer against the principle found this in `write_gold_dots`:
+
+```python
+keys = _gold_keys(addr, ...)
+if keys & seen: continue
+seen.update(keys)        # <-- marked captured HERE
+...
+gw.append_rows(batch)    # <-- attempted much later; on failure, rows are gone
+```
+
+A failed batch was **discarded and permanently marked captured**, so not even a
+re-sweep would retry it. Same silent gold loss the reviewer described, reached
+by a different route. Their instinct was right even though their file was not.
+
+**Fixed:** `commit_rows()` retries with bounded backoff; a batch that still
+fails is parked to `optimus/_pending/*.json` and replayed at the next run's
+startup; rows leave the queue only after Google ACKs. The dedupe key is marked
+seen **only for rows that actually committed**. The console now says
+`SHEET COMMITTED` / `SHEET COMMIT FAILED` / `PRESERVED FOR RETRY` — nothing
+claims a row was written before it is in the sheet.
+
+Tested four ways: transient failure retries and commits; permanent failure
+parks and reports **zero** committed; the next run replays the parked batch into
+the sheet; uncommitted keys stay retryable.
+
+### The best idea in the review: source vs rendered
+
+`queryRenderedFeatures()` and `querySourceFeatures()` answer **different
+questions** — what the style is drawing now, versus what is in the loaded tiles
+regardless of style. Running both makes a zero self-explaining:
+
+| source | rendered | meaning |
+|---|---|---|
+| >0 | >0 | healthy |
+| >0 | **0** | a filter, visibility flag or zoom band is hiding it — **this zero is invalid** |
+| 0 | >0 | wrong source identified |
+| 0 | 0 | no data reached the map — session or load problem |
+
+The diagnostic now runs both and emits `RENDERED_ZERO_SOURCE_FULL` instead of
+reporting a valid zero. This is the same principle as 22.20 — never turn
+uncertainty into a zero — applied one layer deeper, and it is a genuinely new
+idea that came from outside.
+
+### What was deliberately NOT done
+
+- **A `FiberDot` dataclass and a rebuilt pipeline.** Correct design, wrong
+  moment: it is a rewrite, and no sweep has completed yet. Rewriting the path
+  under an unproven capture is how the last three days were spent.
+- **Per-feature-ID loss reporting.** Better than counts, agreed. The boundary
+  counters plus `first_failure()` already name the failing stage; IDs are the
+  next increment, not this one.
+- **Purging every bare `except`.** Done on the write paths. Telemetry keeps
+  its catches on purpose — the feed must never be the reason a sweep dies.
+
+**Their recommended order — verify build → fix the writer → prove the commit →
+counters → source-vs-rendered → only then the classifier — is right, and it is
+the order actually followed.**
