@@ -716,3 +716,87 @@ Whether green and gold capture again. **No sweep completed on 2026-08-23**, so
 none of the above is proven in the field — only in tests. Green is definitely
 alive: Precise Fiber went from 481,576 to **496,512** during the day. The next
 completed run is the first real evidence.
+
+## 22.19 The backend diagnostic — the tool reports its own health (2026-08-23)
+
+Patrick: *"create backend feedback u need to diagnose the issue not me."*
+
+Correct instruction, and it is the fix that makes 22.18 stop repeating. Three
+silent-failure variants were found in one day. Finding a fourth by asking the
+operator to photograph a console is not a method.
+
+### What it does
+
+`capture_diagnostic(page)` runs **before a single cell is swept** and publishes
+to `optimus/_feed/latest.json` under `capture_diagnostic`, where any future
+session reads it directly — no screenshots, no sheet, no Autosheet credits.
+
+It answers, in one call:
+
+| Question | Field |
+|---|---|
+| Is the `mapboxgl` hook alive? | `hook_installed`, `maps_hooked` |
+| Did we capture the real map object? | `map_captured` |
+| Is the style loaded, is the map ready? | `style_loaded`, `map_loaded` |
+| Where are we? | `zoom`, `center` |
+| Which layers can carry dots? | `candidate_layers[].id / type / source / source_layer` |
+| **What is each layer's zoom band?** | **`minzoom` / `maxzoom` per layer** |
+| Is it actually visible? | `visibility`, `circle_color` |
+| How many features does it return NOW? | `rendered` per layer + a sample feature's property keys |
+
+Then it renders a verdict: `HOOK_MISSING`, `MAP_NOT_READY`, `ZOOM_OUT_OF_BAND`,
+`NO_DOT_LAYERS`, `ZERO_RENDERED`, `MAPBOX_OK` — and derives a **safe capture
+zoom** from the live layers rather than a hardcoded guess:
+
+```
+safe_zoom = (max(minzoom of in-band layers) + min(maxzoom of in-band layers)) / 2
+```
+
+Console output is one block:
+
+```
+[HUNTER DIAG] mapbox=ZOOM_OUT_OF_BAND  zoom=17.1  layers_in_band=0
+              every dot layer is outside its zoom band at z=17.1 --
+              a zero here is INVALID, not empty ground
+              safe capture zoom ~ 13.5
+```
+
+### The zoom band, and why it belongs here
+
+A Mapbox layer above its `maxzoom` is **hidden**, so `queryRenderedFeatures()`
+returns zero. That zero means *"you cannot see this from here"* — not *"there is
+nothing here."* The hunter has read and printed those thresholds since v0.5 and
+**never acted on them**. Recording a constraint is not enforcing it.
+
+This is the same disease as 22.18's three variants, one layer up the stack:
+a real condition (layer hidden) rendered as a result (`+0 dots`).
+
+It also means auto-hunt zooming in "for precision" is actively harmful.
+Feature geometry already carries exact lng/lat — extra zoom buys no accuracy
+and can push the layer out of its band. **Geographic precision and layer
+visibility are separate concerns.**
+
+### Why this is the load-bearing change
+
+Everything else built on 2026-08-23 was a fix for a specific bug. This is a fix
+for *how bugs get found*. The cost of the day was not any single defect — it was
+that each one had to be discovered by a human photographing a terminal and a
+model guessing from the photo. Wrong guesses made along the way, all avoidable
+with this in place: a two-source theory that the endpoint inventory disproved,
+reasoning from gzipped byte sizes, and hashing with sha1 when the tool uses
+sha256.
+
+### The standing rule
+
+**A tool that cannot report its own health cannot be debugged remotely.** Any
+capture path added here ships with a diagnostic that states, without
+interpretation: was the precondition met, was the observation valid, and if not,
+which precondition failed.
+
+### Still unproven
+
+No sweep completed on 2026-08-23, so the diagnostic has not yet run in the
+field. First completed run is the first real evidence — and it should answer,
+in one shot, whether the Mapbox hook is alive, whether the map sits in a usable
+zoom band, what the dot layers are named, what properties their features carry,
+and whether AT&T's API answered at all.
