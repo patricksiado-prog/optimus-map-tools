@@ -1,0 +1,122 @@
+I need help decoding an undocumented field in AT&T's internal dealer/
+serviceability API. Full context below — nothing here requires you to see any
+repo.
+
+=== WHAT THE SYSTEM IS ===
+
+I run an authorized AT&T fiber dealership in Houston. AT&T is retiring copper
+(2027/2029 deadlines), so we sell fiber conversions door to door.
+
+Leads come from AT&T's internal dealer map at youachieve.att.com. Every dot on
+that map is an address, in one of three colors:
+
+  GREEN = fiber is live at this address, occupant is NOT an AT&T customer
+          -> $500 commission. The prize.
+  GOLD  = fiber is live, occupant IS an AT&T customer but still on copper
+          -> $140 commission. Easiest sale, it's an upgrade not a switch.
+  GREY  = already an AT&T fiber customer -> skip entirely.
+
+I have a Python/Playwright tool that drives the map in Chromium, reads the
+serviceability JSON off the wire, classifies each dot, and writes leads to a
+Google Sheet.
+
+=== THE PAYLOAD ===
+
+Endpoint (declared text/html, actually serves JSON):
+  GET /yourefer/api/fiberMap.cfc?method=getMapData&lon=..&lat=..&attuid=..&csrfToken=..
+
+Response:
+  { "success": true, "error": {...}, "content": [ {record}, {record}, ... ] }
+
+Capped at 500 records per response (measured, not documented).
+
+A record looks like this:
+
+  {"zip":"77598","address":"558 TRESVANT DR","city":"WEBSTER","state":"TX",
+   "latitude":"29.562304","longitude":"-95.144801",
+   "subscriber_ban":"", "subscriber_ban_masked":"",
+   "curr_ntwrk_bld_type_cd":"unavailable", "speed":"",
+   "miles_from_claim":"0.10137", "missing_supl":0}
+
+=== HOW I CLASSIFY, AND WHY IT'S BROKEN ===
+
+  subscriber_ban is EMPTY            -> GREEN (not a customer)
+  ban present + build code = fiber   -> GREY  (already on fiber)
+  ban present + build code = copper  -> GOLD  (the upgrade lead)
+  ban present + code in neither list -> ??? <-- THE PROBLEM
+
+Build codes I have confirmed from live captures:
+  FIBER  (grey): fttp-gpon, fttp, gpon, ftth
+  COPPER (gold): fttn-bp, fttn, ip-rt, iprt, ipbb, adsl, vdsl, dsl
+
+Notice the asymmetry:
+
+  GREEN is detected by an ABSENCE (no BAN). It never fails.
+  GOLD needs a POSITIVE MATCH against a list of build codes I had to
+  reverse-engineer. It fails constantly.
+
+Result: ~496,000 green rows captured, and almost no gold.
+
+THE HINGE: the single most common value of curr_ntwrk_bld_type_cd is the
+literal string "unavailable", and it is in NEITHER list. Every customer
+carrying it falls through to a guess, and I have now tried both guesses in
+production and both were wrong:
+
+  - treating it as GOLD put existing FIBER customers in front of a rep
+    (I clicked a "gold" dot and it was somebody already on fiber)
+  - treating it as GREY deleted real $140 upgrade leads outright, silently
+
+For a NON-customer, "unavailable" clearly means "no AT&T service at this
+address today" — which is exactly what a green eligible non-customer looks
+like. That part is confirmed: a live capture over ZIP 77027 returned every
+green address as ban="" + curr_ntwrk_bld_type_cd="unavailable". Treating
+"unavailable" as dead once threw away 100% of the greens.
+
+But for someone WITH an active subscriber BAN, "unavailable" seems
+self-contradictory. They have an account, but their current network build
+type is "unavailable"?
+
+I have stopped guessing. Undecodable customers now get written to a separate
+review tab WITH their build code, so nothing is destroyed while I work this
+out. I'm also now capturing the full record for customer dots (BAN redacted)
+because I realized the "speed" field is sitting right there in the payload and
+I have never once looked at it.
+
+=== MY QUESTIONS ===
+
+1. What does curr_ntwrk_bld_type_cd="unavailable" mean when subscriber_ban IS
+   populated? Is this a documented telecom/OSS field? Does "unavailable" on an
+   active subscriber mean "no AT&T BROADBAND at this address" — i.e. the
+   account is wireless or DirecTV only? If so those dots are NOT gold at all,
+   and I need to know that before working them.
+
+2. Is "speed" a reliable discriminator between a copper customer and a fiber
+   one? A DSL subscriber should show something like 768K / 6M / 25M, a fiber
+   subscriber 300M / 1G / 5G. Have you seen this field populated in AT&T
+   serviceability data, and is it trustworthy?
+
+3. Is there a published or reverse-engineered enum for curr_ntwrk_bld_type_cd?
+   I have 13 values confirmed by hand. I would like the full list, especially
+   any newer fiber designations — a new fiber code landing in my "unknown"
+   bucket is exactly how a grey dot becomes a wasted call.
+
+4. Any other field in that record that separates copper from fiber for a
+   CUSTOMER? missing_supl? subscriber_ban_masked format? Something not in my
+   sample?
+
+5. Separately: the 500-record cap. Is there a documented pagination or bbox
+   parameter for this endpoint, or is subdividing the viewport the only way?
+   A dense neighborhood silently truncating at 500 is another invisible way to
+   lose gold.
+
+=== WHAT I'M NOT ASKING ===
+
+Not asking how to access the map — I'm an authorized dealer with valid
+credentials, this is my own account and my own leads. I'm asking how to read a
+field in data I already legitimately receive.
+
+The single answer that matters most is #1. If "unavailable" on a subscriber
+means copper, I have thousands of $140 leads sitting in a review queue waiting
+to be promoted. If it means "not a broadband customer at all", I need to stop
+treating them as leads entirely. Right now I genuinely do not know which, and
+guessing has cost me real money in both directions.
