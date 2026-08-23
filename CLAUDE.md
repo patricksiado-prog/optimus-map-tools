@@ -128,6 +128,32 @@ Where a line is worth holding: anything irreversible and outward-facing. Texting
 at 11pm, deploying to every hunter PC, spending a large credit batch on an
 unverified assumption. State the concern once, then do what he decides.
 
+## Installing on a new PC
+
+ONE installer covers both tools (Fiber Hunter + Maps Scraper): `INSTALL_OPTIMUS.bat`.
+Double-click it, wait ~5-10 min the first time, and two Desktop icons appear. It
+pulls the tools from public GitHub on every launch, so it never goes stale and
+needs no Drive access of its own.
+
+| Source | Link |
+|---|---|
+| Google Drive (Patrick's My Drive) | https://drive.google.com/file/d/1IRnfbeQt2TTxNGVgQL664q3C4lu1biLd/view |
+| Drive direct download (skips the preview page) | https://drive.google.com/uc?export=download&id=1IRnfbeQt2TTxNGVgQL664q3C4lu1biLd |
+| GitHub Release (no Google login) | https://github.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/releases/download/installer/INSTALL_OPTIMUS.bat |
+| Release page | https://github.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/releases/tag/installer |
+
+All three are the SAME file, verified 2026-08-23: **7,204 bytes**, sha256
+`0f9295b82aba2ef2b6cf47a55a8e7c700cae91afa614657bb1f1c95ac8b95252`. If a copy
+does not match that, it is not the current installer.
+
+**Three stale installers are still sitting in Drive** and will strand a new PC on
+old code — `install_optimus.bat` (4,838 bytes, May 26), `install_optimus.py`
+(8,137 bytes, May 10), `install_optimus.bat` (3,906 bytes, Jun 12, different
+folder). Only the ALL-CAPS `INSTALL_OPTIMUS.bat` is current.
+
+The Drive copy is not shared with anyone — it works on a PC signed in as Patrick.
+Anyone else uses the GitHub Release link.
+
 ## Where things live
 
 - **`BRAIN.md`** — long-form memory. Read it when you need depth on the hunter,
