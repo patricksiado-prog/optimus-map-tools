@@ -629,3 +629,90 @@ Does `unavailable` mean copper, fiber, or "AT&T does not know"? 8211 COOLSHIRE
 LN reads `Status: Existing Copper Customer` in its popup and is **not** in the
 gold list, which suggests at least some `unavailable` rows are real copper. Not
 proven. The UNKNOWN bucket is what makes it provable.
+
+## 22.18 Silence is the disease — three variants in one day (2026-08-23)
+
+Written for review. The gold classifier was never the problem. **Every hour lost
+today went to a capture path turning a real condition into silence**, and there
+were three separate instances of the same defect in the same file.
+
+### Variant 1 — a non-200 that only printed a line
+
+```python
+print("  (serviceability reply %s -- skipping, map keeps moving)" % st)
+return
+```
+
+AT&T bounces a stale session to login with a 301. That line scrolls past in a
+fast sweep and is persisted nowhere. The file's own comment had predicted this
+exact failure — *"this print is how 'serviceability reply 301' stayed
+invisible"* — and it happened anyway, because a comment is not a mechanism.
+
+### Variant 2 — a 200 whose body is not JSON
+
+```python
+try:
+    body = response.body()
+    data = json.loads(body)
+except Exception:
+    return          # <-- nothing counted, nothing logged, nothing said
+```
+
+**AT&T's login page returns HTTP 200 with an HTML body.** `json.loads` throws,
+the response evaporates, `svc_seen` never increments, and the run reports "no
+serviceability responses seen" — the opposite of what happened. Every cell reads
+`+0`.
+
+### Variant 3 — a prompt that waits forever
+
+```python
+input("  Map on the right spot? Press Enter to START scanning... ")
+```
+
+A bare `input()` blocks indefinitely. If that window does not hold keyboard
+focus — trivially easy, since the operator has just been clicking the map — the
+sweep never begins. **Six launches in one afternoon reported in with all-zero
+counts. Not one had actually started.** Nothing anywhere said "waiting for a
+keypress."
+
+### The shared shape
+
+| | Real condition | What the operator saw |
+|---|---|---|
+| 1 | Session redirected to login | a line that scrolled away |
+| 2 | Session returned a login page | `+0 (total 0)` |
+| 3 | Never started | `+0 (total 0)` |
+
+All three are indistinguishable from **"this neighbourhood has no fiber."** That
+is why five hours went into the classifier: the evidence said empty ground, and
+empty ground is what a dead session, a dead parse and a never-started sweep all
+look like.
+
+### Fixed
+
+* Non-200 and non-JSON both print a loud banner naming the cause **and the
+  remedy**, and publish it to `optimus/_feed/`.
+* `diagnose()` returns a plain-English verdict across six cases: login page,
+  `success:false`/403, valid-but-empty, renamed fields, records that do parse,
+  and not-JSON-at-all.
+* The start prompt auto-starts after 45s (`OPTIMUS_START_WAIT`), starts
+  immediately with no interactive console, and — importantly — the fallback path
+  no longer calls `input()`, which would have preserved the original bug.
+
+### The rule
+
+**Never convert a transport error, an auth failure, an unready map, an
+out-of-range zoom, a broken hook, a parse failure, or a missing keypress into
+`+0 dots`.** A zero is a claim about the world. It may only be reported after
+the system has proven the observation was actually valid — session alive,
+response parsed, sweep started. Anything else is `INVALID_ZERO` and must say so.
+
+This is the same principle as 22.17's UNKNOWN bucket, one layer down: *do not
+let uncertainty wear the costume of a result.*
+
+### Still open
+
+Whether green and gold capture again. **No sweep completed on 2026-08-23**, so
+none of the above is proven in the field — only in tests. Green is definitely
+alive: Precise Fiber went from 481,576 to **496,512** during the day. The next
+completed run is the first real evidence.
