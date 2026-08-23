@@ -1041,3 +1041,78 @@ idea that came from outside.
 **Their recommended order — verify build → fix the writer → prove the commit →
 counters → source-vs-rendered → only then the classifier — is right, and it is
 the order actually followed.**
+
+## 22.23 The Hunter's two permanent invariants (2026-08-23)
+
+These are not observations. They are rules the code now enforces and the run
+report checks by name.
+
+> **A fiber observation is only valid if the capture state was valid, and a
+> captured dot is only complete once persistence is acknowledged.
+> Never convert an invalid capture into `+0`, and never convert a failed write
+> into `seen`.**
+
+### Invariant 1 — `seen ⊆ committed`
+
+A dot is marked seen **only after Google acknowledges the write.** The old order
+was:
+
+```
+detect -> mark seen -> attempt write -> on failure, rows discarded
+```
+
+which lost the rows *and* left them permanently marked captured, so no re-sweep
+would ever retry them. The order is now:
+
+```
+detect -> stage -> attempt write -> ACK -> mark seen -> clear pending
+                              \-> failure -> park on disk, NOT seen, retry next run
+```
+
+Checked at the end of every run as `gold_seen == gold_committed`. A breach
+prints `IT WILL NEVER RETRY` and names the stage.
+
+### Invariant 2 — a zero must earn the right to be a zero
+
+`VALID_ZERO` requires **all** of: map captured, style loaded, map loaded, dot
+layers found, zoom inside the layer band, query without error. Anything else is
+`INVALID_ZERO`, printed with the failed preconditions listed, and is never
+written as `+0`.
+
+### Stage counters
+
+Printed at the end of every run and published to the feed:
+
+```
+RAW FEATURES 480 / GREEN 440 / GOLD 12 / GREY 22 / UNKNOWN 6
+GOLD QUEUED 12 -> ATTEMPTED 12 -> COMMITTED 12 -> SEEN 12 -> PENDING 0
+```
+
+The shape is the diagnosis. `GOLD CLASSIFIED 12, COMMITTED 0` means stop looking
+at Mapbox. `GOLD CLASSIFIED 0, RAW 480` means it is the classifier. `RAW 0` means
+nothing was delivered. Tested against all four shapes.
+
+### On SQLite, and being honest about what was built
+
+Two outside reviews called for a SQLite pending queue. **It is not SQLite — it
+is append-only JSON files in `optimus/_pending/`,** replayed at startup and
+deleted only after an ACK. That satisfies the actual requirement (the queue must
+survive a crash, a reboot, or a kill) because the files are on disk before the
+write is attempted. SQLite would add `attempt_count` and `last_error` cleanly and
+is the better long-term store, but it was not built, and the difference is worth
+recording rather than glossing.
+
+**A status table arrived claiming ten items were "✅ Fixed."** Six were absent
+from the code: SQLite, stage counters, VALID_ZERO/INVALID_ZERO, the
+layer-vs-source maxzoom split, a Devonwood regression test, and `attempt_count`
+on pending rows. Four of those six have since been built for real; the Devonwood
+regression test and SQLite have not.
+
+The lesson is the same one as 22.20, one level up: **a confident status report is
+not evidence.** Verify a claim about the code against the code — including, and
+especially, a claim that agrees with you.
+
+### Still not proven
+
+Every item above is verified by unit test, not by a field run. **No sweep has
+completed.** Until one does, none of this is known to work on live data.
