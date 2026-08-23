@@ -3662,3 +3662,88 @@ residential, one of these has to happen:
    picks the cluster in step 1 for you.
 
 Step 2 is free and step 3 is free. Do those before step 1.
+
+---
+
+## 2026-08-22 (part 26) — FRONTLINE vs OPTIMUS: EVERY MESSAGE THAT WORKS LEADS WITH A NUMBER
+
+Pulled 40 recent conversations from each location — Frontline Direct
+(`TXw28sw0Z2rI6tcCDhJY`) and T-OPTIMUS Houston (`xZj500PjsflIQg2j9f9D`) — and read the
+actual copy on both sides.
+
+### 26.1 A methodology warning before any of the numbers
+
+`get_recent_messages` sorts by **last activity**, and an opt-out IS activity. So the
+recent-40 window over-represents STOPs in both books — Frontline shows 19 of 40, Optimus
+17 of 40, and **neither is an opt-out rate.** The measured Optimus rate on a known
+denominator is 8 per 100. Do not quote the recent-window ratio as a rate; it is a
+sampling artifact and it will make every book look like it is on fire.
+
+### 26.2 Who each book is actually texting
+
+**Frontline is national.** Area codes in one 40-row window: 228 Gulfport/Biloxi MS
+(dominant, ~10), 405 Oklahoma City (~5), 325 Abilene, plus 229 GA, 321 FL, 251 AL, 225
+LA, 323 CA, 916 CA, 734 MI, 401 RI, 775 NV, 501 AR, 602 AZ, 214/945 Dallas, 713/281
+Houston. Their "Harvey" copy names Gulfport, MS street addresses.
+
+**Optimus is local and heavily commercial.** ~19 of 40 are businesses — Mike's Massage,
+Blueprint Insurance, Byron Auto Service, Buzzers Smoke, Carrizales Appliances, Clovers
+Services, All Electric & AC, The Fine Lines Barber. Area codes 713/281/832/346 Houston,
+409 Beaumont, 979 Angleton.
+
+### 26.3 ★ THE FINDING: every message that moved a conversation forward led with a number
+
+Three copy families produce actual back-and-forth. All three quote money.
+
+**Frontline's engaged-reply copy** — this is what Curtis Fletcher answered by sending
+his ZIP:
+> limited-time promo for AT&T Fiber — new customers on 1 GIG get **$30 off, making it
+> only $50 per month, plus a $200 Visa Reward Card**. No install fees, no monthly modem
+> fees. That's **up to $560 in total savings**.
+
+**Optimus's own business copy** — Care2clean answered this one:
+> Fiber is now live at your address — Business Fiber starting in the **$30s/mo, 2 months
+> free, free install, no annual contract, plus up to a $500 Visa reward card and up to
+> $750 in switching credits**. Reply YES.
+
+**Optimus's older residential copy:**
+> New fiber internet lines have been laid at your address, **10x faster for just
+> $30/month. 2 free months**, no install fees, no contracts. Reply "YES".
+
+**And the Aug 22 copy — mine — led with nothing:**
+> Fiber went live near you in Angleton. Want me to check your street?
+
+100 sent. 2 replies. Nobody sent a ZIP, an address, or a question. **The one-segment
+rewrite fixed getting read and then had nothing to say.** A heads-up with no offer in it
+gets read and discarded.
+
+### 26.4 The best structural idea in either book is Frontline's "Harvey"
+
+> Hi, Harvey here from a local fiber installation team. Fiber just became available on
+> **1020 Lewis Ave, Gulfport, Ms 39501** — **some homes nearby are upgrading** for
+> faster speeds at similar or lower cost. We also have free installation + 4 months free
+> right now. Want me to send the available plans for your area?
+
+Three things at once: the **exact street address**, **social proof** ("some homes nearby
+are upgrading"), and an **offer**. We have better data than they do for the first part —
+our gold dots are per-address — and we have not been using it.
+
+### 26.5 The doctrine conflict, stated plainly
+
+`CLAUDE.md` says **never quote a flat price**. Every message producing conversations in
+either book quotes one. That is a real conflict and it should be Patrick's call, not
+quietly resolved either way.
+
+The middle path that does not require inventing a number: AT&T publishes real figures —
+**$300 / $400 / $500 Business Fiber reward cards by speed tier**, and the current 20%
+discount for customers holding both wireless and internet. Those are AT&T's own, they
+are checkable, and they give the text something concrete without pretending to know
+somebody's exact bill.
+
+### 26.6 Both locations run a conversation AI, and both leak
+
+Frontline's says *"I can't access external sites or emails"* and *"I actually can't help
+with appointment bookings or rescheduling."* Optimus's told Celia twice to "reply STOP
+anytime" when she asked where her data came from, gave out Patrick's personal cell, and
+called her after two declines. **Both bots announce they are bots at the exact moment a
+human would close.** This is a shared, unaddressed leak in the funnel.
