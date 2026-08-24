@@ -1401,3 +1401,96 @@ code** — and `test_gold_predicate.py` proves both implementations pick it up.
 - A classifier rewrite before counters show loss AT classification. The stage
   counters print `RAW -> classified green/gold/grey/unknown -> gold queued /
   committed / seen / pending`; the first drop names the stage.
+
+## 22.27 THE GOLD BUG — found 2026-08-23. It was never the classifier
+
+The reason gold never landed, after a month of suspicion and a full day of
+rebuilds, is four lines in the writer:
+
+```python
+seen = already_seen(ws)        # 507,053 addresses read from PRECISE FIBER
+...
+key = addr.upper()
+if key in seen:
+    continue                   # <-- dropped BEFORE classify_lead() runs
+dot_status = classify_lead(ld)
+```
+
+`seen` is built from **Precise Fiber — the GREEN tab.** Any address captured on
+an earlier sweep was discarded before its colour was ever evaluated. It never
+reached `write_gold_dots`. **It could not be added to the Gold Dots tab, ever,
+no matter how many times the ground was re-swept.**
+
+### This explains the discrepancy that has been open for weeks
+
+**Precise Fiber holds 8,264 ORANGE rows. Gold Dots holds 1,984.** That gap was
+not a writer failure or a classifier failure — it was structurally unable to
+close. Every gold dot already recorded in Precise Fiber was invisible to the
+gold path forever after.
+
+### And it explains the entire day
+
+One run's report and console, side by side:
+
+```
+report : OK: 86 serviceability responses -> 42,500 leads
+console: [cell 210] +0  (total 1)
+stage  : classified_green 1, classified_gold 0, classified_grey 0
+```
+
+**42,500 records decoded. One classified.** Capture was never broken. Prestonwood
+had already been swept, so every dot on that screen was skipped on sight.
+
+`+0` means **zero NEW**, not zero captured. I read it as a capture failure for
+most of a day and chased the session, the parser, the payload shape, and the
+Mapbox rendering path because of it. Two outside reviews chased the classifier
+for the same reason. All of it was downstream of a filter doing exactly what it
+was written to do.
+
+### The fix (build 4303a589)
+
+```python
+_already = key in seen
+if not _already:
+    staged_keys.append(key)        # not marked seen until the write is ACKed
+dot_status = classify_lead(ld)     # ALWAYS runs now
+...
+if _already:
+    stage(revisited=1)             # suppress only the Precise Fiber ROW
+else:
+    new_rows.append([...])
+```
+
+Classification always runs; gold, grey and recheck routing always run. Only the
+duplicate Precise Fiber row is suppressed. Each destination tab carries its own
+dedupe, so nothing duplicates.
+
+**The trap inside the fix.** The obvious form is `continue` after the guard. That
+skips `new_records` — and `new_records` is exactly what feeds `write_gold_dots`,
+so it silently re-creates the bug being fixed. I wrote it that way first and
+caught it only by tracing one record's path through the function. A fix that
+re-implements the bug is the most expensive kind, because it looks like a fix.
+
+### The lesson, and it is the day's real one
+
+**A counter that means "new" was read as if it meant "captured".** `+0` is not a
+zero from AT&T; it is a zero after our own filter. Nothing in the console said
+which, so every layer downstream got investigated before the filter itself.
+
+The rule this earns: **when a count is zero, establish whether the zero came
+from the source or from us before touching anything.** The whole diagnostic
+apparatus built today — boundary counters, capture truth, first-drop — exists to
+answer that question, and it still could not, because `revisited` was not a
+counter that existed. It is now.
+
+Related and previously recorded: 22.20 (a login page read as empty ground),
+22.22 (a real bug found in a file nobody runs), 22.25 (an empty code table looks
+identical to a broken classifier). This is the fourth instance of the same
+shape — **a missing precondition wearing the costume of a wrong answer** — and
+the most expensive.
+
+### Status
+
+Fixed against the code and unit-tested. **Not yet proven on the map.** The next
+sweep over already-captured ground is the test: if gold lands on ground that has
+returned `+0` for weeks, this is confirmed.
