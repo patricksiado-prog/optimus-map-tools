@@ -1494,3 +1494,57 @@ the most expensive.
 Fixed against the code and unit-tested. **Not yet proven on the map.** The next
 sweep over already-captured ground is the test: if gold lands on ground that has
 returned `+0` for weeks, this is confirmed.
+
+---
+
+## 22.28 2026-08-24 Dot Capture Debug — Zero Captures, Root Cause Analysis
+
+**Problem Statement:** The system captures zero dots to sheets after runs complete. Dots appear on the Mapbox UI ("the dots are populating"), but nothing writes to TEST-Green / TEST-Gold / TEST-Grey tabs. Previous builds produced +0 consistently across all three types.
+
+**Session Actions:**
+1. Redirected code to write to test tabs (TEST-Green-2026-08-24, TEST-Gold-2026-08-24, TEST-Grey-2026-08-24) to isolate test data
+2. Inspected production flush path (lines 2560-2784) against documented gold bug fix (build 4303a589)
+3. Traced data flow: NetCapture.handle() extraction → classify_lead() → routing (Precise/Gold/Grey writes)
+4. Read BRAIN.md 22.27 gold bug pattern; verified current code implements it correctly
+
+**Code Structure Verified Correct:**
+- Line 2589: `_already = False  # key in seen  # DISABLED FOR TEST` — correctly disables dedupe for test mode, matching gold bug fix pattern
+- Line 2592: `dot_status = classify_lead(ld)` — ALWAYS runs, not gated by _already
+- Line 2663-2669: Precise Fiber row suppressed only if `_already`, new_records still populated
+- Line 2639-2653: GREY records added to grey_records, then continue (correct — prevents GREY from Precise Fiber)
+- Line 2670-2687: new_records ALWAYS populated with full record, whether _already or not
+- Line 2731: `if new_rows:` → write Precise Fiber independently
+- Line 2754: `if new_records and not (dry or ws is None):` → write Gold independently
+- Line 2766: `if grey_records and not (dry or ws is None):` → write Grey independently
+
+**Routing Logic Correct:** All three destinations (Precise/Gold/Grey) write independently without early returns. No `if not new_rows: return 0` before write_grey_dots().
+
+**Classification Pipeline Verified:**
+- classify_lead() → classify_wire() → DOT_COLOR mapping
+- GREEN: no customer BAN → "lead" → dot_color() = "GREEN"
+- GOLD/ORANGE: BAN + copper build code → "copper_upgrade" → "ORANGE"
+- GREY: BAN + fiber build code → "customer" → "GREY"
+- UNKNOWN: BAN + undecodable code → "unknown_customer" → "UNKNOWN"
+
+**Split Mode vs Production Mode:**
+- Redirect to test tabs uses production flush (line 2567: `if _SPLIT[0]:` checks split mode)
+- Split mode sends to local JSONL, uploader sends to sheets (lines 2786-2829)
+- Production mode writes directly to sheets via commit_rows()
+
+**Potential Root Causes Identified:**
+1. **Session Expiry During Data Capture:** Previous test run hit "LOGGED_OUT phase at 62.1s with zero captured records." Browser session may expire mid-sweep, all network captures fail silently.
+2. **Network Silence:** AT&T API returning empty serviceability responses (0 leads extracted → 0 to classify → 0 to write). Logs would show "OK: 0 serviceability responses" if this occurs.
+3. **Login Redirect:** Map returns login page HTML instead of fiber map; DOM parse sees empty (22.20 pattern from BRAIN 22.1-22.25).
+4. **Buffer Timing:** Writes may occur after test run ends prematurely (flush_backend/flush_local called at exit but process killed before completion).
+
+**Next Step — Field Test Required:**
+Created test tabs and redirected code. Need to:
+1. Start fresh Chromium browser session (clear cookies)
+2. Run precise_fiber_hunter with fresh login flow (not cached session)
+3. Let it complete 60+ seconds (pass login, map load, at least one viewport capture)
+4. Check GitHub artifact (latest.json) for classified_green/gold/grey counters (should show > 0)
+5. Check test tabs for actual written rows
+6. If test tabs empty but artifact shows counters > 0, investigate buffer/flush timing
+7. If artifact shows counters = 0, investigate session/network layer
+
+**Code Confidence:** Production flush, split flush, classification, routing all correct. No bugs found in those paths. Issue is pre-write (extraction, network, or session state).
