@@ -1247,3 +1247,157 @@ Deciding it needs raw gold+grey records from one authenticated capture — or
 AT&T's own colouring rule, which `decode_gold.py` reads out of the browser
 cache. When the answer arrives it is a change to **build_codes.json — data, not
 code** — and the test above proves both implementations pick it up.
+
+## 22.26 State of the fiber capture system — written for outside review (2026-08-24)
+
+Everything an outside reviewer needs, with the specifics. No summary of a
+summary: file names, field names, real numbers, and an explicit line between
+what is proven and what is assumed.
+
+### The architecture (this is not a pixel scraper)
+
+```
+Playwright drives Chromium (persistent profile)
+      -> youachieve.att.com/yourefer/fiber
+      -> the page's own JS calls GET /yourefer/api/fiberMap.cfc
+                ?method=getMapData&lon=..&lat=..&attuid=..&csrfToken=..
+      -> page.on("response") captures that reply OFF THE WIRE
+      -> json.loads(body) -> data["content"] = list of address records
+      -> classify each record -> write to Google Sheets
+```
+
+The hunter does **not** read the screen. It reads AT&T's own JSON. The Mapbox
+hook is a cross-check only and is not in the capture path — a distinction worth
+holding, because a day was partly spent on Mapbox diagnostics that could not
+have affected the outcome either way.
+
+The endpoint is declared `text/html` and serves JSON. It caps at **500 records
+per reply** (measured, not documented).
+
+### The record, verbatim
+
+```json
+{"zip":"77598","address":"558 TRESVANT DR","city":"WEBSTER","state":"TX",
+ "latitude":"29.562304","longitude":"-95.144801",
+ "subscriber_ban":"", "subscriber_ban_masked":"",
+ "curr_ntwrk_bld_type_cd":"unavailable", "speed":"",
+ "miles_from_claim":"0.10137", "missing_supl":0}
+```
+
+### The predicate, in full
+
+```python
+if is_customer_ban(ban):                      # a real AT&T account
+    if "copper" in (status or "").lower():    # AT&T said it outright
+        return "copper_upgrade"               # GOLD  $140
+    code = _bld_code(raw)                     # curr_ntwrk_bld_type_cd
+    if not code:                 return "unknown_customer"
+    if code in FIBER_CODES:      return "customer"        # GREY, never written
+    if code in COPPER_CODES:     return "copper_upgrade"  # GOLD  $140
+    return "unknown_customer"                 # <-- 'unavailable' lands here
+return "lead"                                 # no account = GREEN  $500
+```
+
+`build_codes.json`, the single source of truth for both implementations:
+
+```
+fiber  (GREY): fttp-gpon, fttp, gpon, ftth
+copper (GOLD): fttn-bp, fttn, ip-rt, iprt, copper, ipbb, adsl, vdsl, dsl
+```
+
+### The asymmetry — why green works and gold does not
+
+**GREEN is detected by an ABSENCE.** `subscriber_ban` empty means non-customer.
+One field, no lookup table, cannot fail. ~496,000 rows captured historically.
+
+**GOLD needs a POSITIVE MATCH** against a reverse-engineered code list. And
+AT&T's most common value for `curr_ntwrk_bld_type_cd` is the literal string
+**`unavailable`**, which is in neither list.
+
+Both guesses at it have failed **in production**:
+
+| guess | outcome |
+|---|---|
+| gold | existing FIBER customers reached the call list; Patrick clicked a gold dot and got someone already on fiber. Produced the contaminated 3,328 rows. |
+| grey | grey never reaches the sheet, so real $140 upgrades were deleted silently |
+
+Current behaviour: neither. Undecodable customers are written to a separate
+`Gold Recheck` tab **with their build code**, off the call list, so nothing is
+destroyed while the question is open.
+
+Confirmed separately: for a NON-customer, `unavailable` is normal — a live
+capture over ZIP 77027 returned every green address as `ban=""` +
+`unavailable`. Treating it as dead once threw away 100% of the greens.
+
+### Two implementations of one rule
+
+- `precise_fiber_hunter.classify_wire()` — the live sweep
+- `backend_classifier.classify_lead()` — fiber_scout, zip_reader,
+  verify_gold_capture
+
+`test_gold_predicate.py` (15 assertions, all passing) holds them to identical
+answers on every decided case and pins three regressions that have cost money:
+undecodable is not gold, undecodable is not grey, and a placeholder BAN like
+`non-cust` is not a customer.
+
+### What is PROVEN
+
+- The predicate, by unit test, both implementations agreeing
+- Durable writes: a failed Sheets write parks to `optimus/_pending/*.json`,
+  replays at next startup, and `seen` is marked **only** after Google ACKs.
+  13 assertions in `test_durability.py`, including forced-failure and
+  crash-recovery
+- Green and gold share one write path (they did not, until 2026-08-23)
+- Telemetry: phase breadcrumb, stage counters, crash tracebacks, and the raw
+  body of any zero-lead reply, all pushed to `optimus/_feed/`
+
+### What is NOT proven
+
+**The capture path has never been handed a single real record.** Every failure
+on 2026-08-23 was environmental:
+
+- a stale cookie that authenticated the page shell but **not** the API — AT&T
+  returned `301 -> login` or a 200 carrying `<!DOCTYPE html>`, 150 cells in a
+  row, every cell `+0`, while the map still showed dots fetched before the
+  session went stale
+- two hunters sharing one Chromium profile; the loser dies instantly and
+  overwrites the shared report with zeros
+- a zombie run from 15:17 that surfaced at 18:08 having sat open three hours
+
+So: classifier, writer and dedupe are unit-proven and field-unproven.
+
+### The one open question
+
+**What does `curr_ntwrk_bld_type_cd = "unavailable"` mean when
+`subscriber_ban` IS populated?**
+
+Three readings, each implying different action:
+
+1. **copper** — the recheck queue is thousands of $140 leads awaiting promotion
+2. **fiber** — they are grey and correctly excluded
+3. **not a broadband account at all** (wireless/DirecTV only) — they are **not
+   leads**, and working them wastes a rep's time entirely
+
+Nothing in the system guesses. Three ways to settle it, none requiring a code
+change:
+
+- `decode_gold.py` cross-tabs build code against customer/non-customer from the
+  saved `serviceability_raw.json`. A code appearing on **both** customers and
+  non-customers would prove the field is not describing the subscriber at all.
+- The same script reads **AT&T's own colouring rule** out of the map JavaScript
+  cached in the browser profile. Their map paints gold and grey correctly from
+  this exact payload, so the rule is in their code — the original, not an
+  inference.
+- `speed` is in the payload and has never been examined. A DSL subscriber
+  should show 768K/6M/25M; fiber 300M/1G/5G.
+
+When the answer arrives it is an edit to **`build_codes.json` — data, not
+code** — and `test_gold_predicate.py` proves both implementations pick it up.
+
+### What a reviewer should NOT ask for
+
+- A pixel/RGB detector. Not the architecture; it is fallback only.
+- A rewrite of the green path. It works and was untouched throughout.
+- A classifier rewrite before counters show loss AT classification. The stage
+  counters print `RAW -> classified green/gold/grey/unknown -> gold queued /
+  committed / seen / pending`; the first drop names the stage.
