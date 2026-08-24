@@ -1548,3 +1548,57 @@ Created test tabs and redirected code. Need to:
 7. If artifact shows counters = 0, investigate session/network layer
 
 **Code Confidence:** Production flush, split flush, classification, routing all correct. No bugs found in those paths. Issue is pre-write (extraction, network, or session state).
+
+---
+
+## 22.29 2026-08-24 Unified Classifier Implementation
+
+**Problem Solved:** Eliminated dual-classifier architecture that allowed GREEN→GOLD drift.
+- precise_fiber_hunter.py had its own classify_wire() + environment overrides
+- backend_classifier.py was the canonical classifier but was bypassed
+- Unknown build codes could be forced to GOLD via OPTIMUS_UNKNOWN_CUSTOMER env var
+- Risk: two paths could classify differently, causing regressions
+
+**Solution Implemented (commit d72db00):**
+
+1. **Single Classifier Source of Truth:**
+   - Import `backend_classifier.classify_lead` (line 91)
+   - Replace classify_wire() with unified classify_lead() (lines 637-665)
+   - Preserve wire-specific logic: status text can override ("copper" in status → GOLD)
+   - Delegate to backend_classifier for build-code decoding
+
+2. **Unified Return Values:**
+   - backend GREEN → "lead" (displays as GREEN)
+   - backend GOLD → "copper_upgrade" (displays as ORANGE)
+   - backend GREY → "customer" (displays as GREY)
+   - backend CUSTOMER → "unknown_customer" (displays as UNKNOWN)
+
+3. **Four Test Tabs (Clean Validation):**
+   - TEST-Green-2026-08-24: GREEN non-customers (eligible fiber, no account)
+   - TEST-Gold-2026-08-24: GOLD copper customers (upgrade targets)
+   - TEST-Grey-2026-08-24: GREY fiber customers (existing subscribers, skip)
+   - TEST-Unknown-2026-08-24: UNKNOWN undecodable customer build codes (visible, not on call list)
+
+4. **Unknown Routing (Visibility + Safety):**
+   - Added write_unknown_dots() function (lines 3409-3447)
+   - Production flush routes unknown_customer → TEST-Unknown tab (line 2690+)
+   - Initialize unknown_records, unknown_ct in flush (line 2598)
+   - Call write_unknown_dots() independently (line 2815+)
+   - **Why:** Undecodable codes silently vanished before (GREY has no sheet reach). Now visible for human review and safe (not on call list until verified).
+
+5. **Hardened Append:**
+   - commit_rows() already has 3-attempt retry + exponential backoff (lines 3285-3314)
+   - Explicit SHEET COMMIT FAILED messages printed on retry (line 3303)
+   - Successful batch committed printed on ACK (line 3309)
+   - Parked to disk on all-attempts-failed (line 3311)
+
+**Test Plan:**
+Run precise_fiber_hunter with fresh browser session → capture 60+ seconds →
+1. Terminal: Check counts printed (GREEN / GOLD / GREY / UNKNOWN > 0)
+2. GitHub artifact (latest.json): Verify classified_* counters match terminal
+3. TEST-Green tab: ≥1 non-customer address with timestamp
+4. TEST-Gold tab: ≥1 copper customer with build code
+5. TEST-Grey tab: ≥1 existing fiber customer with build code
+6. TEST-Unknown tab: ≥1 undecodable customer for audit
+
+**Proof of Correctness:** One address must appear in exactly ONE tab with matching classification. If addresses are split across tabs or duplicated, the classifier or dedupe has a bug.
