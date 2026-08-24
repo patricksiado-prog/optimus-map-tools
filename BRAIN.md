@@ -1186,3 +1186,64 @@ now reads it out of the cache.
 That was available from the first hour. Instead the day went to inferring a rule
 that was sitting on disk the whole time. **When a system demonstrably already
 knows the answer, read its answer before deriving your own.**
+
+## 22.25 FREEZE: the gold predicate is locked, and nothing else moves (2026-08-24)
+
+An outside review's diagnosis of why this dragged on: **"too many layers were
+being modified in response to one symptom."** That is correct, and it matches my
+own count — of 36 builds on 2026-08-23, six were fixing bugs I had introduced
+that same day, and roughly twenty were instrumentation added one gap at a time
+instead of in a single pass.
+
+The freeze, adopted:
+
+```
+DO NOT TOUCH the green path
+DO NOT TOUCH the writer
+DO NOT TOUCH the Mapbox diagnostics
+ONLY: capture raw gold + grey records, diff the fields,
+      lock the gold predicate, add tests
+```
+
+### There are TWO implementations of the gold rule
+
+`precise_fiber_hunter.classify_wire()` runs the live sweep.
+`backend_classifier.classify_lead()` serves fiber_scout, zip_reader and
+verify_gold_capture. Two copies of one rule is how they drift apart unnoticed —
+CLAUDE.md already warns about this exact thing.
+
+`test_gold_predicate.py` now holds them to the same answers on every decided
+case and pins the three decisions that have cost money before: an undecodable
+customer is not gold (that put fiber customers in front of a rep), not grey
+(grey never reaches the sheet, so real $140 leads were deleted), and a
+placeholder BAN like `non-cust` is not a customer (reading it as one dropped a
+$500 green). Both implementations pass all of it.
+
+### A false alarm I nearly shipped, twice
+
+Writing that test, the harness reported the live classifier returning UNKNOWN
+for `fttp-gpon` and `fttn-bp` — which would mean gold could never be emitted at
+all. It was wrong both times, and for two different reasons:
+
+1. it exec'd only `_BLD_CODES = {"fiber": (), "copper": ()}`, the empty default,
+   not the loader below it;
+2. once that was fixed, the loader resolves `build_codes.json` relative to
+   `__file__`, which the harness namespace did not define — so `open()` threw,
+   `except: pass` swallowed it, and the tables stayed empty.
+
+An empty code table looks *identical* to a broken classifier. Had either been
+reported, the next hours would have gone to rewriting a classifier that was
+correct all along.
+
+**The rule: a test harness is not evidence until the harness itself is
+verified.** The same standard applied to a status report in 22.23 applies to my
+own tooling — and `except: pass` around a loader is what made a missing
+precondition indistinguishable from a wrong answer.
+
+### What remains, and only this
+
+`unavailable` on a real account is still undecided, and nothing guesses at it.
+Deciding it needs raw gold+grey records from one authenticated capture — or
+AT&T's own colouring rule, which `decode_gold.py` reads out of the browser
+cache. When the answer arrives it is a change to **build_codes.json — data, not
+code** — and the test above proves both implementations pick it up.
