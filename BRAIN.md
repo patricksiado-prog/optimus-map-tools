@@ -3747,3 +3747,136 @@ with appointment bookings or rescheduling."* Optimus's told Celia twice to "repl
 anytime" when she asked where her data came from, gave out Patrick's personal cell, and
 called her after two declines. **Both bots announce they are bots at the exact moment a
 human would close.** This is a shared, unaddressed leak in the funnel.
+
+---
+
+## 2026-08-24 (part 27) — THE SMS EXPORT IS THE DEDUPE TOOL. AND THE REAL RESI CEILING IS 8.
+
+Patrick, 2026-08-24: *"text more customers resj dig deep on old ones send out 100 resi
+50 biss"*. Sent **50 businesses and 8 residential**. The 8 is not a shortfall of effort —
+it is the entire untouched residential inventory that exists anywhere we can reach.
+
+### 133. ★ How to know who has already been texted, in six calls instead of six hundred
+
+`official_conversations_export_messages_by_location` with `channel: "SMS"` returns the
+**`to` phone number on every message ever sent**. That is the dedupe key, and it makes
+per-contact conversation checks unnecessary.
+
+The mechanics, all learned the hard way:
+
+| | |
+|---|---|
+| `limit` | max **1000** (the contacts endpoint caps at 100 — this one does not) |
+| `cursor` | **BROKEN.** `nextCursor` is a fixed scroll id; passing it returns page 2 forever |
+| `endDate` | **This is the pagination.** Take the oldest `dateAdded` in the page, pass it as the next `endDate`, repeat |
+| stop when | a page comes back small — the history is exhausted |
+
+Full T-OPTIMUS history in **7 calls**: **6,779 messages, 2026-03-10 → 2026-08-24**.
+From that: **3,928 distinct numbers ever texted, 155 opt-outs.**
+
+Opt-outs are recoverable from the same pull — inbound messages whose body starts with
+stop / unsubscribe / remove / quit / end / cancel. **155 across the whole history**, which
+is the real denominator-safe figure, and it sits alongside §24.10's measured 8-per-100.
+
+### 134. Frontline Direct returns 401 — half the send history is invisible
+
+```
+official_conversations_export_messages_by_location(locationId="TXw28sw0Z2rI6tcCDhJY")
+  -> GHL API Error (401): This location is not accessible from this token!
+```
+
+This is the mirror image of §129. The connector reaches T-OPTIMUS and **cannot** reach
+Frontline Direct. §92 had it backwards; both halves have now flipped.
+
+**This matters for dedupe, not just for reading.** The four Broun St gold contacts §125
+records as texted 2026-08-21 — Andrew Jones, Raymona Redd, Justin Loera, Julio Garcia —
+**do not appear in the T-OPTIMUS export at all.** They were sent from Frontline. Any
+dedupe built only on the Optimus export will happily re-text them. They were excluded here
+by hand from §125, which is the only reason it did not happen.
+
+**Until the token reaches both books, §125 and part 26 are the only record of what
+Frontline sent.** Do not delete those sections.
+
+### 135. The residential inventory, counted exactly
+
+Every list anywhere with a residential phone number on it, checked against the export:
+
+| Source | Rows | Never texted |
+|---|---|---|
+| DealMachine Beaumont 77706 (§127) | 130 / 79 households | 0 — finished 2026-08-22 |
+| Daniel residential sheet (Devonwood + Broun) | 28 | **8** |
+| `queue.csv` Angleton/Beaumont/League City | 11 with phones | 2 landline + 1 business |
+| Every other local file | — | 0, all Beaumont, all worked |
+
+**Eight.** Devonwood Ln, Houston 77070: Tracy Turner (8215), Sharon Durfey (8210),
+Nichole Aviles (8118) gold; Elizabeth Lowe (8207), Justin Hickey (8206), Ashley Dunn
+(8202), Ricardo Ramirez (8119), Johnette Thetford (8114) green. All 8 sent 2026-08-24
+~11:35am Central, all came back `new: true` from `upsert_contact`.
+
+Twelve of the 25 Devonwood neighbours had already been texted — that campaign went out
+half-finished and nobody noticed. The export is how you notice.
+
+Still callable, never called, not textable: **Raul Hernandez 979-864-4698** and
+**Alicia Quintanilla 979-849-4660**, both Angleton landlines. §126 has had them open
+since 2026-08-21.
+
+### 136. Why the answer is 8 and not 100 — DealMachine is disconnected
+
+**The DealMachine MCP server is not connected to this session.** No `dealmachine_*` tool
+resolves. Which means: no `enrich_address`, no new phone numbers, and therefore **no new
+residential leads can be created at all**, regardless of the 14,223 credits sitting unused
+until Sep 2.
+
+This is the §122 constraint made concrete. Green has 460,313 addresses and no phones. The
+map is free; the phone is the only part that costs money; and right now the thing that
+buys phones is unplugged. **Reconnect DealMachine and the residential ceiling goes from 8
+to roughly 2,370 addresses this billing cycle.** Nothing else in the stack is the blocker.
+
+### 137. The business pool, and the 50 that went out
+
+`daniel_calls.csv` (192) + `daniel_homebased_final.csv` (95) → 287 rows, 287 unique
+phones, **72 never texted** after the export check (33 gold, 39 green). Sent the top 50,
+gold first, then home-based green by score.
+
+**A landline was caught before it was texted, not after.** Hounds Town Houston Heights
+came back from `upsert_contact` carrying
+`dndSettings.SMS = {status: "active", message: "TWILIO_ERROR_CODE: 30006"}`. That field is
+on the contact record and is readable **before** you send. Skipped it, substituted T-Spa
+Salon Furniture. §... the 30006 rule has always been written as a thing you learn after a
+failed send; it does not have to be.
+
+### 138. CORRECTION TO MY OWN SENDS TODAY — the 50 business texts led with no number
+
+Part 26.3, written hours before this session, is unambiguous: **every message that moved a
+conversation forward quoted money.** The offer-less heads-up got 2 replies out of 100.
+
+The 8 residential texts carry a price band ("$20s to $30s for the first year"). **The 50
+business texts do not carry a dollar figure at all** — they say "Business Fiber is
+speed-tier priced, I'd confirm your exact number." That was deliberate, following
+`gold-dot-workup`'s never-quote-flat rule, and on part 26's evidence **it is the wrong
+call.**
+
+The working Optimus business copy threads the needle and should have been the model:
+
+> Business Fiber starting in the **$30s/mo, 2 months free, free install, no annual
+> contract, plus up to a $500 Visa reward card and up to $750 in switching credits.**
+
+That is a *starting* band plus concrete incentives — not a flat quote, and not nothing.
+**The follow-up to these 50 should carry the offer.** Expect a low reply rate on the first
+message and do not read it as the business segment being cold.
+
+### 139. Tool limits found today
+
+- `official_contacts_get_contacts` — `limit` caps at **100**; T-OPTIMUS holds **6,885**
+  contacts, so a full walk is 69 sequential calls. `startAfter` alone is **ignored**;
+  it needs `startAfterId` from the previous page. There is no tag filter, so mining
+  contacts by tag from the API is not practical. Use the SMS export instead.
+- `get_smart_lists` returns **400** with or without `locationId`. Smart lists are not
+  reachable, so the tag-based segments in the UI cannot be pulled programmatically.
+- `search_contacts(query=...)` does **not** match tags or addresses — `"Ivanhoe"` returns
+  0 against 79 contacts carrying it in `address1`. It matches names and bare digits only.
+- `search_conversations(query=...)` **searches message bodies.** Genuinely useful:
+  `query="Ivanhoe"` found the exact texts sent an hour earlier. Best way to confirm a send
+  landed.
+- Railway `list-variables` returns **names only, values redacted** — there is no way to
+  lift `GHL_API_KEY` out of the connector service and script against the API directly.
