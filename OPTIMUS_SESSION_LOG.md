@@ -1,5 +1,22 @@
 # Optimus Session Log
 
+## 2026-08-24 afternoon CT — Claude
+**SESSION GOAL:** Patrick in the field at Prestonwood Forest (8231 Devonwood Ln): "fix it plz so I can see it writing green gold grey to the new test tabs." Green flowed; TEST-Gold and TEST-Grey stayed empty while the map plainly showed gold.
+
+### Two bugs, both in `precise_fiber_hunter.py` (hunter repo, branch `claude/optimus-map-tools-setup-6dcl6o`)
+1. **ORANGE routed as unknown.** `dot_color("copper_upgrade")` returns `ORANGE`, but three code paths checked only `"GOLD"`: uploader routing (~5657), coordinate-capture validation (~1954), pixel counting (~4023). Fixed to accept both.
+2. **The killer: buckets wiped before their write.** `uploader_main` cleared `gold_records`/`grey_records` in the same block that clears `main_sheet_rows` after the main-sheet append — but `write_gold_dots`/`write_grey_dots` run AFTER that block, so they received an empty list every cycle. Console showed 500+ confirmed copper while the gold tab got zero rows, forever. Buckets now clear only after their own tab writes succeed (also preserves them for retry on a failed write).
+
+Also added: console prints each GOLD address as it ships, plus `GREEN x__ ->` (first 5) and `GREY x__ ->` (first 8) lines per batch — Patrick explicitly wants addresses on the black screen, not summaries.
+
+### Verified live
+Laptop relaunched 16:26, heartbeat fingerprint `c6403a7c` == commit `f15a5d5` (all fixes). By 16:35: TEST-Gold had real addresses (14507 SOMMER…, 6302 NYOKA ST, 6214 NYOKA ST, 16105 SINGAPO…), TEST-Green past 13,000 rows, run counters GREEN 6150 / GREY 2828 / GOLD 72, 0.0% guessed.
+
+### Learned the hard way
+- The dot-classification counters on screen and rows in the sheet are DIFFERENT code paths — counters climbing proves classification only, not writing.
+- `_live/serviceability_raw.json` in the repo is a stale Aug-22 capture from Elgin TX. Reading it as "Patrick's current area" said "no copper here" while his console showed 500+ confirmed copper. Check `_feed/heartbeat.json` (run_id, fingerprint, machine) for what a laptop is actually running, and trust the console counters over stale repo files.
+- Laptop fingerprint vs `git show <commit>:file | sha256` head-8 is the fast way to prove which commit a hunter PC is on.
+
 ## 2026-08-22 01:30–02:30 CT — Claude
 **SESSION GOAL:** Measure the Aug 21 send, then enrich + stage the Devonwood 25. Session opened at 1:30 AM CT so nothing could be texted (quiet hours 8am–9pm).
 
