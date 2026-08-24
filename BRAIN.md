@@ -1602,3 +1602,60 @@ Run precise_fiber_hunter with fresh browser session → capture 60+ seconds →
 6. TEST-Unknown tab: ≥1 undecodable customer for audit
 
 **Proof of Correctness:** One address must appear in exactly ONE tab with matching classification. If addresses are split across tabs or duplicated, the classifier or dedupe has a bug.
+
+## 22.30 END-TO-END GOLD VERIFIED — the pipeline is proven (2026-08-24, field session)
+
+Patrick drove Prestonwood Forest (8231 Devonwood Ln, 77070) with all three colors
+deliberately in view. Green flowed; TEST-Gold and TEST-Grey stayed empty while the
+console counted 500+ confirmed copper. Two bugs, both in `precise_fiber_hunter.py`
+on the hunter repo (`Go-High-Level-MCP-2026-Complete`, branch
+`claude/optimus-map-tools-setup-6dcl6o`):
+
+**Bug 1 — ORANGE routed as unknown.** `dot_color("copper_upgrade")` returns
+`"ORANGE"`, but three paths checked only `"GOLD"`: the uploader's bucket routing
+(~5657), coordinate-capture validation (~1954), pixel counting (~4023). Copper
+customers were classified correctly and then filed as unknown. Fixed: every gold
+check is now `in ("GOLD", "ORANGE")`.
+
+**Bug 2 — THE KILLER: buckets wiped before their write.** In `uploader_main`,
+`gold_records`/`grey_records` were cleared in the same block that clears
+`main_sheet_rows` after the main-sheet append — but `write_gold_dots` /
+`write_grey_dots` run AFTER that block. They received an empty list every single
+cycle. This is why the gold tab could stay at zero forever while classification
+counters climbed: **counters on screen and rows in the sheet are different code
+paths — a climbing counter proves classification, not writing.** Buckets now
+clear only after their own tab writes succeed (which also preserves them for
+retry if a write fails).
+
+Also added because Patrick asked for it directly: the uploader console prints
+every GOLD address on its own line as it ships, plus `GREEN x__ ->` (first 5)
+and `GREY x__ ->` (first 8) per batch. He wants addresses on the black screen,
+not summaries.
+
+**The verification, end to end (2026-08-24 ~16:26–16:39 CT):**
+1. Laptop relaunched; `_feed/heartbeat.json` fingerprint `c6403a7c` == sha256
+   head-8 of the file at commit `f15a5d5` (all fixes). That fingerprint match is
+   the fast way to prove which commit a hunter PC is actually running.
+2. Console: GREEN 6150 / GREY 2828 / GOLD 72, "0.0% of customer dots were a
+   guess, not a decode."
+3. TEST-Gold-2026-08-24 filled with real addresses: 14507 SOMMER…, 6302 NYOKA ST,
+   14611 SOMMER…, 6214 NYOKA ST, 16105 SINGAPO…. TEST-Green passed 13,000 rows.
+4. **Ground truth:** Patrick clicked 6214 NYOKA ST on the dealer map itself:
+   "FIBER ELIGIBLE / Status: Existing Copper Customer / Subscriber BAN:
+   ******231". The sheet's gold row matches AT&T's own popup exactly.
+
+That last step is the standard for "gold works": a row in the gold tab whose dot,
+clicked on the live map, says Existing Copper Customer. It happened. The chain
+map dot → backend capture → classify_wire → ORANGE → gold bucket → TEST-Gold tab
+is proven with zero guessed customers.
+
+**Traps recorded so nobody re-learns them:**
+- `optimus/_live/serviceability_raw.json` in the repo was a stale Aug-22 capture
+  from ELGIN, TX. Reading it as "the current area" concluded "no copper here"
+  while Patrick's live console showed 500+ confirmed copper. Repo `_live` files
+  are whatever some past run left behind — check `_feed/heartbeat.json` (run_id,
+  machine, fingerprint, updated_at) for what is running NOW, and trust the live
+  console over stale repo files.
+- The visual map legend and the backend JSON can disagree per-view; the popup
+  status field ("Existing Copper Customer") is direct evidence and classify_wire
+  already honors it before build codes.
