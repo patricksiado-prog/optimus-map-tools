@@ -136,6 +136,20 @@ Where a line is worth holding: anything irreversible and outward-facing. Texting
 at 11pm, deploying to every hunter PC, spending a large credit batch on an
 unverified assumption. State the concern once, then do what he decides.
 
+## Hunter keyboard controls (global — work while Chrome has focus)
+
+| Keys | What it does |
+|---|---|
+| **Ctrl+Shift+Pause** *(or **Ctrl+Shift+P**)* | **PAUSE** — hunter lets go of the map at the next cell. Pan/zoom/search by hand; manual searches are still captured |
+| **Ctrl+G** | **GO** — resume, sweeping outward from the CURRENT view (fresh spiral, no relaunch) |
+| Ctrl+Shift+S | Gentle stop — finish the cell, close clean |
+| Ctrl+Shift+K | Force-quit, even if frozen |
+
+Ctrl+Shift+P is a real alias, not a typo: Pause/Break is an Fn-layer key on most
+HP laptops. Pausing drops a `PAUSED.flag` file — that is how the **separate
+uploader process** knows a long pause isn't idleness and keeps writing. Never
+"clean up" that file mid-run.
+
 ## Installing on a new PC
 
 ONE installer covers both tools (Fiber Hunter + Maps Scraper): `INSTALL_OPTIMUS.bat`.
