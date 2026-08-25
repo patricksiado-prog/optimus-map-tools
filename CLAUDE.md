@@ -145,6 +145,10 @@ unverified assumption. State the concern once, then do what he decides.
 | Ctrl+Shift+S | Gentle stop — finish the cell, close clean |
 | Ctrl+Shift+K | Force-quit, even if frozen |
 
+The sweep also **holds 10 seconds before its first pan** so the map can be aimed
+by hand — Ctrl+G skips the wait. Unattended runs skip it automatically.
+Operators type **initials** now (PS), not a name picked off a menu.
+
 Ctrl+Shift+P is a real alias, not a typo: Pause/Break is an Fn-layer key on most
 HP laptops. Pausing drops a `PAUSED.flag` file — that is how the **separate
 uploader process** knows a long pause isn't idleness and keeps writing. Never
