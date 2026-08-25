@@ -1659,3 +1659,35 @@ is proven with zero guessed customers.
 - The visual map legend and the backend JSON can disagree per-view; the popup
   status field ("Existing Copper Customer") is direct evidence and classify_wire
   already honors it before build codes.
+
+## 22.31 `ip-co` — the unmapped code hiding gold (2026-08-25, DECISION PENDING)
+
+Run `20260825-105030` (Beaumont, LAPTOP-FJEEPATI) classified 126,628 dots:
+green 81,984 · fiber/grey 44,500 · **copper 0** · unknown 144. Zero copper out of
+44,500 customers is not believable.
+
+Exactly ONE build code came back undecodable:
+
+| Code | Count this run | Sample address |
+|---|---|---|
+| **`ip-co`** | **288** | 229 DOWLEN RD RM 6B (Beaumont) |
+
+`ip-rt` (IP **R**emote **T**erminal) is already CONFIRMED copper and on the gold
+list. `ip-co` is almost certainly IP from the **C**entral **O**ffice — the same
+IP-DSL family, copper last mile, just fed from the CO instead of a remote
+terminal. If that reading is right, every `ip-co` dot is a $140 upgrade lead and
+we have been filing them as UNKNOWN.
+
+**NOT ADDED YET, ON PURPOSE.** The gold predicate is frozen (22.25) and a wrong
+widening is exactly what once put existing fiber customers in front of a rep
+(22.14). The rule stands: confirm on the map, THEN add to `build_codes.json`.
+
+**To close this out:** pull up `229 DOWLEN RD RM 6B` on the dealer map and click
+the dot. If the popup reads "Existing Copper Customer" (the way 6214 NYOKA ST did
+on 2026-08-24, BRAIN 22.30), add `"ip-co"` to the `copper` list in
+`build_codes.json` — it rides `_CORE_FILES`, so it deploys to every hunter PC on
+next launch. If it reads as a fiber customer, add it to `fiber` instead and the
+144 unknowns stop being noise.
+
+Nothing is lost while this is undecided: UNKNOWN customers are written to
+`Unknown Customers` / `Gold Recheck`, which is the recheck design doing its job.
