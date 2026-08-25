@@ -1691,3 +1691,58 @@ next launch. If it reads as a fiber customer, add it to `fiber` instead and the
 
 Nothing is lost while this is undecided: UNKNOWN customers are written to
 `Unknown Customers` / `Gold Recheck`, which is the recheck design doing its job.
+
+## 22.32 THE 2026-08-25 ROADMAP — everything Patrick asked for, with status
+
+Dumped in one go while in the field. Recorded here so none of it evaporates.
+Status is honest: SHIPPED means it is in the code and pushed, QUEUED means
+designed but not built, DECISION means it needs Patrick before anyone writes it.
+
+### Shipped this session
+| Item | Where it lives |
+|---|---|
+| Start/stop hotkeys | Ctrl+Shift+Pause (or Ctrl+Shift+P) = PAUSE, Ctrl+G = GO. Global, work while Chrome has focus. See CLAUDE.md controls table |
+| **Map starts in 10 seconds** | `countdown_to_start(10)` runs before the FIRST pan so the view can be aimed by hand. Ctrl+G cuts it short; unattended runs skip it |
+| Operator = typed INITIALS | `optimus_operator._ask()` — the six-name menu is gone. PS / ps / p.s. / "Patrick Siado" all become PS. Stamped on every lead |
+| Timestamp on leads | Already there and always was: `Captured At` on every row of every tab, plus `Run ID` |
+| AT&T build-out news | `intel_banner()` now PRINTS it. It was fetched every launch since August and never shown |
+| Cable outage news | NEW `cable` bucket: Comcast/Xfinity/Spectrum/Charter/Cox/Optimum/Suddenlink/Altice + outage words, territory-filtered. A cable outage is the OPPOSITE of ours — their customers are down and we are the fix |
+| Sheet cleanup | `CLEAN_SHEET.bat` — whitelist delete, CSV backup first, migrates TEST-Gold into Gold Confirmed, dedupes, then formats |
+| Linked sheets Claude can read | Three IMPORTRANGE bridges in Patrick's Drive + `sheet_feed.py` (chunked JSON to GitHub) |
+| Map scraper: resi + cell | Two columns only. `Resi?` from address shape; `Cell?` says `NO toll-free` or `LOOKUP` — never a guessed carrier |
+
+### Queued — designed, not built
+- **2x/day email: progress + analytics.** Source is `_feed/latest.json` (counts,
+  phases, crash, undecoded codes) plus the sheet bridges. BLOCKED on one fact:
+  **which address.** The session account is BHOLLAND@thefiberplug.com, the Drive
+  owner is patricksiado@gmail.com. Do not guess — business analytics to the
+  wrong inbox is not a recoverable mistake.
+- **Fresh-area detector emails PATRICK ONLY.** Explicitly not a team broadcast
+  yet. Reuses the existing freshness rule (green+gold dense, grey share low —
+  see `backend_classifier.FRESH_MIN_ELIGIBLE`), which is already computed.
+- **Cable outage HISTORY.** Live headlines work; nothing archives them. Wants a
+  tab keyed by ZIP/city + date so "who went out here before" is answerable.
+
+### Queued — the Cowork loop (fresh area -> money)
+1. Fresh area detected **by Patrick or his own staff** -> DealMachine number
+   added -> text sent -> loaded for auto-dialer calls.
+2. **A business inside a fresh GREEN area gets flagged too.** The reason is
+   specific: a fresh area may exist *because* of a business that was previously
+   on the business list but NOT on the fiber-green list. That transition is the
+   signal, not the business itself.
+3. Carrier-aware routing: **if DealMachine says AT&T or Verizon, act
+   accordingly** — different pitch per carrier. Design the branch, do not spend
+   credits proving it on a hunch.
+
+### DECISION — needs Patrick before a word of it reaches a customer
+- **$15 cell service, iPhone 17 Pro Max $5.** The intent is to test willingness
+  to bite, on a few emails first. Nothing goes out until Patrick confirms the
+  REAL terms: what $15 buys, what the $5 is (down? per month? with trade?), and
+  what the qualifying conditions are. Standing rule (CLAUDE.md): never quote a
+  flat price, and business fiber is priced by speed tier. An offer this sharp
+  gets scrutinised — wrong numbers in writing is the one mistake that costs more
+  than a lost lead.
+- **Long-term: does this work?** The measurement question. Nothing answers it
+  today because nothing ties a lead to a close. `Run ID` + `Operator` are on
+  every row precisely so this becomes answerable — the missing half is a
+  disposition written back after the call.
