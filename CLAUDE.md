@@ -22,7 +22,7 @@ and builds.
 |---|---|---|
 | **GREEN** | Fiber live, NOT an AT&T customer | **$500** — the prize |
 | **GOLD / ORANGE** | Fiber live + AT&T customer still on copper | **$140** — easiest sale, an upgrade not a switch |
-| **GREY** | Already an AT&T fiber customer | Skip. **Never written to the sheet at all** |
+| **GREY** | Already an AT&T fiber customer | Skip as a lead — but since 2026-08-24 it IS written, to `Grey Fiber Customers` (penetration data) |
 
 Green is ~48x the volume and 3.6x the pay, so green is the money. Gold is the
 **compass**: a dense pocket of copper customers means fiber was lit recently and
@@ -50,10 +50,18 @@ next launch, so a push there is a deploy, not a commit.
 ## Sheet tabs
 
 **Hunter-owned — do not edit, do not read wholesale:** `Precise Fiber` (~474k
-rows), `Gold Dots` (no header row: A=Address, B=Captured At, C=Lat, D=Lng —
-**3,328 rows, lat and lng both populated**, verified 2026-08-22),
-`Maps Businesses`, `Fiber Green Biz`, `Upgrade Orange Biz`, `Backend Capture`,
-`Backend Analysis`, `Hunter Status`, `Backend Comm`, `_Dedupe Lock`, `_dispatch`.
+rows; since 2026-08-24 the main output again — every captured dot with color),
+`Gold Confirmed` (NEW canonical gold, 2026-08-24: new-rule confirmed copper
+only, header row, this is the call list), `Grey Fiber Customers` (existing
+fiber customers, fresh 2026-08-24), `Unknown Customers` (undecodable
+customers), `Gold Dots` (RETIRED — contaminated with gold-by-default rows,
+BRAIN 22.14; 3,328 rows, A=Address B=Captured At C=Lat D=Lng, no header; do
+not add to it, old enrichment history only), `Maps Businesses`,
+`Fiber Green Biz`, `Upgrade Orange Biz`, `Backend Capture`,
+`Backend Analysis`, `Hunter Status`, `Backend Comm`, `_Dedupe Lock`,
+`_dispatch`. The `TEST-*-2026-08-24` tabs are frozen verification snapshots —
+safe to delete once Patrick is done with them (today's 72+ gold live in
+`TEST-Gold-2026-08-24` until folded into `Gold Confirmed`).
 
 **Three tabs this file used to name do not exist.** `Enriched Leads` and
 `New Fiber Alerts` were never real. `Fiber Zones` and `Outage Signals` are read
