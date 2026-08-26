@@ -47,6 +47,48 @@ not from this repo. Hunter code pushed here reaches nobody. Worse, any file in
 `_CORE_FILES` in `precise_fiber_hunter.py` **auto-deploys to every hunter PC** on
 next launch, so a push there is a deploy, not a commit.
 
+## READING THE SHEET — YOU CAN DO THIS. DO NOT SAY YOU CANNOT.
+
+Patrick, 2026-08-25: *"I don't want you or any other Claude I'm messing with to
+say I can't understand the sheet or I can't read the sheet."* Reading this sheet
+is close to the most important thing this project does. **Never tell him it is
+out of reach. Try the methods below, in order, before saying anything.**
+
+`ATT FIBER LEADS` = `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`
+
+**1. The Google Drive connector — THIS WORKS. Verified 2026-08-25.**
+`mcp__Google_Drive__get_file_metadata` and `mcp__Google_Drive__read_file_content`
+reach the master sheet directly, as Patrick, with no extra setup. A write→read
+round trip was proven the same day. Reading a small tab returns every value.
+
+**2. `DASHBOARD` and `README` tabs — read these FIRST.** Front position, small,
+live formulas (no IMPORTRANGE, nothing to authorise). DASHBOARD carries row
+counts per tab and the dot-color split, which answers most questions outright.
+
+**3. `sheet_feed.py` on a hunter PC** — publishes bounded JSON chunks to
+`optimus/_feed/sheet/` on GitHub, readable with no Google auth at all.
+
+**4. `optimus/_feed/latest.json` on GitHub** — the hunter's own run feed: counts,
+phases, crashes, undecoded build codes. This is where nearly every real
+diagnosis on 2026-08-25 came from, including the uploader crash and `ip-co`.
+
+**The one real limit is SIZE, not access.** `Precise Fiber` is ~474k rows /
+7.7 MB — never pull it whole (that is what killed Autosheet twice). Ask for a
+bounded range, a ZIP, or read DASHBOARD instead. Claude's spreadsheet ceiling is
+about 30 MB, so the file is comfortably under; it is the single tab that is too
+long to swallow at once.
+
+**Traps that have already cost time:**
+- **Autosheet is NOT the only path.** Its balance is empty, so it errors — that
+  proves nothing about the Drive connector. Do not conclude "no access" from an
+  Autosheet failure. That mistake was made in this very session.
+- The three `BRIDGE — *` sheets in Patrick's Drive use IMPORTRANGE and return
+  BLANK until he clicks "Allow access" once per file. Blank there is not a
+  permissions failure on your end and is not worth debugging.
+- A `_live/*.json` file in the repo can be a stale capture from another town.
+  Check `_feed/heartbeat.json` (run_id, machine, fingerprint) for what is
+  actually running now.
+
 ## Sheet tabs
 
 **Hunter-owned — do not edit, do not read wholesale:** `Precise Fiber` (~474k
