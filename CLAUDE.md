@@ -9,13 +9,16 @@ on demand.
 Patrick Siado runs **Optimus**, an authorized AT&T dealer. We sell fiber.
 
 **TERRITORY IS THE ENTIRE AT&T FOOTPRINT** (Patrick, 2026-08-25, correcting the
-old note): **32 states, not 21** — the 21 legacy ILEC states plus the 11 that
-came with the **Lumen Mass Markets fiber acquisition, closed February 2026**
-(AZ CO IA ID MN MT NE NM OR UT WA; new metros Denver, Seattle, Portland, Salt
-Lake City, Minneapolis-St. Paul, Phoenix). The Lumen states are the NEWEST
-markets AT&T owns, so they hold the least-worked green anywhere — but they are
-phone/text plays, not door-knocks, and `optimus_web_intel.py` keeps them in a
-separate `LUMEN_STATES` map so ranking stays honest. Not just Texas. Houston metro, Beaumont and
+old note): all **21 legacy ILEC states**, not just Texas.
+
+**The Lumen states are NOT our territory.** AT&T closed the Lumen Mass Markets
+fiber acquisition in Feb 2026, which put AT&T Fiber into 11 more states (AZ CO
+IA ID MN MT NE NM OR UT WA — Denver, Seattle, Portland, Salt Lake City,
+Minneapolis-St. Paul, Phoenix). Patrick, 2026-08-26: *"ignore Lumen deal that
+doesn't matter."* `optimus_web_intel.py` keeps them in
+`LUMEN_STATES_NOT_OUR_TERRITORY`, defined but never merged into `STATES`.
+Recorded so no future session rediscovers the deal and "fixes" the footprint
+by adding them back. Houston metro, Beaumont and
 Brazoria County (Angleton, Clute) are where the FEET are — the boots-on-ground
 core — but lead discovery is national. Do not scope a scan, a news query or a
 freshness check to Texas on the assumption that out-of-state is noise.
