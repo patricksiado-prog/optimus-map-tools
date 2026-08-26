@@ -213,10 +213,14 @@ unverified assumption. State the concern once, then do what he decides.
 
 | Keys | What it does |
 |---|---|
-| **Ctrl+Shift+Pause** *(or **Ctrl+Shift+P**)* | **PAUSE** — hunter lets go of the map at the next cell. Pan/zoom/search by hand; manual searches are still captured |
-| **Ctrl+Shift+Y** *(or **F9**)* | **GO** — resume, sweeping outward from the CURRENT view (fresh spiral, no relaunch). **NOT Ctrl+G** — that is Chrome's find-next and it opens the browser search bar over the map |
+| **Ctrl+Shift+Pause** *(or **Ctrl+Shift+P**)* | **PAUSE / RESUME — same key both ways.** Hunter lets go of the map at the next cell. Pan/zoom/search by hand; manual searches are still captured |
+| **Ctrl+Shift+Y** | **GO** — resume, sweeping outward from the CURRENT view (fresh spiral, no relaunch). **NOT Ctrl+G** — Chrome's find-next, it opens the search bar over the map. **F9 alone no longer works** (2026-08-26): it had no modifier, so a stray F9 un-paused the sweep by accident |
 | Ctrl+Shift+S | Gentle stop — finish the cell, close clean |
 | Ctrl+Shift+K | Force-quit, even if frozen |
+
+The corner-stop gesture needs the pointer **still** for ~1.2s, not merely in a
+corner: the hunter drives the cursor on every pan, so the old 0.45s rule let it
+stop itself and blame the mouse.
 
 The sweep also **holds 10 seconds before its first pan** so the map can be aimed
 by hand — Ctrl+Shift+Y skips the wait. Unattended runs skip it automatically.
