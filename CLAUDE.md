@@ -188,12 +188,12 @@ unverified assumption. State the concern once, then do what he decides.
 | Keys | What it does |
 |---|---|
 | **Ctrl+Shift+Pause** *(or **Ctrl+Shift+P**)* | **PAUSE** — hunter lets go of the map at the next cell. Pan/zoom/search by hand; manual searches are still captured |
-| **Ctrl+G** | **GO** — resume, sweeping outward from the CURRENT view (fresh spiral, no relaunch) |
+| **Ctrl+Shift+Y** *(or **F9**)* | **GO** — resume, sweeping outward from the CURRENT view (fresh spiral, no relaunch). **NOT Ctrl+G** — that is Chrome's find-next and it opens the browser search bar over the map |
 | Ctrl+Shift+S | Gentle stop — finish the cell, close clean |
 | Ctrl+Shift+K | Force-quit, even if frozen |
 
 The sweep also **holds 10 seconds before its first pan** so the map can be aimed
-by hand — Ctrl+G skips the wait. Unattended runs skip it automatically.
+by hand — Ctrl+Shift+Y skips the wait. Unattended runs skip it automatically.
 Operators type **initials** now (PS), not a name picked off a menu.
 
 Ctrl+Shift+P is a real alias, not a typo: Pause/Break is an Fn-layer key on most
