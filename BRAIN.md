@@ -1795,3 +1795,71 @@ The three `BRIDGE — *` sheets use IMPORTRANGE and stay blank until he clicks
 "Allow access" once per file. They were built before the Drive-connector path was
 known. They are now a convenience for HIM on a phone, not the access route —
 do not debug their blankness.
+
+## 22.34 THE ECONOMICS, AND WHERE THE MONEY ACTUALLY IS (2026-08-25)
+
+Patrick, on a day when door-to-door had just taken a setback and this channel is
+"going kinda slow." His numbers, his words:
+
+| Product | Pays |
+|---|---|
+| **Pack of phones (mobility)** | **~$2,000** |
+| Business internet | ~$1,000 |
+| Residential internet | ~$500 |
+
+### The reframe that follows from his own data
+Mobility pays **4x** a residential internet deal. And GREY dots — existing AT&T
+fiber customers, which the legend says to skip as a lead — are the **best
+mobility list in the business**: already AT&T, already on fiber, address on file,
+and AT&T gives existing fiber customers a real bundle credit for adding a
+wireless line (researched 2026-08-25: ~$25/mo off fiber, ~20% off wireless, 12
+months, addresses must match).
+
+**One run on 2026-08-25 classified 44,500 grey customers before lunch** and the
+system filed every one under "ignore." Patrick has been asking to raise mobility
+attachment; the list was already in his hands.
+
+Grey stays a SKIP for *fiber* selling. It is a PRIME list for *mobility*.
+
+### Staffing — the honest math
+He has Filipino VAs willing to run the software. **Do not put them on the
+software.** One laptop pulls millions of addresses a day unattended; discovery is
+the one part that already scales without people. Ten operators produce ten times
+more of the thing there is already too much of.
+
+The constraint is **conversations**, not captures:
+- 1 person part-time babysits several machines (they do hang and need resetting)
+- 2–3 callers to START, aimed at the $2,000 and $1,000 products, not the $500 one
+- Measure those first for two weeks, THEN scale — staffing ten against an
+  unmeasured funnel is how the money goes
+
+**Why "measure first" is not caution-for-its-own-sake:** the last measured batch
+was Aug 21 — 100+ texts, **0 replies, 0 opt-outs**, still nothing four days
+later. Nothing in the system records what happens on a call. Scaling a funnel
+whose conversion nobody has ever seen multiplies an unknown.
+
+### The size of the prize (researched 2026-08-25)
+AT&T ended last year at **32M fiber locations**, expects **40M by end of this
+year** — about **8M new locations in 2026, ~22,000 per day**. Organic run-rate 4M
+/yr rising to 5M/yr through 2030, target 60M. Every new location is born GREEN.
+
+**4M of that 8M is the Lumen acquisition** — locations that already have fiber and
+simply become AT&T's. When it closes, ~4 million addresses turn sellable at once.
+With a diff running you would see that wave the week it lands; without one you
+hear it from a competitor.
+
+### What is still missing (in priority order)
+1. **The diff.** Sweep → wait → sweep → compare. It is the only way to know how
+   much new fiber we FOUND, it powers the fresh-area detector, and it catches the
+   ~22k/day that never make the news. Every row already carries Run ID +
+   timestamp; nothing does the subtraction.
+2. **Disposition writeback.** Until a call outcome lands next to the lead, "is
+   this working" stays a feeling.
+3. **Storage ceiling.** Google Sheets is 10M cells TOTAL across all tabs. Precise
+   Fiber alone is ~5.7M at 474k rows × 12 cols. Footprint scale needs one row per
+   ADDRESS (updated on color change) instead of one row per sighting — that fixes
+   the ceiling AND makes the diff trivial.
+4. **Widen the outage filter.** `optimus_web_intel.TERRITORY` is still a Texas
+   city list. Territory is now the whole footprint (see CLAUDE.md); a cable
+   outage anywhere AT&T sells is a phone/text selling event, even where we have
+   no boots.
