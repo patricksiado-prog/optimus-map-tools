@@ -9,7 +9,13 @@ on demand.
 Patrick Siado runs **Optimus**, an authorized AT&T dealer. We sell fiber.
 
 **TERRITORY IS THE ENTIRE AT&T FOOTPRINT** (Patrick, 2026-08-25, correcting the
-old note): all 21 ILEC states, not just Texas. Houston metro, Beaumont and
+old note): **32 states, not 21** — the 21 legacy ILEC states plus the 11 that
+came with the **Lumen Mass Markets fiber acquisition, closed February 2026**
+(AZ CO IA ID MN MT NE NM OR UT WA; new metros Denver, Seattle, Portland, Salt
+Lake City, Minneapolis-St. Paul, Phoenix). The Lumen states are the NEWEST
+markets AT&T owns, so they hold the least-worked green anywhere — but they are
+phone/text plays, not door-knocks, and `optimus_web_intel.py` keeps them in a
+separate `LUMEN_STATES` map so ranking stays honest. Not just Texas. Houston metro, Beaumont and
 Brazoria County (Angleton, Clute) are where the FEET are — the boots-on-ground
 core — but lead discovery is national. Do not scope a scan, a news query or a
 freshness check to Texas on the assumption that out-of-state is noise.
@@ -91,6 +97,12 @@ counts per tab and the dot-color split, which answers most questions outright.
 **4. `optimus/_feed/latest.json` on GitHub** — the hunter's own run feed: counts,
 phases, crashes, undecoded build codes. This is where nearly every real
 diagnosis on 2026-08-25 came from, including the uploader crash and `ip-co`.
+
+**The news feed cannot be tested from a Claude sandbox.** `news.google.com`,
+`bing.com` and `reddit.com` are refused by the agent proxy with a 403 on
+CONNECT, so `optimus_web_intel.gather()` returns zero from here every time.
+That says NOTHING about the operator's laptop — check
+`curl "$HTTPS_PROXY/__agentproxy/status"` before calling the feed broken.
 
 **The one real limit is SIZE, not access.** `Precise Fiber` is ~474k rows /
 7.7 MB — never pull it whole (that is what killed Autosheet twice). Ask for a
