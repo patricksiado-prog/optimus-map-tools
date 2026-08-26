@@ -1746,3 +1746,52 @@ designed but not built, DECISION means it needs Patrick before anyone writes it.
   today because nothing ties a lead to a close. `Run ID` + `Operator` are on
   every row precisely so this becomes answerable — the missing half is a
   disposition written back after the call.
+
+## 22.33 HOW TO READ THE SHEET — settled 2026-08-25, do not relitigate
+
+Patrick, emphatic: *"I don't want you or any other Claude I'm messing with to say
+I can't understand the sheet or I can't read the sheet... that's almost the most
+important thing we're dealing with here."* The short version is in CLAUDE.md so
+every session loads it. This is the detail.
+
+### What is PROVEN (tested this day, not assumed)
+- `mcp__Google_Drive__get_file_metadata` on
+  `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA` returns the real file:
+  "ATT FIBER LEADS", 7,726,944 bytes, owner patricksiado@gmail.com. **Access is
+  real.**
+- Full write→read round trip: created a sheet in his Drive with
+  `mcp__Google_Drive__create_file` (CSV content) and read every value back with
+  `mcp__Google_Drive__read_file_content`. Values came through exactly.
+
+### The limitation to be honest about
+The Drive connector reads a FILE, not a named TAB. It has no tab argument. So on
+a multi-tab workbook you get what the connector chooses to return, and you cannot
+say "give me Gold Confirmed" through that path.
+
+**This is exactly why README and DASHBOARD were put in FRONT position** (janitor,
+`_order_tabs`) and why `Precise Fiber` was moved LAST. Front-loading the small
+summary tabs means the cheap read lands on something useful. It is an
+architectural decision, not cosmetics — do not "tidy" the tab order back.
+
+For tab-level addressing use, in order: the DASHBOARD numbers (usually enough),
+`sheet_feed.py --tab "<name>"` (chunked JSON to GitHub, no Google auth), or
+Autosheet when it has credits.
+
+### The mistake made in this very session — do not repeat it
+Autosheet returned `api-billing-empty-balance`, and I concluded and TOLD PATRICK
+that I could not reach his sheet. That was wrong. I had never tried the Drive
+connector. **One tool failing says nothing about the others.** Try every path
+before reporting a limit, and never state a limit you have not personally tested
+that day.
+
+### Size, not permission
+`Precise Fiber` is ~474k rows in a 7.7 MB file. Claude's spreadsheet ceiling is
+around 30 MB, so the FILE is fine; the single tab is too long to swallow, and
+pulling it whole is what killed Autosheet twice. Deliberately NOT attempted, and
+should stay that way: ask for a bounded range, a ZIP, or read DASHBOARD.
+
+### Still needing one click from Patrick (low priority now)
+The three `BRIDGE — *` sheets use IMPORTRANGE and stay blank until he clicks
+"Allow access" once per file. They were built before the Drive-connector path was
+known. They are now a convenience for HIM on a phone, not the access route —
+do not debug their blankness.
