@@ -6,8 +6,13 @@ on demand.
 
 ## Who and what
 
-Patrick Siado runs **Optimus**, an authorized AT&T dealer. Territory: Houston
-metro, Beaumont, Brazoria County (Angleton, Clute). We sell fiber.
+Patrick Siado runs **Optimus**, an authorized AT&T dealer. We sell fiber.
+
+**TERRITORY IS THE ENTIRE AT&T FOOTPRINT** (Patrick, 2026-08-25, correcting the
+old note): all 21 ILEC states, not just Texas. Houston metro, Beaumont and
+Brazoria County (Angleton, Clute) are where the FEET are — the boots-on-ground
+core — but lead discovery is national. Do not scope a scan, a news query or a
+freshness check to Texas on the assumption that out-of-state is noise.
 
 AT&T is retiring copper — **Phase 1 by 2027** (wireless-first areas), **Phase 2
 by 2029** (fiber-migration areas). That deadline is the opener on every pitch:
