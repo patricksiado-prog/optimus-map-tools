@@ -23,11 +23,26 @@ and builds.
 
 ## The dot legend — everything downstream depends on this
 
-| Dot | Means | Worth |
-|---|---|---|
-| **GREEN** | Fiber live, NOT an AT&T customer | **$500** — the prize |
-| **GOLD / ORANGE** | Fiber live + AT&T customer still on copper | **$140** — easiest sale, an upgrade not a switch |
-| **GREY** | Already an AT&T fiber customer | Skip as a lead — but since 2026-08-24 it IS written, to `Grey Fiber Customers` (penetration data) |
+One colour, one tab, one meaning (Patrick, 2026-08-26). Every row on these
+tabs carries the wording below in a **Status** column, so a single exported row
+still explains itself and nobody has to remember a colour code.
+
+| Dot | Tab it lands on | Status wording on the row | Worth |
+|---|---|---|---|
+| **GREEN** | `Precise Fiber` | `Non-AT&T Customer - Can Get Fiber` | **$500** — the prize |
+| **GOLD / ORANGE** | `Gold Confirmed` | `Upgrade Customer - On Copper, Fiber Available` | **$140** — easiest sale, an upgrade not a switch |
+| **GREY** | `Grey Fiber Customers` | `Existing AT&T Customer` | Not a fiber lead — but it IS written: penetration data, and the best wireless/bundle list we have |
+| **UNKNOWN** | `Unknown Customers` | `Build Code Not Decoded - Not A Lead` | Parked for review, never called |
+
+**`Precise Fiber` is GREEN ONLY as of 2026-08-26.** It used to take every
+colour, which buried the call list under grey customers nobody can sell. Do not
+write a non-green dot to it and do not assume a colour filter on it means
+anything — every row is green now.
+
+The wording lives in ONE place: `STATUS_GREEN` / `STATUS_GOLD` / `STATUS_GREY` /
+`STATUS_UNKNOWN` at the top of `precise_fiber_hunter.py`. `clean_sheet.py`
+imports them for the README, the DASHBOARD and the dot legend, so the sheet and
+this file cannot drift apart. Change the words there, not in three places.
 
 Green is ~48x the volume and 3.6x the pay, so green is the money. Gold is the
 **compass**: a dense pocket of copper customers means fiber was lit recently and
@@ -97,10 +112,10 @@ long to swallow at once.
 ## Sheet tabs
 
 **Hunter-owned — do not edit, do not read wholesale:** `Precise Fiber` (~474k
-rows; since 2026-08-24 the main output again — every captured dot with color),
-`Gold Confirmed` (NEW canonical gold, 2026-08-24: new-rule confirmed copper
-only, header row, this is the call list), `Grey Fiber Customers` (existing
-fiber customers, fresh 2026-08-24), `Unknown Customers` (undecodable
+rows; **GREEN ONLY since 2026-08-26** — it used to hold every colour),
+`Gold Confirmed` (canonical gold: new-rule confirmed copper only, header row,
+this is the call list), `Grey Fiber Customers` (existing AT&T fiber customers,
+own tab since 2026-08-26 with a Status column), `Unknown Customers` (undecodable
 customers), `Gold Dots` (RETIRED — contaminated with gold-by-default rows,
 BRAIN 22.14; 3,328 rows, A=Address B=Captured At C=Lat D=Lng, no header; do
 not add to it, old enrichment history only), `Maps Businesses`,
@@ -120,6 +135,17 @@ part 24.
 For anything big: make ONE temp tab, put bounded QUERY/COUNTIF formulas in it,
 read the small result, delete the temp tab. Autosheet has died twice pulling
 whole tabs.
+
+**The workbook has a hard ceiling of 10,000,000 cells and it has been hit
+(2026-08-26).** Writes then fail with `[400] This action would increase the
+number of cells ... above the limit`, which no retry can ever satisfy. A tab is
+billed for its whole GRID, not the rows in it — a tab added as 5000x26 bills
+130,000 cells holding ten rows, and the hunter creates tabs that way, so there
+is usually free room. `FREE_SPACE.bat` shrinks over-allocated grids (deletes
+nothing) and can then drop the frozen `TEST-*` tabs. Precise Fiber alone is
+roughly 5.7M cells, so if resizing is not enough that tab needs archiving to
+its own spreadsheet. Google also allows only ~60 writes per minute per user;
+the hunter now throttles itself rather than collecting 429s.
 
 ## Things that cost real time to learn
 
