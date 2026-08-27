@@ -234,6 +234,16 @@ Where a line is worth holding: anything irreversible and outward-facing. Texting
 at 11pm, deploying to every hunter PC, spending a large credit batch on an
 unverified assumption. State the concern once, then do what he decides.
 
+## The hunter's contract (2026-08-27): aim, start, forever
+
+Patrick, after one night of watching news-flights: *"no jumping!! we never
+stop until the pc dies."* Default behavior (commit `f38b3cc`): the operator
+aims the map, the sweep spirals OUTWARD from there and never ends on its own.
+News-chasing (auto-flying to AT&T build-out towns) survives ONLY behind
+`--follow-news` — full flight lessons in BRAIN 22.36/22.36b. Closing the
+browser takes typing `q`; a bare Enter does nothing, because a stray Enter
+once killed Chromium mid-run.
+
 ## Hunter keyboard controls (global — work while Chrome has focus)
 
 | Keys | What it does |

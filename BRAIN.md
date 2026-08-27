@@ -1989,3 +1989,34 @@ Three findings from that flight, confirmed in code:
    into a continuous sweep from the last target (a finished list must never
    mean an idle hunter — same law as an empty feed), and close should demand
    'q', never bare Enter.
+
+
+### 22.36b VERDICT: NO JUMPING (Patrick, 2026-08-27, ~6am)
+
+Watched a full night of flights and killed it: *"no jumping!! ... we never stop
+until the pc dies ... get me back to putting the map in the right place
+pressing start, then it goes until forever."* The runs ENDING after the town
+list was the dealbreaker — turf capture needs a machine that grinds one area
+indefinitely, not a tourist.
+
+**DEFAULT NOW (commit f38b3cc): aim the map → start → sweep outward from right
+there, forever, until the PC dies or a key stops it.** Pause = Ctrl+Shift+P
+(same key resumes). Restart-from-here = Ctrl+Shift+Y. Close = type q (bare
+Enter does nothing).
+
+**THE FLIGHT ABILITY IS SAVED, NOT DELETED — how to do the jumping:**
+run the hunter with `--follow-news`. That flies to each town named in AT&T
+build-out news across the 21-state footprint and sweeps it. Everything the
+first flights taught is baked in:
+  1. A geocoder landing arrives at TOWN height where the AT&T map shows "No
+     addresses with Fiber availability" and zero dots. After every landing it
+     must zoom NEWS_DOT_ZOOM (3) presses IN and press the map's own
+     "search this area" button — without both, a flight harvests nothing.
+  2. 40 cells per town minimum (12 was a taste, not a meal).
+  3. When the town list ends, roll into a normal outward sweep from the last
+     town — a finished list must never mean an idle hunter.
+  4. Playwright's clicks don't move the visible Windows cursor — the "hand"
+     never appears to click. Cosmetic, confuses operators, worth remembering.
+The one night it ran (Kyrock KY et al.) it captured 6,466 addresses in a
+single run once aimed+zoomed — "the zip code bounce may prove very effective
+later" (Patrick). Later = when he asks, never by default.
