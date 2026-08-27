@@ -282,6 +282,57 @@ Anyone else uses the GitHub Release link.
   the work is finding or working leads.
 - **`docs/archive/`** — older material, superseded. Do not act on it.
 
+## DO NOT BREAK THE HUNTER
+
+**A push to `Go-High-Level-MCP-2026-Complete` is a DEPLOY, not a commit.** Every
+file in `_CORE_FILES` lands on every hunter PC at next launch. There is no
+staging, no rollback button, and nobody is watching the console when it breaks.
+A silent regression costs a day of capture on every machine at once. These rules
+were all bought with real damage on 2026-08-26.
+
+**1. Find what silently depends on what you are changing.** Grep for every
+reader of it before you touch it. Making `Precise Fiber` green-only quietly
+broke four things that all looked unrelated: `seen`-marking (fed from that
+queue, so grey would re-queue every 2s forever), idle detection (a grey-only
+stretch left the queue empty and the uploader quit mid-run), the gold cluster
+alert (read that queue for gold, and was gated on it), and `optimus_summary`'s
+ORANGE scan (now matches nothing while reading two 474k-row columns to prove
+it). None of them error. They just go quiet.
+
+**2. Measure behaviour changes. Do not reason about them.** Gold clusters, so
+tightening the sweep onto a gold pocket is obviously right — and simulation
+against the real control flow showed it was **80% WORSE**: 11 unique cells
+instead of 100, because the outward spiral already visits every neighbour once
+and any dwell re-scans captured ground. It was written, measured, and deleted
+the same hour. Build the simulation before shipping the idea.
+
+**3. Check the checker.** The first column-alignment test written that day was
+off by one and called correct code broken. If a test says something is wrong,
+confirm the test is right before "fixing" the code.
+
+**4. Anything touching the sheet writer must respect BOTH quotas.** Google
+allows ~60 writes AND ~300 reads per minute, counted separately, plus the 10M
+cell ceiling. `replay_pending` looked up the worksheet once per parked FILE --
+a read each -- and blew the read quota before writing a row, then left every
+file in place so the next launch had more. Anything per-item in a loop that
+touches Google is a bug waiting for volume: cache per tab, merge into 500-row
+batches, and bound the work per launch.
+
+**5. Never retry an error that cannot succeed.** The 400 cell-limit error was
+retried three times per batch like a network blip. Classify first: 429 = wait
+(and the wait must outlive a per-MINUTE window, so 1s and 2s were useless),
+400-cell-limit = permanent, say so once and stop.
+
+**6. Rows are never allowed to vanish.** `_park_batch` named files by row COUNT,
+so two failed batches of the same size in one run overwrote each other. The
+function whose entire job is "do not lose rows" was losing them. Park files are
+deleted only for rows Google actually acknowledged.
+
+**7. Verify against the feed, not against hope.** `optimus/_feed/latest.json`
+carries `written`, `failed_writes` and `capture_truth.delivery`. "It classified
+126,628" means nothing if `written: 0`. Check that field before saying anything
+is fixed.
+
 ## Keeping this file useful
 
 When something is learned that would change what a future session does, add it
