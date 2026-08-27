@@ -333,6 +333,35 @@ carries `written`, `failed_writes` and `capture_truth.delivery`. "It classified
 126,628" means nothing if `written: 0`. Check that field before saying anything
 is fixed.
 
+## The daily brief (2026-08-27)
+
+Patrick gets ONE email every morning, **8am Central**, to `patricksiado@gmail.com`.
+Routine `trig_018JYaeTgaN8NToSs3RK2T3D`, cron `0 13 * * *`, bound to the session
+that made it. Eleven sections, in this order: sheet analysis, dialing, sales,
+sales follow-up (who to touch today), what the VAs did, money-saving scan of his
+inbox, calories + activity, goals check, a daily recovery reflection, what he
+should be doing today, and the still-blocking list.
+
+**Every number is a live read that morning.** No figure is ever carried forward
+from a previous brief or from chat memory, and `written` / `failed_writes` are
+always reported — never captured-or-classified alone (brain rule 7). A source
+that can't be reached says `COULDN'T READ — <why>`; it is never guessed at and
+never quietly dropped.
+
+**`OPTIMUS DAILY LOG`** — Google Doc `1ZFFm58hjmJJTVF0GPs-TvUMgCq9qHMA4J9j-2Zv3Bk0`
+is where Patrick posts. GOALS at the top (standing, he rewrites them when they
+change), then a dated FOOD / ACTIVITY / NOTES block per day. Three sections of
+the brief read only this doc. If he didn't post, the brief says so in one line
+and does not nag.
+
+The reflection is **written fresh each day**, never copied from the Daily
+Reflections book or any published reader. Steady, no advice, no praise, no
+questions back.
+
+The VA section reports what the data shows. If a VA has no activity for 2+ days
+the routine emails them directly to ask what they're blocked on, and tells
+Patrick it did.
+
 ## PARKED — waiting on Patrick (2026-08-26)
 
 **The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
