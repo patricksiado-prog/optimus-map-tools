@@ -248,17 +248,17 @@ once killed Chromium mid-run.
 
 | Keys | What it does |
 |---|---|
-| **Ctrl+P** *(or Ctrl+Pause)* | **PAUSE / RESUME — same key both ways, MOTION ONLY.** Hunter lets go of the map at the next cell; capture and the uploader stay ON. Pan/zoom/search by hand; everything viewed is still captured |
-| **Ctrl+G** *(or Ctrl+Shift+Y)* | **GO** — sweep outward from the CURRENT view (fresh spiral, no relaunch). Also skips the opening countdown |
+| **Ctrl+DOWN-arrow** *(aliases: Ctrl+P, Ctrl+Pause)* | **PAUSE / RESUME — same key both ways, MOTION ONLY.** Hunter lets go of the map at the next cell; capture and the uploader stay ON. Pan/zoom/search by hand; everything viewed is still captured |
+| **Ctrl+UP-arrow** *(aliases: Ctrl+G, Ctrl+Shift+Y)* | **GO** — sweep outward from the CURRENT view (fresh spiral, no relaunch). Also skips the opening countdown. **Before 2026-08-27 GO never worked mid-run** — the key raised a flag only the countdown read; the sweep never consumed it. Fixed in `03dca35` |
 | Ctrl+Shift+S | Gentle stop — finish the cell, close clean |
 | Ctrl+Shift+K | Force-quit, even if frozen |
 
-**Two-finger keys as of 2026-08-27** (Patrick: three-finger chords "never work").
-Chrome binds Ctrl+P (Print) and Ctrl+G (find-next) itself — the historic reason
-these keys were avoided — so the hunter injects a key-shield script into every
-page that cancels the browser's handling of exactly those two combos. If the
-shield ever fails it says so at launch, and Ctrl+Shift+P / Ctrl+Shift+Y still
-work. Bare F9 stays dead (a stray press once un-paused a sweep mid-edit).
+**Ctrl+arrows as of 2026-08-27, third round** (Patrick: three-finger chords
+"never work", then "give me different keys"). Ctrl+arrow opens no dialog in any
+program. The hunter injects a key-shield script into every page that cancels
+Chrome's handling of Ctrl+P/G/Up/Down (Print, find-next, and Mapbox bearing
+rotation) so only the hunter acts on them; if the shield fails it says so at
+launch. Bare F9 stays dead (a stray press once un-paused a sweep mid-edit).
 "B to print to sheet" from the same conversation was a typo — no such key.
 
 The corner-stop gesture needs the pointer **still** for ~1.2s, not merely in a
