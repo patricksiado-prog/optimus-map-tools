@@ -1955,3 +1955,37 @@ aimed at the $2,000 mobility and $1,000 business products before adding anyone.
 customers classified in one run and filed under "ignore". Mobility pays ~4x a
 residential internet deal.
 
+
+
+## 22.36 THE NEWS-FOLLOW DISPATCH — FIRST FLIGHT (2026-08-27)
+
+Built 2026-08-26 on Patrick's order ("I want new fiber discovered / build it
+into the ai / 2 programs is enough / entire att footprint"). `follow_news_pass`
+is now the hunter's DEFAULT: it pulls new-build + outage intel across the
+21-state footprint, then flies the map to each named town and sweeps ~12 cells
+before moving on. `--no-follow-news` or `--grid` restores the old behavior.
+Patrick watched the first real flight and loved it: "it jumped to all the zips
+on the list of new fiber builds... the zip code bounce may prove very
+effective later."
+
+Three findings from that flight, confirmed in code:
+
+1. **Playwright clicks don't move the Windows cursor.** `search_zip` clicks
+   and types via the DOM, so the visible hand never moves. Cosmetic — but it
+   made the next two bugs look like "it did nothing".
+2. **`search_zip` claims success without proof.** If no geocoder suggestion
+   matches its selectors it presses Enter and `return True` — it NEVER
+   verifies the map actually flew. Its own docstring records the previous
+   version of this bug ("entered OKC but scraped elsewhere"). And
+   `follow_news_pass` never zooms after flying: `zoom()` exists at line ~4680
+   and the news path doesn't call it. Dots only render zoomed in, so the
+   hunter can reach the right city at city height, see nothing, and hop on.
+   Fix = verify movement (center coords or captured-feature flow) + zoom to
+   dot level after each successful fly. WRITTEN LOCALLY, NOT PUSHED (Rule 0;
+   Patrick is sending screenshots of the sequence first).
+3. **Enter killed Chromium because the run had ENDED.** A finished target
+   list falls out of `one_pass` to `input("Press Enter to close the
+   browser...")`, buried under scroll. Fix queued: a finished news list rolls
+   into a continuous sweep from the last target (a finished list must never
+   mean an idle hunter — same law as an empty feed), and close should demand
+   'q', never bare Enter.
