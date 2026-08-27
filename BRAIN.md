@@ -2235,3 +2235,78 @@ does the same job for half the tokens, and lands the VAs an editable sheet they
 can update as they dial instead of a CSV that goes stale the moment it is sent.
 `bulk_update_contact_tags` is dead (`404 Cannot POST /contacts/tags/bulk`) — tag
 one at a time with `add_contact_tags`.
+
+## 22.39 — DealMachine enrichment of both pockets (2026-08-27)
+
+Patrick: *"use deal machine to enrich"*, then *"email to dave and churchie w
+instructions that I want them in the auto dialer And dispositions back on sheet
+and in dialer / upgrades go to speedy / and remind them to remove spam #"*
+
+**815 credits bought 496 enriched rows, 362 phone numbers not previously in the
+CRM.** 12,081 credits remain and the billing cycle ends **2026-09-02** — unused
+credits do not roll over, so there are six days to spend them on real leads.
+
+### Cost facts, measured not assumed
+
+- `enrich_address` with `contact_audience=owners` = **1 credit** for property +
+  owner + phone + up to 3 emails + DNC flag. Not the 1-2 in older notes; 1.
+- `property_search`'s `estimate_cost` **over-predicts badly** — it assumes 5
+  people per property. It quoted 450 credits for the Ivanhoe radius; the real
+  charge was **111**. Estimate first, but do not size a batch off it.
+- **Dedup within the billing period is real and total.** Re-running the same
+  76-property search with extra `fields` cost **1 credit** (163 deduplicated).
+  So re-pulling to add a field is effectively free — do it rather than shipping
+  a column you could not fill.
+- Whole-ZIP counts are useless for this work: 77706 + 77515 together are 31,435
+  properties. Radius searches around a confirmed gold address are the right
+  unit — 0.12 mi caught the Ivanhoe pocket at 76 properties.
+
+### `property_search` returns FEWER fields than `enrich_address`
+
+`owner_occupied` came back on the single-address probe and was **null on every
+row** of the search. The absentee column would have shipped empty and nobody
+would have noticed. Ask for them explicitly:
+`is_owner_occupied`, `has_absentee_owners`, `is_corporate_owned`,
+`is_vacant_home`, `owner_1_full_name`. With them: 23 absentee, 13 corporate,
+1 vacant out of 76 on Ivanhoe alone.
+
+`is_corporate_owned` fires on ordinary single-family homes with a named human
+owner, so it must NOT be labelled "may not be the decision maker" on a call
+sheet — that talks a rep out of a real pitch. Label it "flagged entity-owned"
+and let them judge.
+
+### The Census geocoder is proxy-blocked from a sandbox
+
+`geocoding.geo.census.gov` returns `403 Tunnel connection failed` here, same
+class as news.google.com. Get coordinates from `enrich_address` instead — it
+returns lat/lng on every match, which is what makes the radius searches
+possible. (This says nothing about the operator's laptop, where the scraper's
+address backfill uses the same service.)
+
+### What shipped
+
+Six sheets, all shared `writer` with Dave and Churchie, 824 rows total:
+
+| List | Rows | ID |
+|---|---:|---|
+| WARM CALLBACKS — Replied YES | 17 | `1yEs6X2PbYV5ebAXAcaT98xthDgTSsY_dozu7Om91w9w` |
+| GOLD — Upgrade Customers | 46 | `1-jqslcrdpubGqNC1XbuM5C1Rxq8VuBGNqsdOIxycymg` |
+| GRANT RD GOLD POCKET enriched | 362 | `1O4VrxYJoWo9vbYPoNHcQIft_EiNP5UbGze78o2rxE5E` |
+| IVANHOE POCKET enriched | 103 | `1KqJ_3TIHMXnMVlI58aeiLDMeh9nwS2dTXOA7S4wx3rs` |
+| BEAUMONT | 190 | `173t3dN14-1cJOC3m_IErtaV7TWQJmJZN0W0zN32HorQ` |
+| ANGLETON | 75 | `1AvJmk6VgI5joJJr4BAMmGYfxXSLjtglNIqr3IXrQaTM` |
+
+**Standing instructions now in writing with the team:** everything goes into the
+AUTO dialer; every record is dispositioned in the dialer AND back on the sheet;
+**every GOLD row routes to Speedy**, not the general queue; spam-flagged numbers
+are scrubbed BEFORE loading (rows marked "verify number" or "number
+unreachable", plus duplicates) and the outbound caller ID is checked for a spam
+label before a big push, because a flagged number sends every call to voicemail
+regardless of list quality.
+
+48 rows across the two enriched pockets returned no owner contact (LLC-held) and
+were left out of the VA sheets — nothing to dial — but kept in Patrick's copies.
+
+`mcp__Google_Drive__share_file` sometimes returns `Internal error encountered`
+**after the share has actually succeeded**. Confirm with `get_file_permissions`
+before re-sharing; two of these "failures" were already done.
