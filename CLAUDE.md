@@ -282,6 +282,27 @@ Anyone else uses the GitHub Release link.
   the work is finding or working leads.
 - **`docs/archive/`** — older material, superseded. Do not act on it.
 
+## DO NOT BREAK THE SOFTWARE — AND ASK BEFORE YOU TOUCH IT
+
+Patrick, 2026-08-27: *"new brain rule don't ever break software!! and if u
+modify sheet modify software check w me and don't break stuff."*
+
+**RULE 0 — ASK FIRST. Every time.** Before changing anything in the hunter, the
+Maps Scraper, or the sheet: say what is broken, say what the fix is, and WAIT
+for him to say go. This outranks every rule below it. A fix that is written,
+tested and sitting unpushed has cost nothing. A fix that is pushed without
+asking has already deployed to every PC.
+
+This is not a rule about being careful. It is a rule about *who decides*. He
+runs the machines, he watches the console, he loses the day when capture stops.
+The call is his, not yours — including when the fix is obviously right, including
+when the software is visibly broken right now, and including when you are certain.
+
+Applies to: any file in `_CORE_FILES`, anything under `optimus/standalone/`,
+the sheet's tabs, headers or contents, and any config on a hunter PC.
+Reading, diagnosing, writing the fix and testing it locally need no permission —
+those are free and reversible. **Pushing is the line.**
+
 ## DO NOT BREAK THE HUNTER
 
 **A push to `Go-High-Level-MCP-2026-Complete` is a DEPLOY, not a commit.** Every
