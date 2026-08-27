@@ -2020,3 +2020,37 @@ first flights taught is baked in:
 The one night it ran (Kyrock KY et al.) it captured 6,466 addresses in a
 single run once aimed+zoomed — "the zip code bounce may prove very effective
 later" (Patrick). Later = when he asks, never by default.
+
+
+### 22.36c DEPLOYED + the two bugs "full address everywhere" uncovered (2026-08-27)
+
+**Hunter is DEPLOYED** (verified hash `648301c` on the branch): aim-start-forever
+default, news-chasing opt-in behind `--follow-news`, **Ctrl+DOWN pause /
+Ctrl+UP go** (page key-shield swallows Ctrl+P/G/Up/Down so Chrome's Print
+dialog, find bar and Mapbox rotation never fire), q-to-close, auto-shrink on
+the cell-limit 400.
+
+**GO had never worked mid-run — ever.** Patrick: *"cntr shift y never worked."*
+He was right and it was not his fingers: the key set `_GO_NOW` and only
+`countdown_to_start` ever read it. No sweep consumed the flag, so outside the
+opening ten seconds GO did nothing on any machine, ever. `sweep_continuous`
+now eats the flag and restarts the spiral from the current view.
+**Lesson: a flag with one reader is a feature with one caller. Grep for the
+consumer before believing a control works.**
+
+**The backfill nearly retired real addresses over a network blip.** The first
+version re-asked the Census geocoder once, a second later, and its comment
+claimed that meant "a bad afternoon at the Census API never writes off good
+rows." It did not: with the service down every row missed, every row got a
+permanent `NO MATCH` marker, and a marked row is never looked up again. The
+rule now: **a miss is only retired once a SIBLING row in the same run
+resolves**, proving the service was answering. A run that resolves nothing
+marks nothing and says so. **Lesson: when a write is permanent, require
+positive proof the world was healthy — never infer health from a single retry.**
+The test suite had encoded the buggy behaviour as expected; the checker was
+corrected, not the code (brain rule 3, second time it has paid off).
+
+**Dedupe kept the wrong twin.** `Precise Fiber` dedupe kept the EARLIEST row
+per address, so a skinny 3-column June row beat its own fresh 13-column
+re-capture — the full address was deleted and the incomplete one won forever.
+It now keeps the FULLEST row (most non-empty cells).

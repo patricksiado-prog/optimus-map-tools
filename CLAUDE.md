@@ -53,6 +53,17 @@ a JSON of the removed rows first, abort-untouched if the `Captured At` header
 is missing. **Never quote a gold count without checking the purge has run** —
 pre-purge counts are mostly decode failures wearing a gold label.
 
+**FULL ADDRESS EVERYWHERE (2026-08-27).** Rows captured before the 13-column
+format carry a street line and nothing else, so they cannot be mailed or
+skip-traced. The scraper now repairs a bounded 400-row batch each launch from
+each row's coordinates using the US Census Bureau's free keyless geocoder,
+writing City/State/ZIP plus a **`Backfilled At`** stamp in its own column.
+`Captured At` is NEVER overwritten — that is when the dot was seen. A row with
+no coordinates is left exactly as it is; a city is never guessed from a street
+name. A coordinate is retired as `NO MATCH` only once a sibling row in the same
+run proves the geocoder was answering, so an outage cannot write off real
+addresses. The tab heals itself over a few days with nobody running anything.
+
 **`Precise Fiber` is GREEN ONLY as of 2026-08-26.** It used to take every
 colour, which buried the call list under grey customers nobody can sell. Do not
 write a non-green dot to it and do not assume a colour filter on it means
@@ -240,7 +251,9 @@ Patrick, after one night of watching news-flights: *"no jumping!! we never
 stop until the pc dies."* Default behavior (commit `f38b3cc`): the operator
 aims the map, the sweep spirals OUTWARD from there and never ends on its own.
 News-chasing (auto-flying to AT&T build-out towns) survives ONLY behind
-`--follow-news` — full flight lessons in BRAIN 22.36/22.36b. Closing the
+`--follow-news` — full flight lessons in BRAIN 22.36/22.36b. **DEPLOYED and
+verified 2026-08-27** (hash `648301c`), together with the Ctrl+arrow keys and
+the fix for GO, which had never worked mid-run on any machine. Closing the
 browser takes typing `q`; a bare Enter does nothing, because a stray Enter
 once killed Chromium mid-run.
 
