@@ -2054,3 +2054,114 @@ corrected, not the code (brain rule 3, second time it has paid off).
 per address, so a skinny 3-column June row beat its own fresh 13-column
 re-capture — the full address was deleted and the incomplete one won forever.
 It now keeps the FULLEST row (most non-empty cells).
+
+## 22.37 — Working the backlog into Dave's dialer (2026-08-27)
+
+Patrick: *"analyze the gold end grey concentration green and give me a few call
+lists ... give u 250 gold upgrade customers especially in new area ... add phone
+numbers from deal machine ... get the to churchie to manage in the dialer"*,
+then *"u do it / but I want her to assist later"*.
+
+**DONE — 17 warm leads are live in Dave's manual dialer.** The `replied-yes`
+backlog dig returned 25 contacts. 8 are permanently unreachable (3 hard
+`STOP_KEYWORD` opt-outs; 4 DND'd by the STOP workflow
+`bcaa33a6-cb0f-4b93-b749-8852e8bfe0a4`; 1 `excluded-vertical`). The other 17
+were loaded and tagged `churchie-callback-list` + `backlog-dig-aug27`, so
+Churchie can pull them as one smart list later.
+
+**32% of the warm backlog was already dead.** Measured 2026-08-22 it was 7 of 22.
+Now 8 of 25. Every one of those was a person who replied YES and was left long
+enough to opt out. This is the strongest argument for the same-hour callback
+rule there is — the leak is not lead supply, it is latency.
+
+### The dialer workflow IDs churned AGAIN — always list before enrolling
+
+`Optimus Dave` (`4985f898-...`) **no longer exists**; enrolling returns
+`400 The workflow id is invalid`. Patrick rebuilt Dave's queues 2026-08-25,
+split business / residential:
+
+| Workflow | ID |
+|---|---|
+| **Dave-Fiber Bizz** | `b7681898-1a0b-4406-bb94-1684ea78cb9f` |
+| **Dave-Fiber Riss** ("Riss" = Res) | `00482c14-461f-4ba6-b6e7-acc39ed8df4f` |
+
+Both are `Manual call` -> create opportunity in AT&T Leads, **no trigger** —
+nothing auto-dials, so loading a batch at any hour is safe. There is also a
+published workflow literally named **`Dave do not use`**
+(`49da9c64-9407-4765-8fbd-b78230493915`) — never enroll into it. Run
+`ghl_list_workflows` and check the shape with `ghl_get_workflow_full` before
+enrolling into any queue: a published workflow with a `send_sms` step would text
+everyone at once.
+
+`bulk_update_contact_tags` is dead too — `404 Cannot POST /contacts/tags/bulk`.
+Tag one contact at a time with `add_contact_tags`.
+
+### The 250-gold list is BLOCKED on reading one tab, and here is exactly why
+
+`Gold Confirmed` holds 11,490 rows of which only ~2,438 are real (the rest are
+pre-2026-08-24 gold-by-default). **The purge has still not run** — the tab read
+11,490 at 05:42 today, unchanged. Never quote a gold count until it has.
+
+Nothing in this sandbox can read that tab:
+- The Drive connector has **no range or tab parameter**. It exports the whole
+  workbook from tab 1, and `Precise Fiber`'s 645,422 rows eat the entire
+  ~500k-character budget before tab 2. Verified again today.
+- `DASHBOARD` and `README` — which CLAUDE.md tells every session to read FIRST
+  because they sit at front position — **are not in the live tab list**. Same
+  trap as `Fiber Zones` / `Outage Signals`. That is why the front-position
+  trick no longer rescues the read.
+- The temp-tab technique needs a sheet WRITE, and there is no tab-level write
+  from here. Autosheet's balance is empty.
+- `_dispatch` is not a command channel — `_print_dispatch()` only prints a
+  banner. It cannot be used to ask a PC to do work.
+
+**The fix that respects NO NEW PROGRAMS:** the scraper already publishes
+`optimus/_feed/sheet/tabs.json` to public GitHub, readable with no Google auth
+at all. Teaching it to also publish a bounded, newest-first slice of
+`Gold Confirmed` there would unblock every future call list permanently, with
+nobody running anything. That is a software change, so it waits on Patrick
+(RULE 0).
+
+### Live confirmations from today's metadata read
+
+- `Precise Fiber`'s header row is STILL `Address,Dot Color,Captured At` — three
+  columns, while writers emit thirteen. The address backfill therefore matches
+  no City/State/ZIP header and **repairs nothing on every launch**. The fix is
+  built and tested (`_label_pf_header`, local hash `238b5b69`) and remains
+  UNDEPLOYED pending Patrick's go.
+- A stray AI-assistant string is sitting in `Precise Fiber` row 2 column F:
+  *"I do not have enough information to answer the query..."* — someone's Sheets
+  AI sidebar wrote its refusal into a data cell. Harmless but it proves the tab
+  is hand-editable and gets hand-edited.
+- Workbook `modifiedTime` was ticking during the read, and heartbeat run
+  `20260827-103509` logged in at 10:36:28 and hit `sweep_start` at 10:38:46 on
+  LAPTOP-FJEEPATI. The hunter is capturing right now.
+
+### Tab census, run `20260827-050453` (05:42 today)
+
+| Tab | Rows | Note |
+|---|---:|---|
+| Precise Fiber | 645,422 | GREEN only since 8/26 |
+| Maps Businesses | 38,481 | |
+| Grey Fiber Customers | 26,689 | existing AT&T fiber |
+| Backend Comm | 17,085 | |
+| TEST-Green-2026-08-24 | 13,027 | frozen snapshot |
+| Gold Confirmed | 11,490 | **~2,438 real, purge not run** |
+| Fiber Green Biz | 7,298 | |
+| Hunter Status | 3,599 | |
+| Gold Dots / GOLD — CLEAN | 3,328 each | both retired, contaminated |
+| HOUSTON UNVERIFIED — Aug 19 | 1,339 | |
+| Beaumont Gold — Aug 2026 | 238 | |
+| **Upgrade Orange Biz** | **62** | gold businesses — the highest-value slice we have, and it is nearly EMPTY |
+| Gold Biz Campaign — READY | 45 | built, never worked |
+| Warm Backlog — Replied YES | 40 | |
+
+**Two things jump out of that census.** First, `Upgrade Orange Biz` — copper
+business customers, the single most valuable row type in the whole system — has
+**62 rows** against 7,298 green businesses. Either the business classifier
+almost never fires orange, or gold businesses genuinely are that rare; worth
+measuring before anyone builds a campaign around them. Second, penetration:
+26,689 grey against ~2,438 real gold means roughly **92% of the AT&T customers
+we have seen are already on fiber**. Copper upgrade prospects are scarce.
+Green outnumbers real gold about **265 : 1** — the skill still says 48x. Green
+is not just the money, it is nearly the only volume.

@@ -358,16 +358,29 @@ same opt-out discipline that protects the sending number protects the domain.
 **Dialer.** Loading a contact into a dialer workflow is `add_contact_to_workflow`
 with `contactId` and `workflowId`:
 
-| Workflow | ID |
-|---|---|
-| Optimus Dave | `4985f898-4015-4da2-acd3-fabb963b15eb` |
-| Optimus Dialer 2 — Zack Call Queue | `9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8` |
-| Optimus Dialer 3 — Fiber Green Biz Auto Loop | `b21e43bd-75ee-45a1-8764-bce4f3ab0771` |
-| Optimus Fiber Biz — Power Dialer Queue | `41e00387-a766-4975-bbcd-627c684a3ee1` |
+**`Optimus Dave` NO LONGER EXISTS (verified 2026-08-27).** Enrolling against
+`4985f898-...` returns `400 The workflow id is invalid`. Patrick rebuilt Dave's
+queues on 2026-08-25 and split them business / residential. **List the live
+workflows before enrolling anyone** — `ghl_list_workflows` — because these IDs
+have now churned twice.
 
-`Optimus Dave` has **no trigger** — it only ever runs on contacts you enroll
-deliberately, and its call windows are Mon–Fri 09:00–17:00. That makes it safe to
-load a batch into: nothing fires on its own, and nothing dials outside hours.
+| Workflow | ID | Use for |
+|---|---|---|
+| **Dave-Fiber Bizz** | `b7681898-1a0b-4406-bb94-1684ea78cb9f` | businesses |
+| **Dave-Fiber Riss** | `00482c14-461f-4ba6-b6e7-acc39ed8df4f` | residential ("Riss" = Res) |
+| Optimus Dialer 2 — Zack Call Queue | `9d3c7d0c-8f6f-44a9-93f9-d55d78e3b4a8` | |
+| Optimus Dialer 3 — Fiber Green Biz Auto Loop | `b21e43bd-75ee-45a1-8764-bce4f3ab0771` | |
+| Optimus Fiber Biz — Power Dialer Queue | `41e00387-a766-4975-bbcd-627c684a3ee1` | |
+
+**Never enroll into `Dave do not use`** (`49da9c64-9407-4765-8fbd-b78230493915`)
+— published, and named that on purpose.
+
+Both Dave queues are two steps, `Manual call` -> create opportunity in **AT&T
+Leads** (`2V9thfxQpuhn6ZP0Peqt`), and carry **no trigger**. Nothing auto-dials
+and nothing fires on its own, so a batch can be loaded at any hour — the call
+is made by a human out of the manual dialer. Check that shape with
+`ghl_get_workflow_full` before loading a queue you have not used before; a
+published workflow with a `send_sms` step would text everyone you enrolled.
 
 Load the landline-only rows and every gold business into a dialer rather than
 dropping them. They were never dead leads, only un-textable ones.
