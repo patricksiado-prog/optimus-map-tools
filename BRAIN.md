@@ -1863,3 +1863,95 @@ hear it from a competitor.
    city list. Territory is now the whole footprint (see CLAUDE.md); a cable
    outage anywhere AT&T sells is a phone/text selling event, even where we have
    no boots.
+
+## 22.35 THE STORAGE CEILING — RESEARCHED, PLAN PARKED (2026-08-26)
+
+**Status: PARKED. Patrick said "hold tight, remind me, I'll get back to it."**
+Nothing below is built. Do not start it without his go-ahead.
+
+### Where it stands the night this was written
+The workbook is FULL. **1,911 parked batches** on the laptop, every write
+failing, every run capturing perfectly and landing nothing. `FREE_SPACE.bat` is
+written and deployed but **has never been run**. That is the unblock, and it
+comes before any of the work below.
+
+### The question he asked: is this a storage thing, and is it common?
+Yes and yes. "Google Sheets as a database, outgrown" is one of the most common
+failure modes there is. Optimus just hits it faster than most because a scanner
+fills rows faster than humans ever could.
+
+### THE CHEAP WIN, FOUND 2026-08-26 — DO THIS FIRST
+**Google opened a beta in April 2026 that doubles the Sheets cell limit from
+10M to 20M**, and it applies to EXISTING files, not just new ones. Register the
+domain on a form, get allowlisted in waves. Opening big sheets also got ~30%
+faster.
+
+That is free headroom with no migration and no code. It does not change the
+shape of the problem — a scanner will fill 20M too — but it buys months instead
+of days. **Register before building anything.**
+Source: workspaceupdates.googleblog.com/2026/04/faster-performance-and-doubled-cell-limits-in-Google-Sheets.html
+
+### Sub-sheets that compile together: RESEARCHED AND REJECTED
+Patrick asked about separate sub-sheets compiling into a master. It fails three
+ways and should not be revisited:
+  - IMPORTRANGE is one of the slowest functions in Sheets; past ~50 formulas the
+    workbook crawls.
+  - It needs a manual "Allow access" click PER FILE. The three BRIDGE sheets in
+    his Drive are blank today for exactly this reason.
+  - The footprint (~30M addresses) needs **37 spreadsheets** at 833k rows each.
+    IMPORTRANGE cannot join them and nobody can query them.
+
+### The shape change that actually fixes it (restates 22.34 #3)
+**One row per ADDRESS, updated when its colour changes — not one row per
+sighting.** Today every re-sweep APPENDS, which is why Precise Fiber is 474k
+rows and climbing forever. Make re-sweeps UPDATE and the file stops growing once
+an area is covered.
+
+**This also makes the diff free.** Colour changed grey->green or copper->gold =
+fiber just lit. That is the answer to "how do I find all the new fiber in the
+footprint", and it is one shape change away. ~22,000 locations light up per day
+and every one is born GREEN.
+
+### The alternatives, priced (2026-08-26)
+| Option | Verdict |
+|---|---|
+| 20M-cell beta | **First move.** Free, immediate, no migration |
+| One row per address | **The real fix.** Stops growth; makes the diff trivial |
+| BigQuery | Right endgame past 2-3 laptops. Google-native, free at this volume |
+| Airtable | **Rule out on price** — $20-45 per editor per month, compounds with VAs |
+| Baserow / NocoDB | Free and SQL-backed, but he would own a server |
+
+### The pipeline he described, and what each stage costs
+scrape on AT&T news -> AI detects new fiber -> DealMachine adds numbers ->
+loaded to dialer and texted -> VAs qualify and warm-transfer to US closers ->
+closed, followed up, entered in SARA Plus.
+
+| Stage | State 2026-08-26 |
+|---|---|
+| Scrape guided by AT&T news | **DONE** — default behaviour, 21 states, cable outages ranked first |
+| New fiber detected by AI | **NOT BUILT** — the diff. ~1 day, needs the shape change first |
+| DealMachine adds numbers | Works manually. ~1 day to auto-enrich; SPENDS CREDITS, needs a daily cap |
+| Load to dialer + text | **DONE** — 37 leads tagged into Dave's queue with notes |
+| VA qualify -> warm transfer | **NOTHING EXISTS.** Scripts, routing, training — the real work |
+| Close -> SARA Plus | Manual. No API seen for SARA |
+
+### Multi-machine, settled 2026-08-26
+Google's quota is **per SERVICE ACCOUNT, not per machine**, and every PC runs the
+same `google_creds.json`. Two laptops each throttling to 50 writes/min sent
+100/min against a ~60 ceiling and both crawled — it presents as "the network is
+slow" or "AT&T is rate-limiting our IP", and it is neither. `--machines N` now
+splits the budget. At 9 machines the write rate is fine (54/min) but the
+workbook fills in ~31 minutes, so **storage is the wall, not the rate**. READS
+are still unthrottled — that bites before 9 machines.
+
+### The standing warning, unchanged from 22.34
+Do NOT staff the software. One laptop pulls millions of addresses a day
+unattended. The constraint is CONVERSATIONS, not captures. The last measured
+batch (Aug 21, 100+ texts) got **0 replies and 0 opt-outs**, and nothing in the
+system still records what happens on a call. Measure two weeks with 2-3 callers
+aimed at the $2,000 mobility and $1,000 business products before adding anyone.
+
+**And the best untouched asset is still GREY** — 44,500 existing AT&T fiber
+customers classified in one run and filed under "ignore". Mobility pays ~4x a
+residential internet deal.
+

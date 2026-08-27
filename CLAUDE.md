@@ -333,6 +333,26 @@ carries `written`, `failed_writes` and `capture_truth.delivery`. "It classified
 126,628" means nothing if `written: 0`. Check that field before saying anything
 is fixed.
 
+## PARKED — waiting on Patrick (2026-08-26)
+
+**The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
+put this in brain and remind me to fix later."* Full detail in `BRAIN.md` 22.35.
+Do not start building it; do remind him.
+
+The three things waiting on him, in order:
+
+1. **`FREE_SPACE.bat`** — 1,911 parked batches, every write failing. Nothing
+   else matters until this runs.
+2. **Register for Google's 20M-cell beta** — doubles the limit, applies to
+   EXISTING files, free, no migration. The cheapest unblock available.
+3. **Decide on one-row-per-address + the diff** — the permanent fix, and the
+   answer to "how do I find all the new fiber". ~1 day each.
+
+Rejected after research, do not revisit: **sub-sheets compiled with
+IMPORTRANGE.** Too slow past ~50 formulas, needs a manual Allow-access click per
+file (the reason his BRIDGE sheets are blank), and the footprint would need 37
+of them. **Airtable** is ruled out on price once VAs are in seats.
+
 ## Keeping this file useful
 
 When something is learned that would change what a future session does, add it
