@@ -2165,3 +2165,73 @@ measuring before anyone builds a campaign around them. Second, penetration:
 we have seen are already on fiber**. Copper upgrade prospects are scarce.
 Green outnumbers real gold about **265 : 1** — the skill still says 48x. Green
 is not just the money, it is nearly the only volume.
+
+## 22.38 — Four call lists shipped to Churchie and Dave (2026-08-27)
+
+Patrick: *"send it all t o churchie dave in csv files / 350 golds w phone
+numbers / and a few other areas u think will be good especially Beaumont
+Ivanhoe the new anglton stuff"*
+
+**Shipped: 328 rows, every one with a phone number**, as four Google Sheets
+shared `writer` with `churchiieoperationsva@gmail.com` and
+`davebd0816@gmail.com` (CSV via File > Download), plus an email explaining the
+columns and the pitch.
+
+| List | Rows | ID |
+|---|---:|---|
+| WARM CALLBACKS — Replied YES | 17 | `1yEs6X2PbYV5ebAXAcaT98xthDgTSsY_dozu7Om91w9w` |
+| GOLD — Upgrade Customers | 46 | `1-jqslcrdpubGqNC1XbuM5C1Rxq8VuBGNqsdOIxycymg` |
+| BEAUMONT | 190 | `173t3dN14-1cJOC3m_IErtaV7TWQJmJZN0W0zN32HorQ` |
+| ANGLETON | 75 | `1AvJmk6VgI5joJJr4BAMmGYfxXSLjtglNIqr3IXrQaTM` |
+
+### THE 350 GOLD COULD NOT BE MET — 46 is every gold GHL holds
+
+GHL is the only phone-bearing source reachable from a sandbox, and it carries
+**46 real gold contacts, total**: `gold-dot` 13, `gold-biz` 33, `upgrade-140` 7,
+`upgrade-copper` 1 (overlapping). The other ~2,400 real golds live in
+`Gold Confirmed` on the master sheet, which still cannot be read (BRAIN 22.37).
+**350 golds with phones does not exist anywhere we can reach today** — it exists
+once that tab is readable and DealMachine has enriched it.
+
+**Trap: searching GHL for "gold" matches business NAMES.** The query returned
+Golden Dryer Service, Goldberg, Lucky Clover Gold Buyers, Golden Hour Healing —
+ten businesses merely called Golden-something, none of them gold dots. Filter on
+`Dot == GOLD` derived from tags, never on the search text.
+
+### Two real pockets came out of this, and they are the answer to "which areas"
+
+**IVANHOE LN + AFTON LN, Beaumont 77706 — 99 of the 190 Beaumont rows.** Both
+streets, house numbers 6052-6392, already skip-traced with phone AND email.
+`6371 Ivanhoe Ln` is a confirmed GOLD (Carolyn Hudler, `upgrade-copper`), which
+makes the whole pocket worth working as a block. This is "the Beaumont Ivanhoe
+stuff" Patrick meant.
+
+**GRANT RD / CYPRESSWOOD, Houston 77070 — 14 of the 46 golds.** Commercial-
+leaning exactly as the skill predicts (Grant Auto Repair, Grant Road Animal
+Clinic, Vacuum Centers, True Tire, Spectral Gaming, Mr. Sticker on Jones Rd),
+plus resi on Glenway, Elmsgrove, Cleobrook, Rose Landing, Mills, Elmdale,
+Napoli, Renmark. The densest gold pocket in anything reachable.
+
+Angleton's gold is thin: 6 confirmed, all `979` numbers, around E Miller St 77515.
+
+### Cleaning that had to happen before a rep saw the list
+
+- **Four Oklahoma City rows were sitting in the Beaumont batch** (Tinas Nails,
+  Ann's I-35 Tan, Choice Cafe, S K Shemor — OKC 73129). Dropped. This is the
+  exact failure the skill warns about, and it had already happened.
+- **`laporte` was sitting in the Address column** on Beaumont-tagged rows.
+  Blanked rather than left as a wrong city — a wrong address is worse than none.
+- Rows tagged `not interested` are Priority 9 and marked DO NOT RE-PITCH, not
+  deleted, so nobody re-works them and nobody re-discovers them either.
+- Every unreachable row is kept with a plain-English reason in its own column
+  (landline / opted out / number unreachable), never dropped silently and never
+  filled with placeholder text.
+
+### Delivery technique worth reusing
+
+A sandbox cannot email a file attachment cheaply (base64 has to pass through
+context) but `mcp__Google_Drive__create_file` with `textContent` + `share_file`
+does the same job for half the tokens, and lands the VAs an editable sheet they
+can update as they dial instead of a CSV that goes stale the moment it is sent.
+`bulk_update_contact_tags` is dead (`404 Cannot POST /contacts/tags/bulk`) — tag
+one at a time with `add_contact_tags`.
