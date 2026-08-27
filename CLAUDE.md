@@ -43,6 +43,16 @@ still explains itself and nobody has to remember a colour code.
 | **GREY** | `Grey Fiber Customers` | `Existing AT&T Customer` | Not a fiber lead — but it IS written: penetration data, and the best wireless/bundle list we have |
 | **UNKNOWN** | `Unknown Customers` | `Build Code Not Decoded - Not A Lead` | Parked for review, never called |
 
+**GOLD WAS CONTAMINATED AND IS BEING PURGED (2026-08-27).** `Gold Confirmed`
+read 9,658 rows and Patrick called it immediately: most predate working gold
+capture. Gold-by-default — gold = "could not decode the build code" — died
+2026-08-23 (BRAIN 22.17); confirmed-copper capture was verified 2026-08-24.
+Scraper commit `754ecbf` now purges `Gold Confirmed` rows captured before
+**2026-08-24**, once per PC at launch: whole tab backed up to a local CSV plus
+a JSON of the removed rows first, abort-untouched if the `Captured At` header
+is missing. **Never quote a gold count without checking the purge has run** —
+pre-purge counts are mostly decode failures wearing a gold label.
+
 **`Precise Fiber` is GREEN ONLY as of 2026-08-26.** It used to take every
 colour, which buried the call list under grey customers nobody can sell. Do not
 write a non-green dot to it and do not assume a colour filter on it means
