@@ -627,6 +627,50 @@ Told to the team in writing 2026-08-28, so they will now expect it:
    texted once then dropped, and warm-but-quiet with no follow-up booked. This is
    the `daily-coverage-gap` skill; the team can now ask for it by name.
 
+## TEXTING IS DOWN — 405, and it is the CAMPAIGN not the brand (2026-08-28)
+
+Sends from the T-OPTIMUS UI fail with **`Request failed with status code 405`**.
+Ruled out by API the same day, so do not re-chase these: two numbers are live on
+the location (`+13466603810`, `+13466710729`, "dave's number 5/6"), the billing
+wallet has funds, and the test contact was clean (valid mobile, `dnd: false`,
+already tagged `fiber-sms-sent`, so sending once worked).
+
+**A2P has three gates and support only ever confirms the first.** Brand approved
+≠ campaign approved ≠ numbers attached to that campaign. Patrick was told
+"Optimus is approved" — that is the brand row. A rejected or suspended CAMPAIGN
+blocks the send and GHL surfaces it as the 405.
+
+**The likely chain: website went down → campaign rejected → 405.** Patrick,
+2026-08-28: *"Frontline website down paid to add it bk."* Carriers/TCR re-verify
+the registered site after approval. **Paying to restore the site does NOT restore
+the campaign — it has to be resubmitted and re-reviewed.** Nothing re-vets on its
+own.
+
+Two open unknowns worth resolving before anything else:
+- **Which brand is the campaign under, Optimus or Frontline Direct?** The failing
+  numbers live on T-OPTIMUS, whose registered website is `https://optimus-fiber.com`
+  (confirmed via `get_location`). A campaign under Frontline sending on T-OPTIMUS
+  numbers is a separate failure from the website.
+- **Is the site back as the RIGHT site?** It was serving "Optimus Prime
+  Marketing", a generic agency page. That is a use-case mismatch and gets
+  rejected even when the site loads fine. `optimus-fiber.com` is egress-blocked
+  from a Claude sandbox — never conclude it is down from that.
+
+Full site requirements + the four questions for support are written up in
+`scratchpad/a2p/A2P WEBSITE REQUIREMENTS`. The one carriers keyword-search for is
+the privacy-policy line: *"No mobile information will be shared with third
+parties or affiliates for marketing or promotional purposes."*
+
+### The message being sent is its own problem
+
+The live template (seen 2026-08-27) breaks four standing rules at once and would
+get filtered even with sending fixed: blank name merge (`Hi` alone), **a flat
+`just $30/month` quoted to BUSINESSES** off the Maps scraper, ~390 chars/3
+segments, identical text to every recipient, and it leads with a promo instead of
+copper retirement. Unverified claims in it — "10x faster", "2 free months",
+"no install fees and no contracts" — are also a likely campaign-rejection reason
+in their own right. Rewrite before the next batch.
+
 ## PARKED — waiting on Patrick (2026-08-26)
 
 **The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
