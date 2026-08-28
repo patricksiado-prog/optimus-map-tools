@@ -2377,3 +2377,50 @@ trash** two of three files, confirmed by re-reading their metadata. Unlike
 land — always verify which kind you have. The fallback that worked was renaming
 them `OLD - DO NOT USE - ...` via `update_file`, which also preserves any
 dispositions a VA had already typed into the old copy.
+
+## 22.42 — ~1,300 texted, ~25 replied, nobody called (2026-08-27)
+
+Patrick, Thursday night: *"follow up wc all the texts tomorrow"*.
+
+**Measured in GHL that night: `fiber-sms-sent` = 1,152, `att-fiber-texted` = 215
+(overlapping, so call it ~1,300 people texted). `replied-yes` = 25.** A ~2%
+reply rate, which matches the Aug 21 batch that sent 100+ texts and got zero
+replies and zero opt-outs.
+
+Zero opt-outs means the copy is not burning anyone. Zero-to-two-percent replies
+means **texting alone does not close**, which the playbook already said: the call
+is the conversion step. So roughly 1,300 people have been touched once, in the
+cheapest way available, and then dropped. That is the largest unworked asset in
+the business — bigger than any pocket on the map, and it costs nothing to work
+because the numbers are already bought.
+
+**Follow-up here means CALL, never a second text.** A second text to a
+non-responder is where opt-outs spike, and a third of the replied-yes pool is
+already unreachable. When Patrick says "follow up on the texts", build a call
+queue.
+
+Queued as one-shot routine `trig_012FUpK6jNopp1QAUHMZ7szX` for Fri 2026-08-28
+09:00 Central. It filters the ~1,300 down: opt-outs stay (they can be called,
+just not texted, and are marked call-only), closed/`not interested` come out,
+the 17 `churchie-callback-list` are excluded as separately queued, and `invalid`
+/ TWILIO 30005 rows are flagged "verify number" rather than loaded. Sorted
+oldest-text-first, because the oldest are coldest and closest to opting out, and
+capped at 300 if the full list is more than a day's work.
+
+### Routines in this project must be SELF-BOUND, not fresh-session
+
+`create_trigger` with `create_new_session_on_fire: true` produces a routine with
+**no MCP connectors** — no Gmail, no Drive, no GHL — so it fires and produces
+nothing. The `connectors` parameter is rejected outright on this org
+(`the connectors parameter is not available for this organization`).
+
+The pattern that works, and the one the 8am brief already uses, is the default:
+omit both `create_new_session_on_fire` and `persistent_session_id` so the
+routine binds to the session that created it and inherits its connectors. The
+response shows `persist_session: true` and a `persistent_session_id` when this
+is right. The "stores no MCP connectors" warning still prints — ignore it for a
+self-bound routine, but treat it as fatal for a fresh-session one.
+
+Consequence worth stating: these routines die with their session. If the daily
+brief, the coverage gap or a queued follow-up stops arriving, that is the first
+thing to check.
