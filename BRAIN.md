@@ -2462,3 +2462,72 @@ Standing constraints that are real and unaffected: never text a landline (Twilio
 8am-9pm Central, one segment (~130 chars of body), every message different, no
 opt-out language (GHL appends its own), identify as "Patrick with AT&T Fiber".
 An SMS opt-out is not a call opt-out — those contacts stay on the call list.
+
+## 22.44 — The twice-daily sales email, and every routine now running (2026-08-28)
+
+Patrick: *"ok so me and churchie dave get email 2x a day w everything w need to
+know to sell more"*.
+
+### Why two editions rather than one longer one
+
+They answer different questions, and the second one is where the money is.
+
+**Morning, 7am Central — "what do I work today."** Lands before the dialer
+window opens at 9. Leads with whatever is on a clock: a competitor outage over a
+pocket we own, then the oldest reply still waiting, then the queue.
+
+**Evening, 5:30pm Central — "who replied today and has not been called back."**
+This is the important one. The measured leak is not lead supply and never has
+been: a third of everyone who ever replied to us went unreachable before anyone
+dialed them (7 of 22 on 2026-08-22, 8 of 25 on 2026-08-27), and the gap is
+almost always **overnight** — somebody answers at 2pm, nobody calls, by morning
+they have moved on or opted out. So the evening edition's first section is
+always *replies received today, not yet called back*, by name and by the time
+they came in.
+
+**5:30pm is chosen, not arbitrary.** It is after the dialer window closes at 5
+and still comfortably inside quiet hours (8am-9pm Central), so every person on
+that list can still be called tonight. An evening report that lands at 9pm names
+people nobody is allowed to phone, which makes it a log instead of a tool.
+
+If nobody is waiting, the section says so in one line. A section that always
+finds something is a section nobody reads.
+
+### Three emails per edition, never one with three recipients
+
+Patrick gets everything — capture health, scan targets, counts, trends, money.
+Dave gets names and numbers first, no diagnostics. Churchie gets the work queue
+and what to load or scrub. **No dollar figures in Dave's or Churchie's copy.**
+
+The single-body-multiple-recipients shortcut is exactly how the commission
+figures reached Ara on 2026-08-27. Assembling once and sending three times costs
+nothing and makes that failure structurally impossible.
+
+### Every routine now running
+
+Nothing else lists these in one place, and they are easy to lose track of.
+
+| Routine | Cron (UTC) | Central | Goes to |
+|---|---|---|---|
+| `trig_01JTQKnB2U5ihS1mC4rpX2qy` | `0 12 * * *` | 7:00am | Coverage gap MORNING — Patrick, Dave, Churchie |
+| `trig_018JYaeTgaN8NToSs3RK2T3D` | `0 13 * * *` | 8:00am | Patrick's personal brief — **him alone** |
+| `trig_01RjAUBz16UNpdDzK2neCz37` | `30 22 * * *` | 5:30pm | Coverage gap EVENING — Patrick, Dave, Churchie |
+| `trig_012FUpK6jNopp1QAUHMZ7szX` | one-shot 2026-08-28 09:00 | Fri 9am | Text #2 + call queue to the ~1,300 texted |
+
+The 8am brief is a **different report** — health, goals, food, money-saving scan
+— and must not drift into covering the same ground as the coverage gap or get
+folded into it.
+
+### They all die with this session, and that is not a choice
+
+Every one is bound to the session that created it
+(`session_01GRgAKeNm1SCYDrD16GcSTX`). That is forced: `create_trigger` with
+`create_new_session_on_fire: true` produces a routine with **no MCP connectors**
+— no Gmail, no Drive, no GHL — so it fires and silently produces nothing, and
+the `connectors` parameter is rejected outright on this org
+(`the connectors parameter is not available for this organization`).
+
+**So if the emails stop arriving, the session is gone and they need recreating
+from a live one.** That is the first thing to check, before debugging anything
+in the skill. Worth telling Patrick rather than letting him discover it from
+silence.
