@@ -514,8 +514,18 @@ Separate from the 8am personal brief and not to be folded into it. Skill:
 
 | Edition | Cron (UTC) | Central | Routine |
 |---|---|---|---|
-| Morning — what to work today | `0 12 * * *` | 7:00am | `trig_01JTQKnB2U5ihS1mC4rpX2qy` |
-| Evening — who replied and wasn't called back | `30 22 * * *` | 5:30pm | `trig_01RjAUBz16UNpdDzK2neCz37` |
+| AM — personal + work | `0 12 * * *` | 7:00am | `trig_01JTQKnB2U5ihS1mC4rpX2qy` |
+| PM — work + evening reflection | `30 22 * * *` | 5:30pm | `trig_01RjAUBz16UNpdDzK2neCz37` |
+
+**The standalone 8am brief is RETIRED** (`trig_018JYaeTgaN8NToSs3RK2T3D`,
+disabled 2026-08-28). Patrick: *"combine my stuff to an am pm / daily
+reflections aa goals Bible stuff / plus all the work stuff"*. He did not want a
+third email, so everything it did — reflection, goals, food and activity, the
+inbox money scan, dialing and sales numbers, VA activity, the still-blocking
+list — now rides in the **AM email to him**, personal sections first, work
+after. **Bible passage is new** and sits under the reflection.
+
+Only Patrick's copy carries any of that. Dave and Churchie get the work half.
 
 **Three separate emails per edition, never one with three recipients** — the
 moment they share a body the commission figures leak into a VA's copy, which has

@@ -2531,3 +2531,52 @@ the `connectors` parameter is rejected outright on this org
 from a live one.** That is the first thing to check, before debugging anything
 in the skill. Worth telling Patrick rather than letting him discover it from
 silence.
+
+## 22.45 — Personal and work merged into AM/PM (2026-08-28)
+
+Patrick: *"combine my stuff to an am pm / daily reflections aa goals Bible stuff
+/ plus all the work stuff dnd I'll add activvities"*.
+
+Two emails a day now, not three. The standalone 8am brief
+(`trig_018JYaeTgaN8NToSs3RK2T3D`) is **disabled**, and everything it carried
+moved into the AM email: reflection, goals, food and activity, the inbox
+money-saving scan, dialing and sales numbers, VA activity with the
+email-them-if-idle rule, and the still-blocking list. Dropped from that list on
+the way across: `FREE_SPACE.bat`, which was retired on 2026-08-27 when the grid
+shrink went automatic inside the scraper.
+
+**Bible passage is a new request.** Short, quoted with the reference, left to
+stand on its own — no sermon, no three-point application, no tying it to sales
+numbers. Morning only; one a day is a practice, two is homework. It is newer
+than the rest of the personal block, so take the steer if he wants a different
+shape (a reading plan, a psalm a day, longer passages).
+
+The reflection rules are unchanged and worth restating because they are easy to
+erode: written fresh every day, never reproduced from the AA *Daily Reflections*
+book or any published reader, steady, no advice, no praise, no questions back,
+and never a suggestion that he rest or slow down.
+
+**The evening personal block is deliberately thin** — a few sentences and
+today's activity if he posted. At 5:30pm the work sections are the substance and
+he has been going all day.
+
+### The new failure mode this creates
+
+One email now carries his recovery, his weight, his goals and his money
+alongside a work report that also goes to two employees. **Assembling one body
+and varying the recipient list would put his AA reflection in a VA's inbox.**
+That is a worse version of the commission-figure leak, and the mitigation is the
+same: assemble once, send three times, and never let the personal sections into
+the loop that builds Dave's or Churchie's copy.
+
+### The Daily Log is still empty
+
+`OPTIMUS DAILY LOG` (`1ZFFm58hjmJJTVF0GPs-TvUMgCq9qHMA4J9j-2Zv3Bk0`) reads fine
+but as of 2026-08-28 the GOALS block is blank bullets and 2026-08-27's
+FOOD/ACTIVITY/NOTES are empty. So goal-checking has nothing to check against and
+the calorie trend has no data. Say that once, plainly, and move on — do not
+invent goals, do not nag. He said he will start adding activities.
+
+The doc's own header still says "Claude reads this doc every morning at 8am",
+which is now wrong (7am, and again at 5:30pm). It is his document, so it was
+left alone rather than edited without asking.

@@ -198,6 +198,67 @@ ground or re-scanning.>
 <every source that failed and why. Empty is fine and good.>
 ```
 
+## Patrick's personal block — his copy only
+
+Patrick, 2026-08-27: *"combine my stuff to an am pm / daily reflections aa goals
+Bible stuff / plus all the work stuff"*. His two emails now carry both. This
+replaced the standalone 8am brief — he does not want a third email.
+
+**None of this ever appears in Dave's or Churchie's copy.** It is his recovery,
+his goals and his health. Sending it to staff would be a real breach of trust,
+and it is easy to do by accident if you assemble one body and vary the
+recipients — which is the same failure mode as the commission figures.
+
+Source for goals, food and activity is the **`OPTIMUS DAILY LOG`** Google Doc,
+`1ZFFm58hjmJJTVF0GPs-TvUMgCq9qHMA4J9j-2Zv3Bk0`. GOALS sit at the top as a
+standing block he rewrites when they change; dated FOOD / ACTIVITY / NOTES
+entries run newest-first below.
+
+**If he did not post, say so in one line and move on.** Do not nag, do not ask
+why, do not repeat it in both editions. As of 2026-08-28 the GOALS block is
+still empty bullets, so goal-checking has nothing to check against — state that
+once, plainly, rather than inventing goals or silently skipping the section.
+
+### Morning — reflection, passage, goals, yesterday's log
+
+**The reflection is written fresh every day.** Never reproduce an entry from the
+AA *Daily Reflections* book, *Twenty-Four Hours a Day*, or any published reader
+— those are copyrighted and, more to the point, a photocopy is not a reflection.
+Write a few sentences that could only have been written today.
+
+Tone, and this matters more than the content: **steady, no advice, no praise, no
+questions back.** He is not looking for a coach at 7am. Something to sit with,
+not something to answer. Never tell him to rest, slow down, or stop working —
+that is a standing rule about how he wants to be worked with, and it holds here
+too.
+
+**Bible passage** — a short one, quoted plainly with the reference. Same
+restraint: let it stand on its own. No sermon, no three-point application, no
+tying it back to his sales numbers. If a line of context genuinely helps, one
+line. This section is newer than the rest, so if he wants a different shape —
+a set reading plan, a psalm a day, longer passages — take the steer.
+
+**Goals** — read the standing block, check each against what the work sections
+actually show. That is the point of keeping them in the same email as the
+numbers: "capture is up, goal says convert not collect" is a real observation.
+
+**Yesterday's food and activity** — estimated calories and protein, and the
+week's trend. Estimates are estimates; they are for the trend, not precision.
+He writes it however it comes out ("2 tacos and a coffee") — read it that way.
+
+### Evening — shorter
+
+The evening personal block is deliberately light. He has been working all day
+and the work sections are the substance at 5:30pm.
+
+A brief evening reflection in the same voice — AA's nightly inventory is a real
+practice and a natural fit, but keep it to a few sentences and keep it free of
+verdicts. Then today's activity as logged, if he posted it, and one line on
+goals only when the day actually moved one.
+
+No Bible passage in the evening unless he asks for one. One a day is a
+practice; two is homework.
+
 ## Two editions a day
 
 Patrick, Dave and Churchie all get both. The two editions answer different
