@@ -266,7 +266,86 @@ disappear.
 emailed. A lead worked on three channels converts far better than the same lead
 texted once, and the enrichment already paid for the email address.
 
-## 8. The three daily tips
+## 8. The scoreboard — the same numbers, every single day
+
+Patrick, 2026-08-28, after the first full audit: *"add that stuff to my daily
+emails."* The audit found things nobody had been watching. The fix is not to
+audit again — it is to put those numbers in the email every day so a change gets
+noticed the day it happens instead of a month later.
+
+**Rules for the whole scoreboard:**
+
+- **Same rows, same order, every day.** A row that disappears when the number is
+  bad is worse than no scoreboard.
+- **Read live. Never carry a figure forward** from yesterday's email or from
+  memory. If a source is unreachable the row says `COULDN'T READ — <why>`.
+- **Show the benchmark next to the number**, so it reads itself. A number alone
+  needs a person to interpret it; a number beside its band does not.
+- **An alarm row goes to the top of "Do this today"**, not just the table.
+- **Cost rows are Patrick's copy only.** Spend is not a VA's business.
+
+### Capture — from `optimus/_feed/latest.json` and the run feed
+
+| Row | Source | Benchmark / baseline | Alarm when |
+|---|---|---|---|
+| Addresses classified, last run | `capture_truth.classified` | 452,736 in one 12h sweep (27 Aug) | Run is much shorter than the sweep window — a 3-second run means it launched and quit |
+| Green / Grey / Unknown | `stage_counters` | 306,332 / 145,066 / 1,338 | — |
+| **Penetration %** | grey ÷ (green + grey) | **32.1%** as of 27 Aug | Moves more than a few points — either new territory or a classifier change |
+| **Gold classified** | `classified_gold` | Gold capture verified working 24 Aug | **ZERO IS AN ALARM.** Gold is the easiest sale we have; zero across a large sweep is not credible |
+| Undecoded build codes | `undecoded_codes` | `ip-co` = 2,676 outstanding | Any new code appears, or the count grows |
+| Auth expiries | `auth_expired` | 4 in the 27 Aug run | Above zero. Each one is a blackout where the map returns a login page |
+| Written / failed writes | `dedupe` | Report **both**, always | Never diagnose the write path from `written: 0` alone — the uploader is a separate process. Confirm with sheet file size and modified time |
+| Map ready | `map_ok`, `zoom_ok` | — | Either is false: capture may still work off the serviceability API, but aiming is blind |
+
+### Pipeline — live read of GoHighLevel
+
+| Row | Baseline 28 Aug | Alarm when |
+|---|---|---|
+| Opportunities open | 3,706 | — |
+| **Won** | **0** | **Still zero. This is the standing alarm** until dispositions start |
+| **Lost** | **0** | Same |
+| Days since any disposition | never | Anything above 2 |
+
+**Say this plainly whenever won and lost are both zero:** the pipeline is
+write-only, so close rate, cost per customer and profit per activity cannot be
+computed. Do not soften it and do not substitute a proxy — an invented ratio is
+worse than an admitted gap.
+
+### Outbound — GoHighLevel messages and calls, last 24h
+
+| Row | Benchmark | Alarm when |
+|---|---|---|
+| Texts sent / delivered / failed | — | Any `TYPE_CUSTOM_SMS`, or any failure with a provider name in `from` |
+| Text delivery % | — | Below 90%, or unmeasurable |
+| Connect rate | 8–12% generic list, **18–22% verified direct-dial** | **Below 7% — that is a data, timing or caller-ID problem, not a rep problem.** Say so in those words |
+| Dials per booked meeting | 25–35 typical, 12–18 top performers | Above 35 |
+| Meeting-set rate | 2–3% average, 6–10% top | Below 2% |
+| Replies today not yet called back | zero is the target | Any, and this leads the PM edition |
+
+### Inventory — the sheet
+
+| Row | Baseline 27 Aug | Alarm when |
+|---|---|---|
+| `Maps Businesses` unmatched | 38,481 | The match still is not running |
+| Business-to-dot matches found | not built | Report "not built" rather than omitting the row |
+| `Upgrade Orange Biz` | 62 | Not growing. Gold businesses are the most valuable slice we have and that tab is nearly empty |
+| Contacts tagged sent that never delivered | unaudited | Above zero |
+
+### Cost — Patrick's copy only
+
+| Row | Baseline | Note |
+|---|---|---|
+| DealMachine credits remaining | 11,660 of 30,000, cycle ends 2 Sep | Flag when the cycle is within 5 days and credits are unspent — they do not roll over |
+| Credits per callable lead | **~2.6** (309 rows, ~800 credits, Beaumont) | The one unit-economics figure that is solid today |
+| Cost per customer | **NOT COMPUTABLE** | Requires closes to be recorded. Print the words, not a guess |
+| Profit per activity | **NOT COMPUTABLE** | Same |
+
+Keep printing the two NOT COMPUTABLE rows every day. They are the most useful
+lines in the table — they are the standing reminder of what recording won and
+lost would unlock, and the day they turn into real numbers is the day the
+business becomes measurable.
+
+## 9. The three daily tips
 
 Every **AM** edition carries exactly three, one of each. Patrick asked for these
 by name on 2026-08-28. They are short on purpose — a rep reads them on a phone
@@ -423,6 +502,11 @@ rows that cannot be mailed. Silence here is a pass, but say so.>
 <capacity math and the real constraint, which pockets are producing, where to
 point the scanner next, the business-match count.>
 
+## Scoreboard
+<the fixed tables from section 8. Same rows every day, live reads only, benchmark
+beside each number. Alarm rows also appear at the top under "Do this today".
+Cost rows in Patrick's copy only.>
+
 ## New builds worth scanning
 <named places only. If the news gave nothing aimable, say that in one line.>
 
@@ -438,7 +522,7 @@ point the scanner next, the business-match count.>
 **SALES TIP —** <2-4 sentences>
 ```
 
-## 9. Tasks out of the inbox
+## 10. Tasks out of the inbox
 
 Patrick, 2026-08-28: *"use my activities to help w production make suggestions
 on tasks based on email"*. His inbox is where commitments get made and then
@@ -471,7 +555,7 @@ dialing them ... Give him access and load in dialer for him plz". Speedy
 ever appeared in that one thread. Patrick had no way to know it had not
 happened. That is exactly the class of miss this section exists to catch.
 
-## 10. Activities and production
+## 11. Activities and production
 
 The other half of the same request: use what he logs to find what actually
 drives output.
