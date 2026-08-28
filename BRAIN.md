@@ -2289,12 +2289,16 @@ Six sheets, all shared `writer` with Dave and Churchie, 824 rows total:
 
 | List | Rows | ID |
 |---|---:|---|
-| WARM CALLBACKS — Replied YES | 17 | `1yEs6X2PbYV5ebAXAcaT98xthDgTSsY_dozu7Om91w9w` |
-| GOLD — Upgrade Customers | 46 | `1-jqslcrdpubGqNC1XbuM5C1Rxq8VuBGNqsdOIxycymg` |
+| WARM CALLBACKS — Replied YES | 17 | `1v947vFmcIJJoz7zULdKbXSrgCVKm-fiFNfNXJ672oJU` |
+| GOLD — Upgrade Customers | 46 | `1wxEuI2DP9KxS_f2HNL7RZpEZLt0kPIMyqqSIrc19PtY` |
 | GRANT RD GOLD POCKET enriched | 362 | `1O4VrxYJoWo9vbYPoNHcQIft_EiNP5UbGze78o2rxE5E` |
 | IVANHOE POCKET enriched | 103 | `1KqJ_3TIHMXnMVlI58aeiLDMeh9nwS2dTXOA7S4wx3rs` |
 | BEAUMONT | 190 | `173t3dN14-1cJOC3m_IErtaV7TWQJmJZN0W0zN32HorQ` |
-| ANGLETON | 75 | `1AvJmk6VgI5joJJr4BAMmGYfxXSLjtglNIqr3IXrQaTM` |
+| ANGLETON | 75 | `1PkUMwist7R0EFHl8xfvcUvJDeSYOG4wZ8mIoqeFyRDI` |
+
+(Warm Callbacks, Gold and Angleton were republished 2026-08-28 to strip the
+commission figures — see 22.41. The three originals are renamed
+"OLD - DO NOT USE" and still exist; Drive's trash call kept erroring on them.)
 
 **Standing instructions now in writing with the team:** everything goes into the
 AUTO dialer; every record is dispositioned in the dialer AND back on the sheet;
@@ -2342,3 +2346,34 @@ Later emails today (the four call lists, and the dialer instructions with the
 "$140 / $500" column labels) went only to Dave, Churchie and Patrick. Ara was
 not on them. The shared Google Sheets carry `GOLD $140` and `GREEN $500` in the
 Status column, so **those sheets must not be shared with Ara** as they stand.
+
+## 22.41 — The money came out of the call sheets (2026-08-28)
+
+Patrick, on whether to strip the commission figures: *"might as well not rub it
+in their face either at $3 and hour"*. So the rule is not only about Ara — **do
+not put per-sale commission figures in front of any VA.** They are on $3/hour
+and the numbers read as a taunt, whatever else they do.
+
+`GOLD $140 - on copper, fiber available` and `GREEN $500 - not AT&T, fiber
+available` were in the Status column of three of the six shared sheets. They now
+read `GOLD - already an AT&T customer on copper, fiber is live` and
+`GREEN - not an AT&T customer, fiber is live` — same meaning to a caller, no
+number. Beaumont, Grant Rd and Ivanhoe never carried the figures.
+
+Keep it out of future sheets at the point the Status column is built. The
+wording above is the replacement; use it rather than reintroducing STATUS_GOLD /
+STATUS_GREEN verbatim, which is where the money came from.
+
+### Two Drive mechanics worth knowing
+
+**`update_file` only edits metadata — title and parent, not content.** There is
+no content-update call on this connector, so "fix a published sheet" always
+means create a new file, re-share, and hand out a new link. Plan for that before
+publishing anything a VA will bookmark.
+
+**`trash_file` returned `Internal error encountered` and genuinely did not
+trash** two of three files, confirmed by re-reading their metadata. Unlike
+`share_file`, whose identical-looking error is cosmetic and the share does
+land — always verify which kind you have. The fallback that worked was renaming
+them `OLD - DO NOT USE - ...` via `update_file`, which also preserves any
+dispositions a VA had already typed into the old copy.
