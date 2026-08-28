@@ -507,9 +507,27 @@ Patrick it did.
 
 ## The daily coverage gap (2026-08-28)
 
-Second daily email, separate from the 8am brief and not to be folded into it.
-Routine `trig_01JTQKnB2U5ihS1mC4rpX2qy`, cron `0 12 * * *` (7am Central), bound
-to the session that made it. Skill: `.claude/skills/daily-coverage-gap/`.
+**Twice a day, to Patrick, Dave AND Churchie** (Patrick, 2026-08-27: *"me and
+churchie dave get email 2x a day w everything w need to know to sell more"*).
+Separate from the 8am personal brief and not to be folded into it. Skill:
+`.claude/skills/daily-coverage-gap/`.
+
+| Edition | Cron (UTC) | Central | Routine |
+|---|---|---|---|
+| Morning — what to work today | `0 12 * * *` | 7:00am | `trig_01JTQKnB2U5ihS1mC4rpX2qy` |
+| Evening — who replied and wasn't called back | `30 22 * * *` | 5:30pm | `trig_01RjAUBz16UNpdDzK2neCz37` |
+
+**Three separate emails per edition, never one with three recipients** — the
+moment they share a body the commission figures leak into a VA's copy, which has
+already happened once. Patrick gets everything including the money; Dave gets
+names and numbers; Churchie gets the work queue. **No dollar figures in Dave's
+or Churchie's copy.**
+
+The evening edition leads with **replies received today that have not been
+called back**, by name and time. That is its whole reason to exist: a third of
+everyone who ever replied went unreachable before anyone dialed, and the gap is
+almost always overnight. 5:30pm is after the dialer window closes and still
+inside quiet hours, so anyone on that list can still be called tonight.
 
 It cross-references four things and reports the GAP between them: what the sheet
 holds, what GoHighLevel shows as actually texted or called, what the news says

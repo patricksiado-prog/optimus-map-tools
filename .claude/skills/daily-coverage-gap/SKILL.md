@@ -1,6 +1,6 @@
 ---
 name: daily-coverage-gap
-description: Build Optimus's daily coverage-gap report — cross-reference the leads sitting in the ATT FIBER LEADS sheet against what has actually been texted or called in GoHighLevel, against AT&T fiber build news, and against live cable/competitor outages, then email it to Patrick and Churchie. Use this whenever Patrick asks what hasn't been worked, which leads are going stale, where to point the scanner, what's new in fiber news, whether a competitor is down, what the team should do today, or for the daily/coverage/gap report by name. Also use it when he asks a narrower version of the same question — "what are we sitting on", "who hasn't been called", "any new builds", "is Comcast down" — because each of those is one section of this report and the other sections are the context that makes it actionable.
+description: Build Optimus's twice-daily coverage-gap report — cross-reference the leads sitting in the ATT FIBER LEADS sheet against what has actually been texted or called in GoHighLevel, against AT&T fiber build news, and against live cable/competitor outages, then email it to Patrick, Dave and Churchie — a morning edition that says what to work today and an evening edition that catches the replies that came in and have not been called back. Use this whenever Patrick asks what hasn't been worked, which leads are going stale, where to point the scanner, what's new in fiber news, whether a competitor is down, what the team should do today, or for the daily/coverage/gap report by name. Also use it when he asks a narrower version of the same question — "what are we sitting on", "who hasn't been called", "any new builds", "is Comcast down" — because each of those is one section of this report and the other sections are the context that makes it actionable.
 ---
 
 # Daily coverage gap
@@ -34,12 +34,12 @@ yesterday's report or from memory. If a source cannot be reached, the report
 says `COULDN'T READ — <why>` on that line. A guessed number is worse than a
 missing one, because Patrick will act on it.
 
-**No commission figures in the copy that reaches Churchie.** She is a VA. Ed's
-standing instruction (2026-08-27) is that commission numbers stay away from the
-VAs, and Patrick agreed. Say "the upgrade" and "the higher-value sale", never
-$140 or $500 or anything a rate can be reconstructed from. This is why the
-report is assembled once and then **sent as two different emails** — see
-Delivery.
+**No commission figures in anything except Patrick's copy.** Ed's standing
+instruction (2026-08-27) is that commission numbers stay away from the VAs, and
+Patrick agreed. Say "the upgrade" and "the higher-value sale", never $140 or
+$500 or anything a rate can be reconstructed from. This is why the report is
+assembled once and then **sent as three separate emails** rather than one with
+three recipients — see Who gets what.
 
 ## 1. What we own — reading the sheet
 
@@ -198,34 +198,71 @@ ground or re-scanning.>
 <every source that failed and why. Empty is fine and good.>
 ```
 
-## Delivery
+## Two editions a day
 
-**Two emails, not one.** Same findings, different copy.
+Patrick, Dave and Churchie all get both. The two editions answer different
+questions, and running only one of them loses the thing that actually leaks.
 
-**Patrick** (`patricksiado@gmail.com`) — the full report, all sections, numbers
-included. He is the one who acts on capture health and scan targets.
+**MORNING — 7am Central — "what do I work today"**
+Aim the day before dialing starts. Lead with anything on a clock: a competitor
+outage overlapping a pocket we own, then the oldest reply still waiting on a
+callback, then the queue itself.
 
-**Churchie** (`churchiieoperationsva@gmail.com`) — the "Do this today" and
-backlog sections only, framed as a work queue: who to call, which list, why now.
-Drop capture diagnostics, drop scan targets, and **drop every dollar figure**.
-She needs the actions, not the machinery or the economics.
+**EVENING — 5:30pm Central — "who replied today and has not been called back"**
+This is the one that protects the money. A third of everyone who ever replied to
+us went unreachable before anyone dialed them, and the gap is almost always
+overnight — someone answers at 2pm, nobody calls, by tomorrow they have moved on
+or opted out. The evening edition exists to make that impossible to miss.
 
-Subject line carries the single most important finding, so it reads in a
+Its first section is always **replies received today that have not been called
+back**, named, with the time they came in. If that list is empty, say so in one
+line — that is a good day, not an empty section.
+
+Then: what actually got worked today (calls made, texts sent, dispositions
+written), what is still sitting untouched, and the top of tomorrow's queue so
+nobody starts the morning deciding what to do.
+
+5:30pm is deliberate. It is after the dialer window closes at 5, and still
+comfortably inside quiet hours, so anyone named in it can be called tonight.
+
+## Who gets what
+
+**Patrick** (`patricksiado@gmail.com`) — everything. Capture health, scan
+targets, counts, trends, and the money.
+
+**Dave** (`davebd0816@gmail.com`) — the call queue and the callbacks. He is the
+one dialing, so his copy leads with names and numbers, not diagnostics. Skip
+capture health and scan targets; they are not his job.
+
+**Churchie** (`churchiieoperationsva@gmail.com`) — the work queue and list
+management: who to load, what to scrub, what came back.
+
+**No dollar figures in Dave's or Churchie's copy.** Money lives in Patrick's
+only. This is not squeamishness — it is a standing instruction from Ed that
+Patrick agreed to, and the daily email is the most likely place to break it by
+accident. Say "the upgrade" and "the higher-value sale".
+
+**Send three separate emails, never one with three recipients.** The moment they
+share a body, the money leaks into the VA copy. That has already happened once.
+
+Subject lines carry the single most important finding so they read in a phone
 notification without opening: `Coverage gap Aug 28 — Xfinity down in 77706, 34
-green on those streets` beats `Daily report`.
+green on those streets` beats `Daily report`. In the evening, the callback count
+is almost always the headline: `EOD Aug 28 — 3 replies today, none called back`.
 
-Append `Claude (for Patrick)` at the end so nobody mistakes it for hand-written.
+Append `Claude (for Patrick)` so nobody mistakes it for hand-written.
 
 ## Scheduling
 
-Patrick wants this daily. He already has a separate 8am brief
-(`trig_018JYaeTgaN8NToSs3RK2T3D`) covering health, goals and sales — **this is a
-different report and must not be folded into that one.**
+Two routines, both bound to the session that created them — a fresh-session
+routine carries no connectors on this org and would fire with no Gmail, Sheets
+or GHL access, producing nothing.
 
-Create it with `create_trigger`, fresh session per fire, cron in **UTC**. Central
-is UTC-5 in summer, so 7am Central is `0 12 * * *`. Put it before the 8am brief
-so the outage list is in hand at the start of the calling day.
+| Edition | Cron (UTC) | Central | Routine |
+|---|---|---|---|
+| Morning | `0 12 * * *` | 7:00am | `trig_01JTQKnB2U5ihS1mC4rpX2qy` |
+| Evening | `30 22 * * *` | 5:30pm | `trig_01RjAUBz16UNpdDzK2neCz37` |
 
-The prompt for a fresh-session trigger must be standalone — it starts with no
-memory of this conversation. Have it invoke this skill by name and state both
-recipients.
+Patrick's personal 8am brief (`trig_018JYaeTgaN8NToSs3RK2T3D`) is a **different
+report** — health, goals, food, money-saving — and goes to him alone. Do not
+fold either edition into it or let them drift into covering the same ground.
