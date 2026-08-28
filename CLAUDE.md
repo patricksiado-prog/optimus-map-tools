@@ -497,6 +497,28 @@ The VA section reports what the data shows. If a VA has no activity for 2+ days
 the routine emails them directly to ask what they're blocked on, and tells
 Patrick it did.
 
+## The daily coverage gap (2026-08-28)
+
+Second daily email, separate from the 8am brief and not to be folded into it.
+Routine `trig_01JTQKnB2U5ihS1mC4rpX2qy`, cron `0 12 * * *` (7am Central), bound
+to the session that made it. Skill: `.claude/skills/daily-coverage-gap/`.
+
+It cross-references four things and reports the GAP between them: what the sheet
+holds, what GoHighLevel shows as actually texted or called, what the news says
+about new AT&T builds, and any live cable/competitor outage. **A competitor
+outage is the only finding with a same-day clock on it** — a household whose
+cable died this morning is the most receptive fiber prospect there is, and
+tomorrow they have forgotten.
+
+Two emails, deliberately different: Patrick gets everything; Churchie gets the
+"do this today" queue with **no dollar figures at all**. Assembling one email and
+BCCing both is the mistake that rule exists to prevent.
+
+`WebSearch` reaches the news and outage sources from a Claude session even
+though `optimus_web_intel.py` cannot (news.google/bing/reddit are proxy-blocked).
+So the news and outage sections work unattended; the sheet sections still route
+around the tab-read block via `_feed/sheet/tabs.json` and workbook file size.
+
 ## PARKED — waiting on Patrick (2026-08-26)
 
 **The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
