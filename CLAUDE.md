@@ -584,14 +584,36 @@ scan volume, so more scanning feeds the easier revenue.
 part of that publicly — the business lists went out *unqualified*, so Dave was
 guessing which addresses could even be served. Do not repeat that.
 
-### The business match — the highest-value analysis we have
+### The business match — SOFTWARE DOES IT, NOT A PERSON
 
 `Maps Businesses` holds ~38.5k scraped businesses with **no serviceability
 data**. The scanner holds dots that DO know. **A business address that matches a
 scanner dot is a confirmed-fiber business lead.** That join turns 38.5k blind
 rows into a callable list where the answer is known before the dial. Patrick,
-2026-08-28: *"most importan thing."* Churchie owns running it; the matched rows
-then go through DealMachine like any other list.
+2026-08-28: *"most importan thing."*
+
+**Patrick, same day, correcting an assignment I got wrong:** *"churchie doesn't
+match the biss to the green dots the sofwaree does."* Nobody hand-compares 38.5k
+addresses. The match belongs INSIDE the scraper or the hunter, running by itself
+— which is the NO NEW PROGRAMS rule applied: no .bat, no human step, no new
+roster entry. Not built yet; building it is on us, not on the VA. A correction
+email went to Dave and Churchie the same hour telling them to ignore the
+hand-matching instruction.
+
+### Churchie's job — six things, and the sixth is the point
+
+1. Run the scanner, keep it running.
+2. Ask the AI to put DealMachine numbers on the list — she never skip-traces by
+   hand.
+3. Load the dialer.
+4. Manage dispositions, on the sheet AND in the dialer.
+5. Get the leads to the sales people — right list, right rep, ready to dial.
+6. **Get people calling the right stuff. Narrow down who we're calling.**
+
+Six is the value. Patrick does not want more names, he wants fewer better ones:
+a rep working 60 right numbers beats a rep working 300 wrong ones, and handing
+someone thousands of rows burns their day on people who cannot buy. Any list
+built for a rep gets cut down before it ships, never dumped whole.
 
 ### What the AI does, so the humans don't
 
