@@ -719,6 +719,38 @@ wake their own session do not record one.
 enabling the old one** — a Routine pointed at a dead session cannot be revived by
 toggling it back on.
 
+## THE PERSONAL SIDE HAS ITS OWN SKILL (2026-08-28)
+
+Patrick asked for a manager for himself, not just the pipeline:
+*"build your claude helps manager patrick skill through reseach nutrition
+productivity gym selling management it finance legal fatherhood sobriety /
+learn it teach me via email updates and suggested act self learning ... don't
+want that to stop."*
+
+`.claude/skills/patrick-chief-of-staff/` covers all ten domains, teaches **one
+lesson a day by email with a single finishable action**, and improves itself:
+`TAUGHT.md` is the rotation log (never repeat inside 60 days), `LEARNED.md`
+records what he engaged with and every correction he makes, and the skill is
+meant to rewrite its own SKILL.md when a domain's guidance turns out wrong.
+
+**The parts that matter most are the boundaries**, and they are written into the
+skill: nutrition and gym stay general and never medical; finance is never tax or
+investment advice; legal is never advice and anything touching a signed contract
+or liability goes to a real attorney in one sentence; **fatherhood assumes
+nothing** — number of kids, ages and living arrangement are all unknown and must
+be learned, never guessed; and **sobriety listens rather than teaches** — no
+diagnosing, no risk assessment, no praise for honesty, no follow-up questions,
+point at his own supports, and crisis resources outrank every other rule.
+
+The evidence base for the sobriety domain is recovery capital: structure, sleep,
+movement, support-group attendance and reflective practice are what actually
+predict maintenance — the same boring things the other nine domains rest on,
+which is why the skill treats them as one system rather than ten.
+
+Two rules that survived from here and must not be lost: **never tell him to stop
+working or rest** (frame recovery as capacity, never permission to stop), and
+**never nag a missed log**.
+
 ## PARKED — waiting on Patrick (2026-08-26)
 
 **The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
