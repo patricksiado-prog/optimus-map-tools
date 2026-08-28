@@ -936,9 +936,22 @@ route tried**, not just `git push`:
 | `mcp__github__create_branch` on the hunter repo | **works** (no content) |
 | `git push` to `optimus-map-tools` | **works** |
 
-The `create_or_update_file` path in the deploy note above is only usable if the
-file can be read and re-emitted whole — and that read is now blocked for the
-scraper, so the path is closed in practice for this file. It also required
+**CORRECTION (same day): `mcp__github__create_or_update_file` DOES work on the
+hunter repo** — verified by writing `optimus/CROSSMATCH_FIX_NOTE.md` to a scratch
+branch. Pushing is NOT blocked. The `Read` tool also reads the scraper fine; only
+bulk `awk`/`sed` dumps of it are blocked.
+
+So the real constraint is not permission — it is that `create_or_update_file`
+takes the WHOLE file as a string parameter, so deploying a 2-line change means
+retransmitting 78,946 bytes verbatim. On the 2026-08-28 attempt the read coverage
+was short by 3 lines and would have shipped a file missing
+`if __name__ == "__main__": main()` — a scraper that starts and silently does
+nothing, on every PC. Caught before sending, by checking `wc -l` against what had
+actually been read.
+
+**Rule: never hand-retransmit a large file to deploy a small change.** Verify with
+a scratch branch + `git hash-object` if you ever must, but for anything under a
+few hundred lines of change the 60-second GitHub web edit is strictly better. It also required
 retyping 78,946 bytes, which is its own corruption risk on a file that
 auto-deploys to every PC.
 
