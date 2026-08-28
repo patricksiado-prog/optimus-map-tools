@@ -205,8 +205,16 @@ the hunter now throttles itself rather than collecting 429s.
   I'll confirm your exact price before anything is ordered." **Business fiber is
   priced by speed tier — never use residential figures on a business.**
 - Every message individually written. No two identical.
-- **One text, then a CALL.** Opt-outs spike hard on message two to a
-  non-responder — follow-up pressure belongs on calls and doors.
+- **Text people 2-3 times.** Patrick, 2026-08-27, striking the old
+  one-text-then-call rule: *"I didn't say that its retarded text people 2x 3x
+  time they sometimes respond wtf."* Later touches get replies — that is how
+  every outbound sequence works. Space them a few days apart, write each one
+  fresh, and stop the sequence the moment someone replies or opts out.
+- The old rule claimed opt-outs spike on message two. **That was never
+  measured.** The only batch we have numbers on (Aug 21, 100+ texts) produced
+  zero replies AND zero opt-outs, because nobody ever sent a message two. Watch
+  the opt-out rate as touches go up and let the real number decide — it is a
+  dial, not a law.
 - Any reply gets a call the **same hour**. People have opted out while waiting.
 
 **DealMachine**

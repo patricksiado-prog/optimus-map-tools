@@ -2424,3 +2424,41 @@ self-bound routine, but treat it as fatal for a fresh-session one.
 Consequence worth stating: these routines die with their session. If the daily
 brief, the coverage gap or a queued follow-up stops arriving, that is the first
 thing to check.
+
+## 22.43 — The one-text-then-call rule is STRUCK (2026-08-27)
+
+Patrick: *"take away one text one call rule I didn't say that its retarded text
+people 2x 3x time they sometimes respond wtf."*
+
+**He is right on both counts and the rule is gone.** It was never his — no
+session ever attributed it to him, it simply appeared in the brain and got
+repeated into `gold-cluster-sweep` and `optimus-brain` as though it were
+measured policy. Removed from all three.
+
+**The evidence behind it was also fake.** The rule justified itself with
+"opt-outs spike hard on message two". Nothing here ever measured that, because
+nobody ever sent a message two. The only batch with real numbers — Aug 21, 100+
+texts — produced **zero replies and zero opt-outs**. Zero opt-outs is evidence
+the copy is not burning anyone; it is not evidence for a limit on touches.
+
+The rule was also expensive in a way that is easy to miss: it turned a ~1,300
+person list into a one-touch list, then declared the follow-up had to be phone
+calls that one person (Dave) makes. That is why ~1,275 people sat untouched.
+
+**What replaces it:** text non-responders 2-3 times, spaced a few days apart,
+every message freshly written. A near-copy of the first text is what actually
+reads as a robot. Stop the sequence the moment someone replies or opts out.
+Anyone who does reply still gets a call fast — that one IS Patrick's own rule
+("any reply gets a call the same hour") and is untouched.
+
+**Measure instead of asserting.** Friday's follow-up
+(`trig_012FUpK6jNopp1QAUHMZ7szX`) now sends text #2 in a batch of 40, then stops
+and reads the opt-out rate before continuing. If it runs above ~2% it holds and
+asks. That number is a dial set by data, not a law written from a hunch — which
+is what the struck rule was.
+
+Standing constraints that are real and unaffected: never text a landline (Twilio
+30006, counts against the sending number), honour STOP and DND, quiet hours
+8am-9pm Central, one segment (~130 chars of body), every message different, no
+opt-out language (GHL appends its own), identify as "Patrick with AT&T Fiber".
+An SMS opt-out is not a call opt-out — those contacts stay on the call list.

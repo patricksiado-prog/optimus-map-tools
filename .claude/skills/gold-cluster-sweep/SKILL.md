@@ -325,8 +325,17 @@ Probe **25–40**, then stop and read the result:
 - **10–20% → rewrite the copy** before sending more.
 - **over 20% opting out → stop and rotate the sending number.**
 
-**One text, then a CALL.** Do not send a second text to someone who did not
-answer the first — that is where opt-outs spike.
+**Text non-responders 2-3 times, spaced a few days apart.** Patrick struck the
+old one-text-only rule on 2026-08-27: people do reply on the second and third
+touch, and stopping after one throws away most of what the list is worth. Each
+message must be freshly written — a repeat of the first text reads as a robot
+and is the thing that actually annoys people. Stop the sequence the instant
+someone replies or opts out.
+
+The old rule justified itself with "opt-outs spike on message two", which was
+never measured — the one batch with real numbers (Aug 21, 100+ texts) produced
+zero replies and zero opt-outs because no second message was ever sent. Track
+the opt-out rate as touches increase and let it set the ceiling.
 
 Calibration from a real batch: **100+ texts sent Aug 21 produced zero replies
 and zero opt-outs.** Zero opt-outs means the copy is not burning anyone; zero
