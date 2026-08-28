@@ -2646,3 +2646,64 @@ repeats across all three ("add Status + Date Called columns to OPTIMUS DIAL
 LIST", asked on 08-19, 08-20 and 08-21, marked "third day asking"). A request
 repeated three times with no movement is a signal the ask is wrong or aimed at
 the wrong person, not that it needs a fourth repetition.
+
+## 22.47 — Tasks out of the inbox, and Speedy never got access (2026-08-28)
+
+Patrick: *"use my activities to help w production make suggestions on tasks
+based on email"*. Both halves are now sections 5 and 6 of the
+`daily-coverage-gap` skill.
+
+### Speedy is `sophiajones51419@gmail.com` and he has no access
+
+On 2026-08-27 17:47 Patrick emailed Churchie, Dave **and Speedy**: *"I've got
+2500 upgrade gold dots yall get speedy dialing them please Thank u Givehim
+access and load in dialer for him plz"*. Dave replied ten minutes later: *"Give
+me the specific leads. I'm always ready to call."*
+
+The gold list was shared with Dave and Churchie only. **Speedy was missed**
+because his address existed nowhere in the brain and only ever appeared in that
+one thread. Patrick had no way to know the instruction had not been carried out.
+
+`share_file` then failed on that address three times running with `Internal
+error encountered`, and `get_file_permissions` confirms he is genuinely not on
+the file — this is the real failure, not the cosmetic one where the share lands
+anyway. **Always confirm with `get_file_permissions`**; both errors look
+identical and only one of them means anything.
+
+**Team addresses, so this cannot happen again:**
+
+| Person | Email | Role |
+|---|---|---|
+| Dave | `davebd0816@gmail.com` | dials |
+| Churchie | `churchiieoperationsva@gmail.com` | VA, list management |
+| **Speedy** | `sophiajones51419@gmail.com` | **dials the gold upgrades** |
+| Ed | `edsaldana08@gmail.com` | no money figures near Ara |
+| Ara | `aranezzaespinosa99@gmail.com` | **never any dollar figures** |
+| Jay | `jaykdunn@yahoo.com` | AT&T contract holder |
+
+### The lesson worth keeping
+
+An instruction Patrick gives the team by email is a task, and he will assume it
+happened. Nobody reports back that it did not. **Cross-check his sent mail
+against reality** — that is now part of the daily report, and it is how this was
+caught a day late rather than never.
+
+### Actionable items sitting in the inbox as of 2026-08-28
+
+Findable in ten minutes, none of them surfaced anywhere before now:
+
+- **GoHighLevel campaign rejection `#GHL-6225289`** — support says the opt-in
+  error is because the website is not live: *"make sure that your website is
+  live and has multiple pages, with the chat widget added to the footer."*
+  **This blocks a texting campaign**, which is the channel the whole ~1,300
+  follow-up depends on. Highest-value item in the mailbox.
+- **GHL `X-WH-Signature` deprecates September 1** — action required, four days
+  out.
+- GoDaddy order + payment-method link the same morning, most likely the domain
+  for the website GHL is asking for. Worth confirming the two are connected.
+- Money with dates: Fortiva overdue, TrueAccord $111.70 (LVNV Funding), Happy
+  Minds Psychiatry invoice $51.75 due 08-27.
+
+Newsletters, receipts, delivery notices and surveys were the bulk of the inbox
+and are correctly ignored — a section that lists them is a section he stops
+reading.

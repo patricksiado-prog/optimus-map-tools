@@ -198,6 +198,60 @@ ground or re-scanning.>
 <every source that failed and why. Empty is fine and good.>
 ```
 
+## 5. Tasks out of the inbox
+
+Patrick, 2026-08-28: *"use my activities to help w production make suggestions
+on tasks based on email"*. His inbox is where commitments get made and then
+lost — a support ticket that blocks a campaign, a rep asking for leads, a
+renewal about to hit. Read the last 7-10 days of `in:inbox` (skip promotions and
+social) and pull out only what has an **action attached to it**.
+
+What actually qualifies:
+
+- **Anything blocking production.** A GoHighLevel campaign rejection, a Twilio
+  or A2P registration problem, a suspended number, an API deprecation with a
+  date. These stop money and they hide in support threads. Put them first.
+- **A person waiting on him.** A rep asking for leads, a partner whose email is
+  unanswered after 2+ days, a customer question in a thread that died. Name the
+  person, the date, and what they asked.
+- **Money with a date on it.** Invoices due, overdue notices, renewals,
+  collections, trials converting. Amount and the day it hits.
+- **His own commitments.** Search `in:sent` too — things he said he would do.
+  An instruction he gave the team that nobody executed is the same as an
+  unfinished task, and he will assume it is done.
+
+What does not qualify, and should not pad the section: newsletters, receipts,
+delivery notifications, surveys, marketing. If there is nothing actionable, say
+"nothing new" — that is a real answer.
+
+**Cross-check every instruction he gave against whether it happened.** On
+2026-08-27 he emailed the team "I've got 2500 upgrade gold dots yall get speedy
+dialing them ... Give him access and load in dialer for him plz". Speedy
+(`sophiajones51419@gmail.com`) was never given access, because his address only
+ever appeared in that one thread. Patrick had no way to know it had not
+happened. That is exactly the class of miss this section exists to catch.
+
+## 6. Activities and production
+
+The other half of the same request: use what he logs to find what actually
+drives output.
+
+`LIFE LOG` (`1rwFjqK-oG8YuvNHFE_-4F4JuGg8JCzmE3RnjCeaFiZU`) has both the inputs
+and the outputs on the same row — Workout, Food, Sober, Bible/Prayer next to
+Dials Made, Leads Worked, Deals, Revenue. Once there are two or three weeks of
+rows, that is a real answer to "what kind of day produces a sale": whether the
+days he trains are the days he dials, whether deals cluster after a gym morning.
+
+**Right now it cannot be answered and you must say so rather than implying a
+pattern.** As of 2026-08-28 there are three dated rows (08-19 to 08-21), most
+cells blank, one deal ever logged. Three rows is an anecdote. Report what is
+actually in there, name the gap in one line, and move on.
+
+What you CAN do today without waiting for data: report the input/output pair for
+whatever days exist, so the connection becomes visible and logging starts to
+feel worth doing. "You logged 1 lead worked on 08-19 and closed the Beaumont
+deal the same day" is more motivating than an empty trend line, and it is true.
+
 ## Patrick's personal block — his copy only
 
 Patrick, 2026-08-27: *"combine my stuff to an am pm / daily reflections aa goals
