@@ -2580,3 +2580,69 @@ invent goals, do not nag. He said he will start adding activities.
 The doc's own header still says "Claude reads this doc every morning at 8am",
 which is now wrong (7am, and again at 5:30pm). It is his document, so it was
 left alone rather than edited without asking.
+
+## 22.46 — Patrick's real goals live in LIFE LOG, not the doc I was reading (2026-08-28)
+
+Found while adding calendar tasks. **There are two different logs and I had the
+wrong one.**
+
+- `OPTIMUS DAILY LOG` (Doc `1ZFFm58hjmJJTVF0GPs-TvUMgCq9qHMA4J9j-2Zv3Bk0`) —
+  the one CLAUDE.md points at. GOALS block is **empty bullets**. This is the doc
+  the old 8am brief read, which is why goal-checking never had anything to check.
+- **`LIFE LOG`** (Sheet `1rwFjqK-oG8YuvNHFE_-4F4JuGg8JCzmE3RnjCeaFiZU`) — the
+  real one. This is what his calendar events tell him to fill in, and it holds
+  the goals.
+
+**Read LIFE LOG for goals, food, activity, dials, deals and revenue.** Its
+DAILY LOG columns are: Date, Workout, Food, Dials Made, Leads Worked, Deals,
+Revenue ($), Sober (Y/N), Bible/Prayer (Y/N), Win of the Day, Notes. A weekly
+roll-up tab tracks Revenue against a **$10,000/week goal**.
+
+### IDENTITY & AFFIRMATIONS — written by Patrick 2026-08-26
+
+| Statement | Measurable target | Tracked by |
+|---|---|---|
+| I honor God with my life | — | Bible/Prayer (Y/N) |
+| I have eternal treasure | — | — |
+| I am happy | — | Win of the Day |
+| **I earn $10,000 a week** | $10,000/week | Revenue ($) |
+| I saved $1,000,000 by 2026 | $1,000,000 | manual, needs a balance tracker |
+| **I do excellent work** | 25+ dials/day | Dials Made + Leads Worked |
+| **I am in excellent shape** | train 5x/week | Workout |
+| I am an excellent husband | — | — |
+| I am an excellent father | — | — |
+| I am wise | — | — |
+| **I am clean and sober** | every day | Sober (Y/N) |
+
+These are his words. Quote them back when a task or a report touches one — that
+is what makes the daily email land instead of reading like a dashboard.
+
+### Calendar tasks
+
+He already had four recurring all-day events: `25 DIALS`, `TRAIN — out of gym by
+10`, `WORK A FIBER CLUSTER`, `LOG THE DAY`. Each names its goal in the
+description and says which LIFE LOG field to write. **Match that format
+exactly** when adding more.
+
+Added 2026-08-28 for the four affirmations that had no task at all:
+`BIBLE + PRAYER` (daily), `SOBRIETY — meeting or call` (daily),
+`CLOSE — call everyone who replied` (weekdays, fires 9am before cold dialing),
+`FAMILY — phone down` (daily).
+
+### The logging has stopped, and that is the thing to watch
+
+LIFE LOG has three dated rows — 2026-08-19, 08-20, 08-21 — and most cells in
+them are blank. Last modified 2026-08-21. **One deal is logged, ever**: a resi
+sale in Beaumont on 08-19.
+
+So every trend the daily emails promise — calories, workouts, dials, revenue
+against $10k/week — currently has one week of mostly-empty data from a week ago.
+Say that plainly rather than computing a trend from three rows. The AM email's
+job here is to make logging feel worth it, not to nag: report what IS there,
+name what is missing in one line, and move on.
+
+Three days of AM briefs are recorded in the Notes column, and the same ask
+repeats across all three ("add Status + Date Called columns to OPTIMUS DIAL
+LIST", asked on 08-19, 08-20 and 08-21, marked "third day asking"). A request
+repeated three times with no movement is a signal the ask is wrong or aimed at
+the wrong person, not that it needs a fourth repetition.

@@ -491,6 +491,14 @@ always reported — never captured-or-classified alone (brain rule 7). A source
 that can't be reached says `COULDN'T READ — <why>`; it is never guessed at and
 never quietly dropped.
 
+**`LIFE LOG`** — Google Sheet `1rwFjqK-oG8YuvNHFE_-4F4JuGg8JCzmE3RnjCeaFiZU` is
+the REAL log and the one his calendar tasks point at. Columns: Workout, Food,
+Dials Made, Leads Worked, Deals, Revenue ($), Sober (Y/N), Bible/Prayer (Y/N),
+Win of the Day, Notes — plus a weekly roll-up against a **$10,000/week revenue
+goal**, and his IDENTITY & AFFIRMATIONS table (BRAIN 22.46). **Read this one for
+goals.** Logging stopped 2026-08-21, so trends have almost no data — say so, do
+not compute a trend from three rows, and do not nag.
+
 **`OPTIMUS DAILY LOG`** — Google Doc `1ZFFm58hjmJJTVF0GPs-TvUMgCq9qHMA4J9j-2Zv3Bk0`
 is where Patrick posts. GOALS at the top (standing, he rewrites them when they
 change), then a dated FOOD / ACTIVITY / NOTES block per day. Three sections of
