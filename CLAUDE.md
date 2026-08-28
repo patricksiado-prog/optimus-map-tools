@@ -833,3 +833,57 @@ When something is learned that would change what a future session does, add it
 here (short) or to `BRAIN.md` (long), then commit and push. Anything not
 committed does not survive — a finding that lives only in a chat is lost when
 that chat ends.
+
+## THE A2P CAMPAIGN REJECTION HAS A WRITTEN CAUSE (2026-08-28)
+
+A2P was never the cause of the 405 — that was the fake SMS provider, and that
+stays closed. But the A2P **campaign** genuinely was rejected, and GHL support
+put the reason in writing in ticket `#GHL-6225289` (2026-08-27 08:39 CDT):
+
+> *"Please make sure that your website is live and has multiple pages, with the
+> chat widget added to the footer of the website. You received the opt-in error
+> because the website was not live."*
+
+That is a checklist, not a mystery: **live site, more than one page, chat widget
+in the footer.** Patrick paid GoDaddy 2026-08-27 (order `4172579894`) to bring
+the site back. Ticket `#6232348` was opened 2026-08-28. Do not re-theorise about
+carriers or brand-vs-campaign layers — read the ticket text first.
+
+Separately, **`X-WH-Signature` (RSA-SHA256) deprecates in GoHighLevel on
+2026-09-01.** Anything reading that legacy webhook header stops working.
+
+**Sending itself is healthy.** Every outbound is `TYPE_SMS` with a real `+1`
+number in `from`; the LeadConnector fix is holding. A campaign rejection and a
+send failure are different animals — check which one you actually have.
+
+## THE SIX NEW AGENTS — TWO ADDRESSES ARE DEAD (2026-08-28)
+
+Read off a photo of Patrick's GHL user list, so they were always provisional.
+Four delivered, two hard-bounced `550 5.1.1 address not found`:
+
+| Delivered | Bounced |
+|---|---|
+| `aldions446267@gmail.com` (Angel C) | **`cdpulfreelancer@gmail.com`** (Christian Puli) |
+| `dnavadiscipleone@gmail.com` (Daniel Nava) | **`lpie919@gmail.com`** (Jimmy Cars) |
+| `dominicandrade.officialbusiness@gmail.com` (Dominic Andrade) | |
+| `khevinjoffreyn@gmail.com` (Hazel Joy) | |
+
+Get the real addresses before resending. **Never send customer PII to an address
+read off a screenshot** — the 750-lead file went to Churchie and Dave only, and
+the agents were pointed at the dialer instead, which is where the work belongs
+anyway.
+
+`sophiajones51419@gmail.com` (Speedy) IS confirmed — Patrick emailed him
+directly 2026-08-27 17:47. Whether he ever got access is still unknown.
+
+## READING THE FEED: THE HEARTBEAT LIES BEFORE THE SHEET DOES (2026-08-28)
+
+`latest.json` and `heartbeat.json` are pushed to GitHub by the hunter and the
+push **stalls independently of capture**. On 2026-08-28 `latest.json` still
+showed a dead 04:24 `LOGIN_TIMEOUT` run and the heartbeat had frozen at
+`sweep_start` 04:52 — while the workbook was being written at 06:54.
+
+**The authoritative liveness check is `get_file_metadata` on the workbook:
+`modifiedTime` and `fileSize`.** Baseline set 2026-08-28 07:20 CDT:
+**8,511,247 bytes**. Precise Fiber runs ~13 bytes/row, so diff the file size to
+get rough new rows. Never declare capture broken from a stale feed file.
