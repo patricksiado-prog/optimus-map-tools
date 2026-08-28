@@ -976,3 +976,71 @@ The old brain warning about "an Oklahoma 405 number joined onto a Texas W Main
 St" is about a **bad join**, not about Oklahoma. Both can be true. Judge a row by
 whether its phone area code matches **its own address**, never by whether the
 state is Texas.
+
+## NEW RULE — NO SILENT RUNNING (Patrick, 2026-08-28)
+
+*"going forward dont let the software work if it's not writing to the sheet"*
+
+Ara ran the Maps Scraper for hours on 2026-08-28 and asked why her ZIP wasn't on
+the sheet. It wasn't because the workbook was FULL — the scraper had quietly
+switched to parking rows on her disk and kept scraping. Nothing was lost, but
+nothing was **delivered**, and the operator had no way to know. Hours of an
+operator's time bought zero usable rows.
+
+**The rule: when the destination is unwritable, the program STOPS. Loudly.**
+A run that cannot deliver is not a run — it is a machine burning an operator's
+day to produce a folder of JSON nobody will look at.
+
+Precise, so it does not overcorrect:
+
+- **`FULL` (the 10M-cell 400) → STOP the run.** Permanent by definition; no
+  number of retries can succeed. Print what is wrong, print the fix, exit
+  non-zero. Do NOT keep scraping into park files.
+- **`QUOTA` (429) → keep going.** Transient and self-clearing; the existing
+  waits are correct. This is not a stop condition.
+- **`OTHER` → existing retry then park.** Also not a stop condition.
+- **Park/replay stays** for rows already captured when the stop hits — the point
+  is to stop *acquiring* more, never to throw away what is in hand.
+- Applies to the **hunter too**, not just the scraper.
+
+`_err_kind()` in `maps_scraper_standalone.py` already separates these three
+cases, so this is a change at the `_SHEET_FULL["hit"]` branch, not new
+plumbing. `_say_full()` already prints the right message — it just needs to end
+the run instead of returning False.
+
+## GROWING THE SHEET — THE ACTUAL ANSWER (2026-08-28)
+
+**You cannot grow a Google Sheet past 10,000,000 cells.** 20M in the beta. That
+is a hard product limit, not a setting. So "grow the sheet" has to become either
+*stop growing the data* or *move the data*. Both, ideally.
+
+Where the cells actually are: `Precise Fiber` is 645,422 rows x 13 columns =
+**8.4M cells — 84% of the whole workbook.** Every other tab combined is ~1.2M.
+Deleting test and temp tabs frees ~200k. That buys days. It is not a solution.
+
+**The two moves, in order:**
+
+1. **Register for Google's 20M-cell beta.** Free, applies to the EXISTING file,
+   no migration, no code. Buys months. Do it today — it is a form.
+   `workspaceupdates.googleblog.com/2026/04/faster-performance-and-doubled-cell-limits-in-Google-Sheets.html`
+
+2. **One row per ADDRESS, not one per sighting.** This is the real fix and it is
+   a code change, not a storage change. Today every re-sweep APPENDS, so the file
+   grows forever even over ground already covered. Make a re-sweep UPDATE the
+   existing row and growth stops once an area is swept — the file size becomes a
+   function of TERRITORY, not of how many times we look at it.
+
+   **And it hands you the new-fiber diff for free.** A row whose colour changes
+   grey→green, or copper→gold, is fiber that just lit. That is the answer to
+   "how do I find all the new fiber," and it falls out of the shape change with
+   no extra work. ~22,000 locations light per day nationally and every one is
+   born GREEN.
+
+**The endgame, when the footprint outgrows even that:** BigQuery + Connected
+Sheets. Free at this volume, Google-native, no row ceiling, and it still looks
+like an ordinary spreadsheet to Churchie and Ara — so it does not violate NO NEW
+PROGRAMS. Only worth doing once #2 is in and still not enough.
+
+**Rejected, do not revisit:** sub-sheets joined by IMPORTRANGE (crawls past ~50
+formulas, needs a manual Allow-access click per file, and the footprint would
+need 37 of them); Airtable (per-editor pricing compounds with VAs).
