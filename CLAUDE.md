@@ -987,26 +987,30 @@ switched to parking rows on her disk and kept scraping. Nothing was lost, but
 nothing was **delivered**, and the operator had no way to know. Hours of an
 operator's time bought zero usable rows.
 
-**The rule: when the destination is unwritable, the program STOPS. Loudly.**
-A run that cannot deliver is not a run — it is a machine burning an operator's
-day to produce a folder of JSON nobody will look at.
+**Patrick corrected this the same day: NOT stop-on-full.** *"not stop on full
+but make it obvious it's doing nothing."* He is right and the first draft of this
+rule was wrong — the capture is still worth having, the parked rows replay
+automatically, and stopping throws away good work. The only real defect was that
+a full sheet *looked like* a working run.
 
-Precise, so it does not overcorrect:
+**The rule: never stop, but never let it look like it is working.** DEPLOYED
+2026-08-28 (PR #8, `e06d976`):
 
-- **`FULL` (the 10M-cell 400) → STOP the run.** Permanent by definition; no
-  number of retries can succeed. Print what is wrong, print the fix, exit
-  non-zero. Do NOT keep scraping into park files.
-- **`QUOTA` (429) → keep going.** Transient and self-clearing; the existing
-  waits are correct. This is not a stop condition.
-- **`OTHER` → existing retry then park.** Also not a stop condition.
-- **Park/replay stays** for rows already captured when the stop hits — the point
-  is to stop *acquiring* more, never to throw away what is in hand.
-- Applies to the **hunter too**, not just the scraper.
+- **Every per-search line** ends `<-- NOT ON THE SHEET, parked (N held)`. A
+  banner printed once scrolls away in minutes; a suffix on every line cannot.
+- **The ZIP-complete line** says plainly that nothing went to the sheet.
+- **The closing summary** ends on a loud block, never on a row count that reads
+  like success.
+- **`LIVE_COUNTS_scraper.txt`** carries the same status, so it is visible
+  remotely and not only on the operator's screen.
+- **`_PARKED_ROWS`** tracks the real count so every message quotes a number.
+- **Rate limiting (429) is untouched** — transient and self-clearing. Park and
+  replay untouched. Nothing is ever discarded.
 
-`_err_kind()` in `maps_scraper_standalone.py` already separates these three
-cases, so this is a change at the `_SHEET_FULL["hit"]` branch, not new
-plumbing. `_say_full()` already prints the right message — it just needs to end
-the run instead of returning False.
+The general principle, worth applying anywhere else it fits: **when software
+degrades to a mode that produces nothing usable, the degradation has to be
+visible in the thing the operator is already looking at** — not in a banner
+they scrolled past twenty minutes ago.
 
 ## GROWING THE SHEET — THE ACTUAL ANSWER (2026-08-28)
 
