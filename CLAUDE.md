@@ -638,6 +638,13 @@ address.
 
 **Fix, by Patrick:** in the sub-account, switched the telephone/conversation
 provider to **LeadConnector (LC Phone)**. Texting started working immediately.
+Confirmed with GHL tech support the same night — Patrick, 2026-08-28:
+*"spoke w tech support I'm back texting ... lead connector got clicked off and
+some other odd setting."* So the provider was not deliberately changed; it got
+clicked off, alongside a second setting support also corrected. **Treat the
+provider as a setting that DRIFTS** — by accident, by a snapshot push, or by a
+support agent mid-call — and check it daily. It is check #1 of the GHL health
+block in the `daily-coverage-gap` skill.
 
 **A2P WAS NEVER THE PROBLEM. Do not re-open it.** Support was right that Optimus
 is approved. Both numbers (`+13466603810`, `+13466710729`) delivered live test
@@ -667,6 +674,50 @@ send in the same thread also shipped a **doubled STOP line** and quoted a
 `$500 Visa reward card` and `$750 switching credits` to a business. Unverified
 claims — "10x faster", "2 free months", "no install fees and no contracts" —
 should not go back out as-is.
+
+## WHY THE DAILY EMAILS PERIODICALLY STOP (2026-08-28)
+
+Patrick asks this repeatedly. There are **two** distinct causes and they need
+different fixes.
+
+**1. Session-bound routines die when their session dies.** A Routine created with
+neither `create_new_session_on_fire` nor `persistent_session_id` binds to the
+session that made it. That session lives in an ephemeral container which is
+reclaimed after inactivity — and when it goes, the Routine has nothing to fire
+into. Proof in the account: `Optimus — DAILY: Where to Attack + Sheet Snapshot`
+(`trig_01NogsAtWRVmMbFmpEj9VVLS`) is bound to `session_01FiEXCtCQ4W1MakEGSg8jsf`,
+its `next_run_at` is frozen at **2026-08-11**, and it is disabled. It did not
+error — it just stopped.
+
+The AM and PM editions (`trig_01JTQKnB2U5ihS1mC4rpX2qy`,
+`trig_01RjAUBz16UNpdDzK2neCz37`) and the Friday follow-up
+(`trig_012FUpK6jNopp1QAUHMZ7szX`) are all bound to
+`session_01GRgAKeNm1SCYDrD16GcSTX` and will stop the same way when it is
+reclaimed. **This is the main answer to "why did my email stop".**
+
+**2. Runs that hang get ABANDONED.** `Morning Brief — Patrick`
+(`trig_019vheHFZBKyGnzbu6tVjPjb`) fired 2026-08-27T13:21 and shows
+`status: ROUTINE_RUN_STATUS_ABANDONED` with no `finished_at`. It started and
+never completed, so no email went out. Usually a read that hangs — a big tab, a
+blocked domain, a connector that stalls. Bound the reads and let a failed source
+print `COULDN'T READ` rather than hanging the whole run.
+
+**The tension, and why this is not a one-line fix.** Fresh-session routines
+(`create_new_session_on_fire: true`) survive forever but come up with **no MCP
+connectors**, so they cannot read Gmail, Drive, the sheet or GoHighLevel — which
+is most of what the brief needs. Session-bound routines inherit the connectors
+but inherit the session's mortality. Every routine in the account that has a
+recorded `SUCCEEDED` run is unbound; every bound one shows no run history at all.
+
+**Diagnosing it:** `list_triggers` and read three fields per routine —
+`persistent_session_id` (bound = mortal), `next_run_at` (frozen in the past =
+already dead), and `last_run.status` (`ABANDONED` = it hung). Do not conclude a
+bound routine never fired from a missing `last_run` alone; bound routines that
+wake their own session do not record one.
+
+**When Patrick reports a stopped email, re-create the routine rather than
+enabling the old one** — a Routine pointed at a dead session cannot be revived by
+toggling it back on.
 
 ## PARKED — waiting on Patrick (2026-08-26)
 

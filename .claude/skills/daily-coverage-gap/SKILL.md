@@ -1,6 +1,6 @@
 ---
 name: daily-coverage-gap
-description: Build Optimus's twice-daily coverage-gap report — cross-reference the leads sitting in the ATT FIBER LEADS sheet against what has actually been texted or called in GoHighLevel, against AT&T fiber build news, and against live cable/competitor outages, then email it to Patrick, Dave and Churchie — a morning edition that says what to work today and an evening edition that catches the replies that came in and have not been called back. Use this whenever Patrick asks what hasn't been worked, which leads are going stale, where to point the scanner, what's new in fiber news, whether a competitor is down, what the team should do today, or for the daily/coverage/gap report by name. Also use it when he asks a narrower version of the same question — "what are we sitting on", "who hasn't been called", "any new builds", "is Comcast down" — because each of those is one section of this report and the other sections are the context that makes it actionable.
+description: Build Optimus's twice-daily coverage-gap report — cross-reference the leads sitting in the ATT FIBER LEADS sheet against what has actually been texted or called in GoHighLevel, against AT&T fiber build news, and against live cable/competitor outages, then email it to Patrick, Dave and Churchie — a morning edition that says what to work today and an evening edition that catches the replies that came in and have not been called back. It is also the daily manager of the machine, the data and the growth plan: it checks that GoHighLevel can actually send before anything else, audits data integrity, says where the next deal comes from, and carries three daily tips (a GHL tech tip, an AT&T fiber technology or phone benefit, and a sales tip). Use this whenever Patrick asks what hasn't been worked, which leads are going stale, where to point the scanner, what's new in fiber news, whether a competitor is down, what the team should do today, or for the daily/coverage/gap report by name. Also use it when he asks a narrower version of the same question — "what are we sitting on", "who hasn't been called", "any new builds", "is Comcast down" — because each of those is one section of this report and the other sections are the context that makes it actionable. Also use it when he asks whether texting is working, why a daily email stopped arriving, for a GHL or AT&T or sales tip, or where to grow.
 ---
 
 # Daily coverage gap
@@ -165,6 +165,229 @@ When there *is* an outage, the deliverable is not the outage — it is the
 **overlap**: which of our green pockets sit inside it. Name the streets or ZIPs
 and put them at the top of the call list.
 
+## 5. GHL health — you are the manager of the machine
+
+Run this **first**, before the sheet, before the news. If GHL cannot send, every
+other section of the report is describing work that is not happening.
+
+This section exists because of a real outage. On 2026-08-27 the account stopped
+texting for over a day and nobody noticed: outbound SMS had been routed to a
+placeholder conversation provider named **"SMS Demo Provider"**
+(`6958de9aca6f38b289d7f65e`), every send returned `405`, and the contacts still
+got tagged as though they had been messaged. Patrick spent a Zoom call with
+support chasing an A2P problem that did not exist. Check the machine daily so
+that never costs a day again.
+
+**The five checks, in order:**
+
+1. **Is the provider right?** The telephone / conversation provider must be
+   **LeadConnector (LC Phone)**. If a custom provider is selected, sending is
+   broken even though everything looks normal in the UI.
+2. **Are recent sends real sends?** Pull recent outbound messages and look at two
+   fields. A healthy send is `messageType: TYPE_SMS` with a `+1…` number in
+   `from`. A broken one is `messageType: TYPE_CUSTOM_SMS` with a **provider name**
+   in `from`. One glance settles it — do not theorise about carriers first.
+3. **Any failed sends?** Count messages with `status: failed` in the last 24h and
+   quote the `error` string verbatim. Read the code:
+   - `405` — refused outright, the message never left GHL. Routing/config fault.
+     Never carrier filtering.
+   - `30006` — landline. We texted a number we should have called.
+   - `30007` — carrier filtered it as spam. That IS a content problem: look at
+     the template.
+4. **Numbers and money.** Phone numbers still present on the location, and the
+   billing wallet funded. Both are one call each and both silently kill sending.
+5. **Ghost-sent contacts.** Anyone tagged `fiber-sms-sent` whose only outbound
+   messages failed. Those rows read as worked and are not — they will get skipped
+   by the team forever. Name the count and offer to strip the tag.
+
+**Report it as one line when healthy.** "GHL: sending healthy, provider
+LeadConnector, 0 failed in 24h." A green light stated plainly is what makes the
+red light believable. When it is red, that goes at the very top of **Do this
+today**, above outages.
+
+**Also watch for the settings that drift.** Patrick, 2026-08-28, after support:
+*"lead connector got clicked off and some other odd setting."* Settings get
+clicked off by accident, by a snapshot push, or by a support agent mid-call. The
+provider is the one that breaks sending outright; check it every single day.
+
+## 6. Data integrity — you are the manager of the data
+
+The lists are the product. A list with a wrong number in it costs a dial and a
+reputation; a list that lies about what has been worked costs the lead entirely.
+
+**Check daily:**
+
+- **Writes are landing.** From `optimus/_feed/latest.json`: `written` and
+  `failed_writes`. Report both, always. "Classified 126,628" means nothing if
+  `written: 0` — that is brain rule 7 and it has misled a session before.
+- **Sheet headroom.** The workbook has a hard 10,000,000-cell ceiling and has hit
+  it. Report roughly how close it is. A tab is billed for its whole grid, not its
+  rows.
+- **Parked rows.** Any rows parked to disk awaiting replay, and whether the last
+  launch replayed them.
+- **Placeholder text in data fields.** Never allowed. A column once held the
+  literal text `(all DNC)` where digits belonged and gold could not be texted for
+  a day. Scan for non-numeric junk in phone columns and flag it loudly.
+- **Rows that cannot be mailed.** Captured rows with no city/state/ZIP, and
+  whether the backfill is still healing them.
+- **Duplicates.** Contacts sharing a phone or email under different names.
+- **DNC that is actually unknown.** Column F of `Fiber Green Biz` is a hand-typed
+  call-status field, not a DNC check. Never report those rows as DNC-clear.
+
+Where a check cannot run, say `COULDN'T READ — <why>`. Never guess a number and
+never carry one forward from yesterday.
+
+## 7. Sales expansion — where the next deal comes from
+
+The gap sections say what is not being worked. This one says where to grow.
+
+**Capacity math, honestly.** Dials available today × the connect rate we actually
+observe × the close rate we actually observe. If the arithmetic does not reach
+the goal, say so and name the constraint — reps, numbers, or scan volume. Do not
+dress it up. The usual answer is that resi is capped by scanning and business is
+capped by qualification, not by effort.
+
+**Which pockets are producing.** Rank recent closes and replies by pocket, not by
+row count. A pocket that produced two replies from forty dials outranks one that
+produced none from three hundred.
+
+**Where to scan next.** Never point the scanner at ground already swept — dwelling
+on a worked pocket simulated 80% worse than sweeping outward. Prefer a metro with
+no capture history, and prefer gold density as the freshness signal: thick gold
+with little grey means fiber was lit recently and nobody has converted it.
+
+**The business match.** Report the count of `Maps Businesses` rows that match a
+scanner dot — that join is what turns ~38.5k blind rows into confirmed-fiber
+business leads, and Patrick calls it the most important thing. Until the software
+does it automatically, report that it is still not running rather than letting it
+disappear.
+
+**Channel coverage.** Who was texted but never called. Who was called but never
+emailed. A lead worked on three channels converts far better than the same lead
+texted once, and the enrichment already paid for the email address.
+
+## 8. The three daily tips
+
+Every **AM** edition carries exactly three, one of each. Patrick asked for these
+by name on 2026-08-28. They are short on purpose — a rep reads them on a phone
+between dials.
+
+1. **GHL TECH TIP** — one thing about the CRM that makes the day easier or
+   prevents a silent failure.
+2. **AT&T FIBER TECH / PHONE BENEFIT** — one true fact about the product that a
+   rep can say out loud on a call. This is ammunition, not trivia.
+3. **SALES TIP** — one behaviour that closes more.
+
+**Rules for all three:**
+
+- Two to four sentences. No preamble.
+- It must be **true**. Never invent a speed, a promo, or a feature. If a number
+  cannot be verified today, use a tip that needs no number.
+- Never repeat a tip within 30 days. Track which have run.
+- Prefer a tip tied to something that actually happened this week — a failure
+  we just had, a competitor outage, a deal that closed.
+- **Money rule:** customer-facing pricing and promos ARE allowed in tips, because
+  reps cannot sell without them. **Commission, payout, per-lead value and revenue
+  figures are never in a rep's or VA's copy** — that is Ed's standing rule about
+  Ara and it is about what we get paid, not what the customer pays.
+
+Refresh the libraries below with `WebSearch` when a tip touches a current price,
+promo or speed tier — those change. The mechanics do not.
+
+### GHL tech tip library
+
+- A `405` on send means the request was refused outright and the message never
+  left GHL. That is always routing or config, never a carrier.
+- Two fields tell you if sending is healthy: a real send is `TYPE_SMS` with a
+  phone number in `from`; a broken one is `TYPE_CUSTOM_SMS` with a provider name.
+- Never write your own opt-out line. GHL appends `Reply STOP to unsubscribe.`
+  automatically, and a doubled STOP line is the clearest tell that no human wrote
+  the message.
+- A2P has three gates: brand approved, campaign approved, and numbers attached to
+  that campaign. "Your brand is approved" answers none of the other two.
+- `30006` means you texted a landline. It fails and it counts against the sending
+  number. Check the line type before the send, not after.
+- `30007` means a carrier filtered the message as spam. That is a content
+  problem — shorten it, personalise it, and take the price out.
+- `lastMessageBody` only holds the most recent message, so scanning it will never
+  find someone who replied and then got answered. Use tags and pipeline stage.
+- A contact can carry `hot-lead` and be opted out at the same time. Always read
+  `dndSettings` before counting a lead as reachable.
+- A workflow can select its own SMS provider that overrides the account default.
+  Fixing the account setting does not fix a workflow that has one hard-selected.
+- A snapshot push can overwrite sub-account settings, including the telephone
+  provider. Re-check sending after any snapshot.
+- Duplicate contacts are matched on email and phone. Importing a list with a
+  differently-formatted number creates a second record and splits the history.
+
+### AT&T fiber tech / phone benefit library
+
+- **Symmetrical speed is the real difference.** Fiber uploads as fast as it
+  downloads. Cable does not — coax is asymmetric by design, so upload lags badly.
+  That is the single most honest fiber-vs-cable line there is.
+- **Upload is what people actually feel**: video calls that do not freeze, cloud
+  backup, security cameras, and a card reader that does not hang. Ask what they
+  do that pushes data up.
+- **Fiber does not degrade with distance.** Light loses almost nothing over the
+  run, so a customer far from the office gets the same speed as one next door.
+  Cable slows the further you sit from the node.
+- **No shared-node slowdown at 7pm.** Cable neighbours share bandwidth on a node;
+  fiber is far less affected by congestion, weather and interference.
+- **AT&T Fiber runs on XGS-PON**, which is what makes the multi-gig tiers
+  possible. Tiers are 300 Mbps, 500 Mbps, 1 GIG and 5 GIG.
+- **AT&T has already hit 20 Gbps symmetric** on a production network using
+  25GS-PON in trials. The fiber going in the ground now has enormous headroom —
+  useful against "I don't need that much speed."
+- **Bundling wireless takes 20% off the fiber bill** — roughly $15–$25 a month
+  depending on tier, and AT&T markets savings up to about $420 a year. Bundled
+  fiber starts around $35/mo before taxes and fees.
+- **Bundling also includes Internet Backup at no cost**, which matters to anyone
+  who works from home or runs a register.
+- **AT&T Phone – Advanced is the landline answer.** It keeps the customer's
+  existing handsets and their number, but delivers dial tone over wireless or
+  broadband instead of copper. Starts around $45/mo.
+- **It has 24-hour battery backup and E911 location**, plus Call Protect spam
+  blocking, caller ID, call waiting, call forwarding and 3-way. That backup line
+  is what settles the older customer who is scared of losing the phone in an
+  outage.
+- **The copper clock is real and public.** AT&T is exiting copper across most of
+  its wireline footprint by **end of 2029**, and aims for **no copper customers
+  in wireless-first areas by end of 2027**. You are giving them a heads-up, not
+  a pitch.
+- **Migration happens either way — timing is the only thing they control.** That
+  sentence is the whole gold pitch in one line.
+
+### Sales tip library
+
+- **Any reply gets a call the same hour.** People have opted out while waiting on
+  a callback. The reply is the buying signal; the delay is what kills it.
+- **3-way the warm one.** Do not finish it alone and do not promise a callback —
+  conference Patrick in live, or Ed, Zack or Valmore. A warm customer cools fast.
+- **Lead with copper retirement, not the promo.** It is true, it is urgent, and it
+  reads as a heads-up. "Great news!" reads as a blast.
+- **Never quote a flat price.** Residential is "in the $20s to $30s for the first
+  year, I'll confirm your exact price before anything is ordered." Business is
+  priced by speed tier — never put a residential figure on a business.
+- **Gold is the easier sale.** They are already a customer on copper, so there is
+  no competitor to beat. It is an upgrade, not a switch.
+- **Text two or three times, spaced days apart, each one written fresh.** One text
+  and done leaves replies on the table. Stop the moment someone replies or opts
+  out.
+- **Fewer better names beats more names.** A rep working 60 right numbers beats a
+  rep working 300 wrong ones, and a huge list burns their day on people who
+  cannot buy.
+- **Read the tags before you dial.** `absentee-owner` means they do not live
+  there — ask about the property, never "your home".
+- **Never pitch a connection at a vacant house.** Talk to the owner about the
+  property instead.
+- **Ask a business what their upload does today.** They will tell you the pain
+  before you have to sell anything.
+- **Disposition honestly, immediately.** A lead marked wrong is worse than a lead
+  not marked at all, because the next person trusts it.
+- **A competitor outage is the only same-day clock we get.** A household whose
+  cable died this morning is the most receptive prospect there is; tomorrow they
+  have forgotten.
+
 ## Report structure
 
 Use this shape. It is ordered by what a person should do first, not by how the
@@ -183,10 +406,22 @@ urgency.>
 trend. Then the big pools: green / gold / grey / businesses, with row counts
 and how stale the counts are.>
 
+## GHL health
+<one line when green: provider, failed-send count in 24h. When red, this moves
+to the top of "Do this today". Always name ghost-sent contacts if any.>
+
 ## Capture — is the machine working
 <classified vs written, sheet growth in bytes and approximate rows, auth
 failures, and the current phase. One line saying whether the sweep is on fresh
 ground or re-scanning.>
+
+## Data integrity
+<writes landing, sheet headroom, parked rows, duplicates, placeholder junk,
+rows that cannot be mailed. Silence here is a pass, but say so.>
+
+## Where to grow
+<capacity math and the real constraint, which pockets are producing, where to
+point the scanner next, the business-match count.>
 
 ## New builds worth scanning
 <named places only. If the news gave nothing aimable, say that in one line.>
@@ -196,9 +431,14 @@ ground or re-scanning.>
 
 ## Couldn't read
 <every source that failed and why. Empty is fine and good.>
+
+## Today's three  (AM edition only)
+**GHL TECH TIP —** <2-4 sentences>
+**AT&T FIBER TECH / PHONE BENEFIT —** <2-4 sentences>
+**SALES TIP —** <2-4 sentences>
 ```
 
-## 5. Tasks out of the inbox
+## 9. Tasks out of the inbox
 
 Patrick, 2026-08-28: *"use my activities to help w production make suggestions
 on tasks based on email"*. His inbox is where commitments get made and then
@@ -231,7 +471,7 @@ dialing them ... Give him access and load in dialer for him plz". Speedy
 ever appeared in that one thread. Patrick had no way to know it had not
 happened. That is exactly the class of miss this section exists to catch.
 
-## 6. Activities and production
+## 10. Activities and production
 
 The other half of the same request: use what he logs to find what actually
 drives output.
@@ -352,10 +592,22 @@ capture health and scan targets; they are not his job.
 **Churchie** (`churchiieoperationsva@gmail.com`) — the work queue and list
 management: who to load, what to scrub, what came back.
 
-**No dollar figures in Dave's or Churchie's copy.** Money lives in Patrick's
-only. This is not squeamishness — it is a standing instruction from Ed that
-Patrick agreed to, and the daily email is the most likely place to break it by
-accident. Say "the upgrade" and "the higher-value sale".
+**The three daily tips go in every copy.** Dave gets the sales tip and the
+AT&T tech/phone benefit above all — that is what he says on the phone. Churchie
+gets the GHL tech tip above all — she runs the machine. Send all three to
+everyone anyway; they are short and the cross-training is worth it.
+
+**No COMMISSION figures in Dave's or Churchie's copy.** Money we get paid lives
+in Patrick's copy only. This is not squeamishness — it is a standing instruction
+from Ed that Patrick agreed to, and the daily email is the most likely place to
+break it by accident. Say "the upgrade" and "the higher-value sale".
+
+**Customer-facing pricing is NOT the same thing and IS allowed.** A rep cannot
+sell without knowing what the customer pays — the bundle discount, the tiers,
+what AT&T Phone – Advanced costs. What must never appear is what *we* earn:
+per-sale payout, per-lead value, revenue totals, anything a commission can be
+reconstructed from. Ed's concern was Ara learning what an upgrade pays, not Ara
+knowing the retail price of fiber.
 
 **Send three separate emails, never one with three recipients.** The moment they
 share a body, the money leaks into the VA copy. That has already happened once.
