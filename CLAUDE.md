@@ -1048,3 +1048,61 @@ PROGRAMS. Only worth doing once #2 is in and still not enough.
 **Rejected, do not revisit:** sub-sheets joined by IMPORTRANGE (crawls past ~50
 formulas, needs a manual Allow-access click per file, and the footprint would
 need 37 of them); Airtable (per-editor pricing compounds with VAs).
+
+## THE ADDRESS BACKFILL HAS NEVER RUN (2026-08-28) — FIXED
+
+The brain claimed "FULL ADDRESS EVERYWHERE" was working since 2026-08-27. **It
+was not.** `backfill_addresses` had been bailing on every single launch.
+
+Row 1 of `Precise Fiber` reads `Address, Dot Color, Captured At` and nothing
+else. The backfill locates its columns **by header name**:
+
+```python
+i_lat, i_lng = col("lat"), col("lng")
+i_city, i_state, i_zip = col("city"), col("state"), col("zip")
+if min(i_lat, i_lng, i_city, i_state, i_zip) < 0:
+    print("  (address backfill skipped -- ... nothing touched)")
+    return 0
+```
+
+`min(...) < 0` every time → one-line skip → `return 0`. That is why captured
+rows still carry a street line with no city/state/ZIP and cannot be mailed or
+skip-traced, and why the "self-healing over a few days" never happened.
+
+**The columns were never junk — only the labels were gone.** `OUT_HEADER` in
+`precise_fiber_hunter.py` is 13 wide and the data matches it:
+
+```
+Address | Dot Color | Captured At | Business | Phone | Run ID | Operator
+        | Lat | Lng | City | State | ZIP | Status
+```
+
+(Verified against live data: col 3 held "Luxury Homes Renovation", col 4 held a
+phone number.)
+
+**Fixed and DEPLOYED (PR #9, `edee6a3`).** `_repair_pf_header` writes the
+missing labels back, on the same timid contract as the hunter's
+`_ensure_header`: only blank row-1 cells are filled, an existing label is never
+overwritten, row 2 and below are never touched, and a failed write is swallowed.
+If it still cannot find the columns it now says so LOUDLY with what row 1 really
+contains.
+
+**`PF_HEADER` in the scraper must stay identical to `OUT_HEADER` in the hunter.**
+
+### Why "delete the junk columns" is the wrong instinct here
+
+A tab is billed for its **GRID**, not its content — clearing junk out of cells
+frees exactly zero. Only shrinking the grid helps, and the scraper's auto-shrink
+already trims columns to `max(header_width, 13)` and reported "nothing left to
+shrink."
+
+Deleting columns 8-13 would save ~3.2M cells, but the hunter appends **13-wide
+rows positionally**: the next write either expands the grid straight back, or
+shifts every value one column left — City landing in State, silently. This is
+the same failure already caught once when `free_space.py` had `MIN_COLS` at 12,
+which would have wiped every Status value. **The floor is 13 for a reason.**
+Shrinking the row format is only safe as a coordinated hunter + sheet change.
+
+Also seen in live data: a cell in the Run ID column containing *"I do not have
+enough information to answer the query..."* — an AI response written into a data
+cell. Real garbage, but clearing it frees no space.
