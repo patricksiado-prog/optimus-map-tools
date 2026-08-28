@@ -627,49 +627,46 @@ Told to the team in writing 2026-08-28, so they will now expect it:
    texted once then dropped, and warm-but-quiet with no follow-up booked. This is
    the `daily-coverage-gap` skill; the team can now ask for it by name.
 
-## TEXTING IS DOWN — 405, and it is the CAMPAIGN not the brand (2026-08-28)
+## THE 405 WAS A FAKE SMS PROVIDER — SOLVED (2026-08-28)
 
-Sends from the T-OPTIMUS UI fail with **`Request failed with status code 405`**.
-Ruled out by API the same day, so do not re-chase these: two numbers are live on
-the location (`+13466603810`, `+13466710729`, "dave's number 5/6"), the billing
-wallet has funds, and the test contact was clean (valid mobile, `dnd: false`,
-already tagged `fiber-sms-sent`, so sending once worked).
+**Cause: outbound SMS was routed to a custom conversation provider named
+"SMS Demo Provider"** (`conversationProviderId 6958de9aca6f38b289d7f65e`), a
+placeholder with no real endpoint. Messages went out as `TYPE_CUSTOM_SMS` with
+`from: "SMS Demo Provider"` and came back `Request failed with status code 405`.
+They never reached Twilio, a carrier, or A2P — they were posted to a dead
+address.
 
-**A2P has three gates and support only ever confirms the first.** Brand approved
-≠ campaign approved ≠ numbers attached to that campaign. Patrick was told
-"Optimus is approved" — that is the brand row. A rejected or suspended CAMPAIGN
-blocks the send and GHL surfaces it as the 405.
+**Fix, by Patrick:** in the sub-account, switched the telephone/conversation
+provider to **LeadConnector (LC Phone)**. Texting started working immediately.
 
-**The likely chain: website went down → campaign rejected → 405.** Patrick,
-2026-08-28: *"Frontline website down paid to add it bk."* Carriers/TCR re-verify
-the registered site after approval. **Paying to restore the site does NOT restore
-the campaign — it has to be resubmitted and re-reviewed.** Nothing re-vets on its
-own.
+**A2P WAS NEVER THE PROBLEM. Do not re-open it.** Support was right that Optimus
+is approved. Both numbers (`+13466603810`, `+13466710729`) delivered live test
+sends at 02:34 CDT from this same sub-account, `status: "delivered"` with real
+Twilio SIDs, while the workflow send was still 405ing. The website being down,
+the brand-vs-campaign gap, and the Frontline site payment are all unrelated to
+this error — I built that theory and the test killed it.
 
-Two open unknowns worth resolving before anything else:
-- **Which brand is the campaign under, Optimus or Frontline Direct?** The failing
-  numbers live on T-OPTIMUS, whose registered website is `https://optimus-fiber.com`
-  (confirmed via `get_location`). A campaign under Frontline sending on T-OPTIMUS
-  numbers is a separate failure from the website.
-- **Is the site back as the RIGHT site?** It was serving "Optimus Prime
-  Marketing", a generic agency page. That is a use-case mismatch and gets
-  rejected even when the site loads fine. `optimus-fiber.com` is egress-blocked
-  from a Claude sandbox — never conclude it is down from that.
+**How to tell them apart next time, in one field:** a real send is
+`messageType: TYPE_SMS` with a `+1...` phone number in `from`. A broken one is
+`TYPE_CUSTOM_SMS` with a provider *name* in `from`. Check `from` before
+theorising about carriers — a 405 means the request was refused outright and the
+message never left GHL, so it is a routing/config fault, never carrier filtering
+(that shows up later as a delivery failure or a Twilio 300xx code).
 
-Full site requirements + the four questions for support are written up in
-`scratchpad/a2p/A2P WEBSITE REQUIREMENTS`. The one carriers keyword-search for is
-the privacy-policy line: *"No mobile information will be shared with third
-parties or affiliates for marketing or promotional purposes."*
+**Still open from this:** any contact texted through the demo provider was tagged
+`fiber-sms-sent` but never actually received anything. Those rows read as worked
+and are not. Audit before anyone skips them.
 
-### The message being sent is its own problem
+### The message template is still broken — separate problem
 
-The live template (seen 2026-08-27) breaks four standing rules at once and would
-get filtered even with sending fixed: blank name merge (`Hi` alone), **a flat
-`just $30/month` quoted to BUSINESSES** off the Maps scraper, ~390 chars/3
-segments, identical text to every recipient, and it leads with a promo instead of
-copper retirement. Unverified claims in it — "10x faster", "2 free months",
-"no install fees and no contracts" — are also a likely campaign-rejection reason
-in their own right. Rewrite before the next batch.
+The live copy breaks four standing rules and needs rewriting before the next
+batch: blank name merge (`Hi` alone), **a flat `just $30/month` quoted to
+BUSINESSES** off the Maps scraper, ~390 chars/3 segments, and identical text to
+every recipient, leading with a promo instead of copper retirement. The Aug 17
+send in the same thread also shipped a **doubled STOP line** and quoted a
+`$500 Visa reward card` and `$750 switching credits` to a business. Unverified
+claims — "10x faster", "2 free months", "no install fees and no contracts" —
+should not go back out as-is.
 
 ## PARKED — waiting on Patrick (2026-08-26)
 
