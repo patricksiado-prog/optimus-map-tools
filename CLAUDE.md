@@ -27,7 +27,8 @@ AT&T is retiring copper — **Phase 1 by 2027** (wireless-first areas), **Phase 
 by 2029** (fiber-migration areas). That deadline is the opener on every pitch:
 it is true, it is urgent, and it reads as a heads-up rather than a sales call.
 
-**Team:** Dave (the only one who dials), Ed, Zack, Ara, Daniel. Patrick closes
+**Team:** Dave (dials), Ed, Zack, Ara, Daniel, **Valmore** (new, 2026-08-28).
+Patrick closes
 and builds.
 
 ## The dot legend — everything downstream depends on this
@@ -562,6 +563,47 @@ BCCing both is the mistake that rule exists to prevent.
 though `optimus_web_intel.py` cannot (news.google/bing/reddit are proxy-blocked).
 So the news and outage sections work unattended; the sheet sections still route
 around the tab-read block via `_feed/sheet/tabs.json` and workbook file size.
+
+## How the team sells (2026-08-28, Patrick to Dave + Churchie)
+
+**3-WAY THE WARM ONES. Every time.** A rep with a customer warm on the phone
+does NOT finish it alone and does NOT hang up promising a callback — they
+conference Patrick in live. If he is unreachable: **Ed, Zack, Valmore**, in that
+order. The reasoning is the same as the same-hour-callback rule: a warm customer
+cools fast and the callback is a worse conversation than the one already
+happening.
+
+**Ed is the model. 16 residential closes on the phone in two weeks.** Ed and Ara
+are the pair running this well; Patrick's instruction is to copy them. Their
+actual phone approach is NOT yet written down — capturing it is an open task.
+
+**Residential closes easier than business.** The only thing capping resi is
+scan volume, so more scanning feeds the easier revenue.
+
+**Business results to date: 3 closes for Dave off many leads.** Patrick owns
+part of that publicly — the business lists went out *unqualified*, so Dave was
+guessing which addresses could even be served. Do not repeat that.
+
+### The business match — the highest-value analysis we have
+
+`Maps Businesses` holds ~38.5k scraped businesses with **no serviceability
+data**. The scanner holds dots that DO know. **A business address that matches a
+scanner dot is a confirmed-fiber business lead.** That join turns 38.5k blind
+rows into a callable list where the answer is known before the dial. Patrick,
+2026-08-28: *"most importan thing."* Churchie owns running it; the matched rows
+then go through DealMachine like any other list.
+
+### What the AI does, so the humans don't
+
+Told to the team in writing 2026-08-28, so they will now expect it:
+
+1. **Enrichment is never hand-done.** Dots go through DealMachine here and the
+   list ships with name, cell, email, line type and DNC already on it, sorted
+   cleanest-first. A list arriving without numbers is a defect to fix same-day.
+2. **The AI reports the GAP** — sheet vs. what GoHighLevel shows as actually
+   texted or called. Four buckets: never touched, replied and never called back,
+   texted once then dropped, and warm-but-quiet with no follow-up booked. This is
+   the `daily-coverage-gap` skill; the team can now ask for it by name.
 
 ## PARKED — waiting on Patrick (2026-08-26)
 
