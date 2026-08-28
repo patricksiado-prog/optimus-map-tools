@@ -751,6 +751,61 @@ Two rules that survived from here and must not be lost: **never tell him to stop
 working or rest** (frame recovery as capacity, never permission to stop), and
 **never nag a missed log**.
 
+## THE AUDIT — what the numbers actually say (2026-08-28)
+
+Measured from the run feed `20260827-103509`, the 27 Aug tab counts and a live
+read of the GHL residential pipeline. Re-measure before quoting any of it; these
+are the findings, not permanent facts.
+
+**Capture is the strongest part of the business.** One 12h13m sweep pulled 1,139
+serviceability responses and decoded **452,736 addresses** — roughly 400 usable
+addresses per response, twelve hours, no crash.
+
+**The penetration number, computed rather than assumed:** green 306,332 (67.9%),
+grey 145,066 (**32.1%**), unknown 1,338. **AT&T already holds about one in three
+fiber-passed addresses in swept territory**, so two-thirds are the addressable
+market. That is also a usable line on a call — one in three neighbours already
+made this decision.
+
+**Four faults inside that one run:**
+- **`classified_gold: 0` across all 452,736.** Not low, zero — and gold is the
+  easiest sale we have. Confirmed-copper capture was verified working 2026-08-24,
+  so either the classifier regressed or the swept ground genuinely had no
+  copper-with-fiber, which is not credible at that volume. **Highest-value thing
+  to diagnose.**
+- **`ip-co` — 2,676 addresses** with a build code nothing decodes (sample
+  `229 DOWLEN RD RM 6B`). One rule recovers all of them.
+- **`auth_expired: 4`** plus 3 parse errors. Every expiry is a blackout where the
+  map returns a login page instead of data.
+- **`map_ok: false`, `zoom_ok: false`** — capture survived because it reads the
+  serviceability API, not the rendered map, but aiming was blind.
+
+**THE PIPELINE IS WRITE-ONLY.** GHL residential: **3,706 open, 0 won, 0 lost.**
+Ed's 16 closes and Dave's 3 business closes appear nowhere. Nothing is ever
+dispositioned.
+
+**This is why `cost per customer` and `profit per activity` CANNOT be produced
+today** — both are ratios with a measurable cost over an outcome that is recorded
+nowhere. Any figure offered for them right now is invented; say so rather than
+computing one. What IS solid: **~2.6 DealMachine credits per callable lead**
+(309 rows for ~800 credits, Beaumont, 2026-08-28).
+
+**B2B benchmarks that reframe Dave's 3 closes** (2026 published figures): connect
+8–12% on generic lists, **18–22% on verified direct-dial**, 25–35 dials per booked
+meeting (top performers 12–18), meeting-set 2–3% average vs 6–10% top. The
+decisive one: **a connect rate below 7% is almost always a technical problem —
+data, timing, caller ID — not a rep problem.** Business lists went out without
+serviceability data, which is exactly that failure mode. Also: one dial connects
+~1 in 10, but the same prospect across multiple attempts picks up ~1 in 4 —
+persistence on the same name beats fresh names.
+
+**`Upgrade Orange Biz` has 62 rows.** Gold businesses are the most valuable slice
+in the system and that tab is nearly empty. Whatever produces it is barely
+running or barely finding.
+
+Full write-up rendered for Patrick as `Where The Dots Are` (artifact publishing
+was classifier-blocked, so it went as a file).
+
 ## PARKED — waiting on Patrick (2026-08-26)
 
 **The storage ceiling plan is researched and PARKED.** Patrick: *"hold tight,
