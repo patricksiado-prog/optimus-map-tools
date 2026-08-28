@@ -230,6 +230,32 @@ the hunter now throttles itself rather than collecting 429s.
 opt-outs are honored and opt-out language is present. Record the status, send
 anyway.
 
+## NO COMMISSION NUMBERS IN ANYTHING THAT REACHES ARA (2026-08-27)
+
+Ed, by text: *"Please do not put commission numbers in any email that goes to
+[Ara] ... I just don't want her to know upgrades pay 140!! Because I have told
+her they pay very little."*
+
+**Rule: no dollar figures in any email, sheet or message that Ara can see.** Not
+$140, not $500, not a total, not a per-unit rate, not a "worth about" — nothing
+a commission can be reconstructed from. This is Ed's call about his own rep and
+Patrick agreed to it; record it, do not relitigate it.
+
+Ara is `aranezzaespinosa99@gmail.com`. The trap is that she sits on the
+all-hands distribution (Dave, Ed, Ara, Jay, Churchie), so a team-wide update is
+an email to Ara. **Before sending anything to more than one person, check the
+recipient list for her address, then strip the money.** The same applies to the
+daily brief's VA section, which emails VAs directly, and to any sheet shared
+with her.
+
+Say "the upgrade" and "the higher-value sale" instead of the numbers. Dave and
+Churchie can still be given figures directly — the restriction is Ara.
+
+**This has already been breached once, by Claude.** Gmail `1a0443ed44f775a2`,
+sent 2026-08-27 17:22 to all five, states "The $500 sale" and "The $140
+upgrade" in plain text. That is the email behind Ed's message. It cannot be
+unsent.
+
 ## How Patrick wants to be worked with
 
 Move fast, do the work, report results. He corrects hard and directly — take it

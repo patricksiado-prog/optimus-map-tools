@@ -2310,3 +2310,35 @@ were left out of the VA sheets — nothing to dial — but kept in Patrick's cop
 `mcp__Google_Drive__share_file` sometimes returns `Internal error encountered`
 **after the share has actually succeeded**. Confirm with `get_file_permissions`
 before re-sharing; two of these "failures" were already done.
+
+## 22.40 — No commission numbers to Ara (2026-08-27)
+
+Ed Saldana, by text to Patrick: *"Please do not put commission numbers in any
+email that goes to [Ara]"* ... *"I just do t want her to know upgrades pay 140!!
+Because I have told her they pay very little."* Patrick agreed and asked for it
+in the brain. Short version is now a rule in `CLAUDE.md`.
+
+**The breach was mine.** Gmail `1a0443ed44f775a2`, sent 2026-08-27 17:22 to
+davebd0816, edsaldana08, **aranezzaespinosa99**, jaykdunn and
+churchiieoperationsva, contains verbatim:
+
+- "645,422 GREEN — fiber available, NOT an AT&T customer. **The $500 sale.**"
+- "~2,400 GOLD — confirmed copper customer with fiber available. **The $140
+  upgrade.**"
+
+So Ara has both numbers in writing, from Patrick's own address, and no
+retraction un-rings that. Patrick offered Ed a retraction or to be told how to
+play it; as of this writing he had not said which.
+
+**Why this was easy to miss and will be again:** the money figures are baked
+into the dot legend at the top of `CLAUDE.md`, and the legend is the thing every
+session reads first. Explaining green vs gold *naturally* reaches for "$500 vs
+$140" — that is how the brain teaches it. The guard has to be at the recipient
+list, not at the wording: **check for Ara's address before composing, then write
+without figures**, rather than writing normally and hoping to catch it on
+review.
+
+Later emails today (the four call lists, and the dialer instructions with the
+"$140 / $500" column labels) went only to Dave, Churchie and Patrick. Ara was
+not on them. The shared Google Sheets carry `GOLD $140` and `GREEN $500` in the
+Status column, so **those sheets must not be shared with Ara** as they stand.
