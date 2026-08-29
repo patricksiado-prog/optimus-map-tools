@@ -2233,6 +2233,15 @@ Inc` is the same outfit at the same Urbandale address, an older/legal entity nam
 **11114 Grader St, Dallas, TX 75238** — Dallas is the one to ask for, being in
 state.
 
+**Who they are, for a first call:** started **11 June 1984 as Diamond Systems
+Incorporated** by three entrepreneurs out of Des Moines — that is where "DSI"
+comes from. **CEO Doug Robison.** Still Iowa-headquartered and family/
+founder-run in character, not private equity. They grew up as one of the largest
+satellite and consumer-electronics distributors in the US (DIRECTV, appliances)
+and moved into telecom; AT&T is a newer line for them, not their origin. That
+matters on a call: they think like a **distributor serving dealers**, so
+volume, clean paperwork and low support burden are what impress them.
+
 **DSI's contact number is NOT in Patrick's email.** Searched the whole mailbox:
 zero messages to or from `dsisystems.com`, and the nine threads that mention DSI
 carry no number. These are DSI Systems Inc's **published** numbers, from public
