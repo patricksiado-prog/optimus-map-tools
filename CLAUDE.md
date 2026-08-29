@@ -2505,3 +2505,39 @@ Changing one never changes the other.
 (no-answer workflow), `+13464844979` (the Janell Dumas close), `+13465177523`,
 `+13466603810`, `+13466710729`. Relevant to the Spam Likely problem — one team,
 five caller IDs, no assignment policy.
+
+## RESI TEXTS SENT — 2026-08-29, 3:50pm CT
+
+**91 sent, 3 refused on DND.** That is the ENTIRE qualified residential pool in
+T-OPTIMUS Houston, not a sample. Patrick asked for 200; 200 does not exist yet.
+
+| | |
+|---|---|
+| Tagged `fiber-resi` in GHL | **139** |
+| Qualified after DND / STOP / 30006-landline / invalid filters | **94** |
+| Sent | **91** |
+| Blocked by GHL as DND (correctly) | 3 |
+
+Copy: six variants, one segment each (108-132 chars), first name only, no price,
+no opt-out line, "Patrick with AT&T Fiber", copper-retirement lead. Tagged
+`sms-v-rgreen1..6` so replies can be scored per variant.
+
+**Numbers rotated 4 ways**, ~23 each: `+13465906578`, `+13466446468`,
+`+13466581556`, `+13465177523`. `+13468106925` deliberately excluded — that is
+the live no-answer workflow's number and stacking on it is how a caller ID
+burns.
+
+**The gap is the story: 139 contacts is the whole resi inventory.** The
+3,064-row `OPTIMUS_IMPORT_ghl.csv` is still not imported. Until it is, "200/day"
+is arithmetic that cannot happen — there are only 139 people to text.
+
+Two live-fire lessons worth keeping:
+- **GHL refuses a DND send with a 400 and a clear message.** It is a real
+  backstop, not something to pre-filter perfectly for. Attempt and let it refuse.
+- **Full-name merges truncate ugly** ("Kristopher Goo", "Thomas Ashwort").
+  Always merge FIRST NAME ONLY, and fall back to a nameless variant when the
+  first name is missing, non-alphabetic, or is itself "Patrick".
+
+**The routine's `fire_trigger` run produced nothing in 38 minutes**, which is why
+these were sent by hand from this session. If a fired run shows no sends in GHL
+after ~20 minutes, stop waiting and send directly.
