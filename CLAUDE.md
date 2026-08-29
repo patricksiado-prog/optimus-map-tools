@@ -2321,3 +2321,55 @@ never be found by any Gmail query, and this connector cannot download an
 attachment to read it. **The way to get an answer is for Patrick to send the
 image into a Claude chat directly** — images pasted into the conversation ARE
 readable. Do not burn more turns re-searching Gmail for it.
+
+## THE NEW-VENDOR / DEALER APPLICATION PATH (researched 2026-08-29)
+
+Patrick asked for everything on applying as a new vendor in the D2D channel.
+Two routes exist and they are different things.
+
+**Route 1 — apply direct to AT&T.** `att.com/newdealer/contactus` is AT&T's own
+become-a-dealer page. Egress-blocked from a Claude sandbox, so a human has to
+open it. This is the only route that does not put a master agent between Optimus
+and AT&T.
+
+**Route 2 — apply through a master agent.** That is what Optimus does today, and
+the two that matter are already in the contact list:
+
+| | DSI Systems Inc | RS&I (RSI Inc) |
+|---|---|---|
+| Role | AT&T master agent; **Preferred Sales Support Provider for the NDS (Neighborhood Direct Sales = D2D) channel** | Master Sales Agent & Distributor for AT&T Wireless + Fiber |
+| Apply | `dsisystemsinc.com/become-an-att-dealer.html`, `/become-an-att-business-dealer.html`, `/Become-An-authorized-fiber-Dealer.html` | `downloads.rsiinc.com/authorized-att-dealer-application`, `rsiinc.com/home/become-a-dealer.asp` |
+| Known contacts | Mike Baldwin, Daphne Lewis, `ATT4BSupport@` — all `@dsisystemsinc.com`; (800) 888-8876 | **Keely Pizzano**, Area Sales Manager, 615-633-8095, `Keely.Pizzano@rsiinc.com`; **Leah Murphy**, Dealer Admin |
+| Offer | "up to $1,500 per customer", assigned account executive, DSI University training | AT&T Wireless / Fiber / **Internet Air**, dedicated Area Sales Manager, marketing + onboarding |
+
+**Published terms, both agents:** no franchise fee, no large up-front investment.
+Real costs are business license, insurance and background checks. RS&I publishes
+**approved and selling in as little as 10 business days**.
+
+**What an application actually required last time — from Patrick's own email, so
+this is the real checklist, not marketing copy:**
+
+1. **EIN + entity docs.** `Optimusgroup LLCEIN.pdf` and `Optimusgroup LLCSCAN.pdf`
+   went to Infinity 2023-08-27; John Howell: *"to be a Single Pay Optimus must
+   provide the information in the attachment."*
+2. **Certificate of insurance naming the master agent as certificate holder** —
+   `DSI SYSTEMS INC_CERTIFICATE.pdf`, issued through **Newtek**.
+3. **Background check and drug test per agent.** RS&I's Leah Murphy, 2026-06-12:
+   *"Are you going to be providing your own background and drug test?"* Team Field
+   App answered that they had completed both.
+4. **Platform activation** — SaraPlus login requested for `janars@katenterprise.com`
+   the same week. SaraPlus is the order-entry system.
+5. **Dealer codes** issued by the agent, per rep.
+6. **Single Pay vs direct contracts** is the structural choice: Optimus has been a
+   Single Pay (agent pays Optimus, Optimus pays reps, agent holds no contract with
+   the reps). John Howell enforced this hard — *"we are not supposed to be
+   communicating directly with your agents."*
+
+**Also found: `dsiatt.aidaform.com/dsi-dealer-commission-reconciliation-form`** —
+DSI's own dealer commission reconciliation form. That is the correct instrument
+for a disputed payout with DSI, rather than an email chain.
+
+**The cost of switching, and it is the deciding factor:** John Howell,
+2025-06-18 — *"you can't just drop a company like DSI and go to RSI - you would
+not be able to make sales for 90 days."* Confirm that blackout with whichever
+agent is being applied to BEFORE signing anything.
