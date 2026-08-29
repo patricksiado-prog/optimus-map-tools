@@ -2209,3 +2209,52 @@ copy them into this repo** — it is pushed to GitHub.
 6. **Zack's 80% → 86% ask is unanswered** in the thread.
 7. **The 5 Gig premium ($630 vs $500) rests on one sale.** Ask LVL UP for the
    rate card rather than arguing from a single line item.
+
+## DSI, INFINITY AND JANAR — THE 2023 TRAIL (looked up 2026-08-29)
+
+**DSI's contact number is NOT in Patrick's email.** Searched the whole mailbox:
+zero messages to or from `dsisystems.com`, and the nine threads that mention DSI
+carry no number. These are DSI Systems Inc's **published** numbers, from public
+directories rather than from anything DSI sent us — verify before relying on
+them for an account matter:
+
+| | |
+|---|---|
+| Toll-free (the one DSI publishes for retailers) | **(800) 888-8876** |
+| Main | (515) 334-3700 |
+| Fax | (515) 276-9477 |
+| HQ | 11338 Aurora Ave, Urbandale, IA 50322 |
+| Site | dsisystemsinc.com (**egress-blocked from a Claude sandbox** — a human has to open it) |
+
+**The July 2023 email Patrick was looking for** — Gmail thread
+`1894afd64069c975`, **2023-07-12**, from `office@infinitysalesllc.com`, signed
+**John C. Howell**, Infinity Marketing and Sales, Payroll/Business Manager, to
+`janars@teamfieldapp.com`, cc Patrick. Subject *"About the $725 in IC Fees"*,
+opening *"As you move directly to DSI..."*. It itemises the IC fee (background
+$20, shirts/hats/lanyards/vest plus shipping, ~$725 of gear shipped to Houston,
+two months of office rent never charged). **The only numbers in it are
+Infinity's own: (800) 344-6748 phone, (800) 201-1053 fax.**
+
+**Janars = Dr. Janarthanan Senthurpandi**, and he runs Patrick's payroll/audit
+side. Three live addresses — `janars@katenterprise.com`,
+`janars@elevationdirect.com`, `janars@teamfieldapp.com` — plus **Team Field App
+LLC** (`support@teamfieldapp.com`) and **KAT Enterprise**. Zelle payments go to
+**713-865-2413**. **`teamfeildapp.com` is a misspelling that has hard-bounced
+twice** — the real domain is `teamfieldapp.com`.
+
+Team Field App is the entity that issued the **Commission Audit Notification —
+OptimusGroup LLC / Patrick Siado** to Vanessa on 2026-06-11, and that runs the
+payroll portal Zack's commission reports come from. So Janar is the third leg of
+the pay dispute alongside LVL UP and Prime Nation, on Patrick's side.
+
+**The switching-cost rule, from John Howell 2025-06-18:** *"you can't just drop
+a company like DSI and go to RSI - you would not be able to make sales for 90
+days."* Any talk of moving dealer affiliation carries that blackout — price it
+in before agreeing to a move.
+
+**Where a DSI contact might actually be found:** the attachment
+`DSI SYSTEMS INC_CERTIFICATE.pdf` (Newtek insurance certificate naming DSI
+Systems Inc as certificate holder), sent 2026-04-10 to `mariaaamndz@gmail.com`,
+thread `19d787ce9835c005`. A certificate-holder block normally carries the
+holder's address and sometimes a contact. **The Gmail connector cannot download
+attachments** — Patrick has to open it.
