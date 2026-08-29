@@ -1796,3 +1796,41 @@ Two questions he asked that need real answers rather than a guess:
   help with planning?
 - The scanner "page fill" issue — he has not described the symptom, so do not
   guess at a fix. Ask what he sees on screen.
+
+## BUSINESS LIST QUALIFICATION — THE FILTER (2026-08-29)
+
+Patrick: *"unlikely to close biss removed from call lists either by address phone
+type or category so when calling biss it's a better potential customer."*
+
+Built and applied to the 380-row business pool → **350 qualified, 30 removed.**
+File `dial/BIZ_qualified.csv`, in call order, every row saying why it is there.
+
+**Drop rules, in this order:**
+1. Dispositioned dead / `invalid` / opted out
+2. No phone
+3. **Toll-free number** (800/888/877/866/855/844/833) — a switchboard means no
+   local telecom decision-maker
+4. **Chain or franchise** by name — McDonald's, Walmart, CVS, AutoZone, the
+   national restaurant and fuel brands, hotel flags, rental car. Corporate IT
+   buys their circuits; a store manager cannot say yes
+5. **School / ISD / city / county / hospital / library** — procurement process,
+   not a sales call
+6. **No convertible category AND not home-based** — if we cannot tell what they
+   do and the address is commercial, it is a guess, not a lead
+
+**Keep and rank:**
+1. **GOLD business** — already AT&T on copper. 19 of them, and they go first.
+2. **Convertible category** — auto/repair/tire/mechanic, real estate/title/
+   mortgage, restaurant/cafe/bakery/catering, salon/barber/nails/spa, HVAC/
+   plumbing/electrical/roofing/construction/remodel, dental/clinic/vet,
+   insurance/law/CPA/bookkeeping, gym/daycare/academy, photography/print/sign/
+   IT, cleaning/laundry/detailing/towing/welding/storage, boutique/florist/
+   jeweller/tattoo. 164 of them.
+3. **Home-based or residential-type street** — 299. The listed number is
+   frequently the owner's own cell, which is why these convert.
+
+The categories are not a guess — they are the trades that actually feel upload
+speed, plus the ones the gold-cluster skill already names as high-converting.
+
+**Note the counts overlap** — a row can be gold AND a good category AND
+home-based, which is the best kind of row.
