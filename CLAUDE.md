@@ -2481,3 +2481,27 @@ not been confirmed outright, so say "probably the same" rather than asserting it
   screenshots attached. That is the largest disputed figure on record.
 - **`patrickfiber@att.net` is Patrick's second address** and receives some vendor
   mail the gmail does not. Search both.
+
+## THE LIVE NO-ANSWER TEXT WORKFLOW — DO NOT TOUCH IT (Patrick, 2026-08-29)
+
+*"And don't break that template that is working."*
+
+There is a **GoHighLevel workflow already auto-texting after a no-answer dial**,
+and it is delivering. Verified 2026-08-28: outbound call 21:42:34Z → no answer →
+SMS 21:42:54Z, `source: workflow`, `status: delivered`, from **`+13468106925`**.
+Twenty seconds from missed call to text. The "text them if they don't pick up"
+capability is not something to build — it exists and it runs.
+
+**It sends the `$30/month` template.** Patrick's call is that it works and stays
+as it is. **Do not edit it, pause it, or swap its copy.** Earlier notes in this
+file call that template broken; that judgement was about opt-out risk and
+segment cost, not delivery — it delivers, and the decision to keep it is his.
+
+**The new SMS routine (`trig_018JYeQpvcgfrmBxc46Vv967`) is a separate path** with
+its own rewritten variants. It does not read, share or modify this workflow.
+Changing one never changes the other.
+
+**Outbound numbers now seen sending, five and counting:** `+13468106925`
+(no-answer workflow), `+13464844979` (the Janell Dumas close), `+13465177523`,
+`+13466603810`, `+13466710729`. Relevant to the Spam Likely problem — one team,
+five caller IDs, no assignment policy.
