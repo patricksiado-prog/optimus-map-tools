@@ -863,7 +863,7 @@ Four delivered, two hard-bounced `550 5.1.1 address not found`:
 
 | Delivered | Bounced |
 |---|---|
-| `aldions446267@gmail.com` (Angel C) | **`cdpulfreelancer@gmail.com`** (Christian Puli) |
+| `aldions446267@gmail.com` (Angel C) | ~~`cdpulfreelancer@gmail.com`~~ — **corrected below** |
 | `dnavadiscipleone@gmail.com` (Daniel Nava) | **`lpie919@gmail.com`** (Jimmy Cars) |
 | `dominicandrade.officialbusiness@gmail.com` (Dominic Andrade) | |
 | `khevinjoffreyn@gmail.com` (Hazel Joy) | |
@@ -1153,3 +1153,13 @@ Recorded so nobody re-derives it: `git push` direct to the deploy branch
 
 That is PRs #7–#11. It beats `create_or_update_file` outright — no retyping a
 78KB file, and step 4 proves byte-identity with what was tested.
+
+**`cdpulifreelancer@gmail.com` IS THE REAL ADDRESS (2026-08-29).** Patrick gave
+the corrected spelling — `cdpul`**`i`**`freelancer`, the missing `i` is the whole
+bug. Full onboarding resent there the same day (Gmail thread
+`1a04b6f24db6ac04`, cc Patrick): GHL login + LeadConnector app, what the Claude
+connector does for him (his list arrives filtered, enriched, deduped — he never
+builds one), the `INSTALL_OPTIMUS.bat` GitHub Release link with the Ctrl+arrow
+keys, the 3-way rule, and the don't-read-a-script note. No bounce.
+
+`lpie919@gmail.com` (Jimmy Cars) is **still bad** and still needs a real address.
