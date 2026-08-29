@@ -1386,3 +1386,35 @@ That distinction is the whole call. A rep who cannot tell gold from green at a
 glance pitches both the same way and loses the easy one. The opener for both
 stays the same true thing: AT&T is retiring copper, Phase 1 by 2027, Phase 2 by
 2029.
+
+## NO PICKUP → TEXT THEM (Patrick, 2026-08-29)
+
+*"if they don't pick up text them."* Decided, spec'd and handed to Christian.
+
+**GHL supports it natively.** The `Call Status` workflow trigger carries a
+**Call Direction** field, so: Direction = **Outgoing**, Status = no answer /
+busy / voicemail → Send SMS. Under an hour of config, no code.
+
+The flow, in order: wait 2 min → line type must be **mobile** (landline exits,
+no text) → time must be inside **8am-9pm Central** (else hold until the window
+opens) → send → **stop on any reply**.
+
+**Cap the auto-text at 3, not 6.** The dial cadence runs six attempts; the text
+follows only the first three. Patrick's own standing rule is text people 2-3
+times — past that it just collects opt-outs.
+
+**The plumbing was never the risk; the copy is.** The old template is STILL LIVE
+and going out (verified in conversations 2026-08-29): blank name merge (`Hi`
+alone), a flat `$30/month` quoted to BUSINESSES (Truview Business Advisors,
+Cokinos Bond Agency), ~305 chars / 2 segments, word-for-word identical to
+everyone, promo-led instead of copper-led. An auto-text multiplies that by every
+unanswered dial.
+
+**Live signal worth re-checking: 2 of the 8 most recent conversations are
+"Stop"** (Melissa, Joel's Tattoos). Watch the opt-out rate as volume rises; past
+~20%, change the copy rather than push more.
+
+Replacement copy shipped to Christian — one segment, street merged in (street
+ONLY, the full address blows the budget), no price, no opt-out line, identify as
+"Patrick with AT&T Fiber", copper-retirement lead, and separate GREEN vs GOLD
+sets rotated so no two are identical.
