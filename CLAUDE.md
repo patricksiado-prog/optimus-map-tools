@@ -1733,3 +1733,66 @@ confirmed live in row 1.
 Use `get_file_metadata` `modifiedTime` as the liveness check — never
 `latest.json`, which was showing a dead 2-second run from 2026-08-28 18:19 while
 the sheet was being written to normally.
+
+## PATRICK'S GOALS AND AFFIRMATIONS — WRITTEN 2026-08-29
+
+Photographed from his notebook. **The GOALS block in the `OPTIMUS DAILY LOG` doc
+is still empty bullets and I cannot write to it** — the Drive connector's
+`update_file` only changes title and parent, not content. So they live here, and
+every brief checks its sections against them.
+
+Header on the page: **2000 X** and **$10,000** — the weekly revenue target that
+also appears in `LIFE LOG`.
+
+**Affirmations, in his words:**
+- I honor God with my life
+- I have eternal treasure
+- I am happy
+- I earn $10,000 a month
+- I have $1 mil saved by 2030
+- I do excellent work
+- I am in excellent shape
+- I am an excellent father
+- I am wise, clean and sober
+
+**Gratitude list that day:** coffee, Bank, love, Shan, Ion, Olivia, Charlotte,
+Crystal, Bishy, Zack, Jay, Ed, Daniel.
+
+**A standing item he raised the same morning:** *"3rd step prayer needs to be
+said."* Record it, do not coach it, do not follow up asking whether he said it —
+same posture as the tithe reminder and the sobriety domain.
+
+### Day plan he set for 2026-08-29
+Lift (legs or arms) · 2 shakes at 4 scoops · 7 eggs · 2 salmon packs · ramen ·
+quesadilla · snack · **call at 2pm — Angel's customer** · AA · gym.
+
+Rough intake on that plan is high-protein and around 2,600-3,200 kcal, ~230-260g
+protein. Estimates for the trend, not precision.
+
+## HIS WHOLE-SYSTEM CHECKLIST (Patrick, 2026-08-29, heading to the gym)
+
+*"do it i'mma best u can ... use your best judgement ... we can adjust later."*
+The list he wants standing, not one-off:
+
+1. Leads are loaded, duplicate sheet working
+2. Customers are being texted
+3. Scanners and software work
+4. Follow-up happens
+5. Lead management and dialer management accomplished
+6. Telesales people have dialer instructions — **DONE 2026-08-29**, seven
+   separate emails
+7. Spam numbers sorted — Voice Integrity / Free Caller Registry, needs his
+   account access
+8. Lead enrichment goes to the sheet AND to GHL
+9. Dispositions go back to the sheet
+10. Unlikely-to-close businesses removed from call lists by address, phone type
+    or category, so business dialing hits better prospects
+11. Follow-up text fires automatically after a call and after a positive reply
+12. Scanner page-fill issue fixed
+13. Email updates arrive with **colour-coded sections**
+
+Two questions he asked that need real answers rather than a guess:
+- Can Claude read his texts automatically (Google Messages sharing, WhatsApp) to
+  help with planning?
+- The scanner "page fill" issue — he has not described the symptom, so do not
+  guess at a fix. Ask what he sees on screen.
