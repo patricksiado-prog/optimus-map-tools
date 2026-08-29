@@ -1495,3 +1495,39 @@ they are struck, so do not state the reason as fact.
 boots are in Houston and that does not change, but the scanner is national and
 aiming it purely at Texas leaves the three largest pools untouched. Re-read this
 table before choosing where to sweep next.
+
+## TITHE — THE 21st, MONTHLY (Patrick, 2026-08-29)
+
+Standing. Recurring all-day calendar event **"Tithe"** on the **21st of every
+month**, `RRULE:FREQ=MONTHLY;BYMONTHDAY=21`, event id `3mqpe99hj7m8lrs4mb4pc21cug`
+on `patricksiado@gmail.com`, 9am popup reminder, marked Free so it does not block
+the day. First occurrence 2026-09-21.
+
+**The AM brief on the 21st names it in one line and moves on.** No amount, no
+percentage, no follow-up asking whether he did it, no comment either way — the
+same posture the sobriety domain uses. He asked for a reminder, not a monitor.
+
+He also said *"tithe together"*; what "together" refers to was never clarified and
+must not be guessed at. Ask if it becomes relevant.
+
+## NO MORE BULK BLASTS — THE 60/DAY SMS ROUTINE IS OFF (Patrick, 2026-08-29)
+
+*"stop messaging 50x people."* Routine `trig_018JYeQpvcgfrmBxc46Vv967` —
+30 business texts per shift, `0 16,21 * * *` (11am + 4pm Central), **60 a day** —
+**DISABLED 2026-08-29** and renamed `PAUSED — Fiber-biz SMS 30/shift (bad
+template, Patrick 8/29)`. Do not re-enable without Patrick saying so.
+
+**Reading its stored prompt found the source of the opt-outs.** Its base message
+broke four standing rules at 60 sends a day:
+
+- It writes **"Reply STOP to opt out"** into the body, and GHL appends its own —
+  so every send shipped a **doubled STOP line**, the clearest tell that no human
+  wrote it. This is the exact defect the brain has warned about since 2026-08-22;
+  it was live in an automated routine the whole time.
+- **`$500 Visa reward card` and `$750 in switching credits`** — unverified claims.
+- **Flat `$30s/mo` quoted to businesses**, which are priced by speed tier.
+- **~390 characters, three segments**, and near-identical to every recipient.
+
+**Lesson worth keeping: a rule written in the brain does not bind a routine whose
+prompt was authored before it.** Audit stored routine prompts against the current
+rules — they are code, not chat, and they keep running exactly as written.
