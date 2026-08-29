@@ -1680,3 +1680,56 @@ contacts have never been dialed. Grab from GHL before spending anything.
 11am and 4pm Central. Governor unchanged: over 10% opt-outs it recommends cutting
 to 30, over 20% it pauses and asks. The run also reports **how short the
 qualified pool ran** — that shortfall is the signal that more enrichment is due.
+
+## DNC IS NOT A BLOCKER — SAY IT PLAINLY (Patrick, 2026-08-29)
+
+*"I don't mind dnc texting and calling."* The SMS routine had been excluding
+`dnc-flagged`, which contradicted this. **Fixed 2026-08-29.** The distinction the
+software must make, and the wording now sitting in the routine prompt:
+
+| | |
+|---|---|
+| **Registry DNC** — tag `dnc-flagged` / `dnc`, or DealMachine DNC=yes | **Record it and send/dial anyway.** A third party's list. |
+| **They told US to stop** — GHL DND, permanent STOP/unsubscribe, inbound "stop"/"remove", tags `not interested` / `wavv-not-interested` | **Absolute, forever.** The customer talking to us. |
+
+The difference is *who asked*. Never collapse the two. Never `scrub_dnc` on a
+DealMachine export — it throws away roughly a third of the callable leads.
+
+## TEXTING STARTS 30 AUG, NOT TODAY (Patrick, 2026-08-29)
+
+*"start texting out tomorrow."* Routine `trig_018JYeQpvcgfrmBxc46Vv967` is set to
+200/day (100 per run, 65 resi / 35 biz, 11am + 4pm Central) with the DNC fix in,
+and is **DISABLED so it does not fire on the 29th**. Renamed
+`Optimus SMS — 200/day (starts 30 Aug, re-enable to run)`. **It must be
+re-enabled to run** — that is a deliberate hold, not a fault.
+
+## THE DIALER HOW-TO WENT OUT INDIVIDUALLY (2026-08-29)
+
+*"email everyone who started how to use dialer w seperate emails so they don't
+see each other."* **Seven separate emails**, no shared recipients, no CC — Angel,
+Daniel Nava, Dominic Andrade, Hazel Joy, Christian, Speedy, and Dave.
+
+Contents: log in via GHL or the LeadConnector app; work the queue top to bottom
+because it is already priority-ordered; the GOLD-UPGRADE / GREEN-NEW / GREY
+distinction and how each opens; **say the address out loud** (it is in Notes and
+it is the whole reason the call is not telemarketing); copper-retirement opener;
+3-way a rep live the moment they are warm; disposition every call with the four
+outcomes; quiet hours 8am-9pm Central; never quote a flat price and never put
+residential figures on a business. **No commission figures in any of them.**
+
+Personalised: Angel's names his Beaumont close, Christian's frames dispositions
+as his build and spells out the DNC-vs-STOP distinction, Speedy's asks him
+directly to confirm whether he ever got GHL access, Dave's carries the queue
+composition and the att.net gold signal.
+
+## THE SHEET IS WRITING AGAIN — SCANNER CAN RUN (2026-08-29)
+
+Verified live twice, 30 minutes apart: `modifiedTime` 08:29:15Z then 08:59:18Z,
+`fileSize` 8,488,776. **The workbook is accepting writes, so the scanner is
+clear to run.** The auto-shrink (scraper `22ef0e6`) and the safe `clean_sheet`
+(PR #11) are both deployed; Precise Fiber's 13-column header repair (PR #9) is
+confirmed live in row 1.
+
+Use `get_file_metadata` `modifiedTime` as the liveness check — never
+`latest.json`, which was showing a dead 2-second run from 2026-08-28 18:19 while
+the sheet was being written to normally.
