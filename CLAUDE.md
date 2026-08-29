@@ -1163,3 +1163,83 @@ builds one), the `INSTALL_OPTIMUS.bat` GitHub Release link with the Ctrl+arrow
 keys, the 3-way rule, and the don't-read-a-script note. No bounce.
 
 `lpie919@gmail.com` (Jimmy Cars) is **still bad** and still needs a real address.
+
+## CHRISTIAN IS BUILDING THE DIALER — AND THE PIPELINES ARE BROKEN (2026-08-29)
+
+Patrick, by WhatsApp to Christian Dan Puli: *"Build the dialer w dispositions /
+Use claude to help / Use my sofware and sheet / Let my claudev and your claude
+talk / I want my leads and dislers managed by u and claude."* So dispositioning
+is Christian's build, assisted by his own Claude, and this session's job is the
+spec side of that handoff — not to build it here.
+
+**Four defects found by reading the live sub-account, 2026-08-29:**
+
+1. **`AT&T Leads` (`2V9thfxQpuhn6ZP0Peqt`) returns EIGHT stages, not four.**
+   `Lead`, `Contacted`, `Closed/Won`, `Lost` at positions 0-3, then the **same
+   four stage IDs again** at positions 4-7. This is the pipeline holding all
+   **3,835 open** opportunities. Anything keyed on stage position is unreliable
+   until it is repaired. Predates Christian.
+2. **Stage win probabilities are inverted.** Christian's new
+   `AT&T Status Pipeline` (`NN40ZBEgTIkbTcuBqfWd`, created 2026-08-28 17:39):
+   `No answer` 80%, `Not Interested` 40%, `Invalid/Wrong number` 60%,
+   `Closed Won` 80%. `AT&T Commercial` too: `DND` 40%, `Closed/LOST` 80%. These
+   drive the funnel and pie chart, so the forecast is not imprecise — it is
+   backwards.
+3. **Missing: Callback Scheduled, Voicemail Left, Do Not Call, and Closed Lost.**
+   DNC is a compliance record and must stay permanently distinct from
+   "Not Interested". With no Closed Lost, a lost sale merges with a lead that
+   was never real.
+4. **Dispositions are being modelled as pipeline STAGES.** A contact sits in one
+   stage at a time, but "Interested" and "no answer on the last attempt" are both
+   true constantly. **Stage = where the deal is; disposition = how the last call
+   went.** Five stages, seven dispositions as tags written at hangup.
+
+Also present: a stray `money` pipeline (`T5Kydgkm2V9PXhVgcibZ`, 2026-08-26,
+unused).
+
+**Live GHL facts worth not re-deriving:** contacts carry the WHOLE address in
+`address1` (`"716 N ANDERSON ST, ANGLETON, TX 77515"`) — so the sheet join is
+half-possible today; `customFields` is `[]` on lead contacts; only four custom
+fields exist in the location (Carrier, Business name, call transcript, Line
+Type); T-OPTIMUS Houston holds **5 phone numbers**, all titled "dave's number
+2/3/5/6/8" — the two numbers this brain records as the texting pair are NOT in
+that list.
+
+**RESEARCHED, and it changes the plan (2026-08-29):**
+
+- **GHL has a native Google Sheets premium workflow action** that updates an
+  existing row keyed on a unique value, triggered on pipeline stage or
+  opportunity status change. That IS the disposition return leg — **no code, no
+  program, so do not build the sync into the scraper.** ~$0.01/execution
+  pay-as-you-go, 100 free per sub-account LIFETIME, ~$0.001 on a Workflow Pro
+  plan ($10/10k, $25/30k). Sheet → GHL is NOT native; it does not need to be,
+  contacts already go in via API. Do not buy Zapier/Make.
+- **More phone numbers does NOT buy more texting.** Carrier throughput and daily
+  caps are per BRAND/campaign, not per number — Twilio states one number and a
+  pool of numbers hit the same MPS limit. T-Mobile daily caps by trust score:
+  unvetted 2,000; 25-49 10,000; 50-74 40,000; 75+ 200,000. **The lever is brand
+  vetting, not number count.**
+- **More numbers DOES buy calling.** Caller ID reputation is per-number; the
+  published benchmark is ~10 numbers per lead caller. Assign pools BY PURPOSE,
+  and never let one number both cold-dial and send A2P texts.
+- **GHL outbound goes from the location DEFAULT number.** Assigning an LC number
+  to a user routes INBOUND only; reps can pick another from the dialer dropdown
+  but it is manual. Ten agents on one sub-account will all dial from one number
+  by default — the fastest route to "Spam Likely". True per-user outbound is an
+  open feature request, not a feature.
+- GHL's native dialer is **single-line** — no parallel dialing, no local
+  presence (vendor-sourced but consistent). ~100-130 dials/day/rep ceiling.
+- Address matching best practice: normalise, then **block on ZIP + house
+  number**, then score. Exact-match on stored IDs first. So: store the GHL
+  contact ID on the sheet row and the address key in a contact custom field,
+  both directions, and fuzzy-match exactly once ever.
+
+**Shipped:** build spec artifact
+`https://claude.ai/code/artifact/7f6cf787-e72c-42b1-91b3-715034ace122` (private —
+Patrick must share it), and a full guidance email to Christian sent
+2026-08-29 from Patrick's account but **written in Claude's own voice and
+explicitly identified as such in the first line** (Gmail thread
+`1a04c2a634ed9913`, cc Patrick). It asks him which Claude setup he runs and
+proposes shared-GitHub-repo + his own GHL MCP server as the way to connect the
+two Claudes. **Awaiting his reply — that answer decides how much can be handed
+over directly.**
