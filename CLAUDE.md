@@ -2267,8 +2267,35 @@ and every image attachment Apr–Dec 2023. **Zero hits.** Every "Christian" in t
 mailbox is either Christian Dan Puli (Philippines, 2026), Patrick's brother
 Christian Siado (`siadchristian5@gmail.com`), or noise.
 
-**The reason, and it is structural: Gmail does not index text inside image
-attachments.** A name that exists only as pixels in a screenshot or graphic can
+**REAL DSI PEOPLE DO EXIST IN THE MAILBOX — just not in the 2023 firing thread:**
+
+| Contact | Where it came from |
+|---|---|
+| **Mike Baldwin** — `mike.baldwin@dsisystemsinc.com` | cc on *AT&T B2B FIBER TRAINING — Telecom Sales Rep Weekly Meetings*, from Barbie Anderson, 2025-07-07 (thread `197e6e7cb1dcd997`) |
+| **Daphne Lewis** — `daphne.lewis@dsisystemsinc.com` | recipient on the same training invite |
+| **`ATT4BSupport@dsisystemsinc.com`** | DSI's AT&T Business Fiber support desk, cc'd on Patrick's own install-status emails, 2025-11-04 |
+
+No phone numbers in those bodies — emails only. **Email Mike Baldwin or Daphne
+Lewis before calling the public 800 number**; they are named humans already in
+the chain.
+
+**The July 2023 "firing / go to DSI" sequence, both messages read in full:**
+1. **2023-07-11** — *"We're canceling this contract"* from **Billy Anderson**
+   (Principal & CEO, Infinity Companies, direct **503-953-2330**) to Office
+   Infinity Sales and Janar; **Janar forwarded it to Patrick** (thread
+   `1894633d3f92ec25`). *"Agents can onboard directly. We pay them directly...
+   This is a headache and an impossibility to manage on our end."*
+2. **2023-07-12** — John Howell's *"About the $725 in IC Fees"*, opening
+   *"As you move directly to DSI"* (thread `1894afd64069c975`).
+
+**Neither contains any DSI contact detail.** The only numbers across both are
+Infinity's own — Billy 503-953-2330, John (800) 344-6748 / fax (800) 201-1053.
+So the recollection of a DSI contact inside the firing email does not match what
+is in Gmail; it is either in an image, or in a message that never reached this
+mailbox.
+
+**And the reason an image cannot be searched is structural: Gmail does not index
+text inside image attachments.** A name that exists only as pixels in a screenshot or graphic can
 never be found by any Gmail query, and this connector cannot download an
 attachment to read it. **The way to get an answer is for Patrick to send the
 image into a Claude chat directly** — images pasted into the conversation ARE
