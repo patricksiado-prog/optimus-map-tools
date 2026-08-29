@@ -1863,3 +1863,78 @@ lines and a strict importer splits rows mid-record. `OPTIMUS_IMPORT_ghl.csv` is
 the flattened, import-safe version — same 3,064 rows, newlines replaced with
 ` | `. **Ship the flattened one.** General rule: never hand a human a CSV whose
 line count disagrees with its row count.
+
+## THE COMMISSION STATEMENTS — WHAT A YEAR OF PAYOUTS ACTUALLY SAYS (2026-08-29)
+
+Source: Google Sheet **`Pat.S. AT&T`** (`1o3ThG4FWepEGRPWv0A9ZGq78kASYWKt3RjnkbrXZzPI`),
+64 statement blocks, **1,821 line items, 7/1/25 → 6/30/26**. This is the dealer's
+own money coming in, so it outranks any assumed figure. Customer names and
+account numbers stay in the sheet — never copy them here.
+
+**The brain's $500 / $140 was right.** Measured rates confirm it:
+
+| Line item | Rate seen (count) |
+|---|---|
+| Funding — AT&T Internet **1 Gig** | **$500** x118, $450 x50, $550 x3 |
+| Commission — AT&T Internet 1 Gig | $450 x57, $405 x26 |
+| Funding — **AT&T Internet Air** | **$600** x42, $540 x16 |
+| Funding — Mobility AT&T Wireless Broadband | **$600** x34 |
+| Funding — Internet **300 Mbps** | $400 x13, $360 x7, $315 x5 |
+| Funding — Internet 500 Mbps / 2 Gig | $450 x3 / $533 avg x3 |
+| **Commission — Migration Internet 1 Gig** | **$135** x47, $121.50 x10 |
+| Bonus/MDF — SBS Internet VIR | $400 x15, $360 x14 |
+| Funding — Mobility Installment / BYOD | $225 x110 / $225 x29 |
+| Bonus/MDF — SBS Mobility VIR | $75 x102 |
+| Voice Activation OOF / Per Line Unlimited / AutoPay | $50 / $25 / $10 |
+
+**Migration = the gold dot.** A copper customer moving to fiber pays **$135**,
+which is the $140 in the dot legend. A brand-new 1 Gig line pays **$500**, which
+is the green $500. A year of statements says the legend is accurate.
+
+**"Funding" and "Commission" are ALTERNATIVE structures, never stacked.**
+Checked every 1 Gig customer: 173 Funding-only, 85 Commission-only, **0 with
+both**. Do not model a sale as earning $500 + $450. Median total per customer
+across 505 customers is **$495**.
+
+**Three deductions that are always there:**
+- **10% reserve** withheld on Commission lines ($450 → $45 held → $405 paid).
+  Some statements quote gross, some net — the $500/$450 and $450/$405 pairs in
+  the table above are the same sale reported two ways.
+- **$5.00 SARA Plus fee per order**, 413 of them, **-$2,065** over the year.
+- **Chargebacks: -$13,307.50 across 33 lines = 4.7% of gross.** Budget for it.
+
+Net across the year: gross **$286,099**, deductions **-$17,887**, **net $268,212**.
+
+### The finding worth acting on: the attach rate is 4%
+
+Mobility and attach line items are **29.2% of all commission dollars**
+($82,870 over 754 lines) against internet's 69.7% ($197,619 over 483 lines) —
+but only **18 of 449 internet customers (4%)** carry any mobility line. **The
+wireless dollars are coming from separate mobility-led sales, not from attaching
+to fiber sales.** 96% of people who bought fiber bought no wireless.
+
+A fiber install already has the customer on the phone, approved, and signing.
+Mobility Installment ($225) + SBS Mobility VIR ($75) + Voice Activation ($50) +
+Per Line Unlimited ($25) + AutoPay ($10) is **$385 of stackable attach on a sale
+already closed** — comparable to the fiber line itself. This is the cheapest
+revenue in the system and it is being left on the table almost entirely.
+
+**Internet Air pays MORE than 1 Gig fiber ($600 vs $500).** That reframes an
+address fiber cannot serve: it is not a dead lead, it is the highest-funding
+product on the sheet. Worth checking whether unserviceable addresses in the
+scanner data are being discarded.
+
+**Speed tier is worth $100–185 a sale** (1 Gig $500 vs 300 Mbps $400/$315).
+Consistent with the standing rule never to quote a flat price — the tier is the
+margin.
+
+**Data-quality note:** four rows carry a customer NAME in the Service column with
+a value of **$7,345,789** — corrupt cells, excluded from every figure above. Any
+future read of this sheet must drop line items over ~$5,000 or the totals are
+nonsense. Rep names also appear in both cases (`Zachary Gonzalez` and
+`ZACHARY GONZALEZ` are one person); fold case before totalling by rep.
+
+**The link Patrick sent (`1UoqH7I4Gt8MCNa2yYR4ZsksriOOQeLMcaZY6XHrdeqY`) returns
+"Requested entity was not found"** from the Drive connector and is not in his
+recent files or shared-with-me list — it lives under a different Google account.
+`Pat.S. AT&T` was the file he had opened minutes earlier and is what was analysed.
