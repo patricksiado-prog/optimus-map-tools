@@ -1418,3 +1418,80 @@ Replacement copy shipped to Christian — one segment, street merged in (street
 ONLY, the full address blows the budget), no price, no opt-out line, identify as
 "Patrick with AT&T Fiber", copper-retirement lead, and separate GREEN vs GOLD
 sets rotated so no two are identical.
+
+## BIBLE PASSAGES IN NLT (Patrick, 2026-08-29)
+
+*"Bible stuff in nlt."* **New Living Translation, always.** The AM brief had been
+quoting KJV (Luke 14:28, "For which of you, intending to build a tower...").
+Use NLT wording from here on, in the daily brief and anywhere else a passage
+appears.
+
+## DAY LOG — 2026-08-29 (told to Claude directly, not posted to a sheet)
+
+Patrick logged these in chat rather than in `LIFE LOG` or the `OPTIMUS DAILY LOG`
+doc. **Tomorrow's AM brief must use them instead of printing "you didn't post."**
+
+- **Food:** pizza
+- **AA:** 9:30pm — recorded, not commented on (sobriety domain listens, never
+  teaches, never praises the disclosure, never asks a follow-up)
+- **Win of the day:** Angel closed a deal
+
+**Standing lesson: he will log by telling Claude, not by filling in a sheet.**
+Treat anything he says in chat about food, training, meetings or a win as the
+day's log entry and carry it into the next brief. Do not ask him to go and type
+it somewhere.
+
+## THE FIRST RECORDED CLOSE — AND THE LOOP IS PROVEN (2026-08-29)
+
+**Angel closed Janell Dumas.** AT&T order `99-615780212210199`, Internet 300
+(Fiber 300), 350 BRADFORD DR, BEAUMONT TX 77707, $20 paid today / $40 a month,
+self-install, delivery 8/31, submitted 08/28 15:36 by `BHOLLAND-LANE`
+(Order ID `DSI269174644`).
+
+**Marked `Closed/Won` in GHL 2026-08-29** — opportunity `sfNqKofFful7dVXCiO51`,
+contact `1R4yyfvilwmKt3vTzOh1`. **This is the FIRST won opportunity the pipeline
+has ever held.** The standing "0 won / 0 lost" alarm is finally not zero.
+
+**Why it matters more than one sale:** her contact is tagged
+`beaumont gold pockets` — she came off the copper-upgrade list built from the
+scanner dots on 2026-08-28. Map dot → gold cluster → DealMachine enrichment →
+list to a rep → close. **That is the whole machine working end to end, and this
+is the first time it has been provable.** Quote this when anyone asks whether
+the system works.
+
+## AT&T'S OWN "DIRECT FIBER+" MARKET LIST (photo, 2026-08-29)
+
+Patrick sent a photo of AT&T's internal market table — **workable 1-gig
+inventory by DMA**, ~766,000 total. This is far better targeting data than
+anything we derive ourselves, because it is AT&T's own count of what can
+actually be sold.
+
+| Fiber market | DMA | Workable |
+|---|---|---|
+| Northern California | San Francisco, CA | ~206,000 |
+| Greater Lakes | Chicago, IL | ~79,300 |
+| Greater Lakes | Detroit, MI | ~71,600 |
+| **South Texas** | **Houston, TX** | **~62,900** |
+| Florida | Miami-Ft. Lauderdale | ~55,000 |
+| Northern California | Sacramento, CA | ~49,900 |
+| Florida | Orlando, FL | ~31,100 |
+| Southeast | Nashville, TN | ~30,000 |
+| Florida | W. Palm Beach, FL | ~28,600 |
+| Southeast | Chattanooga, TN | ~26,200 |
+| Southeast | Charlotte, NC | ~25,300 |
+| Southwest | Los Angeles, CA | ~16,900 |
+| Greater Lakes | Toledo, OH | ~11,990 |
+| Mid-Atlantic | Greenville, SC-NC | ~9,580 |
+| Southeast | Macon, GA | ~8,820 |
+| Southeast | Memphis, TN | ~6,540 |
+
+**Struck through in red on the sheet:** Eugene OR, Omaha NE, Ft. Myers-Naples FL.
+Eugene and Omaha sit in Lumen-acquisition states, which is consistent with the
+existing rule that those are not our territory — but the photo does not say why
+they are struck, so do not state the reason as fact.
+
+**What it changes:** Houston is only **#4**, and San Francisco alone holds
+**3.3x** Houston's workable inventory. Chicago and Detroit each beat it too. The
+boots are in Houston and that does not change, but the scanner is national and
+aiming it purely at Texas leaves the three largest pools untouched. Re-read this
+table before choosing where to sweep next.
