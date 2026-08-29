@@ -1510,24 +1510,62 @@ same posture the sobriety domain uses. He asked for a reminder, not a monitor.
 He also said *"tithe together"*; what "together" refers to was never clarified and
 must not be guessed at. Ask if it becomes relevant.
 
-## NO MORE BULK BLASTS — THE 60/DAY SMS ROUTINE IS OFF (Patrick, 2026-08-29)
+## THE SMS ROUTINE — REBUILT, NOT RESTARTED (Patrick, 2026-08-29)
 
-*"stop messaging 50x people."* Routine `trig_018JYeQpvcgfrmBxc46Vv967` —
-30 business texts per shift, `0 16,21 * * *` (11am + 4pm Central), **60 a day** —
-**DISABLED 2026-08-29** and renamed `PAUSED — Fiber-biz SMS 30/shift (bad
-template, Patrick 8/29)`. Do not re-enable without Patrick saying so.
+Patrick killed it, then brought it back wider: *"stop messaging 50x people"* →
+*"u want texts going out expand that to include the resi customers too and 2x
+prioritize the best stuff resi and bizzz / change the message based on results."*
 
-**Reading its stored prompt found the source of the opt-outs.** Its base message
-broke four standing rules at 60 sends a day:
+Routine `trig_018JYeQpvcgfrmBxc46Vv967`, now **`Optimus SMS — resi + biz, best
+leads first, 2x/day`**, cron `0 16,21 * * *` (11am + 4pm Central). **LIVE.**
 
-- It writes **"Reply STOP to opt out"** into the body, and GHL appends its own —
+**What the old prompt was doing, found by reading it** — this is why it was
+rebuilt rather than re-enabled. At 60 sends a day it broke four standing rules:
+
+- It wrote **"Reply STOP to opt out"** into the body, and GHL appends its own —
   so every send shipped a **doubled STOP line**, the clearest tell that no human
-  wrote it. This is the exact defect the brain has warned about since 2026-08-22;
-  it was live in an automated routine the whole time.
-- **`$500 Visa reward card` and `$750 in switching credits`** — unverified claims.
+  wrote it. The brain has warned about this since 2026-08-22; it was live inside
+  an automated routine the whole time.
+- **`$500 Visa reward card`, `$750 in switching credits`** — unverified claims.
 - **Flat `$30s/mo` quoted to businesses**, which are priced by speed tier.
-- **~390 characters, three segments**, and near-identical to every recipient.
+- **~390 characters, three segments**, near-identical to every recipient.
 
 **Lesson worth keeping: a rule written in the brain does not bind a routine whose
-prompt was authored before it.** Audit stored routine prompts against the current
-rules — they are code, not chat, and they keep running exactly as written.
+prompt was authored before it.** Stored routine prompts are code, not chat — they
+keep running exactly as written. Audit the others against current rules.
+
+### What it does now
+
+**Volume:** 40 per run — 25 residential, 15 business. 80/day.
+
+**Priority, by VALUE not capture date:** GOLD/copper first (resi and biz alike),
+then GREEN never-texted, then GREEN touched once 3+ days ago. Hard exclusions:
+GREY (never a lead), no mobile, DND/STOP/not-interested, already texted 3 times,
+de-duped on last 10 digits. Never pads the list to hit a number.
+
+**The copy:** ten variants across four segments (resi gold/green, biz gold/green),
+street merged in, one segment each. No price, no offer claims, no opt-out line,
+"Patrick with AT&T Fiber" never the dealership, copper-retirement lead.
+
+**"Change the message based on results" is Step 0 and it is the point.** Every
+send tags the contact with its variant id (`sms-v-rgold2` etc.) — that tag is the
+only thing that makes attribution possible, so it is load-bearing. Each run then
+scores variants on replies-minus-opt-outs and gives the top two 70% of sends,
+never retiring a variant on under 20 sends.
+
+**The volume governor, on trailing 3-day opt-out rate:**
+
+| Opt-out rate | What the run does |
+|---|---|
+| under 5% | normal volume, 40 |
+| over 10% | drops to 15, best variant only, says so loudly |
+| **over 20%** | **sends NOTHING**, emails Patrick with the number, stops |
+
+That last row is the important one: the system now refuses to push volume through
+copy that is burning the number, without anyone having to notice.
+
+**Still open and worth watching:** the A2P campaign is rejected (website not
+live). Sends are healthy today — every outbound is `TYPE_SMS` with a real `+1`
+number — but ramping volume on an unapproved campaign is a carrier-filtering risk
+that shows up later as delivery failures, not as a 405.
+
