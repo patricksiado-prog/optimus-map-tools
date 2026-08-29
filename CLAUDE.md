@@ -1631,3 +1631,52 @@ lead above came from local files and GHL, not from the big tabs.
 
 **Confirmed working:** `Precise Fiber` row 1 now reads the full 13-column header,
 so the PR #9 header repair deployed and ran.
+
+## DEALMACHINE BULK EXPORT — THE CHEAP PATH, MEASURED (2026-08-29)
+
+`dealmachine_property_export` is the tool to use for volume, not
+`property_search` page-by-page. One call returned **2,000 mobile-only owner
+contacts for 1,905 credits — under 1 credit per lead**, against a 2.6 benchmark
+and a 6.0 estimate. It supports `mobile_only`, `require_phone`, `scrub_dnc` and
+`limit`, and returns a signed CSV download.
+
+**Estimates run high; measure the real number.** `estimate_cost` predicted 600
+credits per 100 properties; the actual probe used **161** — deduplication within
+the billing cycle and real contact counts make it far cheaper. Probe one page,
+read `credits.used`, then scale.
+
+**Never `scrub_dnc`.** Patrick's standing call is to record DNC status and call
+anyway, so scrubbing throws away callable leads.
+
+**Filter counting is free:** `dealmachine_property_count` returned 57,268
+properties / 44,505 people across ZIPs 77706, 77707, 77515, 77571 at no cost.
+
+### The att.net signal — a free gold detector
+
+Owner email domains `@att.net`, `@sbcglobal.net`, `@bellsouth.net`,
+`@prodigy.net` mean the owner is almost certainly **already an AT&T customer** —
+which is the GOLD/upgrade segment, the easiest sale we have. It found **217 of
+2,000** with no extra credits. Confirm on the call, but open as an upgrade.
+
+### The load file
+
+`OPTIMUS_MASTER_LOAD.csv` — **3,064 rows**, deduped on last-10-digits, priority
+ordered, tags and per-row rep notes baked in:
+
+- 1,111 from the unimported Aug 28 batch + the Aug 28 business pool
+- 1,953 new from DealMachine (45 were dupes and dropped, 2 had no wireless)
+
+Markets: Beaumont 709, La Porte 668, Angleton 566, plus the earlier Houston 224.
+
+**GHL contact total is 7,558** in T-OPTIMUS Houston — NOT the 76,242 quoted in
+the 2026-08-25 all-hands email, which appears to have counted something else.
+Only 199 of those 7,558 are in the dialer queue, so thousands of already-paid-for
+contacts have never been dialed. Grab from GHL before spending anything.
+
+## SMS RAISED TO 200/DAY (Patrick, 2026-08-29)
+
+*"I want them in the dialer and texted / 200 a day."* Routine
+`trig_018JYeQpvcgfrmBxc46Vv967` now sends **100 per run, 65 resi / 35 biz**, at
+11am and 4pm Central. Governor unchanged: over 10% opt-outs it recommends cutting
+to 30, over 20% it pauses and asks. The run also reports **how short the
+qualified pool ran** — that shortfall is the signal that more enrichment is due.
