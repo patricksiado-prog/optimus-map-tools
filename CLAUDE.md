@@ -2579,3 +2579,61 @@ before handing over an import file.
 is a 404 and per-contact enrollment is one call each. A GHL CSV import is the
 only way to get 3,538 in; it merges by phone onto existing contacts and takes
 about two minutes.
+
+## THE 2,000 LOAD AND THE POST-CALL TEXT BY TYPE (2026-08-29 evening)
+
+Patrick: *"2000 leads / notes / on repeat / dispositions work as far as not
+interested and cb / customer type in notes copper green biss / separate text
+sent w call as a separate automation based on customer type."*
+
+**`OPTIMUS_DIALER_2000.csv` — 2,000 rows**, cut from the 3,538 master.
+
+| Customer Type | Rows |
+|---|---|
+| GREEN | 1,122 |
+| COPPER | 517 |
+| GREEN BUSINESS | 342 |
+| COPPER BUSINESS | 19 |
+
+**Every copper lead in the system is in it** (all 536), plus every green
+business — the first 2,000-cut put green resi ahead of green biz and squeezed
+that type out entirely, which would have contradicted his "copper green biss".
+Fixed by filling gold and green-biz first, then topping up with green resi.
+
+**Customer type appears in TWO places**: its own `Customer Type` column, and as
+**line 2 of every Notes field**, directly under the address. Tag is
+`type-copper` / `type-copper-biz` / `type-green` / `type-green-biz` so an
+automation can branch on it.
+
+Notes shape, in order: address, `CUSTOMER TYPE: X`, what that type means and how
+to open, absentee/CRM/DNC warnings where they apply, `SAY THE ADDRESS OUT LOUD`,
+address again. 1,999 of 2,000 carry a real address. 2,001 lines / 2,000 rows,
+zero embedded newlines.
+
+### The two dispositions he named, and why they must stay separate
+
+- **`Not Interested`** — real exit. Tag, remove from every dial workflow, no
+  post-call text (texting after a no is what earns a STOP), Closed/Lost.
+- **`CB`** — NOT an exit. Stays queued, scheduled task for the rep who dialed,
+  and it gets its own confirming text.
+
+**Never merge them in reporting.** A callback that never lands is not a
+rejection, and folding the two is how a pipeline ends up showing no losses and
+no wins — which is exactly what the 3,835-open / 0-won pipeline already looks
+like.
+
+### The post-call text is a SEPARATE automation
+
+Spec written to `spec/POST_CALL_TEXT_BY_TYPE.md`. Trigger is Call Status =
+completed + Direction = Outgoing; it exits silently on Not Interested, landline,
+DND or quiet hours, then branches on the type tag to one of four one-segment
+messages, with a fifth override for CB. Capped at 3 per contact, stops on any
+reply, tags `postcall-<type>` so reply and opt-out rates can be read per type.
+
+**It does not touch the existing no-answer workflow**, which Patrick has said
+explicitly is working and stays as it is. Two separate paths, and changing one
+never changes the other.
+
+**Not built in GHL — spec only.** Christian owns the dialer and disposition
+build and is actively working in that account; creating parallel workflows there
+would collide with his work. Build it on his say-so or Patrick's.
