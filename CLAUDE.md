@@ -1569,3 +1569,65 @@ live). Sends are healthy today — every outbound is `TYPE_SMS` with a real `+1`
 number — but ramping volume on an unapproved campaign is a carrier-filtering risk
 that shows up later as delivery failures, not as a 405.
 
+
+## THE 750 LEADS WERE EMAILED AND NEVER IMPORTED (2026-08-29)
+
+The five 150-lead CSVs sent to Churchie and Dave on 2026-08-28 **never reached
+GoHighLevel.** Verified by name lookup: Krista Courts and Mallory Anderson, rows
+1 and 2 of List 1, both return `total: 0` in the location. A full day of
+enrichment produced zero callable records in the CRM.
+
+**That is why the dialer queue is tiny.** Live counts, same morning:
+
+| Tag | Contacts |
+|---|---|
+| `power dialer queue` (the ENTIRE queue) | **199** |
+| `fiber-resi` | 139 |
+| `green-dot` | 45 |
+
+And the queue is dirty — a large share of those 199 carry `dnc-flagged`,
+`landline` / `att-fiber-30006`, `invalid`, or a permanent STOP.
+
+**Lesson: emailing a CSV to a VA is not delivery.** A list is not loaded until it
+is in the CRM. Check the destination, never the outbox — the same failure mode as
+"it classified 126,628" meaning nothing when `written: 0`.
+
+### What the connector can and cannot do for bulk loading
+
+- `bulk_update_contact_tags` → **404, `Cannot POST /contacts/tags/bulk`.** No bulk
+  tagging. Do not plan around it.
+- `search_contacts` with a `phone` argument → **500**. Use
+  `official_contacts_get_contacts` with `query` instead, which DOES filter by tag
+  and returns a real `total` — that is how the counts above were measured.
+- Per-contact `add_contact_tags` / `add_contact_to_workflow` work but are one call
+  each, so a 1,000-row load is not feasible turn-by-turn.
+- **The working path is a GHL CSV import**, which creates new contacts, merges
+  tags onto existing ones by phone, and takes about two minutes.
+
+### The load file that was built
+
+`OPTIMUS_DIALER_LOAD_aug29.csv` — **1,111 rows, priority-ordered**, tags and
+per-row rep notes baked in (address on the first line, then what the dot colour
+means and how to open). Sources: the unimported 750 plus 361 eligible business
+contacts pulled from the Aug 28 follow-up pool.
+
+| # | Segment | Rows |
+|---|---|---|
+| 1 | GOLD resi · DNC-clear · mobile | 128 |
+| 2 | GOLD resi · DNC-listed · mobile | 152 |
+| 3 | GOLD resi · landline (call only) | 20 |
+| 4 | GREEN resi · DNC-clear · mobile | 450 |
+| 7 | GOLD BIZ (copper upgrade) | 19 |
+| 8 | GREEN BIZ · home-based / resi-type address | 308 |
+| 9 | GREEN BIZ · commercial | 34 |
+
+Markets: Beaumont 404, Houston 224, Angleton 150, La Porte 76.
+
+**Reading the sheet is still the bottleneck.** `Maps Businesses` (~38.5k rows
+with phone numbers) could not be reached: Autosheet is out of credits, the Drive
+connector's `read_file_content` truncates at ~1,500 rows of the FIRST tab only,
+and `optimus/_feed/sheet/` has never been published by `sheet_feed.py`. Every
+lead above came from local files and GHL, not from the big tabs.
+
+**Confirmed working:** `Precise Fiber` row 1 now reads the full 13-column header,
+so the PR #9 header repair deployed and ran.
