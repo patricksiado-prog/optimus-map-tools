@@ -2161,3 +2161,51 @@ year — are both Zachary Gonzalez, both Houston, both the same shape.
 **What this changes:** Houston lead gen is not unproven, it is the proven part.
 The open question is only which *channel* converts it — and on the evidence that
 is a rep on the phone across several touches, not a single text.
+
+## PARKED FROM THE 29 AUG DEEP DIVE — OPEN ITEMS AND HOW TO REDO THE WORK
+
+Everything analysed on 2026-08-29 is written up in the five sections above. This
+is the residue: what is still open, and how to reproduce the analysis without
+starting over.
+
+### How to redo it (the derived files do not survive the container)
+
+Working files lived in a session scratchpad and are gone once this session ends.
+The **sources** are durable, and so is the method:
+
+| Source | ID / location |
+|---|---|
+| Commission statements `Pat.S. AT&T` | `1o3ThG4FWepEGRPWv0A9ZGq78kASYWKt3RjnkbrXZzPI` |
+| WhatsApp — Christian Dan Puli | `1uAIC8856ji74hlmOKjjEJI3_WN7WIHaU` |
+| WhatsApp — Churchie Tech11 | `1boW9NcQBJ5b3AeskztEyDHwMlnDotMEd` and `1sxz1RNLeG1s4xp3gcErQ5WZaov2Ukt-u` |
+| WhatsApp — Dave | `1fIkibFIpaMTeoSzSaTLES5W48PM1FdrZ` |
+| WhatsApp — AT&T | `1pXMSUqpwcbXV_Ltj_b6SyL50QKIib1bZ` |
+
+Method for the statement file: `read_file_content` returns markdown tables, one
+block per statement, split on blank lines. Header row is the one containing
+`SalesRep`. **Drop any line item over ~$5,000** (corrupt cells) and **fold rep
+name case** before totalling. Geography comes from the `MobileNumber` column by
+area code — there are no addresses in the file.
+
+Customer names, account numbers and phone numbers stay in the source. **Do not
+copy them into this repo** — it is pushed to GitHub.
+
+### Still open
+
+1. **The Frontline Direct GHL token is the biggest blind spot.** Location
+   `TXw28sw0Z2rI6tcCDhJY` returns **403** for this connector. Zack's Houston
+   book — the proven half of the business — is invisible from here, and an empty
+   contact lookup against T-OPTIMUS is NOT evidence a customer does not exist.
+   Get the token widened.
+2. **Three WhatsApp chats are still unread** — Churchie, Dave, and AT&T. Only
+   Christian's was read in full.
+3. **The attach question is worth a decision, not more analysis.** 4% attach on
+   449 internet customers, with the wireless stack worth ~$385 on a sale already
+   closed. Nothing in the system currently prompts a rep to ask.
+4. **Ed's reserve balance is unreconciled** and is Patrick's liability per
+   Vanessa's written answer. No number has been produced for what Ed is owed.
+5. **The VIR claim has support and no resolution.** `Bonus/MDF (SBS Internet
+   VIR)` is a real paid line 31 times over; Nelson said AT&T does not pay it.
+6. **Zack's 80% → 86% ask is unanswered** in the thread.
+7. **The 5 Gig premium ($630 vs $500) rests on one sale.** Ask LVL UP for the
+   rate card rather than arguing from a single line item.
