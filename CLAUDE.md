@@ -1335,3 +1335,46 @@ scopes it. So a contractor uses the same connector with their own Private
 Integration Token issued from our sub-account (GHL → Settings → Private
 Integrations). Free with any plan, ~5 minutes. **The token comes from Patrick and
 never travels in an email or chat.**
+
+## LEADS RECYCLE UNTIL SOMEBODY SAYS NO (Patrick, 2026-08-29)
+
+*"I want leads to recycle until they say no."* This is a rule and it **overrides
+any attempt cap**, including the "stop after 6 attempts" line an earlier draft of
+the dialer spec carried. That line was wrong and has been retracted to Christian
+in writing.
+
+**Only three dispositions remove a lead from the queue permanently:**
+`Not Interested`, `Do Not Call`, `Bad Number`. **A No Answer never removes
+anyone.** It goes back in the queue.
+
+The evidence backs him: one dial connects ~1 in 10, the same person across
+several attempts ~1 in 4. Most leads that "didn't work" were never called back.
+
+**The tension with the spam rules, and the resolution.** Repeat-dialing the same
+person inside a short window is one of the behaviours that earns a number a
+`Spam Likely` label. So the answer is spacing, never stopping — **day 1, day 3,
+day 7, day 14, then every 30 days, indefinitely.** Do not "resolve" this later by
+reintroducing a cap; it is the gap that protects the number.
+
+## WHAT THE REP SEES BEFORE THEY SPEAK (Patrick, 2026-08-29)
+
+*"Addresses in n notes section / And indicator of what it is."* Two things on
+every GHL contact, visible without opening another tab:
+
+1. **The property address at the TOP of Notes**, on its own line — not only in
+   `address1`. These leads ARE the address; the whole pitch is "fiber is live at
+   your address," and a rep who has to hunt for it will not say it.
+2. **An indicator of the dot colour**, in two places: a **tag** so the dialer can
+   sort and prioritise by it, and a **line in Notes under the address** so the
+   rep reads it before speaking.
+
+| Colour | Tag | Means | How the rep opens |
+|---|---|---|---|
+| GOLD / copper | `GOLD-UPGRADE` | Existing AT&T customer still on copper, fiber at the curb | An upgrade they are already entitled to. No competitor to beat |
+| GREEN | `GREEN-NEW` | Fiber live, NOT an AT&T customer | Availability notice, not a switch pitch |
+| GREY | — | Already on AT&T fiber | **Not a lead. Never dial** |
+
+That distinction is the whole call. A rep who cannot tell gold from green at a
+glance pitches both the same way and loses the easy one. The opener for both
+stays the same true thing: AT&T is retiring copper, Phase 1 by 2027, Phase 2 by
+2029.
