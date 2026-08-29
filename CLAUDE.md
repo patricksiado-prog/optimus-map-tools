@@ -2024,3 +2024,88 @@ statements say otherwise.** The only 5-Gig sale in twelve months paid
 1 Gig line on that customer** — against $500 for a 1 Gig. On the evidence
 available that is a **$130 premium for 5 Gig**. One data point, so quote it as
 one data point, but it is a real one and it is in writing.
+
+## THE VENDOR AND PAY PICTURE — WHAT THE EMAILS SAY (read 2026-08-29)
+
+Patrick asked what he should know about Nelson, Vanessa, Ed, Zack and the
+disputes. Read from Gmail; quotes are verbatim from the threads.
+
+**Who is who.** There are **two vendors paying Optimus**, and they are separate:
+
+| | |
+|---|---|
+| **LVL UP Direct** | **John Nelson** (`Johnnelson@gmx.com`, `J.nelson@lvlupdirect.com`) and **Vanessa Nelson** (`vn.lvlupdirect@gmail.com`, `payroll@lvlupdirect.com`) — she runs payroll |
+| **Prime Nation** | `jay@primenation.com`; **Brittany Little**, Operations Manager (`operations@primenation.com`, 586-718-0009, Southfield MI) — sends the weekly `ATT R1/R2` sales reports |
+| **RSI Inc** (AT&T side) | **Keely Pizzano**, Area Sales Manager, 615-633-8095. **`Keely.Denning@rsiinc.com` and `Keely.Pizzano@rsiinc.com` are the same person** — do not treat them as two contacts |
+
+**1. Patrick has alleged in writing that LVL UP withheld VIR bonuses.**
+To Zack, 2026-08-10: *"Can we get most of the deals to the non stealing vendor?
+John Nelson said att doesn't pay the vir bonus But his payroll person vanessa
+nelson forgot to delete them off the charge backs."* The catch is the
+inconsistency — a bonus said not to exist was still being deducted as a
+chargeback. **The commission file confirms `Bonus/MDF (SBS Internet VIR)` is a
+real paid line ($400 x15, $360 x14, 31 lines).** That is documentary support for
+the claim and it sits in Patrick's own statements.
+
+**2. The reserve liability is Patrick's, not the vendor's.** Ed Saldana,
+2026-08-16: *"there seems to be a discrepancy with the way reserve has been
+handled ... It should have never been a community pot for everyone."* Vanessa's
+answer, cc Patrick: *"Patrick is in charge of your reserves as you are under him
+for your contract. We have nothing to do with how Patrick chooses to do
+reserves. Patrick has the entire pay file and access to all records."* **So the
+10% reserve is Patrick's book to reconcile.** Ed has a large balance built up and
+wants it. This is an open, unresolved obligation, not a vendor question.
+
+**3. RSI will not advance on unconfirmed orders.** Keely, 2026-07-21:
+*"I did not confirm the order. What I did was put in a request with AT&T ...
+still pending and not paid out"*, then *"Well your not going to from AT&T or my
+side. If it's not confirmed it's not paid by us."* Do not build cash plans on
+submitted-but-unconfirmed business fiber.
+
+**4. One chargeback is documented end to end** — commission $450 on 5/19/2026,
+$45 reserve withheld, $405 net, then reversed; Keely confirmed **"Charge back"**
+on 2026-08-26. That is the template for auditing any disputed reversal.
+
+**5. Zack asked Prime Nation to move his AT&T split 80% → 86%** (2026-08-10,
+cc Patrick and Jay), because he had already promised his reps raises. Separately
+Patrick reported *"Zack put 60 orders w nelson last week 40 w yall. He did 100
+AT&T products"* and asked for more dealer codes plus 2FA email access. **Zack is
+the highest-volume producer in the network and his margin is an open ask.**
+
+**6. A Retroactive Recon Report** arrived from `payroll@lvlupdirect.com`
+2026-07-13 listing sales not paid and missing bonuses. Patrick agreed to it and
+requested payment. Worth reconciling against the statement file rather than
+taking the recon at face value.
+
+**Personal money items sitting in the inbox** (for the AM brief's money scan,
+not business): TrueAccord is collecting **$111.70** for LVNV Funding;
+**Windsor.ai is billing $23/month** on a subscription Patrick says he never
+authorised and they have refused to refund; a PayPal dispute
+`PP-R-DYF-637065192` he told them to allow because the charge was AT&T.
+
+## CHRISTIAN — TERMS AND CONSTRAINTS, FROM THE WHATSAPP EXPORT (2026-08-29)
+
+Read from `WhatsApp Chat with Christian Dan Puli` in Drive. Facts worth not
+re-asking him for:
+
+- **Philippines, UTC+8. Available Mon–Fri 12:00am–2:00am PHT**, which is roughly
+  **11am–1pm Central the previous day**. He worked 1am–6am his time on 28 Aug.
+- WhatsApp **+63 993 694 0301**, email `cdpulifreelancer@gmail.com`.
+- **Pay offered: $100/week plus commission of 25 / 50 / 100 / 200 by product.**
+  Patrick then told him *"Do it and bill me"* for the pipeline build.
+- **He is NOT a salesperson and said so three times**: *"I don't have much
+  experience with outbound sales calls"*, *"my main experience is with GHL setup,
+  CRM, automations, and dialer/dispositions."* Patrick let him choose and he
+  chose the tech side. **Do not route selling work to him.**
+- **His proposal, which Patrick approved:** ONE Main Pipeline as the single
+  source of truth, plus a **dialer workflow per sales agent named for that
+  agent**, all outcomes flowing back into the Main Pipeline. Target Monday.
+  Automations to be **marked with his initials**.
+- **He imported only the "Clear" tag rows from ONE of the four CSVs** and asked
+  whether to import the DND rows too; Patrick: *"I don't care about dnc I say
+  call them anyway."* **So the four WhatsApp CSVs are partially loaded** — that
+  is separate from the five emailed 150-lead lists, which are still not in GHL.
+- Other numbers from that chat: **+63 909 651 9118** (selling / can train),
+  **+63 926 255 4061** (Churchie, tech).
+- Patrick's own statement of the two problems, in his words: *"us using spam
+  numbers to dial. The leads not recycling, no tracking of what happ[ened]."*
