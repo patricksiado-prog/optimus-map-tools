@@ -1938,3 +1938,89 @@ nonsense. Rep names also appear in both cases (`Zachary Gonzalez` and
 "Requested entity was not found"** from the Drive connector and is not in his
 recent files or shared-with-me list — it lives under a different Google account.
 `Pat.S. AT&T` was the file he had opened minutes earlier and is what was analysed.
+
+## WHAT ACTUALLY TURNS INTO A CUSTOMER (2026-08-29) — READ THIS BEFORE FUNDING MORE TEXTS
+
+Cross-referenced the commission statements against GoHighLevel conversations,
+the WhatsApp exports and Gmail. Four findings, all measured.
+
+### 1. No text has ever produced a customer. Not one.
+
+- The commission file covers **7/1/25 → 6/30/26**. Optimus texting started
+  **2026-08-21**. **The two windows do not overlap at all**, so not one of those
+  497 customers can have come from a text.
+- The Aug 21 batch (100+ texts) produced **zero replies and zero opt-outs**.
+- **The one close the pipeline has ever recorded came from a phone call.**
+  Janell Dumas' GHL conversation contains exactly one outbound call —
+  `TYPE_CALL`, 2026-08-28 19:02 UTC, **duration 1,361 seconds = 22 min 41 sec**,
+  status completed — then the opportunity, then Closed/Won. **Zero texts before
+  the sale.** The first SMS she ever received was the port-out request sent
+  2026-08-29.
+
+This is not an argument to stop texting — texting is untested at volume, not
+disproven. It IS an argument against treating 200 texts/day as the growth engine
+while the only proven mechanism is a rep on the phone for twenty minutes. Track
+`sms-v-*` variant tags against actual closes before scaling further.
+
+**Outbound numbers are inconsistent and nobody is controlling them.** The close
+dialed from `+13464844979`, my SMS went from `+13465177523`, and the brain's
+recorded texting pair is `+13466603810` / `+13466710729`. Four numbers, no
+policy. That is exactly how a number earns `Spam Likely` — see the Voice
+Integrity section.
+
+### 2. The money is in wireless lines, not in fiber speed
+
+Median customer = **$495** (one internet line, nothing else). Every one of the
+top 15 customers is **$2,300–$4,505** and every one has the identical shape:
+
+`Internet (Air or 1 Gig) + Mobility Installment/BYOD + SBS Mobility VIR + Voice Activation + Per Line Unlimited + AutoPay`
+
+**A $4,505 customer and a $495 customer bought the same internet.** The
+difference is entirely the wireless stack. With the attach rate at **4%**, the
+single highest-leverage change in the business is asking every fiber customer
+about their phones — on the call that is already happening, with a customer
+already approved and signing.
+
+### 3. The B2B playbook, from the only business that ever closed
+
+**One business customer in 497** — `DULCES MARIBEL LLC`, rep Daniel Rivera,
+**$1,930**, roughly **4x the residential median**. What it bought:
+
+`Funding: AT&T Internet Air` + `Mobility BYOD` + `Mobility Installment` +
+`SBS Mobility VIR` + `Voice Activation OOF` + `Per Line Unlimited`
+
+Three things fall out of that and they rewrite how B2B gets worked:
+
+- **It was not a fiber sale.** The anchor was **Internet Air**, which funds
+  **$600 — more than 1 Gig fiber at $500.** A business address fiber cannot
+  reach is not a dead lead; it is the highest-funding product on the sheet.
+- **The value was the phone lines**, same as the top residential customers.
+- **It took three touches** — 11/21, 11/25 and 12/1/25. A business is not a
+  one-dial close, which is consistent with Dave's 3 closes off many leads.
+
+**So the best B2B target is not "who will buy fiber" — it is a business with
+crews who carry phones.** `dial/BIZ_call_first.csv` re-ranks the 350 qualified
+businesses on that basis, with an opener per tier:
+
+| Tier | What it is | Count |
+|---|---|---|
+| 1 | GOLD **and** a crew/vehicle business — copper upgrade *and* a fleet of lines | 6 |
+| 2 | GOLD — already AT&T on copper | 13 |
+| 3 | Crew/vehicle trade (HVAC, plumbing, roofing, towing, trucking, auto, cleaning) — techs in trucks | 78 |
+| 4 | Office (insurance, law, CPA, title, realty) — upload speed + desk lines | 10 |
+| 5 | Storefront (salon, restaurant, clinic) — POS/wifi, owner cell often listed | 43 |
+| 6 | Home-based — usually reaching the owner personally | 200 |
+
+The top 6 are the whole starting list: Beveridge Roofing & Construction,
+Cypresswood Construction & Roofing, FS Garza Trucking, Heating & Air
+Conditioning Service, MC Muffler Mechanic, True Tire.
+
+### 4. 5 Gig does NOT pay the same as 1 Gig — and that settles a live argument
+
+Patrick asked LVL UP three times in July whether 5 Gig and 1 Gig pay
+differently, and asserted *"5 gig 1 gig. Pay the same resi always."* **His own
+statements say otherwise.** The only 5-Gig sale in twelve months paid
+**`Commission (5Gig Extra Funding)` $630 gross / $567 net**, with **no separate
+1 Gig line on that customer** — against $500 for a 1 Gig. On the evidence
+available that is a **$130 premium for 5 Gig**. One data point, so quote it as
+one data point, but it is a real one and it is in writing.
