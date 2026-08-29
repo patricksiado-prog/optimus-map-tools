@@ -2541,3 +2541,41 @@ Two live-fire lessons worth keeping:
 **The routine's `fire_trigger` run produced nothing in 38 minutes**, which is why
 these were sent by hand from this session. If a fired run shows no sends in GHL
 after ~20 minutes, stop waiting and send directly.
+
+## THE DIALER LOAD — CONSOLIDATED 2026-08-29 EVENING
+
+**94 resi contacts enrolled in Christian's `AT&T Power Dialer`**
+(`5b87f328-34df-4430-80a5-c74ab290f5e9`, published 2026-08-28) — every one of
+today's texted leads, all succeeded. That workflow is the current dialer; the
+D01-D04 disposition workflows hang off it. Older ones (`Optimus Dialer 2 — Zack
+Call Queue`, `Optimus Fiber Biz — Power Dialer Queue`) still exist and still
+have manual-action tasks sitting in them, assigned to Zack Woodring, unstarted
+since Aug 05.
+
+**`OPTIMUS_DIALER_FULL.csv` — 3,538 unique leads.** Every CSV Patrick has sent
+was merged: 34 files, 14,888 raw rows, deduped on last-10-digits to 3,554, then
+16 dropped as genuinely dead (already said no, vacant, invalid, DNC request).
+
+| Segment | Rows |
+|---|---|
+| GREEN resi | 2,660 |
+| GOLD resi (copper upgrade) | 517 |
+| GREEN business | 342 |
+| GOLD business | 19 |
+| flagged `follow-up` (already in CRM) | 27 |
+
+Format, per Patrick's ask: **the address appears at the TOP and the BOTTOM of
+every Notes field** — top so the rep reads it first, bottom so it survives any
+UI that truncates the middle. Between them: what the dot colour means and how to
+open, the absentee-owner warning where it applies, the DNC-is-not-a-blocker note,
+and `SAY THE ADDRESS OUT LOUD`. Empty `Disposition` and `Follow Up` columns are
+there for the dialer to write back into.
+
+**Line count equals row count (3,539 lines / 3,538 rows), zero embedded
+newlines** — the defect that broke `OPTIMUS_MASTER_LOAD.csv`. Always verify that
+before handing over an import file.
+
+**Still true: there is no API path for a bulk load.** `bulk_update_contact_tags`
+is a 404 and per-contact enrollment is one call each. A GHL CSV import is the
+only way to get 3,538 in; it merges by phone onto existing contacts and takes
+about two minutes.
