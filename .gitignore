@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Optimus: API keys live in files, never in code
+maps_api_key.txt
+google_creds.json
+github_token.txt

@@ -20,7 +20,8 @@ import gspread
 from google.oauth2.service_account import Credentials
 import requests
 
-API_KEY  = "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g"
+from optimus_secrets import get_maps_api_key
+API_KEY = get_maps_api_key()
 SHEET_ID = "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA"
 IN_TAB   = "Hunter Green Commercial"
 OUT_TAB  = "Fiber Commercial Leads"

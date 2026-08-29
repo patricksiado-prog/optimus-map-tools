@@ -35,7 +35,8 @@ import requests
 VERSION = "3.3-tenant-resolver-no-geocoding-api"
 
 # ---- production defaults (override via env) ----
-API_KEY = os.environ.get("PLACES_API_KEY", "AIzaSyA9PJQJmf1LGFN3lATv8-se3tsIy6kCG9g")
+from optimus_secrets import get_maps_api_key
+API_KEY = get_maps_api_key()
 SHEET_ID = os.environ.get("MAP_SHEET_ID", "1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA")
 SRC_TAB = os.environ.get("MAP_INPUT_TAB", "Hunter Commercial")
 OUT_TAB = os.environ.get("MAP_OUTPUT_TAB", "Fiber Commercial Leads")
