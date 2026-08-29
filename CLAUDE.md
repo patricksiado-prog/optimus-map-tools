@@ -2109,3 +2109,55 @@ re-asking him for:
   **+63 926 255 4061** (Churchie, tech).
 - Patrick's own statement of the two problems, in his words: *"us using spam
   numbers to dial. The leads not recycling, no tracking of what happ[ened]."*
+
+## CORRECTION — LEAD GEN HAS PRODUCED AT LEAST 59 HOUSTON CUSTOMERS (2026-08-29)
+
+**Patrick caught a real error and the number is his, not mine.** He said *"at
+least 50 customers in Houston are from lead Gen u Just didn't spot it."*
+Measured: **59**, worth **$54,887.50**.
+
+The mistake was conflating two different questions. "No SMS has closed a deal"
+is still true and still supported. But I let it stand as if the lead-gen machine
+had produced nothing, and that is flatly wrong — it has produced the single
+largest identifiable block of business in the file.
+
+**How to see it, so nobody misses it again: the MobileNumber column is a
+geography field.** The statements carry no addresses, but 122 customers have
+mobile numbers on file, and area code separates the network's markets cleanly:
+
+| Area codes | Market | Who sells it |
+|---|---|---|
+| **346 / 832 / 281 / 713** | **Houston — 59 customers, $54,888** | **Zachary Gonzalez (41), Patricia Munguia (9)** |
+| 602 / 480 / 623 | Phoenix | Daniel Rivera, Peyton Salkeld, Christopher Richardson |
+| 251 / 448 | Mobile, Alabama | Joshua Butler, Maison O'Neal |
+| 817 | Fort Worth | Melvin Webb |
+
+**Zachary Gonzalez IS the Houston book**: 41 customers, **$41,605**, running
+7/22/25 → 5/12/26. Patricia Munguia adds 9 more at $9,301. Every other
+high-volume rep is selling a different city entirely. So when Houston lead gen
+produces, it lands on Zack's team — which is also why none of these names
+resolve in T-OPTIMUS Houston GHL and why my earlier name lookups came back
+empty. **They live in the Frontline Direct location (`TXw28sw0Z2rI6tcCDhJY`),
+which this connector token returns 403 for.** Get that token widened before
+concluding anything about whether a customer exists in the CRM.
+
+**59 is a FLOOR, not a count.** Only 122 of 497 customers have a mobile recorded
+at all; the other 375 have no geography field. The true Houston number is
+probably well above 59.
+
+### OMER YOLCU — what a lead-gen customer actually looks like
+
+Rep Zachary Gonzalez, **$2,299**, closed over **three dates** (2/3/26, 3/20/26,
+3/24/26). He carries **seven mobile numbers**: `2243185656`, `2816903533`,
+`3465459257`, `3465459358`, `3465939304`, `3468594854`, `3468594875` — five of
+them Houston 346/281.
+
+**That is a seven-line wireless account on one household.** It is the clearest
+single illustration of the finding above: the internet line is the door, the
+phone lines are the money, and it took three touches to get there. Jose Tumax
+($4,505) and Husam Elnounou ($3,945) — the two biggest customers in the whole
+year — are both Zachary Gonzalez, both Houston, both the same shape.
+
+**What this changes:** Houston lead gen is not unproven, it is the proven part.
+The open question is only which *channel* converts it — and on the evidence that
+is a rep on the phone across several touches, not a single text.
