@@ -1243,3 +1243,95 @@ explicitly identified as such in the first line** (Gmail thread
 proposes shared-GitHub-repo + his own GHL MCP server as the way to connect the
 two Claudes. **Awaiting his reply — that answer decides how much can be handed
 over directly.**
+
+## THE SPAM LABEL HAS A FIRST-PARTY FIX — VOICE INTEGRITY (2026-08-29)
+
+Patrick: *"another prob is the numbers coming up as spam."* There is a built-in
+LeadConnector answer and it had never been surfaced here.
+
+**`Voice Integrity`** — registers US numbers with the caller-ID analytics firms
+(First Orion, Hiya, TNS) to strip a `Spam Likely` label and repair a damaged
+number's reputation. Processed in ~2 business days, US numbers only. Requires
+**SHAKEN/STIR certification** (mandatory) and **CNAM registration**
+(recommended — that is what puts a business name on the customer's screen).
+No EIN → use **Free Caller Registry** instead, which is free, submits straight to
+the major carriers, and is widely called the single biggest lever there is.
+
+**Set expectations: 4–8 weeks to measurable improvement, not days.** Start it
+before it gets worse, not after.
+
+The three behaviours that cause the label, all of which Optimus is currently
+doing: one number carrying a whole team's outbound; calling the same person two
+or three times in a short window (double-dialing reads as spam behaviour to the
+analytics engines — note this sits in tension with the persistence rule, so space
+the attempts); and numbers never registered with the carriers at all.
+
+### "Can the dialer use random outbound numbers?" — no, but Local Presence is better
+
+GHL has **no native caller-ID rotation with reputation monitoring**; that is
+dedicated-dialer territory and is NOT worth buying yet. What it does have is
+**Local Presence Dialing**: it dynamically picks one of the numbers *you already
+own* matching the contact's area code and shows that as caller ID — spreading
+load across numbers AND lifting answer rates. It never buys numbers, so the area
+codes must already be owned.
+
+**UNVERIFIED and must be tested in-account:** sources disagree on whether Local
+Presence works inside the POWER DIALER or only the softphone / mobile app. Do not
+promise it until somebody clicks it.
+
+**And the trap underneath all of it:** in GHL, outbound goes from the location's
+**DEFAULT number**. Assigning a number to a user routes INBOUND only. A rep can
+pick another from the dialer dropdown, but it is manual. Ten agents on one
+sub-account with no discipline = every outbound call in the company leaving from
+one number, which is precisely how a number earns the label.
+
+## REPS ARE NUMBERS IN GHL, NOT NAMES (Patrick, 2026-08-29)
+
+*"I don't want names Just rep #."* Confirmed as meaning **inside GoHighLevel**:
+rename the users to `Rep 1`, `Rep 2`, `Rep 3`, so lead assignments, dispositions
+and every report show a rep number instead of a person. Set it up that way from
+the start — renaming users after assignments exist is messy. This is separate
+from what a rep says on a call, which stays "Patrick with AT&T Fiber."
+
+## DEALMACHINE DOES NOT PLUG INTO GHL — AND MUST NOT (2026-08-29)
+
+There is **no first-party DealMachine → GoHighLevel integration.** Everything
+advertised (Zapier, Make, Appy Pie, viasocket) is a third-party connector with a
+subscription, and their conversion claims are vendor marketing, not measured.
+Optimus already calls both APIs directly, which is strictly better. **Do not buy
+a connector, and do not let a VA build an enrichment step** — enrichment is never
+hand-done, lists arrive with name, cell, email, line type and DNC attached.
+
+## DIALER PRIORITY ORDER — BEST LEADS FIRST (2026-08-29)
+
+Patrick: *"I want the best leads dialed first ... clean att dial."* The order,
+which is by VALUE not by capture date:
+
+1. **GOLD / copper** — existing AT&T customers still on copper. No competitor to
+   beat, it is an upgrade not a switch.
+2. **GREEN, never touched**, with a mobile number, in a worked market.
+3. **GREEN, touched once, no answer, 3+ days ago.**
+4. Everything else.
+
+**Never dial:** GREY (already on AT&T fiber — not a lead), any row with no mobile
+number, and anyone already dispositioned Not Interested / Bad Number / Do Not
+Call.
+
+Two rules that outrank the order itself: **cut every list down before it ships**
+(60 right numbers beats 300 wrong ones), and **persistence beats fresh names** —
+one dial connects ~1 in 10, the same prospect across several attempts ~1 in 4.
+
+**The `Do Not Call` disposition must set DND automatically.** It is the one
+automation in the dialer with legal weight and must never depend on a rep
+remembering a second step. DNC-status-on-the-lead is a different thing: a data
+field that arrives with the list, recorded and then called anyway per Patrick's
+standing call.
+
+### Connecting a second Claude to the same GHL
+
+Patrick was right that it is the **same connector**, not a second one — the
+GoHighLevel MCP endpoint is identical for everybody and the **token** is what
+scopes it. So a contractor uses the same connector with their own Private
+Integration Token issued from our sub-account (GHL → Settings → Private
+Integrations). Free with any plan, ~5 minutes. **The token comes from Patrick and
+never travels in an email or chat.**
