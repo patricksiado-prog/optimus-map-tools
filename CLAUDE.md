@@ -2258,3 +2258,18 @@ Systems Inc as certificate holder), sent 2026-04-10 to `mariaaamndz@gmail.com`,
 thread `19d787ce9835c005`. A certificate-holder block normally carries the
 holder's address and sometimes a contact. **The Gmail connector cannot download
 attachments** — Patrick has to open it.
+
+**Searched for "Christian from Utah" and he is not in the email at all.** Patrick
+remembers a graphic naming a Utah DSI contact, possibly forwarded to a David.
+Searched every angle: `DSI` all-time, `Christian` pre-2024, Utah + Salt Lake /
+Provo / Lehi / Orem / Draper / Ogden, every attachment sent to a David or Dave,
+and every image attachment Apr–Dec 2023. **Zero hits.** Every "Christian" in the
+mailbox is either Christian Dan Puli (Philippines, 2026), Patrick's brother
+Christian Siado (`siadchristian5@gmail.com`), or noise.
+
+**The reason, and it is structural: Gmail does not index text inside image
+attachments.** A name that exists only as pixels in a screenshot or graphic can
+never be found by any Gmail query, and this connector cannot download an
+attachment to read it. **The way to get an answer is for Patrick to send the
+image into a Claude chat directly** — images pasted into the conversation ARE
+readable. Do not burn more turns re-searching Gmail for it.
