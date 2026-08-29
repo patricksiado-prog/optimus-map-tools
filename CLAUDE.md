@@ -2382,3 +2382,102 @@ for a disputed payout with DSI, rather than an email chain.
 2025-06-18 — *"you can't just drop a company like DSI and go to RSI - you would
 not be able to make sales for 90 days."* Confirm that blackout with whichever
 agent is being applied to BEFORE signing anything.
+
+## PEOPLE AND NUMBERS — THE CONTACT SHEET (built from Gmail, 2026-08-29)
+
+Reference only. Nothing here is a rule; it is who is who and how to reach them.
+Where a number came from a public directory rather than from the person, it says
+so.
+
+### DSI Systems Inc — AT&T master agent, NDS (D2D) channel
+
+| | |
+|---|---|
+| **Mike Baldwin** | `mike.baldwin@dsisystemsinc.com` — from Patrick's own inbox |
+| **Daphne Lewis** | `daphne.lewis@dsisystemsinc.com` — from Patrick's own inbox |
+| **AT&T Business Fiber support desk** | `ATT4BSupport@dsisystemsinc.com` — cc'd on Patrick's install-status emails |
+| Toll-free (published for dealers) | (800) 888-8876 · **public directory, unverified** |
+| Main / Fax | (515) 334-3700 / (515) 276-9477 · **public directory, unverified** |
+| Dallas office | 11114 Grader St, Dallas, TX 75238 — in-state, ask for this one |
+| HQ | 11338 Aurora Ave, Urbandale, IA 50322 |
+| Dealer commission reconciliation form | `dsiatt.aidaform.com/dsi-dealer-commission-reconciliation-form` |
+
+Baldwin and Lewis both sat on Barbie Anderson's *AT&T B2B FIBER TRAINING* invite
+of 2025-07-07, which Patrick was on — so they are warm, not cold.
+
+### RSI Inc (RS&I) — the other AT&T master agent
+
+| | |
+|---|---|
+| **Keely Pizzano** (formerly Keely Denning — same person) | `Keely.Pizzano@rsiinc.com`, `Keely.Denning@rsiinc.com`, cell 615-633-8095, office 208-523-5721, 2436 N. Woodruff Ave, Idaho Falls, ID 83401 |
+| **Leah Murphy** — Dealer Admin | `Leah.Murphy@rsiinc.com` |
+| **Levi Williams** | `Levi.Williams@rsiinc.com` — sends the BI-WEEKLY OPEN ZIP REPORT |
+| **McKenzie Wheeler** | `McKenzie.Wheeler@rsiinc.com` |
+
+### LVL UP Direct
+
+| | |
+|---|---|
+| **John Nelson** | `Johnnelson@gmx.com`, `J.nelson@lvlupdirect.com` |
+| **Vanessa Nelson** — payroll | `vn.lvlupdirect@gmail.com`, `payroll@lvlupdirect.com` |
+| **Daniel Goding** — COO | `d.goding@lvlupdirect.com`, M (469) 301-8727, 17300 Saturn Ln Ste 112, Houston TX 77058 |
+
+### Prime Nation
+
+| | |
+|---|---|
+| **Jay K. Dunn** — President | `jay@primenation.com`, `jaykdunn@yahoo.com`, cell 586-306-0911 |
+| **Brittany Little** — Operations Manager | `operations@primenation.com`, C 586-718-0009, 18000 W. 9 Mile Rd Ste 515, Southfield MI 48075 |
+
+### Infinity Sales / Infinity Marketing and Sales — the FORMER vendor
+
+| | |
+|---|---|
+| **Billy Anderson** — Principal & CEO | `billy@infinitysalesllc.com`, direct 503-953-2330 |
+| **John C. Howell** — Payroll/Business Manager | `office@infinitysalesllc.com`, (800) 344-6748, fax (800) 201-1053 |
+| **Barbie Anderson** | `barbie@infinitysalesllc.com` |
+| Others | `zuber@infinitysalesllc.com` (Jon Zuber), `shawntel@infinitysalesllc.com` (Shawntel Young, 800.377.0820 / 855.423.1723), `jkelly@infinitysalesllc.com`, `melissa@infinitysalesllc.com`, `onboarding@` , `field.support@infinitysalesd2d.com` |
+| **Ahmad Mustafa** — Infinity field support | office 503-228-2906, mobile 971-804-1442 |
+
+### Payroll / audit side (Patrick's own)
+
+**Dr. Janarthanan "Janar" Senthurpandi** — `janars@katenterprise.com`,
+`janars@elevationdirect.com`, `janars@teamfieldapp.com`; Zelle **713-865-2413**;
+entities **KAT Enterprise LLC**, **Team Field App LLC**, **Mani India
+Technologies**, `support@teamfieldapp.com`. `teamfeildapp.com` is a misspelling
+that hard-bounces.
+
+### Two different Zacks — do not merge them without checking
+
+- **Zack Woodring** — `zackwxfinity@gmail.com`, `zack.attfiber@gmail.com`,
+  `Zack@frontlinedirectsales.com`, `gzack9642@gmail.com`, signs *Endure Marketing
+  Group, 832-403-6232*.
+- **Zachary Gonzalez** (ATTUID `ZG431X`) — the rep name on the commission
+  statements carrying **41 Houston customers / $41,605**.
+
+They may be the same person, and Team Field App does send `ZacharyGonzalez`
+commission reports to `zack.attfiber@gmail.com`, which suggests they are. It has
+not been confirmed outright, so say "probably the same" rather than asserting it.
+
+### Relationship history worth knowing before any of these calls
+
+- **Infinity terminated Optimus twice.** 2025-09-25, *"URGENT!!! Your contract is
+  terminated for failure to perform"* — no agent sales since 8/21/25. Earlier,
+  2025-08-06, *"We will not cancel your contract, but... you can keep the top tier
+  of $450, but we need 60 paid points."* The relationship ended badly and Patrick
+  and Howell traded accusations of stealing overrides.
+- **Optimus was removed from AT&T "No Chargebacks" for a high chargeback rate**
+  (Howell, 2025-10-23) — which is why 10% started being held. That is the origin
+  of the reserve fight.
+- **Infinity was losing contracts across the board** at the same time — Howell:
+  *"Spark just cancelled our contract because we did not do at least 50 sales a
+  week. Genie did the same. CleanChoice took us from a flat $200 to a two-tier
+  system."*
+- **Patrick's own historical claim, to RSI:** *"a list of 5000 agents I onboarded
+  ... 104k accounts are created with these agents all working through me either
+  directly or through sub vendors."* Useful credibility line, unverified here.
+- **The $43k claim:** 2026-05-25, Patrick to Janar / Vanessa / John Nelson —
+  *"It looks like I'm 43k short in vir oof auto pay and plan pay"*, with SaraPlus
+  screenshots attached. That is the largest disputed figure on record.
+- **`patrickfiber@att.net` is Patrick's second address** and receives some vendor
+  mail the gmail does not. Search both.
