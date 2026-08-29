@@ -2212,6 +2212,27 @@ copy them into this repo** — it is pushed to GitHub.
 
 ## DSI, INFINITY AND JANAR — THE 2023 TRAIL (looked up 2026-08-29)
 
+**CONFIRMED — DSI Systems Inc IS the door-to-door company (checked 2026-08-29).**
+Three independent proofs, so do not re-verify this:
+- **DSI was chosen as AT&T's Preferred Sales Support Provider for the
+  Neighborhood Direct Sales (NDS) channel** (their own Aug 2022 press release).
+  **NDS is the D2D channel** — and Zack shared a sheet with Patrick literally
+  titled `AT&T-NDS Links`, so Optimus is already inside that program.
+- DSI is an **AT&T master agent**: dealer onboarding, dealer codes, sales-partner
+  management, hardware logistics, and **DSI University** training — Patrick has a
+  DSI University login (welcome email 2025-06-01).
+- The dealer offer on their own site is *"become an AT&T Preferred Dealer ...
+  earn up to $1,500 per customer, with an assigned account executive."*
+
+**Do not confuse it with `dsinational.com` (DSI Digital Systems Installation)** —
+a different company entirely. Ours is **`dsisystemsinc.com`**, which matches the
+email domain of the real DSI people already in Patrick's inbox. `DSI Distributing
+Inc` is the same outfit at the same Urbandale address, an older/legal entity name.
+
+**Two offices:** HQ **11338 Aurora Ave, Urbandale, IA 50322**; Texas office
+**11114 Grader St, Dallas, TX 75238** — Dallas is the one to ask for, being in
+state.
+
 **DSI's contact number is NOT in Patrick's email.** Searched the whole mailbox:
 zero messages to or from `dsisystems.com`, and the nine threads that mention DSI
 carry no number. These are DSI Systems Inc's **published** numbers, from public
