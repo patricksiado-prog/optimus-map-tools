@@ -1435,6 +1435,7 @@ doc. **Tomorrow's AM brief must use them instead of printing "you didn't post."*
 - **AA:** 9:30pm — recorded, not commented on (sobriety domain listens, never
   teaches, never praises the disclosure, never asks a follow-up)
 - **Win of the day:** Angel closed a deal
+- **Lift:** biceps — 10 sets to failure, seated machine curl
 
 **Standing lesson: he will log by telling Claude, not by filling in a sheet.**
 Treat anything he says in chat about food, training, meetings or a win as the
