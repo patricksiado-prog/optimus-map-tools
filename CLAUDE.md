@@ -1336,25 +1336,33 @@ Integration Token issued from our sub-account (GHL → Settings → Private
 Integrations). Free with any plan, ~5 minutes. **The token comes from Patrick and
 never travels in an email or chat.**
 
-## LEADS RECYCLE UNTIL SOMEBODY SAYS NO (Patrick, 2026-08-29)
+## SIX DIAL ATTEMPTS, THEN OUT OF THE QUEUE (Patrick, 2026-08-29)
 
-*"I want leads to recycle until they say no."* This is a rule and it **overrides
-any attempt cap**, including the "stop after 6 attempts" line an earlier draft of
-the dialer spec carried. That line was wrong and has been retracted to Christian
-in writing.
+Patrick first said *"I want leads to recycle until they say no"*, then read it
+back and settled it: *"6 attempts ok that's enough."* **Six is the rule.** The
+recycle-forever version is dead — do not resurrect it.
 
-**Only three dispositions remove a lead from the queue permanently:**
-`Not Interested`, `Do Not Call`, `Bad Number`. **A No Answer never removes
-anyone.** It goes back in the queue.
+A No Answer re-queues rather than removing, on a widening gap:
 
-The evidence backs him: one dial connects ~1 in 10, the same person across
-several attempts ~1 in 4. Most leads that "didn't work" were never called back.
+| Attempt | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| Dial on | day 1 | day 3 | day 7 | day 14 | day 30 | day 60 |
 
-**The tension with the spam rules, and the resolution.** Repeat-dialing the same
-person inside a short window is one of the behaviours that earns a number a
-`Spam Likely` label. So the answer is spacing, never stopping — **day 1, day 3,
-day 7, day 14, then every 30 days, indefinitely.** Do not "resolve" this later by
-reintroducing a cap; it is the gap that protects the number.
+About two months of coverage per lead. **The widening gap is load-bearing, not
+decoration** — repeat-dialing the same person inside a short window is one of the
+behaviours that earns a number a `Spam Likely` label, so the spacing protects the
+caller ID while the lead still gets six real chances.
+
+**After the sixth attempt, do NOT mark them `Not Interested`.** Nobody said no —
+we never reached them. Leave the lead un-dispositioned and out of the dial queue
+so it stays available for a future campaign and the reporting does not count it
+as a rejection. A no-answer and a no are different numbers; keep them apart.
+
+**Only three dispositions are real exits:** `Not Interested`, `Do Not Call`,
+`Bad Number`.
+
+The underlying evidence still holds and is why six rather than one: a single dial
+connects ~1 in 10, the same person across several attempts ~1 in 4.
 
 ## WHAT THE REP SEES BEFORE THEY SPEAK (Patrick, 2026-08-29)
 
