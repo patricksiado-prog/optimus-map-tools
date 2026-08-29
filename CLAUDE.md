@@ -1834,3 +1834,31 @@ speed, plus the ones the gold-cluster skill already names as high-converting.
 
 **Note the counts overlap** — a row can be gold AND a good category AND
 home-based, which is the best kind of row.
+
+## STATUS CHECK — 2026-08-29 12:48 CT, measured not assumed
+
+Patrick asked whether the expanded sheets, the dialer load, the text sequence
+and the disposition write-back are actually working. Verified live, in order:
+
+| Thing | State | What unblocks it |
+|---|---|---|
+| Split sheet `ATT FIBER LEADS — Precise Fiber` (`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`) | **1,024 bytes. Never written.** Created 02:34, `modifiedTime` still 02:34 | Share it with the scraper's service account (`client_email` in `google_creds.json`) and create `~/optimus/optimus_sheet_id.txt` holding that ID |
+| Master workbook | `fileSize` 8,488,776 — **byte-identical across 08:29 / 08:59 / 09:29 UTC**. Accepting writes, but nothing is arriving | Scanner is not running. Someone has to launch it |
+| GHL `power dialer queue` | **199 contacts.** Unchanged | The 3,064-row CSV import. No API path exists |
+| SMS routine `trig_018JYeQpvcgfrmBxc46Vv967` | Disabled by design until 30 Aug | Auto-enabled now — see below |
+| Enrichment visible in the sheet | **Not there.** No write path from a Claude session | Patrick imports the CSV as a new tab, or the scraper writes it |
+| Dispositions → sheet | Spec'd to Christian, not built | GHL native Google Sheets workflow action |
+
+**The SMS re-enable no longer depends on anyone remembering.** Two independent
+wake-ups now flip `trig_018JYeQpvcgfrmBxc46Vv967` on before the 11am send on
+30 Aug: `trig_016yWxufrPBdmonEJTw5u5R4` (fresh session, 10:00 CT) and
+`trig_01CWEprXBbQhX3XBmm8qvhWb` (this session, 10:20 CT, no-op if already on).
+The fresh one was created with **no MCP connectors**, which is the known
+fresh-session limitation — hence the second, connector-carrying backup.
+
+**`OPTIMUS_MASTER_LOAD.csv` had a line-break defect.** Every one of its 3,064
+rows carried embedded newlines in the Notes column, so the file reads as 7,580
+lines and a strict importer splits rows mid-record. `OPTIMUS_IMPORT_ghl.csv` is
+the flattened, import-safe version — same 3,064 rows, newlines replaced with
+` | `. **Ship the flattened one.** General rule: never hand a human a CSV whose
+line count disagrees with its row count.
