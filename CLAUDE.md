@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 03:50 CDT
+# CURRENT STATE — updated 2026-08-30 07:15 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -21,9 +21,14 @@ beta" survive four sessions unchecked.
 
 ### Is the machine running?
 
-- **Scanner: WORKING.** MEASURED 2026-08-30 03:46 CDT. Run `20260830-033539`
-  launched 03:35, reached `sweep_start` 03:40, sweeping **Pensacola FL**
-  (photo). Workbook grew **8,488,776 → 8,499,354 bytes** (+10,578 ≈ 810 rows).
+- **Scanner: STALLED.** MEASURED 2026-08-30 07:05 CDT. Run `20260830-033539`
+  launched 03:35, wrote ~810 rows (**8,488,776 → 8,499,354**), then stopped at
+  03:42. `fileSize` FLAT for 3.5h; `modifiedTime` 05:18 (touched, nothing
+  landing); heartbeat frozen at `sweep_start` 03:40. Sweeping **Pensacola FL**.
+  Remedy is the AT&T re-login below.
+- **`latest.json` written at launch is an all-zero STUB, not a failure.** Run
+  `20260830-033946` shows every counter at 0 because it had just started.
+  Check `run_id` and `generated_at` before calling capture broken.
 - **THE AUTHORITATIVE LIVENESS CHECK is `get_file_metadata` on the workbook —
   BOTH `modifiedTime` AND `fileSize`.** A moving `modifiedTime` with a flat
   `fileSize` means it is being touched but nothing is landing. Never trust
@@ -55,12 +60,15 @@ the session that made them. That is the answer to "why did my email stop".
    `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` with
    `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, then put that ID
    in `~/optimus/optimus_sheet_id.txt` on the hunter PC.
-3. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
-4. **Call Antonio, 713-474-3899** — said *"come replace"* his copper, still not
+3. **DealMachine credits expire Tue 2 Sep — 7,137 unspent of 30,000.**
+   MEASURED 2026-08-30. They do not roll over. Bulk export runs under 1 credit
+   per lead, so this is thousands of leads if spent before the cycle ends.
+4. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
+5. **Call Antonio, 713-474-3899** — said *"come replace"* his copper, still not
    called back.
-5. **Janell Dumas** — AutoPay/Paperless was declined at the order, and the
+6. **Janell Dumas** — AutoPay/Paperless was declined at the order, and the
    Spectrum port-out PIN is still needed.
-6. **Frontline Direct GHL token** (`TXw28sw0Z2rI6tcCDhJY`) returns **403**.
+7. **Frontline Direct GHL token** (`TXw28sw0Z2rI6tcCDhJY`) returns **403**.
    Zack's Houston book is invisible from here; an empty lookup against
    T-OPTIMUS is NOT evidence a customer does not exist.
 
