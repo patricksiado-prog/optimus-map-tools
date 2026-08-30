@@ -3415,10 +3415,35 @@ have caught all ten.
 Split every batch into confirmed-mobile and everything-else; everything-else
 goes to the dialer.
 
-### The cleanup, and it is not optional
+### CORRECTION, same evening: they were never blocked from CALLING
 
-Strip DND and `invalid` from those 10, add `landline` + `call-only`, keep them
-in the dial queue. Sent to Churchie 2026-08-30 with the names.
+Re-read the live contact records after the report went out. The first read was
+wrong and the correction matters because it changes what anyone should do:
+
+```
+dnd: false
+dndSettings.SMS: { status: "active", message: "TWILIO_ERROR_CODE: 30006" }
+```
+
+**Only the SMS channel is flagged. Contact-level DND is OFF.** So the ten are
+fully dialable right now, no cleanup required, and the SMS flag is doing exactly
+the right job — it stops the routine texting a landline again and collecting
+another failure against the sending number.
+
+**Do NOT clear that SMS flag.** The first instruction sent to Churchie said to,
+and would have re-opened them to texting that can only fail. Corrected to her
+the same evening.
+
+The one thing worth doing is removing the **`invalid`** tag. `landline` already
+says the true thing; `invalid` reads as "bad number" and is how a lead gets
+skipped forever.
+
+**Read `dndSettings` per channel, never the bare `dnd` boolean or a tag.** A
+contact can be SMS-blocked and perfectly callable at the same time, and treating
+those as one thing is what buries good leads.
+
+MEASURED 2026-08-30: **23 contacts** in T-OPTIMUS Houston carry the `landline`
+tag, against 13 in the 2026-08-29 audit — consistent with the 10 added today.
 
 ## CAPTURE — TWO DIFFERENT FAILURES IN ONE DAY (2026-08-30)
 
