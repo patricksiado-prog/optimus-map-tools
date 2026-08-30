@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 14:20 CDT
+# CURRENT STATE — updated 2026-08-30 14:40 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -69,14 +69,16 @@ the session that made them. That is the answer to "why did my email stop".
 
 ### Blocked on Patrick — nothing moves until he does these
 
-1. **SPLIT SHEET — the share is DONE, one step left, and it needs a yes.**
-   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` is now shared as Editor with
-   `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com` (done from a
-   session 2026-08-30). Remaining: either create `~/optimus/optimus_sheet_id.txt`
-   holding that ID on each hunter PC, **or** say go on the tested
-   `PF_SPLIT_SHEET_ID` patch so no PC needs touching. The patch is written,
-   compiled and tested but NOT pushed — it is a `_CORE_FILES` deploy, so RULE 0
-   applies. Wire it while the sweep is idle.
+1. **SPLIT SHEET — share DONE, ONE STEP LEFT, and only Patrick can do it.**
+   The sheet is shared with the service account. The hunter cannot be told about
+   it from a session: **`git push` to the hunter repo is now classifier-blocked,
+   scratch branch included** (the PR route that shipped #7–#11 is dead). Either
+   (a) create `~/optimus/optimus_sheet_id.txt` on the hunter PC holding
+   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` — 30 seconds, but leaves the
+   8-vs-13 column bug live, so add a 13-column `Precise Fiber` tab to the split
+   workbook first — or (b) make the two-line `PF_SPLIT_SHEET_ID` edit in
+   GitHub's web editor, which fixes both on every PC. Patch tested locally,
+   commit `ad9ae65`. Wire it while the sweep is idle.
 1b. **`CHRISTIAN_DIALER_775.csv` IMPORT IS DONE** — MEASURED 2026-08-30 13:39
    CDT: **684 contacts tagged `beaumont-gold-pocket`** in T-OPTIMUS Houston,
    `medium: csv_import`, newest 13:29 CDT, being split across agents (`agt4`,
@@ -3293,3 +3295,79 @@ is read** — a 400 (cells) and a 403 (permission) are different problems with t
 same symptom, and the feed records only a count. The split sheet is worth doing
 either way: if it is the ceiling, this fixes it; if it is permissions, the loud
 fallback will say so on the next launch.
+
+## THE SHEET FIX — WHERE IT ACTUALLY STANDS, 2026-08-30 14:40 CDT
+
+Patrick: *"confirm sheet issue is permanently fixed and the software knows!!"*
+
+**It is NOT permanently fixed, and the software does NOT know yet.** Saying
+otherwise would be the exact failure the session-continuity rules exist to
+prevent. What is true, measured, and what is left:
+
+| Piece | State |
+|---|---|
+| Split workbook shared with the service account | **DONE** 2026-08-30 from a session. `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` → `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, role `writer` |
+| Redirect mechanism in the deployed hunter | **ALREADY LIVE.** `read_pf_redirect()` reads `~/optimus/optimus_sheet_id.txt`, takes a bare ID or a pasted URL |
+| A hunter PC pointed at the split sheet | **NOT DONE. This is the only thing standing between here and a working sweep** |
+| `PF_SPLIT_SHEET_ID` code patch (so no PC needs touching) | Written, tested, committed **locally only** — `ad9ae65`, blob sha `73065a035b40f93a8054d322778c6f487142ff42`. **CANNOT BE DEPLOYED FROM HERE** |
+
+### The one step that finishes it, and it needs no code
+
+On the hunter PC, create a text file at `~/optimus/optimus_sheet_id.txt`
+(`C:\Users\<name>\optimus\optimus_sheet_id.txt`) containing one line:
+
+```
+1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ
+```
+
+Relaunch. The next sweep prints `PRECISE FIBER -> separate workbook` and green
+dots land in a workbook with a fresh 10M cells. **Do it while the sweep is
+idle** — redirecting mid-run loses the night. Nothing else changes: gold and
+grey keep going to the master.
+
+### A DORMANT BUG THAT WOULD HAVE FIRED ON THE FIRST SPLIT-SHEET LAUNCH
+
+Found by asking what depended on the change (brain rule 1), and it is the whole
+argument for that rule. `open_sheet()` created the Precise Fiber tab as
+`cols="8"` while `OUT_HEADER` is **13** wide. Harmless for two years because on
+the production workbook the tab already existed and was never created — and the
+split sheet is the one place it WOULD be created. First launch after the
+redirect would have tried to write a 13-wide header into an 8-column grid.
+Fixed in the same local commit (`cols=str(len(OUT_HEADER))`).
+
+**If Patrick uses the file route instead of the patch, this bug is still live on
+every PC.** Either deploy the patch, or add the `Precise Fiber` tab to the split
+workbook by hand with 13 columns before the first run. Say this out loud — do
+not let the file route ship without it.
+
+### THE DEPLOY ROUTE RECORDED IN THIS FILE NO LONGER WORKS — CORRECTION
+
+The brain has said since 2026-08-28 that pushing to a scratch branch on the
+hunter repo then opening a PR works (it is how PRs #7–#11 shipped). **Re-tested
+2026-08-30: `git push` to the hunter repo is now classifier-blocked, scratch
+branch included.** `git clone` and local `git commit` still work; `git push` to
+`optimus-map-tools` still works.
+
+That leaves `mcp__github__create_or_update_file`, which takes the WHOLE file as
+a parameter. `precise_fiber_hunter.py` is **400,116 bytes**. Retransmitting it
+to change three lines is precisely what the 2026-08-28 rule forbids — that
+attempt was 3 lines short and would have shipped a hunter with no
+`if __name__ == "__main__"` to every PC.
+
+**So today there are exactly two deploy routes and both need Patrick:**
+1. The `~/optimus/optimus_sheet_id.txt` file on the laptop — 30 seconds, no code,
+   but leaves the 8-column bug live.
+2. Patrick edits `precise_fiber_hunter.py` in GitHub's web editor — 60 seconds,
+   zero transcription risk, fixes it on every PC forever. Two edits:
+   add `PF_SPLIT_SHEET_ID = "1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ"`
+   under `NEW_SHEET_ID_FILE` (~line 3238), and make `read_pf_redirect()` fall
+   back to it when the file is absent or empty.
+
+### AND THE CAUSE IS STILL NOT PROVEN
+
+`failed_writes: 2,805` is a COUNT. The feed does not carry the error text, so a
+400 (cell ceiling) and a 403 (permission) are indistinguishable from here — and
+`get_file_permissions` on the master lists **no service account at all**, while
+the hunter wrote ~810 rows to it hours earlier. The split sheet is right either
+way, but **do not claim the ceiling was the cause until a launch prints the
+actual error.**
