@@ -23,11 +23,41 @@ a size that has not moved means nothing is landing, whatever the console says),
 **what came back overnight** (replies and opt-outs in GHL, none of them called),
 **what is blocked on him**, and **what the last session shipped** (`git log`).
 
+## The CURRENT STATE block is the memory — keep it true
+
+`CLAUDE.md` opens with a **CURRENT STATE** block (added 2026-08-30). It is the
+only part of the file that claims to be true *now*: is the scanner writing,
+what is live and sending, what is blocked on Patrick, what is measured-broken,
+and what is CLOSED and must never be re-proposed.
+
+Everything below it is a 3,000-line chronological log — a record, not a state.
+That log is why answers used to come out stale: "is the scanner working" was
+spread across six sections written on four days, some superseded, all sounding
+equally confident.
+
+**Two obligations, and they are the whole point:**
+
+- **Read the state block first, before answering anything.**
+- **Update it in the SAME TURN any line in it changes** — a routine enabled or
+  disabled, a blocker cleared, a new measurement, a decision closed. Then push.
+  A finding appended 2,000 lines down that never reaches the state block is a
+  finding nobody will read.
+
+Keep it short. If a line needs more than two sentences, put the detail in a
+dated section at the bottom and point at it from the block. When something in
+the block stops being true, change it there — do not leave the old line
+standing and add a new one below it. Two confident contradictory lines is the
+failure this block exists to end.
+
+**CLOSED items are load-bearing.** Patrick hates re-litigating decisions. When
+he kills something, it goes in the CLOSED table with his own words and the
+date, and no future session raises it again.
+
 ## Read before you answer (60 seconds, every session)
 
-1. **`CLAUDE.md`** — loads automatically. Actually read it, especially the
-   dated sections at the bottom; those are the most recent decisions and they
-   override older text higher up.
+1. **`CLAUDE.md`** — loads automatically. **CURRENT STATE block first**, then
+   the dated sections at the bottom; those are the most recent findings and
+   they override older text higher up.
 2. **The bottom 200 lines specifically.** Newest findings live there. Old
    sections above are frequently superseded and not always struck through.
 3. **`BRAIN.md`** only when you need depth on the hunter, the classifier or a

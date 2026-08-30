@@ -1,8 +1,111 @@
 # Optimus — operating brain
 
 Claude Code loads this file automatically at the start of every session in this
-repo. Keep it lean and current; put long-form detail in `BRAIN.md` and read that
-on demand.
+repo. **Read the CURRENT STATE block below first — it is the only part that
+claims to be true right now.** Everything under it is the historical record,
+appended newest-at-the-bottom. Where two sections disagree, the later date wins
+and you say so out loud. Long-form detail lives in `BRAIN.md`.
+
+---
+
+# CURRENT STATE — updated 2026-08-30 03:50 CDT
+
+**Update this block whenever any line in it changes, in the same turn.** A
+finding buried 2,000 lines down in the log is a finding nobody will read. This
+block is short on purpose; if a line needs more than two sentences, put the
+detail in a dated section below and point at it from here.
+
+Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
+two share a voice — that is the mistake that let "register for the 20M-cell
+beta" survive four sessions unchecked.
+
+### Is the machine running?
+
+- **Scanner: WORKING.** MEASURED 2026-08-30 03:46 CDT. Run `20260830-033539`
+  launched 03:35, reached `sweep_start` 03:40, sweeping **Pensacola FL**
+  (photo). Workbook grew **8,488,776 → 8,499,354 bytes** (+10,578 ≈ 810 rows).
+- **THE AUTHORITATIVE LIVENESS CHECK is `get_file_metadata` on the workbook —
+  BOTH `modifiedTime` AND `fileSize`.** A moving `modifiedTime` with a flat
+  `fileSize` means it is being touched but nothing is landing. Never trust
+  `latest.json` or the console; both have shown healthy while zero rows were
+  written.
+- **The failure mode that had it stopped for ~16h: the AT&T session expires.**
+  Feed shows `auth_expired` and a login page instead of data. Remedy, printed
+  by the software itself: log OUT of youachieve.att.com, close the browser, log
+  back in, re-run. A fresh login fixed it.
+- **Sheet ceiling: 10,000,000 cells, HARD.** `Precise Fiber` is ~8.4M of it.
+
+### What is live and sending right now
+
+| Thing | ID | State |
+|---|---|---|
+| SMS routine, 200/day (65 resi / 35 biz), 11am + 4pm CT | `trig_018JYeQpvcgfrmBxc46Vv967` | **ENABLED.** Prompt carries the verified offer detail + volume governor |
+| AM coverage-gap email | `trig_01JTQKnB2U5ihS1mC4rpX2qy` | live, 12:00 UTC |
+| PM coverage-gap email | `trig_01RjAUBz16UNpdDzK2neCz37` | live, 22:30 UTC |
+| GHL no-answer auto-text, from `+13468106925` | GHL workflow | **LIVE — DO NOT TOUCH.** Patrick: *"don't break that template that is working"* |
+
+Both email routines are **session-bound and therefore mortal** — they die with
+the session that made them. That is the answer to "why did my email stop".
+
+### Blocked on Patrick — nothing moves until he does these
+
+1. **Import `OPTIMUS_DIALER_2000_labeled.csv`** (2,000 rows, import-safe). No
+   API path exists; a GHL CSV import is the only way. ~2 minutes.
+2. **Split-sheet wiring, while nothing is running:** share
+   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` with
+   `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, then put that ID
+   in `~/optimus/optimus_sheet_id.txt` on the hunter PC.
+3. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
+4. **Call Antonio, 713-474-3899** — said *"come replace"* his copper, still not
+   called back.
+5. **Janell Dumas** — AutoPay/Paperless was declined at the order, and the
+   Spectrum port-out PIN is still needed.
+6. **Frontline Direct GHL token** (`TXw28sw0Z2rI6tcCDhJY`) returns **403**.
+   Zack's Houston book is invisible from here; an empty lookup against
+   T-OPTIMUS is NOT evidence a customer does not exist.
+
+### Known broken, measured, not yet fixed
+
+- **1,376 contacts tagged `invalid` are not invalid.** 100/100 sampled are
+  dialable; 45 are Twilio 30006 (landline — call it, don't text it), 55 have no
+  recorded error at all. Biggest recoverable pool in the CRM.
+- **974 of 2,000 leads carried a dot colour their source could not know**
+  (DealMachine has no serviceability data). Now marked `status-unverified` in
+  `OPTIMUS_DIALER_2000_labeled.csv`. ~360 of them are probably GREY.
+- **85% of the live dial queue has no dot colour at all** (sample of 100/199).
+- **The pipeline is nearly write-only** — 3,835 open, 1 won, 0 lost.
+- **Business cross-match is a 1-line `ValueError`**, fix written, NOT deployed.
+  `patches/scraper-crossmatch-fix.md`.
+- **Wireless attach rate is 4%** on 449 internet customers. ~$385 of stackable
+  attach sits on every already-closed sale.
+
+### CLOSED — do not re-propose, do not re-ask
+
+| Thing | Why it is closed |
+|---|---|
+| **Lumen states (AZ CO IA ID MN MT NE NM OR UT WA)** | Not our territory. Patrick: *"ignore Lumen deal that doesn't matter."* |
+| **Google's 20M-cell beta** | Allowlisted per DOMAIN by a Workspace admin. Workbook is on a personal Gmail account — nothing to allowlist |
+| **Using `thefiberplug.com` as the Workspace domain** | Patrick, 2026-08-30: *"no cuz I owe them $$."* Do not ask again |
+| **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
+| **Airtable** | Per-editor pricing compounds once VAs are in seats |
+| **Recycle leads forever** | Patrick settled it: *"6 attempts ok that's enough"* |
+| **A DealMachine→GHL connector** | No first-party integration exists; we already call both APIs directly, which is better |
+| **A2P as the cause of the 405** | It was a fake SMS provider. Fixed by switching to LeadConnector |
+| **`scrub_dnc` on a DealMachine export** | Registry DNC is recorded and dialed anyway; scrubbing deletes >half the list |
+| **Naming the dealership in a customer text** | *"don't say optimus / we're att"* |
+
+### The three rules that outrank everything below
+
+1. **RULE 0 — ASK BEFORE YOU PUSH.** Reading, diagnosing, writing and testing a
+   fix are free. Pushing is the line. Patrick: *"don't ever break software!!"*
+2. **NO NEW PROGRAMS.** Two exist — the Fiber Hunter and the Maps Scraper. New
+   capability goes INSIDE one of them, running by itself. A `.bat` a human must
+   remember to run is a failure, not a deliverable.
+3. **NO COMMISSION NUMBERS anywhere Ara or a VA can see.** Check the recipient
+   list before sending to more than one person.
+
+---
+
 
 ## Who and what
 
