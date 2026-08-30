@@ -2722,3 +2722,88 @@ Markets are Angleton, La Porte, Beaumont, Houston.
 `TYPE_SMS` from a real `+1` number — but 300 in one hour on a Saturday night
 across four numbers is the shape of ramp that shows up later as carrier
 filtering, not as an immediate error.
+
+## HOW GOOD ARE THE NUMBERS WE DIAL — MEASURED 2026-08-29
+
+Patrick asked. Measured against the DealMachine source export (`dm.csv`,
+2,000 people / 2,893 phones), the merged dialer file
+(`OPTIMUS_DIALER_FULL.csv`, 3,538 rows) and live GHL tag counts.
+**Verdict: the numbers themselves are clean. The TAGS are what is wrong.**
+
+**Structural quality is perfect.** Across 3,538 dial rows: zero structurally
+impossible NANP numbers, zero toll-free switchboards, zero junk patterns
+(`1111111111`), zero duplicates, zero rows with no phone. Nothing to clean.
+
+**Line type: 57% verified, 43% unknown.**
+
+| Source | Rows | Line type |
+|---|---|---|
+| DealMachine | 2,002 (56.6%) | **100% typed `Wireless`** — 2,893 of 2,893 phones, zero landlines, because the export used `mobile_only` |
+| Scanner + Maps scraper | 1,536 (43.4%) | **Unknown.** Neither tool ever checks line type |
+
+Multi-phone coverage is good: 1,243 people with 1 number, 615 with 2, 140 with
+3. Only 2 of 2,000 had no phone at all.
+
+### The `invalid` tag is lying, and it has written off 1,376 contacts
+
+`invalid` is applied on a **Twilio 30006**, which means *this number cannot
+receive SMS* — which usually means **landline**. A landline is not a bad
+number. It is a number you CALL.
+
+Sampled 100 of the 1,376 contacts tagged `invalid` in T-OPTIMUS Houston:
+
+| What the tag actually meant | Count |
+|---|---|
+| Twilio 30006 — landline, textable=no, **callable=yes** | 45 |
+| Tagged `invalid` with **no recorded error at all** | 55 |
+| Genuinely bad phone number | **0** |
+
+**100 of 100 are dialable.** 83 carry a real street address. 16 are already
+also tagged `no-answer`, so somebody did dial them and they simply did not pick
+up — which is not a data fault, it is attempt one of six.
+
+Example: Rigoberto Deleon, 340 Norvell St Beaumont, `beaumont gold pockets`,
+tagged `landline` + `att-fiber-30006` + `invalid` + `no-answer`. A gold
+copper-upgrade lead at a real address, marked invalid.
+
+**Fix is a relabel, not a scrub:** a 30006 means *route to the dialer*, never
+*discard*. `invalid` should be reserved for a number that is structurally bad
+or that the carrier says does not exist. Nothing currently sets it that way.
+
+### Out-of-state area codes are PORTABILITY, not bad joins — settled by test
+
+306 of 3,289 Texas-address rows (9.3%) carry a non-Texas area code. Natural
+experiment to decide whether those are join errors: DealMachine rows are joined
+off the property record and are high-confidence, so compare the two pools.
+
+| Pool | TX-address rows | Out-of-state area code |
+|---|---|---|
+| DealMachine-verified | 2,002 | 191 = **9.5%** |
+| Unverified (scanner/Maps) | 1,287 | 115 = **8.9%** |
+
+**Identical.** If these were bad joins the unverified pool would be far worse.
+The top out-of-state code in BOTH pools is **337 — Lake Charles, Louisiana**,
+next door to Beaumont. These are people who moved and kept their cell.
+
+**Do not strip a row because its area code is out of state.** This generalises
+Patrick's Oklahoma correction of 2026-08-28: judge a row on whether the number
+is real and reaches the person, never on whether the area code matches the
+state. The rule that still holds is the narrow one — an area code that matches
+neither the address NOR any plausible move, on a row with other join smells.
+
+### DNC: 53% of phones are registry-flagged
+
+1,537 of 2,893 phones flagged `yes`, 1,356 `no`. Per Patrick's standing call
+these are recorded and dialed anyway. Worth stating plainly: **anyone who
+scrubbed DNC would delete more than half the list.** Never `scrub_dnc`.
+
+### What is actually worth fixing
+
+1. **Relabel the 1,376.** None are bad numbers; up to all of them are callable.
+   This is the single biggest recoverable pool in the CRM.
+2. **Line type on the 1,536 unverified rows** is unknown. DealMachine
+   `enrich_phone` types a number but returns `no_match` on business lines, so
+   this is a residential-only fix.
+3. **Only 31 of 7,558 GHL contacts carry ANY line-type tag** (13 `landline`,
+   18 `wireless-textable`). The field exists in the source data and is being
+   thrown away on import.
