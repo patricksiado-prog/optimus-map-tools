@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 16:55 CDT
+# CURRENT STATE — updated 2026-08-30 13:45 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -21,11 +21,26 @@ beta" survive four sessions unchecked.
 
 ### Is the machine running?
 
-- **Scanner: STALLED, 13 hours and counting.** MEASURED 2026-08-30 16:50 CDT —
-  `fileSize` **8,499,354**, byte-identical to the 07:05 reading and to 03:42.
-  Run `20260830-033539` wrote ~810 rows then stopped. Heartbeat frozen at
-  `sweep_start` 03:40. Sweeping **Pensacola FL**. Remedy is the AT&T re-login
-  below. Nothing else in the machine moves until this does.
+- **Scanner: CAPTURING FINE. THE WRITE IS BROKEN. This is NOT the AT&T login.**
+  MEASURED 2026-08-30 13:40 CDT off feed `20260830-033539` (generated 13:37:10).
+  10-hour Pensacola sweep: **37,177 addresses decoded** — green 26,965, grey
+  9,924, **gold 208**, unknown 80 — and **`written: 0`, `failed_writes: 2,805`**.
+  `auth_ok: true`, `delivery: DATA_OK`, `first_failure: "written"`. It logged in
+  at 03:38 and never lost the session. **The earlier "stalled, needs the AT&T
+  re-login" reading was wrong** — that was inferred from a flat `fileSize`
+  without reading the feed, and a flat fileSize has two causes, not one.
+- **The workbook is refusing writes.** `fileSize` **8,499,354** and
+  `modifiedTime` **10:18 UTC**, byte-identical across 07:05, 11:5x and 13:40
+  CDT checks. Nothing has landed in ~8 hours while the hunter kept capturing.
+  Rows park to disk and replay, so the capture is not lost — but it is not
+  delivered. Most likely the 10M-cell ceiling; `Precise Fiber` alone is ~8.4M.
+  **This promotes the split sheet from a plan to the fix.**
+- **GOLD CAPTURE IS WORKING AGAIN — 208 copper in one run.** The Aug 27 audit
+  found `classified_gold: 0` across 452,736 addresses and called it the
+  highest-value thing to diagnose. It is no longer zero. Do not re-open it.
+- One login specimen in the same feed shows `USERNAME=zg431x` returning
+  *"Authentication failed"* before the successful login. `auth_expired: 5`.
+  Worth a glance if logins get flaky; it did not stop this run.
 - **`latest.json` written at launch is an all-zero STUB, not a failure.** Run
   `20260830-033946` shows every counter at 0 because it had just started.
   Check `run_id` and `generated_at` before calling capture broken.
@@ -54,17 +69,19 @@ the session that made them. That is the answer to "why did my email stop".
 
 ### Blocked on Patrick — nothing moves until he does these
 
-1. **Forward the lead files to Christian and import `CHRISTIAN_DIALER_775.csv`**
-   (775 rows, priority-ordered, import-safe; his brief already went out —
-   Gmail `1a0538e1c022b287`). Then import `ENRICHED_TAB.csv` into the workbook
-   as a new tab so the sheet records what has been enriched. No API path exists
-   for either; a CSV import is the only way. ~2 minutes each.
-1b. **`OPTIMUS_DIALER_2000_labeled.csv`** (2,000 rows) is still unimported and
-   still the bigger pool behind the 775.
-2. **Split-sheet wiring, while nothing is running:** share
+1. **THE SPLIT SHEET IS NOW THE BOTTLENECK, not insurance.** The hunter is
+   capturing and the workbook is refusing every write (`written: 0` /
+   `failed_writes: 2,805` in a 10-hour run). Two steps: share
    `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` with
    `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, then put that ID
-   in `~/optimus/optimus_sheet_id.txt` on the hunter PC.
+   in `~/optimus/optimus_sheet_id.txt` on the hunter PC. Do it while the sweep
+   is idle — redirecting mid-run loses the night.
+1b. **`CHRISTIAN_DIALER_775.csv` IMPORT IS DONE** — MEASURED 2026-08-30 13:39
+   CDT: **684 contacts tagged `beaumont-gold-pocket`** in T-OPTIMUS Houston,
+   `medium: csv_import`, newest 13:29 CDT, being split across agents (`agt4`,
+   `agt5`). The dialer queue was 199 yesterday. Still open: import
+   `ENRICHED_TAB.csv` as a workbook tab, and `OPTIMUS_DIALER_2000_labeled.csv`
+   (2,000 rows) remains the bigger pool behind the 775.
 3. **DealMachine credits expire Tue 2 Sep — 7,137 unspent of 30,000.**
    MEASURED 2026-08-30. They do not roll over. Bulk export runs under 1 credit
    per lead, so this is thousands of leads if spent before the cycle ends.
