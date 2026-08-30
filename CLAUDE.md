@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 07:15 CDT
+# CURRENT STATE — updated 2026-08-30 16:55 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -21,11 +21,11 @@ beta" survive four sessions unchecked.
 
 ### Is the machine running?
 
-- **Scanner: STALLED.** MEASURED 2026-08-30 07:05 CDT. Run `20260830-033539`
-  launched 03:35, wrote ~810 rows (**8,488,776 → 8,499,354**), then stopped at
-  03:42. `fileSize` FLAT for 3.5h; `modifiedTime` 05:18 (touched, nothing
-  landing); heartbeat frozen at `sweep_start` 03:40. Sweeping **Pensacola FL**.
-  Remedy is the AT&T re-login below.
+- **Scanner: STALLED, 13 hours and counting.** MEASURED 2026-08-30 16:50 CDT —
+  `fileSize` **8,499,354**, byte-identical to the 07:05 reading and to 03:42.
+  Run `20260830-033539` wrote ~810 rows then stopped. Heartbeat frozen at
+  `sweep_start` 03:40. Sweeping **Pensacola FL**. Remedy is the AT&T re-login
+  below. Nothing else in the machine moves until this does.
 - **`latest.json` written at launch is an all-zero STUB, not a failure.** Run
   `20260830-033946` shows every counter at 0 because it had just started.
   Check `run_id` and `generated_at` before calling capture broken.
@@ -44,7 +44,7 @@ beta" survive four sessions unchecked.
 
 | Thing | ID | State |
 |---|---|---|
-| SMS routine, 200/day (65 resi / 35 biz), 11am + 4pm CT | `trig_018JYeQpvcgfrmBxc46Vv967` | **ENABLED.** Prompt carries the verified offer detail + volume governor |
+| SMS routine — **Beaumont gold pocket first**, 200/day, 11am + 4pm CT | `trig_018JYeQpvcgfrmBxc46Vv967` | **ENABLED.** Prompt carries PRIORITY #1 (`beaumont-gold-pocket` + `status-verified`), the verified offer detail, the volume governor, and skip-the-33 |
 | AM coverage-gap email | `trig_01JTQKnB2U5ihS1mC4rpX2qy` | live, 12:00 UTC |
 | PM coverage-gap email | `trig_01RjAUBz16UNpdDzK2neCz37` | live, 22:30 UTC |
 | GHL no-answer auto-text, from `+13468106925` | GHL workflow | **LIVE — DO NOT TOUCH.** Patrick: *"don't break that template that is working"* |
@@ -54,8 +54,13 @@ the session that made them. That is the answer to "why did my email stop".
 
 ### Blocked on Patrick — nothing moves until he does these
 
-1. **Import `OPTIMUS_DIALER_2000_labeled.csv`** (2,000 rows, import-safe). No
-   API path exists; a GHL CSV import is the only way. ~2 minutes.
+1. **Forward the lead files to Christian and import `CHRISTIAN_DIALER_775.csv`**
+   (775 rows, priority-ordered, import-safe; his brief already went out —
+   Gmail `1a0538e1c022b287`). Then import `ENRICHED_TAB.csv` into the workbook
+   as a new tab so the sheet records what has been enriched. No API path exists
+   for either; a CSV import is the only way. ~2 minutes each.
+1b. **`OPTIMUS_DIALER_2000_labeled.csv`** (2,000 rows) is still unimported and
+   still the bigger pool behind the 775.
 2. **Split-sheet wiring, while nothing is running:** share
    `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` with
    `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, then put that ID
@@ -3095,3 +3100,88 @@ The order of work is now, with owners named:
 | 2 | Move `Precise Fiber` to the split sheet | Patrick (share + id file), while idle | ~8.4M cells, months |
 | 3 | One row per ADDRESS instead of one per sighting | us, ~1 day | growth stops entirely, and the new-fiber diff falls out free |
 | 4 | BigQuery + Connected Sheets | us, later | no ceiling at all |
+
+## THE VERIFIED-COLOUR LEAD SET — 2026-08-30
+
+Patrick, with ~48 CSV uploads: *"give me the best leads u can / green gold /
+upgrades cell #s / biss in new area / or gold area based on gold dot
+concentration / get them to Christian and put in dialer on repeat dnd send her
+and text 300 of them an appropriate text ... clean the sheet / and add to sheet
+the data u already enriched so sheet knows."*
+
+**MEASURED 2026-08-30.** All 48 uploads merged and deduped on last-10-digits:
+**3,549 unique people.** The number that matters is the second one —
+**300 carry a VERIFIED gold-dot reference in their notes**, meaning the colour
+was matched against an actual scanner dot. That is the thing the 974
+colour-by-default rows of 2026-08-29 did not have, and it is the whole basis of
+the ranking.
+
+### The gold concentration — where fiber lit and nobody converted
+
+MEASURED by counting gold-dot street references across the merged set:
+
+| 77706 pocket | | 77707 pocket | |
+|---|---|---|---|
+| STACEWOOD | 148 | LANGHAM | 84 |
+| NORWOOD | 125 | POTTER | 76 |
+| SHAKESPEARE | 100 | | |
+| GALWAY | 73 | | |
+| MONTERREY | 69 | | |
+
+Both Beaumont. Dense copper with fiber at the curb = recently lit, unworked.
+
+### What shipped
+
+| File | Rows | Textable | What it is |
+|---|---|---|---|
+| `1_GOLD_UPGRADES_verified.csv` | 300 | 280 | Copper upgrades, colour OBSERVED. All Beaumont |
+| `2_GREEN_in_gold_pocket.csv` | 337 | 295 | Green inside a gold pocket |
+| `3_GREEN_other.csv` | 2,774 | — | Overflow. Least-certain colour. NOT for loading |
+| `4_BUSINESS.csv` | 138 | 131 | 54 Houston, rest unaddressed |
+| `CHRISTIAN_DIALER_775.csv` | 775 | — | 1+2+4 in call order, import-safe (775 rows / 776 lines) |
+| `TEXT_REMAINING_267.csv` | 267 | — | Carries the exact message each person gets |
+
+**33 texted by hand, zero failures** — one segment each, street named, rotated
+across `+13465906578` / `+13466446468` / `+13466581556` / `+13465177523`.
+`+13468106925` deliberately excluded: that is the live no-answer workflow's
+number and stacking on it is how a caller ID burns. All 33 upserted with
+`GOLD-UPGRADE, type-copper, beaumont-gold-pocket, status-verified, dial-aug30,
+power dialer queue`.
+
+**The remaining 267 are not hand-sent — the routine takes them.**
+`trig_018JYeQpvcgfrmBxc46Vv967` renamed *"Optimus SMS — 200/day, Beaumont gold
+pocket first (11am + 4pm CT)"*, prompt rewritten with a **PRIORITY #1** block
+pointing at `beaumont-gold-pocket` + `status-verified`, the six proven gold
+variants that name the street, an exclusion for `status-unverified`, and a note
+to skip the 33. **This is the lesson from 2026-08-29 applied**: a stored routine
+prompt is code, so the priority had to go INTO the prompt — putting it in the
+brain would have changed nothing.
+
+**Christian has the brief** (Gmail `1a0538e1c022b287`, cc Patrick, 2026-08-30),
+written in Claude's voice and identified as such in the first line. It carries
+the segment counts, the two pockets, the VERIFIED-vs-unverified distinction, the
+tags to branch on, the 33-already-done note, the registry-DNC-vs-STOP split, the
+six-attempt cadence with its widening gap, and that a no-answer is never
+`Not Interested`. **Files went to Patrick to forward** — they carry names and
+cells, so they do not travel through automation.
+
+### What could NOT be done from here, and why
+
+- **"Clean the sheet."** No write path exists from a Claude session — the Drive
+  connector's `update_file` changes title and parent only, never content. The
+  safe `clean_sheet` (PR #11, blocklist not whitelist) **is deployed** and runs
+  itself on a hunter launch. The scanner is stalled, so it has not launched.
+  Same blocker as everything else: the AT&T re-login.
+- **"Add to sheet the data u already enriched."** Built as
+  `ENRICHED_TAB.csv` — 775 rows: address, dot colour, VERIFIED flag, owner,
+  cell, pocket, enriched-at stamp, Status wording. ~8k cells, comfortably inside
+  the ceiling. **Sent to Patrick to import** (File → Import → Insert new sheet)
+  rather than retransmitted through a connector: the brain's own rule from
+  2026-08-28 is *never hand-retransmit a large file to make a small change*, and
+  156KB through a tool call is exactly that risk.
+
+### Scanner, re-checked the same afternoon
+
+`fileSize` **8,499,354** — **byte-identical to the 07:05 CDT stall reading**.
+`modifiedTime` 10:18 UTC. Still stopped, still on the AT&T re-login. Twelve
+hours of no capture.
