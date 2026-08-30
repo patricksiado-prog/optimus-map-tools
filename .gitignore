@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# per-session message counter for the brain-write hook
+.claude/hooks/.prompt-count

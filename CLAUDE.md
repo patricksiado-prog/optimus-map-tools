@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 13:45 CDT
+# CURRENT STATE — updated 2026-08-30 14:20 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -69,13 +69,14 @@ the session that made them. That is the answer to "why did my email stop".
 
 ### Blocked on Patrick — nothing moves until he does these
 
-1. **THE SPLIT SHEET IS NOW THE BOTTLENECK, not insurance.** The hunter is
-   capturing and the workbook is refusing every write (`written: 0` /
-   `failed_writes: 2,805` in a 10-hour run). Two steps: share
-   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` with
-   `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, then put that ID
-   in `~/optimus/optimus_sheet_id.txt` on the hunter PC. Do it while the sweep
-   is idle — redirecting mid-run loses the night.
+1. **SPLIT SHEET — the share is DONE, one step left, and it needs a yes.**
+   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` is now shared as Editor with
+   `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com` (done from a
+   session 2026-08-30). Remaining: either create `~/optimus/optimus_sheet_id.txt`
+   holding that ID on each hunter PC, **or** say go on the tested
+   `PF_SPLIT_SHEET_ID` patch so no PC needs touching. The patch is written,
+   compiled and tested but NOT pushed — it is a `_CORE_FILES` deploy, so RULE 0
+   applies. Wire it while the sweep is idle.
 1b. **`CHRISTIAN_DIALER_775.csv` IMPORT IS DONE** — MEASURED 2026-08-30 13:39
    CDT: **684 contacts tagged `beaumont-gold-pocket`** in T-OPTIMUS Houston,
    `medium: csv_import`, newest 13:29 CDT, being split across agents (`agt4`,
@@ -3202,3 +3203,93 @@ cells, so they do not travel through automation.
 `fileSize` **8,499,354** — **byte-identical to the 07:05 CDT stall reading**.
 `modifiedTime` 10:18 UTC. Still stopped, still on the AT&T re-login. Twelve
 hours of no capture.
+
+## THE BRAIN WRITES ITSELF EVERY 5 MESSAGES NOW (Patrick, 2026-08-30)
+
+*"write to the brsin every 5th request from me plesse."*
+
+Built as a **`UserPromptSubmit` hook**, not as a rule in this file:
+`.claude/hooks/brain-write-counter.sh`, wired in `.claude/settings.json`.
+
+**Why a hook and not a rule.** A rule here is something Claude has to remember
+to obey, and forgetting is precisely the thing he was complaining about. The
+hook counts every message he sends and, on each 5th, prints a block into the
+turn saying a brain write is DUE — with the CURRENT STATE block's age and the
+number of unpushed commits already filled in. Nothing has to be remembered.
+Same reasoning as the SessionStart hook beside it, and it obeys NO NEW PROGRAMS:
+nobody runs anything, it attaches to what already exists.
+
+It never blocks and never fails a turn — prints to stdout, exits 0 regardless.
+The counter lives in `.claude/hooks/.prompt-count`, gitignored, so it is
+per-checkout and resets with the container.
+
+**The escape hatch is written into the banner on purpose:** *"Nothing new to
+record? Say so in one line and move on. Do not invent an entry to satisfy the
+counter."* A counter that forces a write every time would fill this file with
+noise, and noise is how the 20M-cell error survived four sessions.
+
+Tested 1→6: counts down on 1-4, fires the full banner on 5, resets to counting
+on 6.
+
+## THE SPLIT SHEET IS HALF-WIRED — THE SHARE IS DONE (2026-08-30)
+
+*"fix the sheet capture w extra sheet."*
+
+**DONE, by me, MEASURED 2026-08-30:** `ATT FIBER LEADS — Precise Fiber`
+(`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`) is now shared as **Editor**
+with `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`. That was step
+one of the two the brain has been listing since 2026-08-29, and it turns out a
+Claude session CAN do it — `mcp__Google_Drive__share_file` acts as Patrick, who
+owns the file. **Nobody had to be asked. It should not have sat in the blocked
+list for two days.** Check what the connector can actually do before parking a
+step as blocked-on-Patrick.
+
+The service account address is corroborated, not assumed: `optimus/README.md`
+in the hunter repo names the key `fiberscanner@fiberscanner-493900`, and
+`EXPECTED_CREDS_PROJECT = "fiberscanner-493900"` is in
+`precise_fiber_hunter.py`.
+
+### The redirect mechanism is real and it is scoped correctly
+
+Verified by reading the deployed source, not from memory:
+
+- `read_pf_redirect()` reads `~/optimus/optimus_sheet_id.txt`, accepts a bare ID
+  **or a pasted URL**, and returns None when absent — so no file means today's
+  behaviour exactly.
+- `open_pf_spreadsheet()` falls back to the production sheet **loudly** if the
+  target cannot be opened, and the printed remedy is "share it with the service
+  account". A quiet fallback here is what once made gold dots vanish for weeks.
+- **Only `Precise Fiber` moves.** `Gold Confirmed` and `Grey Fiber Customers`
+  are opened against `SHEET_ID` separately, so gold and grey stay on the master
+  workbook. Redirecting does NOT scatter the pipeline.
+- If the split sheet ever fills too, it says so and does **not** run
+  `clean_sheet()` there — that function is written for the production workbook
+  and would clear the redirect on its way out.
+
+### Step two is written and tested, NOT pushed — RULE 0
+
+The remaining step is a file on each hunter PC, which no session can create. So
+the fix written (and only written) is a `PF_SPLIT_SHEET_ID` constant in
+`precise_fiber_hunter.py` that `read_pf_redirect()` falls back to when no local
+file exists. A per-PC file still overrides it, so any machine already pointed
+somewhere keeps its own target.
+
+`py_compile` clean. Tested six ways: no file → the constant; empty file → the
+constant; a file with an ID → that ID wins; a pasted URL → parsed; junk in the
+file → None plus the existing warning, i.e. the production sheet; the constant
+blanked → None, old one-workbook behaviour. Worst case is today's behaviour.
+
+**NOT DEPLOYED. It is a `_CORE_FILES` push, which lands on every hunter PC at
+next launch, and RULE 0 says that is Patrick's call.**
+
+### And a measurement that is NOT yet explained
+
+`get_file_permissions` on the master workbook returns only `anyone: reader` and
+Patrick as owner — **no service account listed**. But the hunter wrote ~810 rows
+to it at 03:42 the same morning, so access existed. Either the connector does
+not enumerate service-account grants, or something changed. **Do not conclude
+the ceiling is the cause of `failed_writes: 2,805` until the actual error text
+is read** — a 400 (cells) and a 403 (permission) are different problems with the
+same symptom, and the feed records only a count. The split sheet is worth doing
+either way: if it is the ceiling, this fixes it; if it is permissions, the loud
+fallback will say so on the next launch.
