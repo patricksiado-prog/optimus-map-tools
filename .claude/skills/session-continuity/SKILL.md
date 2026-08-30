@@ -1,6 +1,6 @@
 ---
 name: session-continuity
-description: Keep continuity with Patrick across sessions so he never has to re-explain his business. Load at the START of every Optimus session, before answering anything — it says what to read, in what order, and how often to write findings back. Also use whenever he says you sound like a new chat, asks whether something was recorded, says "put that in the brain", corrects a fact you had wrong, or gives a decision that a future session would otherwise lose.
+description: Optimus memory discipline — how to read the brain, keep its CURRENT STATE block true, and never repeat an unverified claim to Patrick. Use this skill aggressively, not just when memory is named. Trigger it whenever Patrick says you sound like a new chat, that you are not remembering, asks to improve or strengthen the memory or the brain, asks whether something was recorded or "did you put that in the brain", tells you to record or park something, corrects a fact you had wrong, kills an idea ("no", "that's not an option", "don't do that", "stop suggesting"), or states a decision, constraint, price, promo or limit that a future session would otherwise lose. Also trigger it before you repeat any external fact you told him before — a promo, a price, a product limit, a vendor policy — because repeating something unchecked is the failure this skill exists to prevent.
 ---
 
 # Session continuity — don't make him repeat himself
@@ -11,6 +11,25 @@ That is the failure this skill exists to prevent. Every session starts with zero
 memory of the last one. `CLAUDE.md` is the only thing that carries over. If a
 fact is not in it, it is gone — and he pays for that by explaining his own
 business back to you.
+
+## Three layers, because a skill alone cannot do this job
+
+Worth knowing why the machinery is shaped the way it is, so nobody
+"simplifies" it later:
+
+1. **The SessionStart hook** (`.claude/hooks/session-start.sh`, registered in
+   `.claude/settings.json`) fires on every single session with no decision
+   involved. It prints live state — how old the CURRENT STATE block is, what
+   the scanner heartbeat says, what the last session shipped. **This is the
+   only layer that cannot be forgotten**, which is precisely why it exists: a
+   skill only loads when Claude decides to consult it, and the sessions that
+   need this most are the ones that open with a plain question like "is the
+   software working" and never think to reach for a skill.
+2. **The CURRENT STATE block** at the top of `CLAUDE.md` is the answer sheet.
+3. **This skill** is the discipline for keeping the block true.
+
+If continuity is failing, check the layers in that order. A hook that stopped
+firing looks exactly like a model that stopped caring.
 
 ## Open every session by telling him state, not by asking him anything
 
