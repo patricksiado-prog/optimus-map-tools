@@ -12,6 +12,17 @@ memory of the last one. `CLAUDE.md` is the only thing that carries over. If a
 fact is not in it, it is gone — and he pays for that by explaining his own
 business back to you.
 
+## Open every session by telling him state, not by asking him anything
+
+The tell that you did not read is a question he has already answered. The tell
+that you did is opening with a number he did not have to ask for.
+
+Before the first reply of a session, know these four and lead with whichever he
+touched: **is the scanner writing** (workbook `modifiedTime` AND `fileSize` —
+a size that has not moved means nothing is landing, whatever the console says),
+**what came back overnight** (replies and opt-outs in GHL, none of them called),
+**what is blocked on him**, and **what the last session shipped** (`git log`).
+
 ## Read before you answer (60 seconds, every session)
 
 1. **`CLAUDE.md`** — loads automatically. Actually read it, especially the
@@ -48,6 +59,45 @@ off, and everything unwritten dies with them. Write in small pieces as you go.
 
 Commit message says what changed. Push every time — an unpushed commit is not
 memory, it is a local file in a container that gets reclaimed.
+
+## The rot problem — an unverified claim is worse than a forgotten one
+
+Patrick, 2026-08-30: *"u keep saying 20 million cell google thing but why isn't
+that an option?"* He was right. A recommendation went into the brain once on
+2026-08-26, was never checked, and got read back out as fact in four separate
+sessions — each repetition making it sound better established. When it was
+finally verified it turned out to be **allowlisted per domain by a Workspace
+admin**, and the sheet is on a personal Gmail account, so it was never
+available at all.
+
+**That is what "you don't feel like you're remembering" actually means.** Not
+gaps — confidently repeating something nobody ever checked. A forgotten fact
+gets looked up again. A confidently wrong one never does.
+
+Three rules, and they are the point of this skill as much as the write cadence:
+
+**1. Mark every claim MEASURED or ASSUMED, and date it.**
+A measured claim carries the number, the date, and how it was measured, so the
+next session can re-measure it. An assumed one says so out loud. Right now the
+brain writes both in the same confident voice, which is exactly why an
+unchecked recommendation reads like a verified count.
+
+**2. Re-verify before repeating.**
+Any external fact — a price, a promo, a product limit, a vendor policy, an API
+capability — gets re-checked before it goes to Patrick a *second* time. Promos
+move monthly. Betas close. Limits change. If it cannot be checked this turn,
+say "unverified" in the same sentence rather than restating it clean.
+
+**3. Every recommendation names WHO can do it.**
+"Fill out the form" survived four sessions because nobody asked who was
+eligible to fill it out. A recommendation without an actor is a wish, and a
+parked item with no owner is where wishes go to look like plans. Name the
+person: Patrick, Churchie, Christian, a Workspace admin, or us.
+
+**When Patrick pushes back on something you have said before, treat that as a
+signal the claim was never verified** — check it before defending it. He is
+usually pushing because it has not moved, and things that do not move are
+usually things nobody could actually do.
 
 ## What to write, and what not to
 
