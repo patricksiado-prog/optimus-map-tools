@@ -2807,3 +2807,79 @@ scrubbed DNC would delete more than half the list.** Never `scrub_dnc`.
 3. **Only 31 of 7,558 GHL contacts carry ANY line-type tag** (13 `landline`,
    18 `wireless-textable`). The field exists in the source data and is being
    thrown away on import.
+
+## WHY PEOPLE SAY "I ALREADY HAVE FIBER" — COLOUR BY DEFAULT (2026-08-29)
+
+Patrick: *"a few people said they have fiber check it."* They are right, and the
+cause is measured. **Leads are carrying a dot colour their source could never
+have known.** This is the gold-by-default bug of 2026-08-23 reborn on the other
+colour: a label assigned because it was missing, not because it was measured.
+
+### DealMachine has NO serviceability data. It never did.
+
+DealMachine returns property owners, phones, emails and DNC. It knows nothing
+about whether AT&T fiber is at an address or whether the household is already
+an AT&T customer. Only the scanner dots know that.
+
+Measured against `OPTIMUS_DIALER_2000.csv`:
+
+| Label written on the row | Came from DealMachine (cannot know) | Came from scanner/Maps (can know) |
+|---|---|---|
+| GREEN | **732** | 390 |
+| COPPER | **242** | 275 |
+| GREEN BUSINESS | 0 | 342 |
+| COPPER BUSINESS | 0 | 19 |
+
+**974 of 2,000 rows (49%) carry a colour that was inferred, not observed.**
+65% of every GREEN residential row in that file is a guess.
+
+The run feed says the real split of classified addresses is green 413,493 /
+grey 247,663 / gold 1,997 — **grey is 37.4%**. Apply that to 974 unverified
+rows and roughly **360 of them are likely GREY: existing AT&T fiber customers
+who must never be dialled.** That is exactly the rate of "I already have fiber"
+coming back off the phones and the texts.
+
+**Danielle Graham is the worked example.** Replied *"No. We already have
+fiber."* Her contact carries `fiber-resi`, `angleton`, `aug22-batch`,
+`dm-sourced` — and **no dot-colour tag of any kind**. Source line reads
+"AT&T Fiber - Angleton 77515 resi - Aug 22". Nothing ever checked her.
+
+### The live dial queue is worse: 85% has no colour at all
+
+Sampled 100 of the 199 contacts tagged `power dialer queue`:
+
+| Dot colour on the row | Count |
+|---|---|
+| **NO DOT COLOUR AT ALL** | **85** |
+| Tagged BOTH gold and green (contradictory) | 9 |
+| GOLD / copper | 4 |
+| GREEN | 2 |
+| GREY | 0 — but grey is never tagged, so this proves nothing |
+
+Only 6 of 100 carry one clean, trustworthy colour. Top sources are
+`Fiber Green Biz - new match` (50), `Houston_Leads_Full.xlsx` (33) and
+`Optimus Precise Fiber - Beaumont` (12).
+
+**Zero grey tags is not reassurance.** Nothing writes a grey tag, so grey and
+green are indistinguishable in the CRM. The absence of the label is the bug.
+
+### And there is a second, historical leak
+
+`Precise Fiber` held EVERY colour until it was made green-only on 2026-08-26.
+Any list built off that tab before that date contains grey by construction. The
+`Optimus Precise Fiber - Beaumont` contacts sit right on that boundary.
+
+### The fix is an address join, not more enrichment
+
+Every unverified row has a full street address. The scanner rows have address
+plus observed colour. Match on **normalised address (ZIP + house number, then
+street)** and the real colour drops in. Rows that find no match are UNKNOWN and
+should be labelled unknown rather than green.
+
+**Rule that follows: never write a dot colour a source could not observe.**
+A DealMachine row is colour-UNKNOWN until it is joined to a scanner dot. Green
+is a measurement, not a default. Same discipline that killed gold-by-default.
+
+**Cost of getting this wrong is not neutral.** A grey customer dialled as green
+is a wasted dial, a rep pitching a switch to someone who already bought, and
+the fastest way to make a good list feel like a bad one.
