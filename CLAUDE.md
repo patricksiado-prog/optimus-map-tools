@@ -817,8 +817,10 @@ The three things waiting on him, in order:
 1. ~~`FREE_SPACE.bat`~~ **RETIRED 2026-08-27** — the grid shrink now runs
    automatically inside the scraper the moment a write hits the FULL 400.
    Nobody runs anything. The parked batches replay themselves after it.
-2. **Register for Google's 20M-cell beta** — doubles the limit, applies to
-   EXISTING files, free, no migration. The cheapest headroom available.
+2. ~~**Register for Google's 20M-cell beta**~~ — **PROBABLY NOT AVAILABLE TO US.
+   Corrected 2026-08-30, see the section below.** The beta is allowlisted per
+   DOMAIN by a Workspace admin; the sheet is owned by a personal Gmail account,
+   which has neither. Stop recommending this until someone confirms eligibility.
 3. **Decide on one-row-per-address + the diff** — the permanent fix, and the
    answer to "how do I find all the new fiber". ~1 day each.
 
@@ -2883,3 +2885,69 @@ is a measurement, not a default. Same discipline that killed gold-by-default.
 **Cost of getting this wrong is not neutral.** A grey customer dialled as green
 is a wasted dial, a rep pitching a switch to someone who already bought, and
 the fastest way to make a good list feel like a bad one.
+
+## THE 20M-CELL BETA IS PROBABLY NOT AVAILABLE TO US — CORRECTION (2026-08-30)
+
+Patrick: *"u keep saying 20 million cell google thing but why isn't that an
+option?"* He was right to push. **It had never been checked.**
+
+The brain has said "register for the 20M-cell beta — free, applies to existing
+files, no migration, it is a form" since 2026-08-26, and repeated it to him at
+least four times. Verified 2026-08-30 for the first time:
+
+- The **performance improvements** shipped to Workspace AND personal accounts.
+  That part is real and already applies.
+- The **20,000,000-cell limit is a separate beta, allowlisted per DOMAIN.**
+  Google's own wording: register your *organization*, wait for confirmation
+  that your *domain* has been allowlisted, and the control sits with *admins*.
+  Access is granted in waves, so registration is not instant either.
+
+**`ATT FIBER LEADS` is owned by `patricksiado@gmail.com` — a personal Gmail
+account. It has no domain and no admin console, so there is nothing to
+allowlist.** On the evidence available the beta cannot be requested for it at
+all. One secondary source claims personal accounts can register; the primary
+wording says organization/domain/admin. **Sources conflict — treat this as
+probably-unavailable, not proven-unavailable, and do not quote it as a plan.**
+
+**The one real path, and it needs checking rather than assuming:**
+`thefiberplug.com` is a live domain on this account. If it is a Google
+Workspace domain, an admin there could register it and the workbook could be
+moved to an account on that domain. That is a genuine option, and it is a
+question for Patrick, not a task to start.
+
+**So the storage plan is now two items, not three:** the one-row-per-address
+change (the real fix, and it hands over the new-fiber diff for free), then
+BigQuery + Connected Sheets when the footprint outgrows even that.
+
+## THE HABIT THAT PRODUCED THAT ERROR — AND THE FIX (2026-08-30)
+
+Same day Patrick said *"can u strengthen your memory brain writing i don't feel
+like u are rembering things."* The 20M-cell answer is the worked example of
+what he was feeling, and it is worth naming precisely, because "remember more"
+is not an actionable instruction.
+
+**The failure was not forgetting. It was remembering something unverified and
+repeating it with confidence.** A recommendation got written into the brain
+once, was never checked, and then got read back out as fact in four separate
+sessions. Each repetition made it sound better established than it was. That is
+worse than forgetting — a forgotten fact gets looked up again; a confidently
+wrong one never does.
+
+**Three rules now in `.claude/skills/session-continuity/`:**
+
+1. **Mark every claim MEASURED or ASSUMED, and date it.** A measured number
+   carries how it was measured so it can be re-measured. An assumed one is
+   flagged as assumed. The brain currently mixes both in the same voice, which
+   is why an unchecked recommendation reads exactly like a verified count.
+2. **Re-verify before repeating.** Any recommendation, price, promo, limit or
+   external fact gets re-checked before it goes to Patrick a second time. If it
+   cannot be checked this turn, say it is unverified.
+3. **Every recommendation names WHO can do it.** "Fill out the form" survived
+   four sessions because nobody ever asked who was eligible to fill it out. A
+   recommendation without an actor is a wish, and a parked item with no owner
+   is where wishes go to look like plans.
+
+**The counts held up.** Everything measured this session — 1,376 mislabelled
+`invalid`, 974 colour-by-default rows, 85% of the dial queue with no colour,
+the +10,578-byte write — was re-derived from live sources. It is the
+un-sourced recommendations that rotted.
