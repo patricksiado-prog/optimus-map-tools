@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 14:40 CDT
+# CURRENT STATE — updated 2026-08-30 17:45 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -21,7 +21,12 @@ beta" survive four sessions unchecked.
 
 ### Is the machine running?
 
-- **Scanner: CAPTURING FINE. THE WRITE IS BROKEN. This is NOT the AT&T login.**
+- **Scanner: DOWN on the LOGIN as of 14:10 CT — and separately the WRITE is
+  broken. Two faults, do not merge them.** Run `20260830-135937` relaunched
+  13:59, `LOGGED_OUT` 14:00, `LOGIN_TIMEOUT` 14:10, exited. Remedy: log OUT of
+  youachieve.att.com, close the browser, log back in, relaunch. That does NOT
+  fix the write failure below.
+- **The morning run: CAPTURED FINE, WROTE NOTHING.**
   MEASURED 2026-08-30 13:40 CDT off feed `20260830-033539` (generated 13:37:10).
   10-hour Pensacola sweep: **37,177 addresses decoded** — green 26,965, grey
   9,924, **gold 208**, unknown 80 — and **`written: 0`, `failed_writes: 2,805`**.
@@ -3371,3 +3376,84 @@ attempt was 3 lines short and would have shipped a hunter with no
 the hunter wrote ~810 rows to it hours earlier. The split sheet is right either
 way, but **do not claim the ceiling was the cause until a launch prints the
 actual error.**
+
+## THE LANDLINE TEXT COST 10 VERIFIED GOLD LEADS — 2026-08-30 4:15pm CT
+
+MEASURED off the live conversations. The 4:07pm SMS run sent, and **10 of 10
+failed**:
+
+```
+status: failed
+error: "Error 30006 - Landline or non-mobile number. Cannot receive SMS."
+from: +13466446468
+```
+
+Then GHL wrote **`DnD enabled by customer`** on every one, plus the tags
+`invalid` and `landline`. Bradley Taylor, Brenda Osborne, David Olsen, Gail
+Runyon, Mark Blalack, Patsy Yennie, Sherita Alexander, Suzanne Lewis, Mary
+Allen, Mustafa Musa — **every one a `status-verified` copper upgrade in the
+Beaumont gold pocket**, i.e. the most valuable rows in the system.
+
+**They did not opt out. They have landlines.** Left alone they now read as
+opted-out forever, which is the 1,376-contact mislabelling happening again in
+real time, on better leads.
+
+### The prediction was made the same morning and not acted on
+
+Hours earlier this file recorded: *"`Text OK: YES` is only a hard fact on the
+rows that came through DealMachine... On rows sourced from the scanner and Maps
+scraper, neither tool ever checks line type — so YES there means 'nothing said
+it was a landline', not 'confirmed mobile'."*
+
+That assumption was then fed straight into a send. **Naming a risk is not
+mitigating it.** The lesson is narrow and mechanical: when a field is known to
+be an assumption, either verify it before the action that depends on it or
+exclude those rows from that action. `enrich_phone` types a number and would
+have caught all ten.
+
+**Never let a send list inherit `textable` from a source that cannot know it.**
+Split every batch into confirmed-mobile and everything-else; everything-else
+goes to the dialer.
+
+### The cleanup, and it is not optional
+
+Strip DND and `invalid` from those 10, add `landline` + `call-only`, keep them
+in the dial queue. Sent to Churchie 2026-08-30 with the names.
+
+## CAPTURE — TWO DIFFERENT FAILURES IN ONE DAY (2026-08-30)
+
+Do not collapse these. They have different remedies.
+
+| Run | What happened |
+|---|---|
+| `20260830-033539` | Logged in fine, 10 hours, **37,177 addresses decoded, `written: 0`, `failed_writes: 2,805`**. A WRITE failure |
+| `20260830-135937` | Relaunched 13:59, `LOGGED_OUT` 14:00, **`LOGIN_TIMEOUT` 14:10**, exited. A LOGIN failure |
+
+So the AT&T re-login IS now required — but it was NOT the cause of the morning's
+zero writes, and saying so would repeat this morning's wrong diagnosis in
+reverse. Read the feed, not the file size.
+
+Workbook at 17:40 CT: `fileSize` **8,499,354**, unchanged all day; `modifiedTime`
+moving (22:37Z). Touched, nothing landing — the exact signature the liveness rule
+describes.
+
+## THE LOOP CLOSED END TO END TODAY (2026-08-30)
+
+MEASURED. Worth recording because it is the first time this batch ran the whole
+way through without a human carrying it between steps:
+
+- **684 contacts** tagged `beaumont-gold-pocket` imported (`medium: csv_import`),
+  split across `agt4` / `agt5` / `agt6`. The dialer queue was 199 on 29 Aug.
+- A rep worked them the same afternoon: outbound call to Alexandra Hartsfield
+  3:01pm, nine no-answer dispositions ~2:22pm, a manual text at 5:09pm
+  (*"Hi it's patrick w att can we talk for a sec"*).
+- One inbound reply all day (Adrian Richardson 3:43pm), answered at 3:44pm.
+  **Zero replies left uncalled** — the number the PM edition exists to protect.
+
+Pipeline still **3,695 open / 1 won / 0 lost**, every `monetaryValue` 0. Close
+rate, cost per customer and profit per activity stay NOT COMPUTABLE.
+
+**One oddity worth watching:** the internal "Adrian replied" alert to Patrick's
+phone routed through `conversationProviderId 6958de9aca6f38b289d7f65e` — the
+dead **SMS Demo Provider** from the 405 saga. Customer sends are clean
+(`TYPE_SMS`, real `+1` from). His own alerts may not be arriving.
