@@ -2951,3 +2951,36 @@ wrong one never does.
 `invalid`, 974 colour-by-default rows, 85% of the dial queue with no colour,
 the +10,578-byte write — was re-derived from live sources. It is the
 un-sourced recommendations that rotted.
+
+## THE DOMAIN ROUTE TO 20M CELLS IS CLOSED (Patrick, 2026-08-30)
+
+Asked whether `thefiberplug.com` could be used as the Workspace domain to
+register the 20M-cell beta. Patrick: *"no cuz I owe them $$."* **Closed. Do not
+re-propose it, and do not ask him about it again.**
+
+**So the 20M-cell limit is off the table entirely** — the beta is allowlisted
+per domain by a Workspace admin, the workbook sits on a personal Gmail account,
+and the one domain in reach is unavailable for reasons that are his business.
+Every future session should treat 10,000,000 cells as a hard ceiling with no
+negotiation available.
+
+**That promotes the split sheet from insurance to the near-term plan.**
+`Precise Fiber` alone is ~8.4M of the 10M cells — roughly 84% of the workbook —
+so moving that ONE tab into its own spreadsheet is the only move that buys real
+room without a code change. The empty split sheet already exists
+(`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`, created 2026-08-29, still
+1,024 bytes, never written). It needs two things and neither has been done:
+share it with `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`, and
+put that sheet ID in `~/optimus/optimus_sheet_id.txt` on the hunter PC.
+
+**Wire it up while nothing is running.** Redirecting where the scanner writes
+mid-run is how a working night gets lost.
+
+The order of work is now, with owners named:
+
+| # | Move | Who | Buys |
+|---|---|---|---|
+| 1 | Delete the frozen `TEST-*` tabs (safe `clean_sheet` deployed, PR #11) | runs itself on a hunter launch | ~200k cells, days |
+| 2 | Move `Precise Fiber` to the split sheet | Patrick (share + id file), while idle | ~8.4M cells, months |
+| 3 | One row per ADDRESS instead of one per sighting | us, ~1 day | growth stops entirely, and the new-fiber diff falls out free |
+| 4 | BigQuery + Connected Sheets | us, later | no ceiling at all |
