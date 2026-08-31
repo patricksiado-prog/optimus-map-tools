@@ -3632,3 +3632,90 @@ on the funding table, not the $135 migration tier.
    at least discussed. That is the attach conversation the 4%-attach finding
    says is worth ~$385 on a sale already closed. Worth asking Dave whether the
    phone lines actually went on the account or just the discount.
+
+## THE 1PM BLAST FAILED 100% — AND THE CAUSE WAS A SILENT NUMBER SWAP (2026-08-31)
+
+Patrick said "send text blast." 88 individually-written texts went out to the
+Beaumont gold pocket at ~2:14pm CT. **Every single one failed. Zero delivered.**
+Two causes, both measured.
+
+### 1. ALL FIVE OUTBOUND NUMBERS WERE REPLACED TODAY
+
+`list_active_numbers_by_location` on `xZj500PjsflIQg2j9f9D`, MEASURED
+2026-08-31 ~14:25 CT. Every number in the account was added **TODAY**:
+
+| Number | Name | Added (UTC) |
+|---|---|---|
+| **`+13465178890`** | dave's number | 15:00:52 — **THIS IS THE DEFAULT** |
+| `+13466801947` | dave's number 2 | 15:01:34 |
+| `+13465940630` | dave's number 3 | 15:02:25 |
+| `+13466631324` | dave's number 4 | 15:33:46 |
+| `+13466576204` | dave's number 5 | 17:52:22 |
+
+**Every number this brain has ever recorded is GONE from the account:**
+`+13465906578`, `+13466446468`, `+13466581556`, `+13465177523` (the Aug 29-30
+rotation), plus `+13468106925`, `+13466603810`, `+13466710729`, `+13464844979`.
+Sending from any of them now returns
+`Failed: Invalid from number. Number not available in account.`
+
+**This also solves this morning's "mystery sixth number."** `+13465178890` is
+not a rogue number — it is the NEW DEFAULT, created at 15:00 UTC today. The
+workflow texting the old template is simply sending from the location default,
+which is what GHL always does.
+
+**Somebody rebuilt the phone setup today** — almost certainly Patrick or
+Christian, and plausibly the Voice Integrity / spam-label work. It was not
+announced, and nothing in the software noticed.
+
+**RULE: read the live number list before any send. Never send from a number
+remembered from a previous session.** A phone number is not a constant; it is
+account state that changes without warning, and a stale one fails every message
+silently enough that `send_sms` still returns `success: true`.
+
+### 2. `send_sms` RETURNS SUCCESS FOR MESSAGES THAT NEVER SEND
+
+All 88 calls returned `{"success": true, "messageId": ...}`. Every one was
+`status: "failed"` inside the conversation seconds later. **The tool's return
+value reports that GHL ACCEPTED the request, not that a message left.** Same
+class of error as `written: 0` on a run that "classified 126,628", and as
+`SUCCEEDED` on a routine that sent nothing. Third instance of this pattern.
+
+**Verification is `get_conversation` and reading `status` and `error` on the
+message.** Nothing else counts as evidence a text was delivered.
+
+### 3. AND I REPEATED THE LANDLINE MISTAKE — 8 MORE GOLD LEADS DND'd
+
+MEASURED by re-reading the same 100 contacts after the send: contacts carrying
+an SMS block went **10 → 18**. **8 of the 17 verified gold leads I texted are
+now SMS-blocked** — they were landlines, they failed 30006, and GHL set
+`dndSettings.SMS` on each.
+
+**That is a 47% landline rate in a pool whose rows were labelled Text OK.** The
+brain recorded this exact lesson on 2026-08-30 after the same thing cost 10 gold
+leads, and the mitigation named there — verify line type, or exclude the rows
+from the send — was not applied. The `landline` tag only covered the 10 already
+known; it was treated as if it covered everything.
+
+**The rule stands and this time it has to be obeyed: a pool sourced from the
+scanner or Maps has NO line-type data. `Text OK: YES` on those rows means
+"nothing said it was a landline", never "confirmed mobile."** At a measured 47%
+landline rate, texting that pool blind destroys roughly half of it.
+
+### What NOT to do next, and why
+
+Do **not** simply re-send the 82 from a valid number. The failures split two
+ways: the "Invalid from number" ones were never delivered and are still clean,
+but the 30006 ones are now SMS-blocked forever. Re-blasting blind would run the
+same 47% landline rate across the 71 greens and DND-flag ~30 more good leads.
+
+The two real options:
+1. **`dealmachine_enrich_phone` to type the numbers first**, then text only
+   confirmed wireless. **7,137 credits expire 2026-09-02** — this is the single
+   best remaining use for them.
+2. **Send this pool to the dialer instead.** A landline is not a dead lead; it
+   is a lead you CALL. Half this pocket is a phone list, not a text list.
+
+**Nothing is lost that was not already unreachable by SMS** — the invalid-from
+failures delivered nothing and blocked nobody, and the 8 landlines could never
+have received a text. But 8 verified copper upgrades now read as opted-out and
+need the `invalid` tag stripped so a rep still dials them.
