@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-31 07:10 CDT
+# CURRENT STATE — updated 2026-08-31 13:05 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -64,7 +64,8 @@ beta" survive four sessions unchecked.
 
 | Thing | ID | State |
 |---|---|---|
-| SMS routine — **Beaumont gold pocket first**, 200/day, 11am + 4pm CT | `trig_018JYeQpvcgfrmBxc46Vv967` | **ENABLED.** Prompt carries PRIORITY #1 (`beaumont-gold-pocket` + `status-verified`), the verified offer detail, the volume governor, and skip-the-33 |
+| SMS routine — **Beaumont gold pocket first**, 200/day, 11am + 4pm CT | `trig_018JYeQpvcgfrmBxc46Vv967` | **ENABLED BUT SENDING NOTHING.** MEASURED 2026-08-31: fired 11:10am CT, `SUCCEEDED` in **95 seconds** — too short to send 100 texts, and no new-copy send exists anywhere in GHL today. Second time (29 Aug: 38 min, zero sends). **`SUCCEEDED` on this routine does NOT mean texts went out** |
+| **UNKNOWN GHL workflow texting the OLD template from `+13465178890`** | GHL workflow | **LIVE and collecting instant STOPs.** MEASURED 2026-08-31 — see the section dated today. NOT the no-answer workflow. Needs Patrick's call |
 | AM coverage-gap email | `trig_01JTQKnB2U5ihS1mC4rpX2qy` | live, 12:00 UTC |
 | PM coverage-gap email | `trig_01RjAUBz16UNpdDzK2neCz37` | live, 22:30 UTC |
 | GHL no-answer auto-text, from `+13468106925` | GHL workflow | **LIVE — DO NOT TOUCH.** Patrick: *"don't break that template that is working"* |
@@ -3539,3 +3540,95 @@ territory**. Do not let that table read as an opportunity.
 
 **No live competitor outage.** The Houston Xfinity cut-fiber outage was restored
 Friday 17:30.
+
+## RESI TEXTS ARE GOING OUT — BUT THEY ARE THE WRONG ONES (2026-08-31 12:55 CT)
+
+Patrick asked "are resi texts being sent out??" **Yes — and that is the problem.**
+Two separate things are true and they must not be collapsed.
+
+### 1. The 200/day routine sent NOTHING. Again.
+
+MEASURED off `list_triggers`: `trig_018JYeQpvcgfrmBxc46Vv967` fired
+**16:10:34Z (11:10am CT)** and finished **16:12:09Z** — `ROUTINE_RUN_STATUS_SUCCEEDED`
+in **95 seconds**. One hundred individually-written texts cannot be sent in 95
+seconds. No message carrying the new copy (street named, first name only, no
+price) appears anywhere in T-OPTIMUS today.
+
+**This is the second recorded instance.** On 2026-08-29 a fired run produced
+zero sends in 38 minutes. **`SUCCEEDED` on this routine is not evidence that a
+single text went out** — it means the session ran and exited. Same class of
+error as `written: 0` on a run that "classified 126,628": check the destination,
+never the status field.
+
+Next fire is **21:07:32Z = 4:07pm CT today**. Watch whether it sends or exits in
+under two minutes again.
+
+### 2. A DIFFERENT workflow IS texting — the old template, from a sixth number
+
+MEASURED in the live conversations:
+
+| | |
+|---|---|
+| Sending number | **`+13465178890`** — a SIXTH outbound number, not in any list in this file |
+| Source | `source: workflow` (not the routine, not hand-sent) |
+| Copy | *"Hi, this is Patrick. I wanted to remind you about AT&T Fiber internet..."* — the OLD template |
+| One variant | ships **`Reply STOP to unsubscribe.` written into the body**, and GHL appends its own — the **doubled STOP line** this file has warned about since 2026-08-22, live inside an automation |
+
+**It is NOT the no-answer workflow.** That one fires 20 seconds AFTER a missed
+call from `+13468106925`. This one texts FIRST and the call comes later — Js CBD
+was texted 15:44:58Z and not dialed until 17:15Z. It also creates opportunities
+in **`Monitoring AT&T Call Attempt Pipeline`** / `Main AT&T Status Pipeline` /
+`Agent Monitoring Pipeline`, which are Christian's new builds. **So this is
+almost certainly Christian's dialer workflow carrying the old copy.**
+
+### The damage, measured: STOPs are arriving within TWO MINUTES
+
+| Contact | Texted | STOP'd | Gap |
+|---|---|---|---|
+| Jerry Wilson | — | 15:59:26Z | — |
+| Aaron Rios | 15:58:59Z | **16:00:44Z** | **105 seconds** |
+
+Both then had `DnD enabled by customer` and their opportunities **deleted**. A
+STOP 105 seconds after delivery is not indifference — it is a message that reads
+as spam on sight. The promo-led, price-quoting, doubled-STOP template is exactly
+the copy this file predicted would do that.
+
+Also confirmed: the good copy does get STOPs too, just far slower — George was
+sent *"Fiber is live on your street now. Copper is being retired"* on 2026-08-29
+20:48Z from `+13465906578` and STOP'd **77 minutes** later.
+
+**The lesson, and it is the same one as the landline send:** the routine's
+volume governor watches the trailing opt-out rate on the routine's OWN sends.
+It cannot see a workflow's sends. So a workflow burning the numbers with bad
+copy is invisible to the one safety mechanism built to catch exactly that.
+
+**RULE 0 — not touched.** Patrick has said the working no-answer template stays
+as it is, and Christian is actively building in that account. Naming the
+workflow and handing him the number is the job; pausing someone else's
+automation is his call, not mine.
+
+## DAVE CLOSED ONE — 2026-08-31
+
+**Shahrukh Majeed, 211 CAREY RIDGE CT, HOUSTON TX 77094.** Internet 1000
+(Fiber 1 GIG), self-submitted through the DSI dealer portal under
+`Bholland@thefiberplug.com`. Order ID `DSI269623160`, order number
+`99-715848264963476`, account `346359845`. **Install 9/2/2026, 10AM-12PM.**
+$20 paid today, **$40/month** ($90 list, less $30 off for 12 months and $20 off
+ongoing with wireless), $100 AT&T Reward Card, professional install fee waived.
+
+**This is the SECOND close the system has ever recorded**, after Janell Dumas
+(Angel, 2026-08-29). A new 1 Gig line is the green-dot product — the $500 tier
+on the funding table, not the $135 migration tier.
+
+**Two things worth acting on:**
+
+1. **He is NOT in T-OPTIMUS Houston GHL.** `official_contacts_get_contacts`
+   query "Shahrukh" returns `total: 0`. So the close exists in the AT&T portal
+   and nowhere in the CRM — the pipeline stays at 1 won while the business has
+   two. Same write-only failure the audit has flagged since 2026-08-28. He may
+   be in Frontline (`TXw28sw0Z2rI6tcCDhJY`), which still returns **403** here,
+   so an empty T-OPTIMUS lookup is not proof he is missing everywhere.
+2. **The order took the $20-off-with-wireless discount** — meaning wireless was
+   at least discussed. That is the attach conversation the 4%-attach finding
+   says is worth ~$385 on a sale already closed. Worth asking Dave whether the
+   phone lines actually went on the account or just the discount.
