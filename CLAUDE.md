@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-31 13:05 CDT
+# CURRENT STATE — updated 2026-08-31 17:45 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -91,9 +91,12 @@ the session that made them. That is the answer to "why did my email stop".
    `agt5`). The dialer queue was 199 yesterday. Still open: import
    `ENRICHED_TAB.csv` as a workbook tab, and `OPTIMUS_DIALER_2000_labeled.csv`
    (2,000 rows) remains the bigger pool behind the 775.
-3. **DealMachine credits expire Tue 2 Sep — 7,137 unspent of 30,000.**
-   MEASURED 2026-08-30. They do not roll over. Bulk export runs under 1 credit
-   per lead, so this is thousands of leads if spent before the cycle ends.
+3. **DealMachine credits expire MON 1 SEP 11:14pm CT — 7,137 unspent of
+   30,000.** MEASURED 2026-08-31 off `dealmachine_usage`: cycle ends
+   `2026-09-02T04:14:15Z`, which is **Monday night Central, not Tuesday or
+   Wednesday**. They do not roll over. Bulk export runs under 1 credit per
+   lead. **Best remaining use: `enrich_phone` to type the Beaumont pocket,
+   which is ~47% landline.**
 4. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
 5. **Call Antonio, 713-474-3899** — said *"come replace"* his copper, still not
    called back.
@@ -3726,3 +3729,56 @@ The two real options:
 failures delivered nothing and blocked nobody, and the 8 landlines could never
 have received a text. But 8 verified copper upgrades now read as opted-out and
 need the `invalid` tag stripped so a rep still dials them.
+
+## PM EDITION SENT — AND TWO NEW MEASURED FAULTS (2026-08-31 5:40pm CT)
+
+Three separate emails out: Patrick (`1a059fb2943482de`), Dave
+(`1a059fba22499d0d`), Churchie (`1a059fc1f09c5a3e`). Colour-coded HTML, no
+dollar figures in Dave's or Churchie's copy.
+
+### 1. THE OLD-TEMPLATE WORKFLOW DOES NOT STOP ON REPLY
+
+MEASURED, and this is the sharpest evidence yet that it needs Patrick's call.
+**Tracy Turner** (`+18324186581`) replied *"I'm ok thank you"* at
+**21:25:45Z**. The workflow sent her the old `$30/month` promo at
+**21:25:46Z — one second later**, on top of her decline. `source: workflow`,
+from the default `+13465178890`.
+
+Every outbound sequence rule Optimus has says stop the moment someone replies.
+This one texts over a decline within a second. It was still firing at 4:25pm CT.
+
+**7 opt-outs today** — Thuy N Phung (20:14Z, timestamp-confirmed), Aaron Rios
+(16:00Z), Jerry Wilson (15:59Z), plus Amanda D Alberson, Thomas J Cozort,
+Sulema Stone, Silvia L Rueda by message ordering. Every one then had
+`DnD enabled by customer` and its opportunity deleted.
+
+RULE 0 respected — not touched, named and handed to Patrick.
+
+### 2. THE DEALMACHINE DEADLINE IS TOMORROW, NOT WEDNESDAY — CORRECTION
+
+MEASURED off `dealmachine_usage`: cycle ends **2026-09-02T04:14:15Z**, which is
+**Monday 1 Sep 11:14pm CT** — tomorrow night. Earlier in this session Patrick
+was told "Wednesday night"; that was wrong and was corrected in the PM email.
+**7,137 of 30,000 unspent**, used 22,863 (properties 18,392, people 4,471).
+
+`2026-09-02T04:14 UTC` is a *Texas Monday night*. Convert the cycle end to
+Central before quoting a deadline — a UTC date one day ahead is exactly how a
+deadline gets announced 48 hours late.
+
+### 3. Everything else measured at 5:40pm CT
+
+- **Replies waiting on a callback tonight: ZERO.** The metric the PM edition
+  exists to protect held, even on a bad day.
+- **Capture dead ~31h.** `latest.json` run `20260830-135937`: classified 0,
+  written 0, `delivery: AUTH_EXPIRED`, `auth_ok: false`, `auth_expired: 4`,
+  exited `LOGIN_TIMEOUT` 14:10 Sunday.
+- **Workbook `fileSize` 8,499,354** — byte-identical since Saturday.
+  `modifiedTime` 2026-08-31T01:09:30Z, so nothing has landed in ~21 hours.
+- **Pipeline: 2 won, 0 lost, ~3,695 open.** Confirmed by
+  `search_opportunities status=won` → Janell Dumas and Shahrukh Majeed.
+- **No live competitor outage.** The Houston Xfinity result that surfaces in
+  search is from **May 2025** — check the date on an outage story before
+  reporting it as today's.
+- **No aimable build news.** Every newly-named metro is a Lumen state.
+- `COULDN'T READ` — sheet tab counts; `tabs.json` is only rewritten when the
+  Maps Scraper runs, and it has not run.
