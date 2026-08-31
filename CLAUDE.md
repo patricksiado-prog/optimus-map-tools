@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-30 17:45 CDT
+# CURRENT STATE — updated 2026-08-31 07:10 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -21,9 +21,9 @@ beta" survive four sessions unchecked.
 
 ### Is the machine running?
 
-- **Scanner: DOWN on the LOGIN as of 14:10 CT — and separately the WRITE is
-  broken. Two faults, do not merge them.** Run `20260830-135937` relaunched
-  13:59, `LOGGED_OUT` 14:00, `LOGIN_TIMEOUT` 14:10, exited. Remedy: log OUT of
+- **Scanner: DOWN ~17h on the LOGIN — and separately the WRITE is broken. Two
+  faults, do not merge them.** MEASURED 2026-08-31 07:05 CT: no run since
+  `20260830-135937` exited `LOGIN_TIMEOUT` 14:10 Sunday. Remedy: log OUT of
   youachieve.att.com, close the browser, log back in, relaunch. That does NOT
   fix the write failure below.
 - **The morning run: CAPTURED FINE, WROTE NOTHING.**
@@ -3482,3 +3482,60 @@ rate, cost per customer and profit per activity stay NOT COMPUTABLE.
 phone routed through `conversationProviderId 6958de9aca6f38b289d7f65e` — the
 dead **SMS Demo Provider** from the 405 saga. Customer sends are clean
 (`TYPE_SMS`, real `+1` from). His own alerts may not be arriving.
+
+## AM BRIEF WENT OUT IN COLOUR-CODED HTML FOR THE FIRST TIME (2026-08-31)
+
+Patrick asked for colour-coded sections on 2026-08-29 and the routine prompt now
+enforces it: **plain text is a defect, not a style choice.** Palette, semantic
+only, never decoration:
+
+| Meaning | Text | Background |
+|---|---|---|
+| ALARM / broken / act today | `#A93226` | `#FBEAE8` |
+| GOLD / copper upgrade | `#9C6E15` | `#FBF1DC` |
+| GREEN / healthy / new install | `#2E7D52` | `#E3F2E9` |
+| Neutral / informational | `#0F5F73` | `#E2EFF2` |
+| **Personal block** | quiet serif on white, teal rule, **never an alarm colour** | — |
+
+Inline `style=""` only — email clients strip `<style>` blocks. Always pass a
+plain-text `body` as well as `htmlBody`. Numbers monospace and right-aligned.
+
+## STATE AT 2026-08-31 07:05 CT — ALL MEASURED THIS MORNING
+
+- **Capture dead ~17h.** Last run `20260830-135937` exited `LOGIN_TIMEOUT` 14:10
+  Sunday. No run since. Workbook `fileSize` **8,499,354** — byte-identical since
+  Saturday 05:18; `modifiedTime` Sunday 20:09. The AT&T re-login is the block.
+- **Pipeline 3,695 open / 1 won / 0 lost**, every `monetaryValue` 0. Won is
+  still Janell Dumas from 29 Aug.
+- **Zero replies waiting.** One all weekend (Adrian Richardson, Sun 15:43),
+  answered in a minute.
+- **Yesterday's dialing: 3 calls, 9 no-answer dispositions, 10 texts / 0
+  delivered, 0 opt-outs.** Connect rate NOT COMPUTABLE off 3 dials.
+- **DealMachine 7,137 credits, cycle ends 2026-09-02 04:14 UTC** = late Monday
+  night CT. Do not roll over.
+- **A call went to `202-555-0126`** Sunday 18:03 — a reserved *fictional* number.
+  There is a junk row in the dial list. Flagged to Churchie and Dave.
+
+### The money scan — his own accounts, ranked (Patrick's copy only)
+
+MEASURED from Gmail, last 30 days:
+
+| Item | Amount | Note |
+|---|---|---|
+| **AT&T acct …2974** | **$460.88** | **SUSPENSION NOTICE** dated 08/19. His own carrier |
+| **Gexa Energy #36396116** | **$306.93** | 2nd notice 08/30, collections warned |
+| TrueAccord / LVNV Funding | $111.70 | ongoing |
+| Peacock Premium Annual | — | payment failing since 08/20 |
+| Walmart+ | — | wants a new card to auto-authorize renewal |
+| **TextNow — TWO subscriptions** | — | renewing the SAME days at 11:01am and 4:28pm (Aug 21, Aug 28). Looks redundant |
+
+Also unanswered since 08/19: **lease renewal on 112**, rent unchanged.
+
+### News and outages, both negative and both worth saying
+
+**No aimable build news.** Coverage is corporate-level only, and every metro
+named as newly added sits in the **Lumen-acquisition states — not our
+territory**. Do not let that table read as an opportunity.
+
+**No live competitor outage.** The Houston Xfinity cut-fiber outage was restored
+Friday 17:30.
