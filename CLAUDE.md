@@ -3620,14 +3620,21 @@ ongoing with wireless), $100 AT&T Reward Card, professional install fee waived.
 (Angel, 2026-08-29). A new 1 Gig line is the green-dot product — the $500 tier
 on the funding table, not the $135 migration tier.
 
-**Two things worth acting on:**
+**LOGGED IN GHL 2026-08-31 21:01 UTC — the pipeline now holds TWO wins.**
+He genuinely was not in T-OPTIMUS (`upsert_contact` returned `new: true`).
+Contact `b1B3YIvzOLJHb0Ry7jPs`, opportunity `g1jkRf7iD8vn0CbKT8ME` in
+`AT&T Leads`, status `won`, stage `Closed/Won`
+(`d55795b2-959b-4c23-9951-06fb475d2a87`).
 
-1. **He is NOT in T-OPTIMUS Houston GHL.** `official_contacts_get_contacts`
-   query "Shahrukh" returns `total: 0`. So the close exists in the AT&T portal
-   and nowhere in the CRM — the pipeline stays at 1 won while the business has
-   two. Same write-only failure the audit has flagged since 2026-08-28. He may
-   be in Frontline (`TXw28sw0Z2rI6tcCDhJY`), which still returns **403** here,
-   so an empty T-OPTIMUS lookup is not proof he is missing everywhere.
+**Two mechanics worth keeping:**
+- `create_opportunity` takes **no `stageId`** — it drops every opportunity in
+  the FIRST stage regardless of status, so a "won" deal sits under `Lead` until
+  a follow-up `update_opportunity` moves it. Always do the second call.
+- `upsert_contact` and `update_contact` have **no address field**. The property
+  address can only be written into a NOTE from here, which is where Patrick
+  wants it anyway (top and bottom of the note).
+- `monetaryValue` deliberately left 0 — the commission rule means no dollar
+  figure goes anywhere an agent can read it.
 2. **The order took the $20-off-with-wireless discount** — meaning wireless was
    at least discussed. That is the attach conversation the 4%-attach finding
    says is worth ~$385 on a sale already closed. Worth asking Dave whether the
