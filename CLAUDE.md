@@ -4368,3 +4368,60 @@ whether anything overrides it per-conversation.
   **Good copy, dead number.**
 - **Amanda Sylvester STOP'd at 17:19 UTC today** — that is what the "Amanda
   replied via sms" alert was. Not an interested reply.
+
+## WE ARE DIALING THE WRONG HALF — MEASURED 2026-09-01 1:55pm CT
+
+Patrick asked whether the dial queue is the best leads. **It is not, and the
+cause is a tag name.**
+
+### What the phones are actually doing right now
+
+MEASURED off `search_conversations`, 38 conversations with call activity, the
+most recent 25 dials placed between **18:46 and 18:55 UTC** (1:46–1:55pm CT) by
+agents `agt3`, `agt5`, `agt6`:
+
+| | |
+|---|---|
+| Dials in that 9-minute window | **25** |
+| Tagged `green-new` / `type-green` | **25** |
+| Tagged `gold-upgrade` / `type-copper` | **0** |
+
+Outcomes: 13 completed, 10 no-answer, 1 voicemail, 1 failed.
+
+### And the gold is sitting untouched
+
+MEASURED on the `gold-upgrade` tag: **296 contacts.** In a 100-contact sample,
+only **8** carry a `no-answer` tag, i.e. have ever been dialed. **92 of 100 have
+never been called**, and every one has a real Beaumont street address.
+
+Never-dialed gold includes Suzanne Lewis (6695 Windwood), Alicia Doss (7535
+Forest Park), Susan Whalen (1095 Galway), Nikki Glass (1250 Norwood), Barbara
+Martinez (1195 Stacewood) — the exact streets the gold-density count named.
+
+### THE CAUSE IS THE TAG `beaumont gold pockets`
+
+Eleven of the dialed contacts carry `beaumont gold pockets` / `beaumont-gold-pocket`
+**and** `green-new`. That tag names the POCKET, not the colour. A gold pocket is
+a place where copper is dense — the green leads inside it are still green.
+
+Whoever built the dial list filtered on the pocket tag and got greens. The list
+looks gold, reads gold, and is entirely green. **This is gold-by-default and
+colour-by-default in a third form: a place name mistaken for a colour.**
+
+**Fix: build the queue on `gold-upgrade` / `type-copper`, never on a pocket
+name.** Rename the pocket tag to something with no colour word in it —
+`beaumont-77706` — so it cannot be confused again.
+
+### Two more defects in the same queue
+
+- **Contacts already dispositioned are still being dialed.** Cindy L Debbrecht
+  is tagged `not interested` and was called at 18:48. `Not Interested` is a real
+  exit; it must remove from the queue.
+- **Two contacts tagged `invalid` were dialed.** Fine in practice — they are
+  dialable — but it shows the queue applies no exclusion at all.
+
+### Why this matters more than volume
+
+Gold is an existing AT&T customer on copper: no competitor to beat, an upgrade
+rather than a switch, and the cheaper close. The team is spending its dials on
+the harder product while 296 easier conversations sit in the CRM untouched.
