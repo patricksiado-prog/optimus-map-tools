@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-08-31 17:45 CDT
+# CURRENT STATE — updated 2026-09-01 07:35 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -4242,3 +4242,57 @@ Claude (or any second Claude) must carry, in this order:
 **Creating an API key does not disturb it**: OAuth and API keys are independent
 credentials on the same account, so issuing a key for someone else changes
 nothing about his own access, and deleting that key later cuts off only them.
+
+## AM EDITION SENT — TUE 1 SEP, AND THE OPT-OUT RATE IS THE STORY
+
+Three emails out 07:30 CT: Patrick (`1a05cf23e6758f85`), Dave
+(`1a05cf2c29cdeee5`), Churchie (`1a05cf3536659369`). Colour-coded HTML, no
+dollar figures in Dave's or Churchie's.
+
+### NINE opt-outs on 31 Aug — the number kept climbing after the PM email
+
+MEASURED 2026-09-01 07:30 CT. The PM edition reported 7 at 5:40pm; two more
+landed after it went out:
+
+| Contact | STOP'd (CT) |
+|---|---|
+| Alicia M Weir | 8:14pm |
+| Aimee C Martin | 6:09pm |
+| Thuy N Phung | 3:14pm |
+| Aaron Rios | 11:00am |
+| Jerry Wilson | 10:59am |
+| + Amanda D Alberson, Thomas J Cozort, Sulema Stone, Silvia L Rueda | — |
+
+**Nine in one day against a benchmark of two.** Every one was sent the OLD
+`$30/month` promo by the workflow, from the default `+13465178890`. Alicia was
+texted 31 Aug 19:21:51Z and STOP'd 5h53m later; Aaron STOP'd in 105 seconds.
+
+**Sends were all inside quiet hours** — checked, no 8pm–9am violation. The
+damage is the copy, not the timing.
+
+### State at 07:30 CT Tue 1 Sep
+
+- **Capture dead ~41h.** Heartbeat still run `20260830-135937`, `last_phase:
+  exit`, died Sunday 14:10 on `LOGIN_TIMEOUT`.
+- **Workbook `fileSize` 8,499,354 — flat since Saturday.** `modifiedTime`
+  2026-09-01T07:00:46Z and moving. Touched, nothing landing.
+- **Pipeline 2 won / 0 lost / ~3,695 open.** Close rate, cost per customer and
+  profit per activity still NOT COMPUTABLE.
+- **Replies waiting on a callback: ZERO** overnight. One decline — Tracy Turner,
+  4:25pm, to be dispositioned Not Interested.
+- **DealMachine 7,137 credits, expiring TONIGHT** Tue 1 Sep 11:14pm CDT.
+- **No live competitor outage.** The Houston Xfinity story that keeps surfacing
+  is **May 2025** — check the date on an outage story every time.
+- **No aimable build news** — every named metro is a Lumen state.
+
+### Money items found in the inbox
+
+- **Gexa Energy $306.93**, acct 36396116, 2nd notice 30 Aug, collections warned.
+- **TextNow — TWO subscriptions renewed the SAME DAY**, 28 Aug 11:01am and
+  4:28pm. Looks like a duplicate being paid twice.
+- **Walmart+** wants a new payment method to authorise renewal.
+- Incoming: **+$165.00** from Anthony Quebodeaux via PayPal, 30 Aug.
+- Non-money but time-sensitive: **Tyler Municipal Court replied 31 Aug that it
+  has no record of those cause numbers** — JP2 is Justice of the Peace, not
+  municipal court. His filing went to the wrong court. Reported as fact, no
+  advice given.
