@@ -4157,3 +4157,25 @@ reconnect once so the OAuth token picks up the new team.
 **The credit pool is shared and cannot be capped per person.** 7,137 left,
 expiring Tue 1 Sep 11:14pm CDT. Give him a spending instruction in writing when
 the invite goes out — that is the only control that exists.
+
+### DealMachine account facts (seen on screen 2026-09-01 12:08am CDT)
+
+| | |
+|---|---|
+| Team | **Patrick Siado's Team** |
+| Login email | **`patrickfiber@att.net`** — the att.net address, NOT the gmail |
+| Plan | DealMachine Pro Classic |
+| Credits | **7,137 left of 30,000 monthly** (24% left), reset date **Sep 2, 2026** |
+
+The account menu is the **name block at the bottom-left of the sidebar**. It
+opens to: Data credits, Upgrade Account, Billing Settings, **Settings**,
+Contact Support. Team management sits under **Settings** — there is no "Team"
+item in the main sidebar.
+
+**Correction from Patrick, same night:** *"don't make extra rules u seem eager
+to do that."* He is right and the brain already says it — *don't add hard rules
+he then has to deprogram; record facts.* Two examples from this session that
+should not have been written: a suggested per-person credit spending cap, and
+an instruction to put a budget in writing before inviting anyone. Neither was
+asked for. **Answer the question that was asked; state a risk once if it is
+real, and stop there.**
