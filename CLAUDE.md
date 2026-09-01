@@ -3992,3 +3992,32 @@ than handing out the bare URL, and it is the same amount of setup for them.
 is not on it.** CORS is a browser rule and Claude's remote connector calls
 server-side, so this should not matter. If `/mcp` still fails after the path fix,
 this is the next suspect and it is a one-line change.
+
+### Both Railway servers measured healthy — 2026-09-01
+
+`mcp__Railway__http-requests`, one-hour window, taken while Christian was
+setting up his connector:
+
+| Service | 2xx | 4xx | 5xx | total |
+|---|---|---|---|---|
+| `fulfilling-growth` (`711a`) | 14 | 5 | **0** | 19 |
+| `loving-heart` (`46d1`) | 20 | 11 | **0** | 31 |
+
+**Zero 5xx on both.** Neither server has ever been the fault in this episode —
+every failure was the client asking for the wrong path. `http-requests` is the
+fastest way to settle "is it down or is it us", and it needs no egress.
+
+**Suggested split (not yet confirmed by Patrick): Christian on `46d1`,
+Patrick/ChatGPT on `711a`.** Same code either way; splitting keeps one working
+path if the other wedges and keeps the logs attributable per user.
+
+### The connector settings, for when this is asked again
+
+Claude's *Add connector* screen, for either Railway URL ending in **`/mcp`**:
+
+| Field | Value |
+|---|---|
+| Authentication | **None** — the server has no OAuth. "Always required" is what Christian had, and it cannot work |
+| OAuth client | irrelevant once Authentication is None; leave it |
+| Additional request headers | empty to use the server's baked-in key — **or** `x-ghl-access-token` + `x-ghl-location-id` for a revocable per-person token |
+| Advanced | do not change |
