@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-01 07:35 CDT
+# CURRENT STATE — updated 2026-09-01 16:20 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -59,6 +59,22 @@ beta" survive four sessions unchecked.
   by the software itself: log OUT of youachieve.att.com, close the browser, log
   back in, re-run. A fresh login fixed it.
 - **Sheet ceiling: 10,000,000 cells, HARD.** `Precise Fiber` is ~8.4M of it.
+
+### The dial queue
+
+- **GOLD IS NOW IN FRONT OF THE AGENTS WHO ACTUALLY DIAL.** MEASURED + FIXED
+  2026-09-01 4:15pm CT: all **296** copper-upgrade leads were parked in
+  **Agent 4's** queue — 100% gold, 100% of that queue, and only **3% ever
+  dialed** — because every one carries BOTH `agt4` and `agt6` and the
+  `2. Designated Agent` if_else takes the first matching branch. Agents 3 and 5
+  are the ones working (23% dialed each) and held pure green. All 296 enrolled
+  into Agent 3 (148) and Agent 5 (148), 296/296 succeeded. Full detail in the
+  section dated today.
+- **Not yet fixed:** the double `agt4`+`agt6` tag is still on all 296, so
+  anything re-routed through `2. Designated Agent` gets re-parked with Agent 4.
+  Agent 4 still has no live rep. And the queue applies NO exclusion — contacts
+  dispositioned `not interested` and rows tagged `excluded-unsellable` are
+  still being dialed.
 
 ### What is live and sending right now
 
