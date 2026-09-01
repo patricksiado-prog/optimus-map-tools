@@ -4783,3 +4783,93 @@ today came from somewhere else. **A safety mechanism scoped to one sender is
 blind to the sender that is actually doing the damage** — and today that blind
 spot cost five verified leads in eighty minutes while the routine itself sent
 nothing at all.
+
+## THE VAs ARE POSTING WARM LEADS INTO WHATSAPP AND THEY NEVER REACH THE REPORT (2026-09-01)
+
+Patrick: *"Check my drive for a WhatsApp chat att training and put everyone in
+there retext please."*
+
+**The "Att training" group is not a training channel — it is where the VAs post
+the day's hand-raisers.** Drive file `1lqKR8LWLi27QQ4zX3EWDH08b7C--ueBA`,
+uploaded 2026-09-01 23:23 UTC. Group created 8/28 by Patrick; members are Angel
+Leah|VA, Christian Dan Puli, Dave, Hazel Joy, Churchie (+63 926 255 4061), then
+Danie Nava, 1_Dillinger, Nicole Ghl Expert, Sean, Melvin Agsalud, Ed Saldanna,
+Speedy, Zack Woodring, Jay (+1 586-306-0911), Ricky Nolan Jr, Maria Mendoza.
+
+**11 unique warm leads were pasted into it as Name / Address / Contact Number /
+Email / Notes cards.** Every one had spoken to a VA and most named a specific
+callback time.
+
+### THE FINDING THAT MATTERS: THE PM REPORT CANNOT SEE THEM
+
+The PM edition sent 90 minutes earlier reported **"zero replies waiting on a
+callback"** — measured off GHL conversations, correctly. **But six of these
+people asked for a callback today and the request only ever existed in
+WhatsApp.** Three windows had already passed when the report went out:
+
+| Lead | Asked for | Status when found |
+|---|---|---|
+| Monica Goodman | 4:30pm today | **MISSED by 2 hours** |
+| Ricky Espree | 2:30-3:00pm today | **MISSED** |
+| Shelly Rubin | 4:30pm on 8/31 | **MISSED, a day old** |
+| Rafael Aguilar | after 6pm today | live |
+| Sharon Williams | ~1 hour from 5:48pm | live |
+| Rachel Roberson | after 6pm | live |
+
+**A reply that arrives on WhatsApp is invisible to every metric Optimus has.**
+The evening edition exists specifically to catch replies before they go cold,
+and its single most important number was wrong today — not because the query was
+wrong, but because the channel is not instrumented. Either the VAs log
+hand-raisers straight into GHL (a `call back` tag plus a note), or the PM
+edition has to read this export too. Until then "zero waiting" means "zero in
+GHL", and that must be how it is worded.
+
+### 7 texted, 4 deliberately held — MEASURED and verified
+
+Sent 6:34-6:35pm CT from **`+13466634490`** (the live default), each individually
+written, first name only, no price, no offer claim, no opt-out line, referencing
+the conversation they had already had. **All verified `status: "delivered"` via
+`get_conversation`** — not trusted off `success: true`.
+
+Shelly Rubin · Rachel Roberson · Ricky Espree · Tamra Hipp · Monica Goodman ·
+Kendra D Francis · Tobechukwu P Edeh.
+
+**Held, with the reason:**
+
+| Lead | Why not texted |
+|---|---|
+| **Amanda Sylvester** | `dndSettings.SMS = STOP_KEYWORD, permanent`. Hard opt-out. Never text |
+| **Virgie Davis** | `enrich_phone` says **landline**. Texting = a 30006 failure against the number. **She is a CALL** — she asked for a callback tomorrow |
+| **Rafael Aguilar** | tagged `not interested` (set 5:32pm today) while the VA note at 1:59pm says he asked for a 6pm callback. **Conflict — a rep must resolve it** |
+| **Sharon Williams** | tagged BOTH `not interested` AND `call back`, updated 5:49pm, same minute the VA posted her callback request. Same conflict |
+
+**Not-interested is one of only three real exits, so a session does not override
+it.** Both conflicts are dispositions written against people who, minutes
+earlier, asked to be called back. Worth Patrick or Christian checking what the
+D03 workflow is firing on.
+
+### The `invalid` tag lied again, and checking cost nothing
+
+Tamra Hipp and Virgie Davis both carried `invalid`. `enrich_phone` on both:
+**Tamra is WIRELESS** (texted, delivered) and **Virgie is a LANDLINE** (held).
+Same tag, opposite answers — which is the whole argument for typing the number
+instead of trusting the tag. Both lookups were **0 credits** (deduplicated
+within the cycle).
+
+**This is the landline rule finally applied before a send rather than after.**
+It cost 10 gold leads on 2026-08-30 and 8 more on 08-31 to learn.
+
+### Reading the sheet — answered live, 2026-09-01
+
+Patrick asked whether the brain and the sheet can still be read. Both yes:
+
+- **The brain** is `CLAUDE.md` in this repo, read at the start of every session,
+  and a SessionStart hook prints the live state on top of it.
+- **The master workbook** reads fine via `get_file_metadata` —
+  `fileSize` **8,499,354**, `modifiedTime` **2026-09-01T07:00:46Z**, static
+  since. The limit is SIZE, not access: `Precise Fiber` is ~645k rows and the
+  Drive connector exports from tab 1, so a whole-workbook read never reaches
+  tab 2. Bounded reads and metadata work every time.
+- **The split workbook** `ATT FIBER LEADS — Precise Fiber` is **still 1,024
+  bytes, `modifiedTime` 2026-08-30T18:51Z — never written to.** The share to the
+  service account is done; the hunter has still never been pointed at it.
