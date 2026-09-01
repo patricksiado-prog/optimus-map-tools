@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-01 16:20 CDT
+# CURRENT STATE — updated 2026-09-01 17:55 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -75,6 +75,26 @@ beta" survive four sessions unchecked.
   Agent 4 still has no live rep. And the queue applies NO exclusion — contacts
   dispositioned `not interested` and rows tagged `excluded-unsellable` are
   still being dialed.
+
+### Texting — MEASURED 2026-09-01 5:50pm CT
+
+- **THE OPT-OUT RATE IS 7.9% — 5 STOPs from 63 texts, benchmark ~2%.** Zero
+  genuine replies all day. **Peggy Green STOP'd 29 SECONDS after delivery**
+  (call 22:26:50 → text 22:27:16 → "Stop" 22:27:45 UTC); previous worst was 105
+  seconds. **None of today's 63 texts carried the approved copy** — 29 were the
+  old promo, 34 the "Great news! … 10x faster … just $30/month … 2 free months"
+  template that also writes its own STOP line on top of GHL's. Detail in the
+  section dated today.
+- **ALL FIVE OUTBOUND NUMBERS WERE REPLACED AGAIN 2026-09-01** — second full
+  swap in 26 hours. Live now: **`+13466634490` (DEFAULT)**, `+13466603376`,
+  `+13466632307`, `+13466631246`, `+13466631510`. Every number this file
+  recorded before today is dead and returns *"Invalid from number"*.
+  `+13466631246` was created 17:37 UTC and had earned a STOP by 22:27.
+  **Read the live number list before any send.**
+- **The volume governor cannot see any of this.** It watches only the SMS
+  routine's own sends, and the routine sent nothing — it fired 21:09:51 UTC and
+  hung `PENDING`, a third distinct failure mode after the 95-second "SUCCEEDED"
+  and the 38-minute zero-send run.
 
 ### What is live and sending right now
 
