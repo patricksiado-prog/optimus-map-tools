@@ -4087,3 +4087,31 @@ Corrected in the state block above.
 **Compute the weekday, never assert it.** `TZ=America/Chicago date -d <utc>`
 settles it in one call. A wrong day name on a real deadline is how a deadline
 gets missed by someone reading only the day.
+
+### Connecting DealMachine in Claude — the dialog answers (2026-09-01)
+
+Claude auto-detects both settings for `https://mcp.dealmachine.com`; the
+screenshot from Christian showed **Detected** on each, so nothing needs picking:
+
+| Field | Value |
+|---|---|
+| Authentication | **Always required** (OAuth) — the OPPOSITE of the GHL Railway server, which is None |
+| OAuth client | **No client ID — register one automatically (DCR)** |
+| Additional request headers | empty |
+| Advanced | leave alone |
+
+Then **Add** → DealMachine sign-in → **Allow** → and switch it on per chat
+(new chat → **+** → toggle it), same as every connector.
+
+**The step that actually decides access is not in the dialog.** OAuth signs the
+person in as THEMSELVES. A contractor with no login on `Patrick Siado's Team`
+connects to an empty account and sees nothing useful. Granting them anything
+means **inviting them to the team — and that is what puts the shared credit pool
+in their hands.** Decide the credit budget before sending that invite, never
+after.
+
+**State at 2026-09-01 00:00 CDT:** capture still dead (~34h, AT&T re-login
+outstanding), DealMachine 7,137 credits with **23 hours** left, quiet hours in
+force so nothing customer-facing until 8am. Recommended to Patrick, twice, that
+the best remaining use of those credits is `enrich_phone` to type the Beaumont
+pocket (~47% landline) — **not yet answered either way.**
