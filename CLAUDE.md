@@ -4655,3 +4655,111 @@ business-pricing rule, and a trade-specific angle.
   answer.
 - DealMachine after this work: **7,092 credits left**, cycle ends
   2026-09-02T04:14:15Z = **tonight, Tue 1 Sep 11:14pm CDT**. ~45 spent here.
+
+## PM EDITION, TUE 1 SEP — THE COPY BURNED FIVE LEADS IN EIGHTY MINUTES
+
+Three emails out 5:50pm CT: Patrick (`1a05f24727e7a291`), Dave
+(`1a05f251ddb6f386`), Churchie (`1a05f25e7ae1d029`). Colour-coded HTML, no
+dollar figures in Dave's or Churchie's.
+
+### ZERO genuine replies today. Five inbound, all five STOP.
+
+MEASURED off `search_conversations`, all timestamps CT:
+Bernadette Cascio 4:21pm · Lindsey Gaspard 4:57pm · Magda Soto 5:17pm ·
+Peggy Green 5:27pm · Mark Mann 5:37pm. All Beaumont gold pocket, `type-green`,
+agt5/agt6. All now DND'd with the opportunity auto-deleted.
+
+**5 opt-outs from 63 texts = 7.9%.** Benchmark ~2%. The routine's own governor
+cuts volume above 10% and pauses above 20% — but it only watches the routine's
+sends, and none of today's came from the routine.
+
+### PEGGY GREEN — 29 SECONDS FROM DELIVERY TO STOP, timestamped
+
+| UTC | What |
+|---|---|
+| 22:26:50 | outbound CALL, 27s, `source: workflow`, from `+13466631246` |
+| 22:27:16 | SMS delivered, `source: app`, `userId HYaJvB1hsXbJMnb1tt4E`, same number |
+| 22:27:45 | **she replied "Stop"** |
+| 22:27:46 | `DnD enabled by customer` |
+| 22:27:48 | `Opportunity deleted` |
+
+**29 seconds.** Previous worst on record was Aaron Rios at 105 seconds.
+
+The body, verbatim: *"Hi Peggy, Great news! New fiber internet lines have been
+laid at your address, providing speeds 10x faster for just $30/month. Enjoy 2
+free months of service with no installation fees and no contracts! ... Reply
+STOP to unsubscribe."*
+
+Five standing rules broken in one message: promo-led "Great news!" instead of
+copper retirement; **"10x faster"** unverified; **flat $30/month** with no
+bundle condition; **"2 free months"** is not a real AT&T offer; and it writes
+**its own STOP line** which GHL then doubles.
+
+### 63 texts today. ZERO carried the approved copy.
+
+- **29** — the old *"Hi, this is Patrick. I wanted to remind you"* promo
+- **34** — the *"Hi <name>, Great news!"* template above
+- **3 of those merged a BLANK name** and shipped as `"Hi   Great news!"`
+
+Send window 3:31pm–5:38pm CT; calls 3:29pm–5:34pm. The texts follow the dials,
+so this is the post-call path, not the no-answer workflow.
+
+### THE NUMBERS WERE REPLACED AGAIN — second full swap in 26 hours
+
+MEASURED `list_active_numbers_by_location`. **Every number recorded yesterday is
+gone** (`+13465178890`, `+13466801947`, `+13465940630`, `+13466631324`,
+`+13466576204`). Five new ones, all added TODAY:
+
+| Number | Name | Added (UTC) |
+|---|---|---|
+| **`+13466634490`** | dave's number 6 | 16:29:48 — **DEFAULT** |
+| `+13466603376` | dave's number 7 | 17:36:20 |
+| `+13466632307` | dave's number 8 | 17:36:53 |
+| `+13466631246` | dave's number 9 | 17:37:21 |
+| `+13466631510` | dave's number 10 | 17:37:55 |
+
+**`+13466631246` was created at 17:37 UTC and had earned a STOP by 22:27 —
+under five hours.** Buying numbers does not outrun the copy; the copy burns them
+faster than they can be bought. Two swaps in 26 hours is number-churn as a
+substitute for fixing the message, and it cannot work.
+
+**Reinforces the standing rule:** read the live number list before any send.
+A phone number is account state that changes without warning.
+
+### THE SMS ROUTINE HUNG — a THIRD distinct failure mode
+
+`trig_018JYeQpvcgfrmBxc46Vv967` fired 21:09:51 UTC and is still
+`ROUTINE_RUN_STATUS_PENDING` with **no `finished_at`**. Previously: a 95-second
+`SUCCEEDED` (31 Aug) and 38 minutes with zero sends (29 Aug). Three failure
+shapes, zero confirmed sends ever. `Morning Brief — Patrick`
+(`trig_019vheHFZBKyGnzbu6tVjPjb`) is also PENDING since 13:24 UTC.
+
+### Everything else measured at 5:50pm CT
+
+- **Capture dead ~56h.** Run `20260830-135937`, `LOGIN_TIMEOUT` Sunday 14:10,
+  `delivery: AUTH_EXPIRED`, `auth_ok: false`, classified 0, written 0. Workbook
+  `fileSize` **8,499,354** — byte-identical since Saturday; `modifiedTime`
+  2026-09-01T07:00:46Z and static since.
+- **Pipeline: 10,722 open / 2 won / 0 lost.** Open jumped from ~3,695 — the
+  dialer workflows create an opportunity per contact per workflow, so contacts
+  now hold two or three each. **Do not read that jump as new leads.**
+- **31 calls, 3:29–5:34pm** (a two-hour window): 74 completed, 17 no-answer,
+  3 failed, 3 busy, 1 voicemail. **Zero dispositions written.**
+- **DealMachine 7,092 credits, expiring tonight 11:14pm CDT.**
+- **No live outage.** The Houston Xfinity story that keeps surfacing is **May
+  2025** — check the date every time.
+- **No street-level build news.** AT&T's 2026 plan names Atlanta, Charlotte,
+  Raleigh, Nashville, Memphis, Louisville, Jacksonville, Orlando, Miami and
+  Fort Lauderdale — inside our 21 states unlike the Lumen metros, so real scan
+  candidates, but a metro name cannot aim a sweep at a street.
+- `COULDN'T READ` — sheet tab counts; `tabs.json` only rewrites when the Maps
+  Scraper runs and it has not run.
+- **Nothing posted in the DAILY LOG today**; GOALS block still empty bullets.
+
+### The lesson worth keeping
+
+The volume governor watches the ROUTINE's opt-out rate. Every text that went out
+today came from somewhere else. **A safety mechanism scoped to one sender is
+blind to the sender that is actually doing the damage** — and today that blind
+spot cost five verified leads in eighty minutes while the routine itself sent
+nothing at all.
