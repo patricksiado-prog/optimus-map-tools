@@ -126,6 +126,7 @@ the session that made them. That is the answer to "why did my email stop".
 |---|---|
 | **Lumen states (AZ CO IA ID MN MT NE NM OR UT WA)** | Not our territory. Patrick: *"ignore Lumen deal that doesn't matter."* |
 | **Google's 20M-cell beta** | Allowlisted per DOMAIN by a Workspace admin. Workbook is on a personal Gmail account — nothing to allowlist |
+| **Christian on the DealMachine connector** | Patrick, 2026-09-01: *"no Christian!! dnd"* — DECIDED, do not connect him and do not re-propose it. GoHighLevel access only |
 | **Using `thefiberplug.com` as the Workspace domain** | Patrick, 2026-08-30: *"no cuz I owe them $$."* Do not ask again |
 | **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
 | **Airtable** | Per-editor pricing compounds once VAs are in seats |
@@ -4115,3 +4116,24 @@ outstanding), DealMachine 7,137 credits with **23 hours** left, quiet hours in
 force so nothing customer-facing until 8am. Recommended to Patrick, twice, that
 the best remaining use of those credits is `enrich_phone` to type the Beaumont
 pocket (~47% landline) — **not yet answered either way.**
+
+## CHRISTIAN DOES NOT GET DEALMACHINE (Patrick, 2026-09-01)
+
+*"no Christian!! dnd"* — asked whether to invite Christian to the DealMachine
+team so his connector would see real data. **The answer is no. Decided, closed,
+do not re-propose it.**
+
+He had already added the connector correctly (`https://mcp.dealmachine.com`,
+Always required + DCR, both auto-Detected). **Without a seat on
+`Patrick Siado's Team` it signs him into an empty account and shows nothing** —
+so the connector existing is harmless. Nothing needs undoing; he simply never
+gets the invite.
+
+**Why this is the right call and worth keeping:** the DealMachine credit pool is
+shared and team-wide. An invite is not "access", it is a spending grant, and it
+cannot be scoped or capped per person. Christian's build — dialer, dispositions,
+workflows — needs **GoHighLevel only**. Enrichment stays on this side, which is
+also the standing rule that lists arrive already enriched and no VA ever
+skip-traces by hand.
+
+**So the split is now explicit: Christian gets GHL, never DealMachine.**
