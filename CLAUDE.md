@@ -4320,3 +4320,51 @@ built on exactly that data. It is the same class of error as writing
 shows as "Spam Likely" is rendered on the RECEIVING handset — no API reports
 it. The test is: call your own phone from each of the five numbers, in the
 dialer, and look at the screen.
+
+## THE TEST TEXT — SENDING FROM THE API IS BROKEN, WORKFLOWS STILL WORK (2026-09-01 12:52 CT)
+
+Patrick asked for a test text. Sent two to his own internal contact
+(`pTf15HQ88QisY5RuCbf1`, Patrick Siado, `+18322474060`, tagged
+`internal`/`send-test`). **BOTH FAILED.** MEASURED via `get_conversation`.
+
+| # | From | Result |
+|---|---|---|
+| 1 | `+13466801947` (dave's number 2) | `failed` — *"Invalid from number. Number not available in account."* |
+| 2 | `+13465178890` (**the DEFAULT**) | `failed` — **no error string at all** |
+
+**Meanwhile workflow sends from the SAME default number DELIVERED** twice this
+morning (16:15 and 16:47 UTC, internal alerts to the same contact,
+`status: delivered`, `source: workflow`).
+
+So the split is: **`source: workflow` delivers. `source: app` — which is every
+send from this connector — fails.**
+
+### The likely cause, and it is a repeat offender
+
+The conversation carries
+**`lastMessageConversationProviderId: 6958de9aca6f38b289d7f65e`** — that is the
+**"SMS Demo Provider"**, the placeholder with no real endpoint that caused the
+405 saga on 2026-08-28. The brain already warns that this provider **DRIFTS
+back** by accident, by snapshot push, or by a support agent mid-call.
+
+**Stated as the leading hypothesis, not proven:** connector/API sends are being
+routed through the dead demo provider while workflow sends go through
+LeadConnector. Fix is the same as before — in the sub-account, set the
+telephone/conversation provider to **LeadConnector (LC Phone)**, and check
+whether anything overrides it per-conversation.
+
+### And the four non-default numbers are NOT usable as senders
+
+`list_active_numbers_by_location` lists five numbers, but sending from
+`+13466801947` returns *"Number not available in account."* Only
+`+13465178890` is accepted at all — and even that now fails from the API.
+**Being listed in the account does not mean a number can send.**
+
+### Also measured this morning
+
+- Someone else (Patrick's other Claude, `source: app`) texted **Amanda
+  Oliverio** — a `status-verified` Beaumont gold upgrade — at 16:20 UTC from
+  `+13466581556`, a number that is NOT in the account. Failed the same way.
+  **Good copy, dead number.**
+- **Amanda Sylvester STOP'd at 17:19 UTC today** — that is what the "Amanda
+  replied via sms" alert was. Not an interested reply.
