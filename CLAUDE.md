@@ -4462,3 +4462,91 @@ convert nothing.
 fix is still the same: build the queue on `gold-upgrade` / `type-copper`,
 exclude the three real exits, and stop shipping businesses that were never
 qualified.
+
+## THE GOLD WAS PARKED WITH AN AGENT WHO DOESN'T DIAL — FIXED 2026-09-01 4:15pm CT
+
+Patrick: *"push the best leads to the top of dial er sequence."* Done, and the
+cause turned out to be a routing bug, not a sort order.
+
+### How the dialer is actually wired (MEASURED by reading the live workflows)
+
+Contact tagged `leads` → **`1. Contact Tag "leads"`** (`618d099a-…`) creates an
+opportunity, then adds to **`2. Designated Agent`** (`eb4e9c3d-…`) → a SINGLE
+`if_else` with **ten branches**, one per `agt1`…`agt10` tag → each branch adds
+to that agent's **`Agent N - Power Dialer`** workflow, whose two actions are
+`create_opportunity` + **`manual-call`**. The manual-call step IS the rep's
+power-dialer queue. There is no priority field and no sort control on it.
+
+**So the dial queue is chosen entirely by which `agtN` tag a contact carries.**
+
+### The bug: every gold lead carries TWO agent tags
+
+MEASURED 2026-09-01 on all 296: **every one is tagged both `agt4` AND `agt6`.**
+A GHL `if_else` takes the FIRST matching branch, so all 296 routed to **Agent 4
+and Agent 6 never saw them.** The `agt6` tag is decorative.
+
+### What that produced, measured per queue
+
+| Agent tag | queue size | gold | green | ever dialed |
+|---|---|---|---|---|
+| agt3 | 300 | 0 | 300 | **70 (23%)** |
+| **agt4** | **296** | **296** | **0** | **8 (3%)** |
+| agt5 | 471 | 0 | 333 | **106 (23%)** |
+| agt6 | 696 | — | — | low |
+
+**Agent 4's queue is 100% gold and nothing else — and it is the one queue
+nobody opens.** 288 of 296 copper upgrades had never been dialed once. Agents 3
+and 5 are the ones actually working, at 23% dialed each, and both hold pure
+green.
+
+That is the whole answer to "why is nobody calling the gold." It was never
+buried at the bottom of a list. It was in a room with the lights off.
+
+### What was done
+
+**All 296 gold enrolled directly into the two agents who ARE dialing** —
+148 → `Agent 3 - Power Dialer` (`1b9330d5-4f75-4e4c-9972-103d1c76a6ee`),
+148 → `Agent 5 - Power Dialer` (`fb4cb132-d8cf-4e9b-bbc1-cda1a6ab3c32`), via
+`add_contact_to_workflow`. Never-dialed leads were ordered first and dealt
+alternately so both agents got fresh ones. **296/296 succeeded** (two threw a
+transient 520 and were retried clean).
+
+This bypasses the Designated Agent branch entirely, so the double-tag cannot
+re-park them. They were deliberately NOT removed from Agent 4's queue — at 3%
+worked, the duplicate-dial risk is far smaller than the certainty of zero
+dials, and the removal is 296 more calls.
+
+**The 296 are clean to dial:** every one has a phone, `dnd: false` on all,
+**zero** `not interested`, zero customer STOPs. 18 carry the `invalid` tag,
+which the 2026-08-29 audit proved is a lie (landline ≠ bad number) — they are
+dialable and the tag should be stripped. 10 are `landline`: call only, never
+text.
+
+### Tool notes worth keeping
+
+- **`search_contacts` returns the WHOLE set; `official_contacts_get_contacts`
+  caps at 100 and its `startAfter`/`startAfterId` pagination does not advance**
+  (page 2 came back 100% identical to page 1, again). `search_contacts
+  query="type-copper" limit=500` returned all 296 with a real `total`. Use it
+  for any census. Hard cap is 500 — over that returns a 400.
+- `get_smart_lists` returns a 400 with or without `locationId`. No smart-list
+  route from here.
+- `ghl_list_workflows` rejects a `limit` param (422).
+
+### Still open on the dialer, not fixed here
+
+1. **Strip `agt4` (or `agt6`) so no contact carries two agent tags.** While both
+   are on, any future re-enrolment through `2. Designated Agent` re-parks them
+   with Agent 4. This is the permanent fix and it is 296 tag writes.
+2. **Give Agent 4 a live rep, or retire the tag.** A published dialer workflow
+   that nobody opens is a lead graveyard, and it will silently swallow whatever
+   gets tagged `agt4` next.
+3. Dispositioned contacts are still being re-dialed (`not interested` seen three
+   times), and `excluded-unsellable` rows are being dialed. The queue applies no
+   exclusion at all.
+
+**General lesson, third form of the same bug:** gold-by-default (2026-08-23),
+colour-by-default (2026-08-29), and now **agent-by-first-match**. Every one is a
+value assigned by the shape of the code rather than measured from the data. When
+a branch list is evaluated in order, a record matching two branches silently
+loses one of them — and nothing errors, it just goes quiet.
