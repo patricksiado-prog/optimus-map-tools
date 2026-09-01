@@ -4425,3 +4425,40 @@ name.** Rename the pocket tag to something with no colour word in it —
 Gold is an existing AT&T customer on copper: no competitor to beat, an upgrade
 rather than a switch, and the cheaper close. The team is spending its dials on
 the harder product while 296 easier conversations sit in the CRM untouched.
+
+### RE-CHECKED AT 3:51pm CT — STILL ZERO GOLD, AND NOW UNQUALIFIED BUSINESSES
+
+MEASURED off `search_conversations`, the 22 most recent calls placed
+**20:39–20:51 UTC (3:39–3:51pm CT)**, one hour after the 1:55pm check:
+
+| | |
+|---|---|
+| GOLD / copper | **0** |
+| Green | **20** |
+| No dot colour at all | 2 |
+
+Status: 19 completed, 2 no-answer, 1 busy.
+
+**Two things got worse, not better:**
+
+1. **THREE contacts tagged `not interested` were dialed** — space city pool &
+   spa, sosa's cuztoms, Amy Murphy. At 1:55pm it was one (Cindy L Debbrecht).
+   `Not Interested` is one of only three real exits and it is not removing
+   anyone from the queue. Re-dialing a no is how a lead becomes a complaint.
+2. **The queue has moved onto BUSINESSES from the Maps scraper** — tacos sayin,
+   taco nando, Lovely Nails & Spa, sweet admirer bakery, storage solutions plus,
+   sorh tattoos. Those rows have **no serviceability data**; that is the
+   unqualified-business-list mistake Patrick owned publicly after Dave's 3
+   closes. The business cross-match that would fix it has never run.
+
+Also still present: 2 contacts tagged `invalid` dialed.
+
+**The 19-of-22 "completed" rate is not a good sign — read it carefully.** On
+business numbers, `completed` usually means a receptionist or an auto-attendant
+answered, not a decision-maker. Connect rate on this list will look healthy and
+convert nothing.
+
+**Nothing changed after the 1:55pm finding because nobody has been told.** The
+fix is still the same: build the queue on `gold-upgrade` / `type-copper`,
+exclude the three real exits, and stop shipping businesses that were never
+qualified.
