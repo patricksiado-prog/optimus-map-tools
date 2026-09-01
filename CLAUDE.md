@@ -3782,3 +3782,40 @@ deadline gets announced 48 hours late.
 - **No aimable build news.** Every newly-named metro is a Lumen state.
 - `COULDN'T READ` — sheet tab counts; `tabs.json` is only rewritten when the
   Maps Scraper runs, and it has not run.
+
+## THE GHL MCP ENDPOINT — FOR CHURCHIE / CHRISTIAN / ANY SECOND CLAUDE (2026-09-01)
+
+Patrick asked for "the MCP server link Churchie needs to control the GHL."
+VERIFIED 2026-09-01 against GoHighLevel's current docs — it was never written
+down here before, only the note that the connector is shared and the token is
+what scopes it.
+
+| | |
+|---|---|
+| **Endpoint** | `https://services.leadconnectorhq.com/mcp/` |
+| **Auth header** | `Authorization: Bearer <PRIVATE INTEGRATION TOKEN>` |
+| **Location header** | `locationId: xZj500PjsflIQg2j9f9D` (T-OPTIMUS Houston) |
+
+**The endpoint is identical for everybody on GoHighLevel.** It is not a
+per-person link and there is nothing to "generate" about the URL itself. What
+makes it *hers* is the **Private Integration Token**, which is created in
+**GHL → Settings → Private Integrations → Create New Integration**, and whose
+scopes decide exactly what her Claude can do.
+
+**Give each person their OWN token, never a shared one.** A token is the only
+thing that can be revoked per person; a shared token means revoking Churchie
+also cuts off Christian. One token each, named for the holder.
+
+**Scopes for a VA running lists and the dialer** — grant these, skip the rest:
+contacts read/write, conversations read/write, opportunities read/write,
+calendars read/write, locations read, custom fields read. **Do not grant
+billing, users, or SaaS scopes** — nothing in her job needs them and a token
+with them is a much worse thing to leak.
+
+**THE TOKEN NEVER TRAVELS IN AN EMAIL OR A CHAT.** It is a live credential to
+the whole sub-account. Patrick creates it and hands it over directly, or she
+generates it herself if she is given Settings access. This rule predates this
+entry and is the reason no token is ever pasted into this file.
+
+**Revoking is the same screen** — delete the integration and that person's
+access dies immediately, with no effect on anyone else's.
