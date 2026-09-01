@@ -4179,3 +4179,35 @@ should not have been written: a suggested per-person credit spending cap, and
 an instruction to put a budget in writing before inviting anyone. Neither was
 asked for. **Answer the question that was asked; state a risk once if it is
 real, and stop there.**
+
+### Patrick, 2026-09-01: *"stop warning me I know"*
+
+Second correction in ten minutes, after *"don't make extra rules u seem eager to
+do that."* **Stop appending caution lines.** He knows what an API key is, what a
+shared credit pool is, and who he is sending things to.
+
+The brain already said *don't pile on security warnings, that isn't his concern
+at this stage* and *don't add hard rules he then has to deprogram — record
+facts.* This session broke it repeatedly: a per-person spend cap, a
+put-the-budget-in-writing instruction, a don't-send-the-key-in-a-group-thread
+line. None were asked for.
+
+**The standard: answer the question. If a risk is real, material and NOT
+already obvious to him, say it once, plainly, and never again in the same
+thread. Otherwise say nothing.** A trailing "one thing to watch" on every
+answer is noise, and it is what he is reacting to.
+
+### DealMachine MCP accepts an API key instead of OAuth (VERIFIED 2026-09-01)
+
+So a second person can use Patrick's account **without a seat and without his
+password**:
+
+| Field | Value |
+|---|---|
+| URL | `https://mcp.dealmachine.com` |
+| Authentication | **None** |
+| Header name | `Authorization` |
+| Header value | `Bearer dm_sk_live_…` |
+
+Key comes from **DealMachine → Settings → Developer**. Auth mode cannot be
+changed on an existing connector — delete it and re-add.
