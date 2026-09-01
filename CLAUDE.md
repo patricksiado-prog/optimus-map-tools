@@ -3935,3 +3935,60 @@ Consequences, stated once:
 **Adding a shared-secret header check to `/sse` is a small, contained change**
 and it is the right one — but it is a `_CORE_FILES`-class deploy on a service
 ChatGPT is actively using, so it is Patrick's call under RULE 0.
+
+## CORRECTION — THE MCP PATH IS `/mcp`, NOT `/sse` (2026-09-01)
+
+Patrick asked *"are u sure that's the right link?"* He was right to. **I had read
+the wrong source file.**
+
+`src/http-server.ts` defines `/sse` — but **Railway does not run that file.**
+MEASURED off `get-service-config`: it builds branch `main` with RAILPACK and
+runs the default `npm start`, which `package.json` defines as
+`node dist/main.js`. So the live entry point is **`src/main.ts`**.
+`http-server.ts` is only reachable via `start:legacy`, which nothing uses.
+
+**`main.ts` serves BOTH transports:**
+
+| Path | Transport | Use it? |
+|---|---|---|
+| **`/mcp`** | `StreamableHTTPServerTransport`, stateless (`sessionIdGenerator: undefined`) | **YES — this is what Claude and ChatGPT connectors speak** |
+| `/sse` | `SSEServerTransport`, the legacy transport deprecated in the MCP spec | no |
+
+Also on `main.ts`: `/health`, `/capabilities`, `/tools`, `/tool-inventory`,
+`POST /tools/call`, `/execute`, and `/` (which lists all of them — the fastest
+way to re-check this without reading code).
+
+**Proof the server was never the problem.** `mcp__Railway__http-requests` on the
+`46d1` service, MEASURED 2026-09-01: **31 requests in one hour — 20×2xx, 11×4xx,
+0×5xx.** The server is up and answering; the 4xx cluster is Christian's failed
+`/sse` attempts. Claude's connector reported *"Couldn't reach"*, which reads like
+the server is down and is not.
+
+**Lesson: `npm start` decides which file is live, not which file looks like the
+server.** Check `package.json` `start` and the platform's build config BEFORE
+reading routes out of a file whose name sounds right.
+
+### AND `/mcp` TAKES PER-PERSON CREDENTIALS — this reverses an earlier claim
+
+I told Patrick there was no way to revoke one person without rotating
+`GHL_API_KEY` and breaking ChatGPT. **Wrong.** The `/mcp` handler reads two
+optional headers and, when both are present, builds the GHL client from THEM
+instead of the server's baked-in key:
+
+```
+x-ghl-access-token
+x-ghl-location-id
+```
+
+Both are already in the CORS `allowedHeaders` list, so they are meant to be used.
+**So Christian, Churchie or any VA can use the same Railway URL with their OWN
+Private Integration Token pasted into the connector's "Additional request
+headers".** Revoking that person is then one click in GHL → Settings → Private
+Integrations, with no effect on ChatGPT or anyone else. That is strictly better
+than handing out the bare URL, and it is the same amount of setup for them.
+
+**Unverified and worth watching:** the CORS allow-list in `main.ts` names only
+`localhost`, `https://chatgpt.com` and `https://chat.openai.com` — **`claude.ai`
+is not on it.** CORS is a browser rule and Claude's remote connector calls
+server-side, so this should not matter. If `/mcp` still fails after the path fix,
+this is the next suspect and it is a one-line change.
