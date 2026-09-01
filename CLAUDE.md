@@ -3880,3 +3880,58 @@ Two identical services run 24/7 on a paid Railway workspace to do one job. If
 duplicate from the 2026-06-04 double-create, one of them is paid-for noise.
 **Do not delete either without Patrick confirming which tool points where** —
 RULE 0, and an MCP server going away silently breaks whoever was using it.
+
+## THE LINK THAT CONNECTS OPTIMUS — AND IT HAS NO LOCK ON IT (2026-09-01)
+
+Patrick: *"what link connect optimus"*. MEASURED by reading
+`src/http-server.ts` in the deployed repo, not inferred.
+
+**The MCP path is `/sse`.** Routes the server exposes: `/health`,
+`/capabilities`, `/tools`, `POST /tools/call`, **`GET|POST /sse`**, and `/`.
+So the working link is:
+
+```
+https://go-high-level-mcp-2026-complete-production-711a.up.railway.app/sse
+```
+
+That is `fulfilling-growth`, the one whose logs show live GHL traffic. The
+`loving-heart` twin is the same code at `…-46d1.up.railway.app/sse`.
+
+**CORRECTION to yesterday's entry.** I recorded that `loving-heart` was "the
+likely ChatGPT connector" because it holds `OPENAI_API_KEY`. The code says
+**both** are ChatGPT connectors — `setupExpress()` allow-lists exactly two
+non-localhost origins:
+
+```js
+origin === 'https://chatgpt.com' || origin === 'https://chat.openai.com'
+```
+
+This server was purpose-built for ChatGPT. The OpenAI key distinguishes the two
+deployments but does not decide which one ChatGPT talks to.
+
+### THE LINK IS THE CREDENTIAL — there is no auth on it
+
+**`http-server.ts` contains no authentication of any kind.** No bearer check, no
+token check, no shared secret. `Authorization` appears once, in the CORS
+`allowedHeaders` list, and nothing ever reads it. The GHL key is the server's
+own `process.env.GHL_API_KEY`, already baked in.
+
+**So anyone holding that URL has full read/write control of T-OPTIMUS Houston
+with no credential of their own.** CORS does not protect it — CORS is a browser
+rule and does nothing against curl, a script, or any server-side client.
+
+Consequences, stated once:
+- **Do not paste the Railway URL into email, chat, a screenshot or a doc.** It
+  is not a link, it is a key. This is the same rule the brain already applies to
+  the Private Integration Token, and for the same reason.
+- **Never give a person the Railway link.** For Churchie, Christian or any VA,
+  use `https://services.leadconnectorhq.com/mcp/` with their OWN Private
+  Integration Token — revocable per person, scoped per person.
+- The Railway link is for the ChatGPT connector only, because ChatGPT has
+  nowhere to put a token.
+- If it ever leaks, the fix is to rotate `GHL_API_KEY` in the GHL sub-account
+  and update the Railway variable. Changing the Railway URL is not a fix.
+
+**Adding a shared-secret header check to `/sse` is a small, contained change**
+and it is the right one — but it is a `_CORE_FILES`-class deploy on a service
+ChatGPT is actively using, so it is Patrick's call under RULE 0.
