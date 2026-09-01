@@ -126,7 +126,6 @@ the session that made them. That is the answer to "why did my email stop".
 |---|---|
 | **Lumen states (AZ CO IA ID MN MT NE NM OR UT WA)** | Not our territory. Patrick: *"ignore Lumen deal that doesn't matter."* |
 | **Google's 20M-cell beta** | Allowlisted per DOMAIN by a Workspace admin. Workbook is on a personal Gmail account — nothing to allowlist |
-| **Christian on the DealMachine connector** | Patrick, 2026-09-01: *"no Christian!! dnd"* — DECIDED, do not connect him and do not re-propose it. GoHighLevel access only |
 | **Using `thefiberplug.com` as the Workspace domain** | Patrick, 2026-08-30: *"no cuz I owe them $$."* Do not ask again |
 | **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
 | **Airtable** | Per-editor pricing compounds once VAs are in seats |
@@ -4117,23 +4116,44 @@ force so nothing customer-facing until 8am. Recommended to Patrick, twice, that
 the best remaining use of those credits is `enrich_phone` to type the Beaumont
 pocket (~47% landline) — **not yet answered either way.**
 
-## CHRISTIAN DOES NOT GET DEALMACHINE (Patrick, 2026-09-01)
 
-*"no Christian!! dnd"* — asked whether to invite Christian to the DealMachine
-team so his connector would see real data. **The answer is no. Decided, closed,
-do not re-propose it.**
 
-He had already added the connector correctly (`https://mcp.dealmachine.com`,
-Always required + DCR, both auto-Detected). **Without a seat on
-`Patrick Siado's Team` it signs him into an empty account and shows nothing** —
-so the connector existing is harmless. Nothing needs undoing; he simply never
-gets the invite.
+## CHRISTIAN DOES GET DEALMACHINE (Patrick, 2026-09-01) — AND A MISREAD TO LEARN FROM
 
-**Why this is the right call and worth keeping:** the DealMachine credit pool is
-shared and team-wide. An invite is not "access", it is a spending grant, and it
-cannot be scoped or capped per person. Christian's build — dialer, dispositions,
-workflows — needs **GoHighLevel only**. Enrichment stays on this side, which is
-also the standing rule that lists arrive already enriched and no VA ever
-skip-traces by hand.
+Patrick: *"I want him in the deal machinr"*. **He gets DealMachine. Set it up.**
 
-**So the split is now explicit: Christian gets GHL, never DealMachine.**
+**A wrong decision was written into this file and had to be reversed minutes
+later.** Patrick wrote *"no Christian!! dnd"*; that was read as "no, don't give
+Christian DealMachine" and recorded as a CLOSED item. He meant the opposite —
+"no, I'm asking about **Christian**, not me." The entry has been deleted.
+
+**The lesson, and it is the dangerous one:** a misread turned into a
+*do-not-re-propose* row in the closed list, which is the strongest form of
+instruction this file has. A short, ambiguous message is exactly when NOT to
+write a permanent closure. **Record decisions from unambiguous statements. When
+a two-word message could go either way, act on the reading and say which reading
+was taken — do not close the door on it.**
+
+### How to add him — Team Leader invites by email, inside the app
+
+VERIFIED 2026-09-01 against DealMachine's help docs:
+
+- DealMachine has two roles: **Team Leader** (the account holder who pays — that
+  is Patrick) and **Team Member**. Only the Team Leader can invite.
+- Invite from the **Team** menu in the DealMachine app, by entering the member's
+  email address. Each plan tier includes a set number of team members.
+- **If the invite email never arrives**, the person signs up at DealMachine
+  using **the exact email that was invited** — that does not start a trial or a
+  charge, it is just how they claim the seat.
+
+Christian's address is `cdpulifreelancer@gmail.com` — the `i` in `cdpuli` is
+the whole bug that hard-bounced the first onboarding.
+
+**Once he holds a seat, his existing connector starts returning real data** with
+no change on his side: he already added `https://mcp.dealmachine.com` correctly
+(Always required + DCR, both auto-Detected). He may need to disconnect and
+reconnect once so the OAuth token picks up the new team.
+
+**The credit pool is shared and cannot be capped per person.** 7,137 left,
+expiring Tue 1 Sep 11:14pm CDT. Give him a spending instruction in writing when
+the invite goes out — that is the only control that exists.
