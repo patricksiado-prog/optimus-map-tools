@@ -4296,3 +4296,27 @@ damage is the copy, not the timing.
   has no record of those cause numbers** — JP2 is Justice of the Peace, not
   municipal court. His filing went to the wrong court. Reported as fact, no
   advice given.
+
+## THE CONNECTOR CANNOT PLACE A CALL (2026-09-01)
+
+Patrick asked for a test call. **It cannot be done from a Claude session, and
+this is worth recording so nobody tries again.**
+
+`add_outbound_call` reads, verbatim from the tool inventory: *"Manually add an
+outbound call **record** to a conversation."* It writes a log entry. **It does
+not dial anybody.** GoHighLevel's API has no place-a-call endpoint at all —
+dialing happens from the softphone, the power dialer, or the LeadConnector
+mobile app, all of which need a human on a device.
+
+**Never use it to fake a test.** Logging a call record that no one made puts
+false activity in the CRM, and dispositions and connect rates are about to be
+built on exactly that data. It is the same class of error as writing
+`(all DNC)` into a phone column.
+
+**What CAN be tested from a session:** an SMS. `send_sms` really sends, and
+`get_conversation` shows `status` and `error` so delivery is verifiable.
+
+**The spam-label test has to be done by a person anyway.** Whether a number
+shows as "Spam Likely" is rendered on the RECEIVING handset — no API reports
+it. The test is: call your own phone from each of the five numbers, in the
+dialer, and look at the screen.
