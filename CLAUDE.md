@@ -4021,3 +4021,59 @@ Claude's *Add connector* screen, for either Railway URL ending in **`/mcp`**:
 | OAuth client | irrelevant once Authentication is None; leave it |
 | Additional request headers | empty to use the server's baked-in key — **or** `x-ghl-access-token` + `x-ghl-location-id` for a revocable per-person token |
 | Advanced | do not change |
+
+## THE DEALMACHINE CONNECTOR — OFFICIAL, OAUTH, NOT LIKE THE GHL ONE (2026-09-01)
+
+Patrick asked about the DealMachine connector. VERIFIED 2026-09-01 against
+DealMachine's own docs plus a live `dealmachine_whoami` call.
+
+| | |
+|---|---|
+| **Endpoint** | `https://mcp.dealmachine.com` |
+| **Auth** | **OAuth 2.1** — supported for Claude, ChatGPT, Cursor and Codex |
+| **This session is authenticated as** | organization `Patrick Siado's Team`, `type: oauth` |
+
+**This is the opposite of the Railway GHL server and the difference matters.**
+The GHL connector has NO auth and its URL is the credential. DealMachine's is
+first-party and OAuth, so in Claude's connector dialog the setting is
+**"Always required"**, not "None". Anyone told "pick None" for GHL will get it
+wrong here — say which server you mean.
+
+**OAuth also means access is per-person and revocable.** Each person signs in
+with their own DealMachine login; there is no shared key to leak and no key to
+rotate. That is strictly safer than the Railway arrangement.
+
+**But credits are shared and they are the constraint.** Anyone connected spends
+from the same team pool. Do not connect a VA to it without deciding a budget
+first — a careless bulk export is thousands of credits, and `enrich_address`
+alone runs 1–2 credits per lead.
+
+**Standing cost facts, still true:** bulk export via
+`dealmachine_property_export` ran **under 1 credit per lead** (2,000 contacts
+for 1,905 credits) against a 2.6 benchmark; `dealmachine_property_count` and
+`dealmachine_usage` are **free**; `estimate_cost` runs high, so probe one page
+and read `credits.used` before scaling. **Never `scrub_dnc`** — it deletes over
+half the list and Patrick's standing call is to record DNC and dial anyway.
+
+## THE BUILD BRIEF FOR CHRISTIAN — SHIPPED (2026-09-01)
+
+Artifact: `https://claude.ai/code/artifact/52360fe6-7b31-45bc-9015-e90a75a14d28`
+— *Optimus Build Queue*. **Private until Patrick shares it from the page.**
+
+Carries the eight measured faults, a seven-item ranked build queue (workflow
+reply-stop → dispositions → line type → the 1,376 buried leads → same-hour
+reply callbacks → six-attempt cadence → dot colour on every lead), what the
+connector cannot do, and the rules of the road. **No commission or payout
+figures anywhere on it** — customer-facing pricing only.
+
+**Connector scale, MEASURED from `docs/tool-inventory.json` in the deployed
+repo: 834 tools — 520 read, 314 write, and 106 destructive.** That last number
+is why the brief leads its rules with *read freely, ask before writing or
+deleting*: there is no permission layer and no undo on that connector.
+
+**Christian's connector is CONNECTED** (screenshot, 11:36pm) on the `711a`
+`/mcp` URL, named `Claude- GHL - CDP`. It reported *"This connector has no tools
+available"* on the settings page. `main.ts` does call
+`new ToolRegistry(client).registerAll(server)`, so the tools exist — expect the
+list to populate once the connector is switched on inside a chat. **If it still
+shows none in a chat, that is a real fault and not cosmetic.**
