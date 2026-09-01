@@ -3819,3 +3819,64 @@ entry and is the reason no token is ever pasted into this file.
 
 **Revoking is the same screen** — delete the integration and that person's
 access dies immediately, with no effect on anyone else's.
+
+## THE RAILWAY MCP SERVERS — FOUND, LIVE, AND CARRYING THREE DEFECTS (2026-09-01)
+
+Patrick asked to look into "the brain Railway ChatGPT connector." Nothing about
+Railway was in this file before. MEASURED 2026-09-01 00:40 UTC via the Railway
+connector.
+
+**There are TWO Railway projects, each running ONE service, and both services
+are the same thing — `Go-High-Level-MCP-2026-Complete`, the hunter repo
+deployed as an MCP server.** Created three minutes apart on 2026-06-04, both
+last deployed 2026-06-30, both `SUCCESS`, both listening on port 8080.
+
+| Project | Public domain | Has `OPENAI_API_KEY` | GHL API traffic in logs |
+|---|---|---|---|
+| `fulfilling-growth` `13c1661d-…` | `go-high-level-mcp-2026-complete-production-711a.up.railway.app` | **no** | **YES — live GHL calls** |
+| `loving-heart` `0c52fac6-…` | `go-high-level-mcp-2026-complete-production-46d1.up.railway.app` | **YES** | none — connections only |
+
+**`loving-heart` is the one holding the OpenAI key, so it is the likely ChatGPT
+connector.** That is an INFERENCE from the env var, not proof — nothing in the
+logs names ChatGPT. Confirm before relying on it.
+
+Both env sets carry `GHL_API_KEY`, `GHL_LOCATION_ID`, `GHL_BASE_URL`,
+`GHL_API_VERSION`, `GHL_FIREBASE_API_KEY`, `GHL_FIREBASE_REFRESH_TOKEN`.
+Values are redacted by the connector — **do not try to read them out**.
+
+**Both are being connected to constantly**, within minutes of each other
+(00:31:51 and 00:31:55, then both at 00:39:23). `fulfilling-growth` is the one
+actually serving data — its logs show live `[GHL API]` calls against
+`xZj500PjsflIQg2j9f9D`: `/conversations/search`, `/conversations/messages/export`,
+message transcriptions.
+
+**These URLs cannot be reached from a Claude sandbox** — the agent proxy refuses
+CONNECT to `*.up.railway.app` with a 403, same class of block as
+news.google.com. That says NOTHING about whether they work from Patrick's
+machine or from ChatGPT. Use `mcp__Railway__get-logs` to prove liveness instead
+of curling the domain.
+
+### Three defects, all visible in the logs, none of them fatal
+
+1. **Every log line is written at severity `error` — including `Response 200`.**
+   A successful call and a real failure look identical. This is why nobody has
+   noticed the other two. Fix the log level before anything else; right now the
+   logs cannot be used to find a problem.
+2. **`ghl_delete_workflow` is registered twice.** Every connect, on BOTH
+   servers, prints `[Registry] Failed to register tool ghl_delete_workflow:
+   Tool ghl_delete_workflow is already registered`. It is the single most
+   frequent line in both logs. Duplicate registration in the tool registry.
+3. **A real wasted API call on every export.** The server requests
+   `/conversations/messages/export?...&sortBy=dateAdded` and GHL returns
+   **422 — `sortBy must be one of the following values: createdAt, updatedAt`**.
+   It then retries with `createdAt` and gets a 200. So every message export
+   fires a guaranteed-failing request first. One-word fix: `dateAdded` →
+   `createdAt`.
+
+### The cost question nobody has asked
+
+Two identical services run 24/7 on a paid Railway workspace to do one job. If
+`loving-heart` is genuinely the ChatGPT connector, keep both. If it is a
+duplicate from the 2026-06-04 double-create, one of them is paid-for noise.
+**Do not delete either without Patrick confirming which tool points where** —
+RULE 0, and an MCP server going away silently breaks whoever was using it.
