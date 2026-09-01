@@ -4566,3 +4566,92 @@ colour-by-default (2026-08-29), and now **agent-by-first-match**. Every one is a
 value assigned by the shape of the code rather than measured from the data. When
 a branch list is evaluated in order, a record matching two branches silently
 loses one of them — and nothing errors, it just goes quiet.
+
+## ADDRESS + CUSTOMER TYPE ARE ALREADY ON THE DIALER — 3,114 of 3,138 (2026-09-01)
+
+Patrick: *"add addresses and customer types to all the leads in the dialer?"*
+**Checked before writing anything, and it is already done.** The work was not
+re-doing 3,138 notes; it was finding the 24 that were wrong.
+
+### The census, MEASURED 2026-09-01 5pm CT
+
+Pulled every `agt1`…`agt10` queue and deduped: **3,138 unique contacts in the
+dialer.** Every single one carries a colour tag — `type-green` 2,704,
+`type-copper` 296, `type-green-biz` 138. **Zero with no type.**
+
+Sampled notes across all three types (agt7 green, agt1 green, agt5 biz, agt4
+gold) — all four already carry the full note: address on the first line,
+`CUSTOMER TYPE: X`, what the colour means and how to open, `SAY THE ADDRESS OUT
+LOUD`, address again at the bottom. Written 2026-08-30 and 08-31 by the imports.
+
+**So the answer to "can you add them" is that they are there.** Do not re-write
+3,138 notes; check before assuming a gap.
+
+### The real gap was 24 rows — and it is an upstream data bug
+
+| | |
+|---|---|
+| Address has a street number | **3,114** |
+| Address is the literal word **`laporte`** | **13** |
+| Address blank | **11** |
+
+`laporte` is a SOURCE string that landed in the address column. It is not a GHL
+problem — `OPTIMUS_DIALER_FULL.csv` and `all_leads.json` both carry
+`Address=laporte` for the same rows, and the notes built from them read
+*"laporte | CUSTOMER TYPE: GREEN | … | SAY THE ADDRESS OUT LOUD | laporte"*.
+A rep reading that out loud says a town name and the call stops being credible.
+
+**Whatever built those merged lead files wrote a market/source label into the
+address field. Fix it there or it comes back on the next import.**
+
+### What was recovered, and how
+
+`dealmachine_enrich_phone` with `include_properties` on all 24. **8 real
+addresses recovered**, notes rewritten with a line saying the address was
+corrected and why:
+
+| Contact | Recovered address | How |
+|---|---|---|
+| Nichole Aviles | 8118 DEVONWOOD LN, HOUSTON 77070 | DM, owner-occupied |
+| Sharon Durfey | 8210 DEVONWOOD LN, HOUSTON 77070 | DM, owner-occupied |
+| Tracy Turner | 8215 DEVONWOOD LN, HOUSTON 77070 | DM, owner-occupied |
+| Richard Vanness | 8214 SCHAFFER LN, HOUSTON 77070 | DM, owner-occupied |
+| Dwight Beck | 614 N ROCKISLAND ST, ANGLETON 77515 | DM, owner-occupied |
+| Claudett Escoto | 760 RANDOLPH CIR, BEAUMONT 77706 | DM; owns 17 properties, this is the one she lives in |
+| all-service mobile detailing | 7510 FOREST PARK DR, BEAUMONT | **it was sitting inside the business NAME field** |
+| national tank services | 5055 WASHINGTON BLVD, BEAUMONT | same — inside the NAME field |
+
+The remaining **16 are all businesses** and no address exists anywhere — DM
+returns `no_match` or only the owner's investment properties, which are NOT the
+service address and must never be read out. Each got a note saying
+**ADDRESS MISSING — ASK FOR IT ON THE CALL**, plus the customer type, the
+business-pricing rule, and a trade-specific angle.
+
+### Two findings that fell out of it
+
+- **A gold pocket in Houston 77070 nobody has named.** 8118, 8210 and 8215
+  Devonwood Ln plus 8214 Schaffer Ln are four dialer leads on the same two
+  streets — and **Sharon Durfey's email is `sharon.durfey@att.net`**, Dwight
+  Beck's is `antiquebeck@att.net`. Per the att.net rule those two are almost
+  certainly ALREADY AT&T customers, so they are copper UPGRADES mislabelled
+  green. Their notes now say so. This is the same block Patrick's other Claude
+  flagged as *"upgrade near 8231 devonwood ln"* — independent confirmation.
+- **Tracy Turner is still in the dial queue and should not be.** She declined
+  2026-08-31 4:25pm and the workflow texted her one second later. Her note now
+  reads **DO NOT DIAL — SHE ALREADY DECLINED**; she needs dispositioning
+  `Not Interested`. Found only because she was one of the 24.
+
+### Mechanics worth keeping
+
+- **`update_contact` has NO address field** (only contactId, email, firstName,
+  lastName, phone, tags). Neither does `upsert_contact`. **From a session the
+  address can only be written into a NOTE** — which is where Patrick wants it
+  anyway, but it means `address1` on those 8 records is still wrong until
+  someone edits it in GHL or re-imports.
+- **`enrich_phone` with `include_properties` is cheap on a homeowner and
+  expensive on an investor** — 0–1 credits for a single owner-occupied
+  property, but 11 for someone with 10 parcels, and the extra parcels are
+  useless for this. Probe residential first; for a business, expect no usable
+  answer.
+- DealMachine after this work: **7,092 credits left**, cycle ends
+  2026-09-02T04:14:15Z = **tonight, Tue 1 Sep 11:14pm CDT**. ~45 spent here.
