@@ -91,10 +91,9 @@ the session that made them. That is the answer to "why did my email stop".
    `agt5`). The dialer queue was 199 yesterday. Still open: import
    `ENRICHED_TAB.csv` as a workbook tab, and `OPTIMUS_DIALER_2000_labeled.csv`
    (2,000 rows) remains the bigger pool behind the 775.
-3. **DealMachine credits expire MON 1 SEP 11:14pm CT — 7,137 unspent of
+3. **DealMachine credits expire TUE 1 SEP 11:14pm CT — 7,137 unspent of
    30,000.** MEASURED 2026-08-31 off `dealmachine_usage`: cycle ends
-   `2026-09-02T04:14:15Z`, which is **Monday night Central, not Tuesday or
-   Wednesday**. They do not roll over. Bulk export runs under 1 credit per
+   `2026-09-02T04:14:15Z`, which is **Tuesday 1 Sep night Central**. They do not roll over. Bulk export runs under 1 credit per
    lead. **Best remaining use: `enrich_phone` to type the Beaumont pocket,
    which is ~47% landline.**
 4. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
@@ -4077,3 +4076,14 @@ available"* on the settings page. `main.ts` does call
 `new ToolRegistry(client).registerAll(server)`, so the tools exist — expect the
 list to populate once the connector is switched on inside a chat. **If it still
 shows none in a chat, that is a real fault and not cosmetic.**
+
+### Weekday correction on the DealMachine deadline (2026-09-01 00:00 CDT)
+
+The cycle end is `2026-09-02T04:14:15Z` = **Tuesday 1 September, 11:14pm CDT**.
+The date and time were right everywhere, but the **weekday label was wrong** —
+it was written and emailed as "Monday 1 Sep". 1 Sep 2026 is a **Tuesday**.
+Corrected in the state block above.
+
+**Compute the weekday, never assert it.** `TZ=America/Chicago date -d <utc>`
+settles it in one call. A wrong day name on a real deadline is how a deadline
+gets missed by someone reading only the day.
