@@ -4211,3 +4211,34 @@ password**:
 
 Key comes from **DealMachine → Settings → Developer**. Auth mode cannot be
 changed on an existing connector — delete it and re-add.
+
+### The canonical handoff prompt for a second Claude (2026-09-01)
+
+Patrick keeps asking for this, so it lives here. Anything given to Christian's
+Claude (or any second Claude) must carry, in this order:
+
+1. **The brain, by raw URL** —
+   `https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/claude/new-session-8z4pyb/CLAUDE.md`
+   PUBLIC, verified HTTP 200. Read the CURRENT STATE block first; later dates
+   win over earlier ones.
+2. **Which connector is for what** — GoHighLevel (the Railway `/mcp` URL, no
+   auth) is the CRM; DealMachine (`https://mcp.dealmachine.com`) is enrichment
+   and property data.
+3. **The measured faults**, so nobody re-derives them: pipeline write-only
+   (~3,695 open / 2 won / 0 lost), 1,376 contacts mislabelled `invalid` with
+   100/100 sampled dialable, 47% landline in a pool marked Text OK, a workflow
+   that texts over replies, 85% of the dial queue carrying no dot colour.
+4. **The rules that cost money when broken** — dot legend, texting rules,
+   registry DNC vs a customer saying STOP, six attempts on a widening gap then
+   out un-dispositioned, Not Interested ≠ CB, a landline is a call not a
+   discard, read `dndSettings` per channel, API success ≠ delivery.
+5. **Read freely, ask before writing or deleting.** 106 of the 834 GHL tools
+   are destructive and there is no undo.
+6. **Report back before acting** — say which numbers were measured live and
+   which came from the brain, and never blend the two.
+
+**Patrick's own DealMachine connector is live and healthy** — seen on screen
+2026-09-01, `https://mcp.dealmachine.com`, OAuth, 11 read-only tools listed.
+**Creating an API key does not disturb it**: OAuth and API keys are independent
+credentials on the same account, so issuing a key for someone else changes
+nothing about his own access, and deleting that key later cuts off only them.
