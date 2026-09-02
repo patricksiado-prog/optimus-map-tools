@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 22:40 CDT
+# CURRENT STATE — updated 2026-09-02 23:10 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -59,6 +59,20 @@ beta" survive four sessions unchecked.
   by the software itself: log OUT of youachieve.att.com, close the browser, log
   back in, re-run. A fresh login fixed it.
 - **Sheet ceiling: 10,000,000 cells, HARD.** `Precise Fiber` is ~8.4M of it.
+
+### The gold question — answer it with the caveat, never the raw number
+
+- **`Gold Confirmed` = 11,490 rows, but only ~2,438 believed real (21%)** —
+  MEASURED 2026-08-27 via `optimus/_feed/sheet/tabs.json`, **now 6 days stale**
+  because the scanner is down. The other 9,052 are pre-08-24 gold-by-default
+  decode failures; the purge may not have run.
+- **Rows are not dots.** 170 `VERIFIED_GOLD` rows in a sample were **4 unique
+  addresses**. Treat any row count as an upper bound on unique gold.
+- **296 gold contacts in GHL** (MEASURED 2026-09-01, unique) — the only gold
+  number that is both current and de-duplicated.
+- **`Upgrade Orange Biz` = 62 rows.** Gold businesses are the highest-value slice
+  we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
+- Full census in the BRAIN.md section dated 2026-09-02.
 
 ### The dial queue
 

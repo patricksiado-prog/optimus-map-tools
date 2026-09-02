@@ -7186,3 +7186,92 @@ memory file, and a careless split loses things. Recorded here with the numbers
 so the next session can act on it in one turn if he says go. Do not do it
 silently.
 
+
+## SHEET CENSUS AND THE REAL GOLD NUMBER (2026-09-02)
+
+Patrick: *"can u read the sheet?? analyze it ... how many gold dots do we have"*.
+
+### Reading it: yes, three ways, and their limits are now measured
+
+| Method | What it gives | Limit |
+|---|---|---|
+| `get_file_metadata` | `fileSize`, `modifiedTime` — the liveness check | no contents |
+| `read_file_content` on the workbook | a **~200-row sample of EACH tab** (9 blocks, 1,587 lines) | never a full tab, never a count |
+| `optimus/_feed/sheet/tabs.json` on GitHub | **exact row counts for every tab**, no Google auth | only rewritten when the Maps Scraper runs |
+
+**`tabs.json` is the only source of true counts, and it is 6 days stale** —
+generated `2026-08-27 05:42:44`, run `20260827-050453`. It has not refreshed
+because the scanner has been down since Sunday. **So the honest answer to "how
+many gold" is an 8/27 number, and it must be quoted as one.**
+
+### The census, 772,768 rows across 29 tabs (MEASURED 2026-08-27)
+
+| Rows | % | What |
+|---|---|---|
+| 645,422 | 83.5% | `Precise Fiber` — green resi. The money |
+| 38,481 | 5.0% | `Maps Businesses` — **no dot match, so unsellable as-is** |
+| 26,689 | 3.5% | `Grey Fiber Customers` — already on fiber, never dial |
+| 20,797 | 2.7% | machine logs (`Hunter Status`, `Backend Comm`) |
+| 13,032 | 1.7% | frozen `TEST-*` snapshots — **deletable** |
+| **11,490** | **1.5%** | **`Gold Confirmed`** |
+| 7,298 | 0.9% | `Fiber Green Biz` |
+| 6,656 | 0.9% | `Gold Dots` + `GOLD — CLEAN` — RETIRED, contaminated |
+| 1,000 | 0.1% | `ZZ_TMP_GRID` and temp tabs — **deletable** |
+| **62** | **0.0%** | **`Upgrade Orange Biz` — GOLD BUSINESSES** |
+
+### THE GOLD ANSWER — say it with the caveat, never the raw number
+
+- **`Gold Confirmed` = 11,490 rows on 2026-08-27.**
+- **Only ~2,438 of those are believed real (21%).** The other **9,052** are
+  pre-2026-08-24 **gold-by-default** rows — addresses whose build code could not
+  be decoded and were labelled gold because that was the fallback. The purge
+  (scraper commit `754ecbf`) drops rows captured before 2026-08-24; **whether it
+  has run since is unknown**, and the scanner has been down since 8/30.
+- **Rows are not dots.** The sheet writes one row per sighting — 170
+  `VERIFIED_GOLD` rows in the sample were **4 unique addresses**. So even 2,438
+  rows is an upper bound on unique gold, not a count of it.
+- **296 gold contacts exist in GHL** (MEASURED 2026-09-01, unique, deduped).
+  That is the only gold number that is both current and unique-counted.
+
+**The one-line answer: somewhere between 296 (in the CRM, verified) and ~2,438
+(sheet rows, 8/27, before de-duplication). Anyone quoting 11,490 is quoting the
+contamination.**
+
+### Two findings worth acting on
+
+- **`Upgrade Orange Biz` holds 62 rows.** Gold businesses are the highest-value
+  slice in the whole operation — an existing AT&T business customer on copper,
+  priced by speed tier, no competitor — and the tab is essentially empty while
+  38,481 scraped businesses sit unmatched to any dot. **The business-to-dot match
+  is still the highest-leverage thing not running.**
+- **14,031 rows are reclaimable immediately** by deleting the frozen `TEST-*`
+  tabs and `ZZ_TMP_GRID` — free headroom against the 10M-cell ceiling, no data
+  loss, they are verification snapshots from 8/24.
+
+### What would fix the staleness permanently
+
+`tabs.json` is written by `sheet_feed.py` when the Maps Scraper runs. It is
+6 days old because the scanner is down on the AT&T login. **The gold count, the
+tab census and the growth signal all unblock from the same single action Patrick
+already owes: log out of youachieve.att.com, log back in, relaunch.**
+
+## A PORTABLE SKILL WENT TO CHRISTIAN (2026-09-02)
+
+Patrick: *"can u email Christian a new skill too so his claude isn't retarded"*.
+
+**Gmail was DISCONNECTED this session** (server requires re-authorisation; a
+non-interactive session cannot run the OAuth flow). Could not email it. Written
+and handed to Patrick as a file instead — `optimus-att-fiber/SKILL.md`,
+self-contained so it needs no access to this repo.
+
+Contents: THE FOUR CHECKS, the dot legend with what each colour is worth and how
+to open it, the pitch and the copper-retirement line, the texting rules
+(including the exact "Great news!" copy that produced the 7.9% opt-out rate,
+quoted so his Claude recognises and refuses it), DealMachine credit economics
+(1.00/record, cycle-duplicates free, no serviceability data, the att.net gold
+signal), and the dialer wiring including the **first-matching-branch** trap that
+buried 296 gold leads.
+
+**Commission figures are IN it** — $500 / $140 — because Christian is building
+the dialer and needs the value ordering. It carries an explicit instruction not
+to put those numbers anywhere a VA or rep can see, which is Ed's standing rule.
