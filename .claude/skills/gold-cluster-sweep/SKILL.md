@@ -228,6 +228,20 @@ Two cautions that have already cost real money here:
 Chains and franchises with a switchboard have no local telecom decision-maker.
 Drop them rather than burning a message.
 
+### 4c. THE ADDRESS GOES IN THE NOTE — ALWAYS
+
+Patrick, 2026-09-03: *"I want the address in the notes always"*. Every lead note
+**opens with the full street address and closes with it again**. These leads ARE
+the address — "fiber is live at your address" is the entire pitch, and a rep who
+has to hunt for it will not say it.
+
+No address on the record? That is a job, not an exception: `enrich_phone` with
+`include_properties` and take the **owner-occupied** property (or the one where
+`is_resident` is true). ~1-3 credits. If DealMachine returns `no_match`, or the
+record is LLC-owned (it will not skip-trace an LLC), write
+**`ADDRESS UNKNOWN - ASK FOR IT ON THE CALL AND WRITE IT HERE`** as the first
+line and say what you checked. Never leave it blank, never substitute a city.
+
 ### 5. Write the campaign tab
 
 New tab, named for the pocket and date (`Grant Rd Cluster — Aug 24`). Columns:

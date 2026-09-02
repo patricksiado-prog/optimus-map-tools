@@ -7405,3 +7405,74 @@ must not imply it is.
 - **Nothing auto-dials.** `Agent N - Power Dialer` is `create_opportunity` +
   `manual-call`, no trigger — a human works the queue. That is why enrolling at
   1am is safe and why none of this sent anything.
+
+## THE ADDRESS RULE, AND A DEER PARK POCKET NOBODY HAD SEEN (2026-09-03)
+
+Patrick: *"address / I want the address in the notes always"*. He was right —
+**12 of the 33 Tier 1 notes went out with no street address**, because those
+contact records have an empty `address` field and I wrote the note anyway.
+
+### Fixed, and it was cheap
+
+`dealmachine_enrich_phone` with `include_properties` on all 12.
+**10 recovered for 30 credits.** All 33 Tier 1 notes now open AND close with the
+full street address.
+
+| Lead | Address recovered |
+|---|---|
+| Christa Rostohar | 813 LA NELL DR, DEER PARK 77536 |
+| Josefina Maldonado | 906 LA NELL DR, DEER PARK 77536 |
+| Stephen Crate | 926 PAULETTE DR, DEER PARK 77536 |
+| David Espitia | 913 N AMY DR, DEER PARK 77536 |
+| Jessica Thompson | 1102 S AMY DR, DEER PARK 77536 |
+| Edgar Cortes | 2313 LAWRENCE LN, DEER PARK 77536 |
+| David Tucker | 2610 DUNN CIR, DEER PARK 77536 |
+| Kevin Manuel | 2306 PEYTON PL, DEER PARK 77536 |
+| Joseph Ramirez | 3413 CULLEN TRL, COLLEGE STATION 77845 (confirm — household also owns 220 E X St, Deer Park) |
+| Brian **Ligon** | 2256 VANESSA CAY LN, LA PORTE 77571 |
+
+**Two could not be recovered and say so on the record:** `+17139032149` returns
+`no_match` (no name in GHL either), and **All Aesthetics LLC** — DealMachine will
+not skip-trace an LLC. Both notes now open
+`ADDRESS UNKNOWN - ASK FOR IT ON THE CALL AND WRITE IT HERE` with the date and
+what was checked.
+
+### THE FINDING: A DEER PARK 77536 POCKET OF PEOPLE WHO ALL SAID YES
+
+Eight of the ten recovered addresses are **within a few blocks of each other in
+Deer Park 77536** — La Nell Dr (813 and 906), Paulette Dr, N Amy Dr, S Amy Dr,
+Lawrence Ln, Dunn Cir, Peyton Pl. **Every one of them replied YES.** Nobody had
+seen it because the addresses were not on the records.
+
+**That is a door-knock route, not eight phone calls.** Each note now names the
+neighbours so the rep batches the trip.
+
+**And 2256 VANESSA CAY LN, LA PORTE sits on the same street as 2335 Vanessa Cay
+Ln**, which is also Tier 1. Two warm leads, one street.
+
+### THREE MORE att.net GOLD SIGNALS, found for free in the same lookups
+
+- **Stephen Crate** — `hoseguy@sbcglobal.net`
+- **David Tucker** — `skinautique4me@sbcglobal.net`
+- **Brian Ligon** — `tvdude1972@sbcglobal.net` AND `okiegal75@sbcglobal.net`
+
+All three are almost certainly **existing AT&T customers = copper UPGRADES**, and
+all three were filed as ordinary warm leads. Their notes now say
+`CUSTOMER TYPE: LIKELY GOLD - open it as an UPGRADE`.
+
+**The enrichment returns emails whether you ask for them or not, so this signal
+is free every single time an address is looked up.** Read the email domain on
+every enrichment.
+
+### One more thing the data gave away
+
+**David Espitia bought 913 N Amy Dr on 2025-08-29** — days before he replied yes.
+A brand-new homeowner is the best possible moment to be choosing an internet
+provider, and `last_sale_date` tells you that for nothing. Worth scanning for.
+
+### The rule is now in CLAUDE.md and in the gold-cluster-sweep skill
+
+Address first line, address last line, `CUSTOMER TYPE` in between. No address on
+the record means enrich it; unfindable means say so on the record with the date.
+**Never blank, never a city name** — "laporte" sat in 13 dialer address fields
+and reps were being told to read a town out loud.

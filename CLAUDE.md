@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 00:20 CDT
+# CURRENT STATE — updated 2026-09-03 00:45 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -83,6 +83,11 @@ beta" survive four sessions unchecked.
   NEVER been dialed** — some waiting since 2026-08-01. All 33 tagged, noted
   (address + CUSTOMER TYPE + what they said) and enrolled in
   `Agent 3 - Power Dialer`. 33/33 succeeded.
+- **ALL 33 TIER 1 NOTES NOW CARRY THE FULL STREET ADDRESS**, first line and last.
+  12 had none; `enrich_phone` recovered 10 for **30 credits**, 2 are unfindable
+  and say so on the record. **A DEER PARK 77536 POCKET fell out of it** — 8 of
+  the 10 are within a few blocks and every one replied YES. That is a door-knock
+  route. 3 more att.net gold signals found free in the same lookups.
 - `sms-opted-out-call-only` (7) and `landline-call-only` mark the ones to CALL
   and never text. A STOP covers texts, not voice.
 - **Not yet done:** tiers 2-4 are ranked in `POOL_A_BEST_LEADS.csv` but not
@@ -251,6 +256,36 @@ the session that made them. That is the answer to "why did my email stop".
 
 ---
 
+
+## THE ADDRESS GOES IN THE NOTE. ALWAYS. (Patrick, 2026-09-03)
+
+*"address / I want the address in the notes always"*.
+
+**Every lead note opens with the full street address and closes with it again.**
+Not the city. Not the ZIP. The street address, on the first line, before
+anything else — because these leads ARE the address. The whole pitch is "fiber
+is live at your address", and a rep who has to hunt for it will not say it.
+
+**The shape, in this order:**
+
+```
+<FULL STREET ADDRESS>  |  POOL/PRIORITY  |  CUSTOMER TYPE  |  why this lead
+|  what to watch (STOP / landline / DNC)  |  SAY THE ADDRESS OUT LOUD
+|  <FULL STREET ADDRESS>
+```
+
+**A contact with no address in GHL is not an exception — it is a job.**
+1. `dealmachine_enrich_phone` with `include_properties`. The **owner-occupied**
+   property, or the one where `is_resident` is true, is the service address.
+   ~1-3 credits. On 2026-09-03 this recovered **10 of 12** for **30 credits**.
+2. If DealMachine returns `no_match`, or the record is **LLC-owned** (it will not
+   skip-trace an LLC), write **`ADDRESS UNKNOWN - ASK FOR IT ON THE CALL AND
+   WRITE IT HERE`** as the first line, and say what you checked and when.
+
+**Never leave the address line silently blank, and never fill it with a city
+name.** "laporte" sat in the address field of 13 dialer leads and reps were
+being told to read a town out loud. If two addresses are plausible, name both
+and tell the rep to CONFIRM ON THE CALL before pitching.
 
 ## THE FOUR CHECKS — every mistake that has cost money failed one of these
 
