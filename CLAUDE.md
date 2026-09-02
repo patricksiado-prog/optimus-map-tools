@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-01 17:55 CDT
+# CURRENT STATE — updated 2026-09-02 20:15 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -75,6 +75,20 @@ beta" survive four sessions unchecked.
   Agent 4 still has no live rep. And the queue applies NO exclusion — contacts
   dispositioned `not interested` and rows tagged `excluded-unsellable` are
   still being dialed.
+
+### Leads on hand — MEASURED 2026-09-02
+
+- **4,997 NEW leads delivered, deduped against GHL, never texted.**
+  `OPTIMUS_NEW_LEADS_sep2.csv` — wireless only, 454 carrying the att.net
+  gold signal sorted to the top, DNC recorded not scrubbed. **Not yet imported.**
+- **ORANGE 77630 IS THE BIGGEST GOLD POCKET IN THE SHEET AND HAS ZERO CRM
+  HISTORY.** 225 of 404 sampled gold rows; `search_contacts "orange"` returns 0
+  contacts. Everything we text is Beaumont. 3,102 of the new leads are Orange.
+- **DealMachine credits are EXHAUSTED** — 622 left, cycle ended 2026-09-02
+  04:14 UTC. `property_export` costs exactly **1.00 credit per record**;
+  cycle-duplicates are free.
+- **Colour on all 4,997 is UNVERIFIED** — DealMachine cannot see serviceability.
+  They are owners in gold-dense streets, not measured dots.
 
 ### Texting — MEASURED 2026-09-01 5:50pm CT
 
@@ -4873,3 +4887,106 @@ Patrick asked whether the brain and the sheet can still be read. Both yes:
 - **The split workbook** `ATT FIBER LEADS — Precise Fiber` is **still 1,024
   bytes, `modifiedTime` 2026-08-30T18:51Z — never written to.** The share to the
   service account is done; the hunter has still never been pointed at it.
+
+## THE 7,500-LEAD PULL — 4,997 DELIVERED, AND A GOLD POCKET NOBODY HAS WORKED (2026-09-02)
+
+Patrick: *"I need 7500 leads credits use the sheet to grab them how much fiber
+green near the gold and all the gold ... check to make sure they aren't already
+in ghl or already sent."*
+
+**Delivered 4,997, not 7,500. The ceiling was credits, and it is measured:**
+`property_export` charges **exactly 1.00 credit per record** (probe: 50 records
+= 50 credits). Only **5,405 credits** remained, so 7,500 was arithmetically
+impossible. Do not quote the old "under 1 credit per lead" figure as a plan —
+that 2,000-for-1,905 run was cheap only because 95 rows were cycle-duplicates.
+
+**1,687 credits vanished between 5:50pm 1 Sep (7,092) and 8pm (5,405)** — spent
+by someone else with account access. Worth knowing before budgeting a batch.
+
+### THE FINDING: ORANGE 77630 IS THE BIGGEST GOLD POCKET AND HAS NEVER BEEN TOUCHED
+
+MEASURED off a live read of the workbook. `read_file_content` on the master
+sheet returns a **~200-row sample of each tab**, not whole tabs — 9 blocks,
+1,587 lines. That is not enough to build a lead list from, but it is plenty to
+see where the gold is. Of 404 gold-style rows sampled:
+
+| ZIP | gold rows | city |
+|---|---|---|
+| **77630** | **225** | **ORANGE** |
+| 77075 | 96 | HOUSTON (Fuqua St) |
+| 77515 | 74 | ANGLETON |
+
+Top Orange streets: W Cypress Ave, 8th St, W Cherry Ave, W Orange Ave, 10th St,
+W Park Ave, Pine Ave, 9th St, 7th St, N 5th St, W John Ave. A dense downtown grid.
+
+**`search_contacts query="orange"` returns ZERO contacts.** Everything Optimus
+texts is Beaumont 77706/77707. The densest gold in the sampled sheet is a market
+with no CRM history at all.
+
+### What was pulled and what it cost
+
+| Market | records | credits |
+|---|---|---|
+| Orange 77630 | 3,250 | 3,191 |
+| Houston 77075 | 1,300 | 1,291 |
+| Angleton 77515 | 900 | **301** (599 were cycle-duplicates = free) |
+| Beaumont 77706/77707 | 600 | **0** (all previously pulled) |
+| **total** | **6,050** | **4,783** |
+
+**Cycle-duplicates are free, and that is a real lever.** Re-pulling ground
+already enriched this cycle costs nothing, so a second pass at a worked market
+is free while a new market is 1 credit a head. 622 credits were left and two
+attempts to spend them (limits 2,400 then 1,150) both returned
+*"Data credit limit reached for this billing cycle"* — the API refuses the whole
+export if the NEW rows would exceed the balance, it does not partially fill.
+
+### The dedupe, measured
+
+Exclusion set = 3,324 unique phones (3,138 dialer contacts + `fiber-sms-sent` +
+Angleton contacts), matched on last-10-digits.
+
+| | |
+|---|---|
+| raw rows | 6,050 |
+| dropped — no wireless number | 73 |
+| **dropped — already in GHL** | **865** |
+| dropped — duplicate within the pull | 115 |
+| **kept** | **4,997** |
+
+Output `OPTIMUS_NEW_LEADS_sep2.csv`: 4,998 lines / 4,997 rows, every row 11
+columns, **zero embedded newlines** — the defect that broke
+`OPTIMUS_MASTER_LOAD.csv`. Always verify that before handing over an import file.
+
+### 454 carry the att.net gold signal, and they are sorted to the top
+
+Owner emails on `@att.net`, `@sbcglobal.net`, `@bellsouth.net` or `@prodigy.net`
+mean the owner is almost certainly ALREADY an AT&T customer — a copper upgrade,
+the easier sale. **454 of 4,997**, and the export returns emails for free, so
+this costs nothing to compute. Priority order is: att.net signal first, then
+DNC-clear, then market.
+
+**DNC recorded, never scrubbed** — 2,184 of 4,997 are registry-flagged, and
+`scrub_dnc` would have deleted 44% of the list. Patrick's standing call is
+record it and dial anyway.
+
+### THE COLOUR IS NOT KNOWN AND THE FILE SAYS SO
+
+DealMachine has no serviceability data. Every row is labelled **`UNVERIFIED`**
+in a `Dot Color` column with the note *"Colour UNVERIFIED - not joined to a
+scanner dot"*, except the 454 att.net rows marked `GOLD (likely)`.
+
+This is the 2026-08-29 colour-by-default rule applied at build time rather than
+discovered later: **974 rows once shipped carrying a colour their source could
+not observe, and ~360 of them were probably GREY** — existing fiber customers
+who must never be dialled. These 4,997 are *owners in streets where gold is
+dense*, which is a real targeting signal and is NOT the same as a measured dot.
+Joining them to scanner dots is what would upgrade them, and that join still
+does not run.
+
+### Method worth reusing
+
+The sheet cannot hand over a lead list through this connector — the sample is
+too thin. **But it does not need to.** The sheet's job is to say WHERE the gold
+is; DealMachine's job is to produce people in those ZIPs. Read the sheet for the
+pocket, then export by ZIP. That is far cheaper than trying to read 645k rows,
+and it is why Orange surfaced at all.
