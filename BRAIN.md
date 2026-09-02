@@ -9027,3 +9027,26 @@ counts + gold biz match go live. (3) Reconnect Gmail. (4) GHL trigger on tag
 **Not yet verified, say so if asked:** whether `Warm Backlog — Replied YES`
 still exists (needs the stamped tabs.json from the next scraper launch), and
 `(N gold from 'Gold Confirmed')` with N > 0 on the next scraper console.
+
+---
+
+## 2026-09-03 17:30 CT — Pensacola relaunch: capturing, landing NOT YET PROVEN
+
+Patrick aimed the relaunch at Pensacola (N 74th–80th Ave grid off W Fairfield
+Dr, county routes 298/727) — the pick from "where should I run scanner". Screen
+shows the grid packed green with grey between. New run `20260902-172038`,
+machine LAPTOP-FJEEPATI, `sweep_start` at 17:25.
+
+**MEASURED 17:30, and the verdict is NOT IN:**
+- Split workbook `1DXu…`: `fileSize` **1,024**, `modifiedTime` 2026-08-30. Nothing
+  has landed there yet.
+- `latest.json` for this run is the **launch stub** — `written: 0`, every
+  `capture_truth` field `None`, generated 17:24. Exactly the trap CLAUDE.md
+  names: an all-zero latest.json at launch is not a failure.
+- The feed carries no build/fingerprint field, so whether this launch pulled
+  `59a92bf` cannot be read from GitHub. Only the console banner says.
+
+**Do not call it winning until ONE of these moves:** the split workbook's
+`fileSize` (new build, rows landing where they should) — or, worse, the
+production workbook's `fileSize` (old build, still parking). First uploader
+batch can take several minutes after `sweep_start`. Re-check both.
