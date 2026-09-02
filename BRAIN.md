@@ -7341,3 +7341,67 @@ and should simply be tried.
 
 **Email coverage is otherwise healthy** — the agt3 and agt4 dialer queues are
 88-90% emailed, so a bulk email enrichment across the whole CRM is NOT needed.
+
+## POOL A — THE BEST-LEADS DIALER POOL IS BUILT AND LIVE (2026-09-02)
+
+Patrick, after calling GHL support: *"I want power dialer automation w the best
+leads / I want notes in the leads so u can see them / and the customer type / I
+want a pool of good leads put the best ones people who already reasoned yes and
+all the golds and the green around it the biss."*
+
+**Built exactly that, four tiers, ranked by how warm the lead actually is.**
+
+### The pool — 1,381 leads, `POOL_A_BEST_LEADS.csv`
+
+| Tier | What | Count | Never dialed |
+|---|---|---|---|
+| **1** | **WARM — replied YES or asked for a callback** | **33** | 32 |
+| 2 | GOLD + likely gold (copper upgrades) | 472 | 452 |
+| 3 | GREEN inside a gold pocket | 270 | 176 |
+| 4 | BUSINESS — green | 606 | 606 |
+
+**114 contacts were stripped out** as `not interested`, `excluded-unsellable`,
+`excluded-vertical`, DND or no phone. **9 in the pool are SMS-opted-out but still
+callable** — a STOP covers texts, not voice, and `dnd` is false on those records.
+
+### Tier 1 is the answer to "the best ones"
+
+**33 people who already said yes or asked us to ring them, and 32 of them have
+never been dialed.** Some have been sitting since **2026-08-01** — over a month
+with a hand in the air and nobody calling.
+
+The live tag counts that built it: `replied-yes` **25**, `call back` **14**,
+`hot-lead` **4** (all overlapping), minus 6 dead.
+
+### What was actually written into GHL
+
+1. **Tagged `pool-a-best` + `tier1-warm` + `call-first`** on all 33. The dialer
+   points at **one tag** now, not a guess.
+2. **Sub-tags that stop the two mistakes that cost money:**
+   `sms-opted-out-call-only` (7 contacts) and `landline-call-only`.
+3. **A note on every one**, opening with `POOL A - TIER 1 - CALL FIRST`, then
+   **the address**, then **CUSTOMER TYPE**, then **WHY THIS LEAD** — what they
+   actually said and when. Business notes carry the trade-specific angle and the
+   line **"BUSINESS PRICING IS BY SPEED TIER — never the residential $20s-$30s."**
+   Residential notes carry the copper-retirement opener.
+4. **All 33 enrolled into `Agent 3 - Power Dialer`**
+   (`1b9330d5-4f75-4e4c-9972-103d1c76a6ee`) — the queue MEASURED at 23% dialed,
+   i.e. one that is actually worked. 33/33 succeeded.
+
+### Colour honesty carried through
+
+Tier 1 notes say **`colour UNVERIFIED`** wherever the lead came from DealMachine
+and was never joined to a scanner dot. The same rule as the 4,997 file: they are
+real people who really replied, but the DOT COLOUR is not measured and the note
+must not imply it is.
+
+### Still open
+
+- **Tiers 2-4 (1,348 leads) are ranked in the CSV but NOT yet tagged or
+  enrolled.** Tier 2 gold is already in Agent 3 and Agent 5 from 2026-09-01; the
+  `pool-a-best` tag has not been applied to it.
+- **The 173 att.net contacts tagged `type-green` are still mislabelled.**
+  They belong in Tier 2 as copper upgrades and the tag has not been corrected.
+- **Nothing auto-dials.** `Agent N - Power Dialer` is `create_opportunity` +
+  `manual-call`, no trigger — a human works the queue. That is why enrolling at
+  1am is safe and why none of this sent anything.

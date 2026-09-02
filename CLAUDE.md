@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 23:35 CDT
+# CURRENT STATE — updated 2026-09-03 00:20 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -73,6 +73,20 @@ beta" survive four sessions unchecked.
 - **`Upgrade Orange Biz` = 62 rows.** Gold businesses are the highest-value slice
   we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
 - Full census in the BRAIN.md section dated 2026-09-02.
+
+### POOL A — the best-leads dialer pool (BUILT 2026-09-02)
+
+- **Tag `pool-a-best` is the pool. Point the dialer at that tag.**
+  1,381 leads ranked: **T1 warm 33**, T2 gold+likely-gold 472, T3 green in a gold
+  pocket 270, T4 green business 606. 114 dead ones stripped.
+- **TIER 1 = 33 people who already said YES or asked for a callback, and 32 have
+  NEVER been dialed** — some waiting since 2026-08-01. All 33 tagged, noted
+  (address + CUSTOMER TYPE + what they said) and enrolled in
+  `Agent 3 - Power Dialer`. 33/33 succeeded.
+- `sms-opted-out-call-only` (7) and `landline-call-only` mark the ones to CALL
+  and never text. A STOP covers texts, not voice.
+- **Not yet done:** tiers 2-4 are ranked in `POOL_A_BEST_LEADS.csv` but not
+  tagged or enrolled; the 173 att.net contacts are still mislabelled `type-green`.
 
 ### The dial queue
 
