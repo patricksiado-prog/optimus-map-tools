@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 20:55 CDT
+# CURRENT STATE — updated 2026-09-02 21:20 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -87,6 +87,10 @@ beta" survive four sessions unchecked.
   actually marks `VERIFIED_GOLD` are **4 unique addresses**: 7631 Fuqua St
   (Houston 77075) and 800/1112 N Arcola + 611 E Myrtle (Angleton 77515).
   **3,102 of the 4,997 new leads were aimed at Orange on a bad count.**
+- **BEFORE SPENDING OR ASSERTING: grep CLAUDE.md, then measure the marker.**
+  A hook now prints this on every message and the write counter is every 3rd
+  (was 5). 4,783 credits were burnt 2026-09-02 re-deriving what this file
+  already recorded — see the section dated today.
 - **DealMachine credits are EXHAUSTED** — 622 left, cycle ended 2026-09-02
   04:14 UTC. `property_export` costs exactly **1.00 credit per record**;
   cycle-duplicates are free.
@@ -5066,3 +5070,55 @@ quoting any colour count:** grep for the marker that actually names the colour
 **count UNIQUE ADDRESSES, never rows** — the sheet holds one row per sighting,
 so 170 rows was 4 dots. Never infer a colour from a ZIP, a city, a tab position
 or a row shape.
+
+## THE BRAIN ALREADY HELD THE ANSWER AND NOBODY GREPPED IT (2026-09-02)
+
+Patrick: *"u wasted 7500 credits on shit that doesn't need to be enriched that
+is already recorded in the brain"* and *"can make a rule to increase the
+frequency that u check read and write to brain"*.
+
+**He is right. This was not a missing fact — it was an unread one.**
+
+### What the brain already said, before a single credit was spent
+
+| Already in this file | Where |
+|---|---|
+| *"thousands of already-paid-for contacts have never been dialed. **Grab from GHL before spending anything.**"* | 2026-08-29 section |
+| The verified gold streets, **measured**: STACEWOOD 148, NORWOOD 125, SHAKESPEARE 100, GALWAY 73, MONTERREY 69 (77706); LANGHAM 84, POTTER 76 (77707) — **all Beaumont** | 2026-08-30 section |
+| **1,376 contacts mislabelled `invalid` are dialable** — 100/100 sampled | 2026-08-29 audit |
+| **85% of the live dial queue carries no dot colour at all** | 2026-08-29 audit |
+| DealMachine has **no serviceability data** — never write a colour it could not observe | 2026-08-29 |
+
+Every one of those points at the same conclusion: **the next lead was already
+paid for and sitting in GHL.** Instead the sheet was re-read from scratch, a
+truncated sample was miscounted, and **4,783 credits went on a market with no
+gold evidence.** Credits after: **622 of 30,000**, cycle closed.
+
+**The failure mode to name precisely:** not forgetting, and not a missing
+record. The brain is 4,700+ lines and is *read at session start but not
+consulted at the moment of action*. A fact you have read once and do not
+re-open at the point of spending is functionally a fact you do not have.
+
+### The fix — a hook, not a rule
+
+`.claude/hooks/brain-write-counter.sh` now does two jobs:
+
+1. **READ GUARD, printed on EVERY message.** Says grep `CLAUDE.md` before
+   spending credits, sending texts or building a lead list, names the
+   "Grab from GHL before spending anything" line, and requires that any count be
+   derived from the marker that NAMES the thing and counted as UNIQUE ADDRESSES,
+   never rows.
+2. **WRITE COUNTER raised from every 5th message to every 3rd**, at Patrick's
+   request the same day.
+
+**Why a hook rather than another paragraph here:** a rule in this file is
+something a session has to remember to obey, and not-remembering is the exact
+defect. The hook prints whether anyone remembers or not. Same reasoning that put
+the original counter in place on 2026-08-30. Tested 1→3: guard on every message,
+full write banner on the 3rd.
+
+### The standing rule that comes out of it
+
+**Before spending money or asserting a number: grep the brain, then measure the
+marker.** In that order. The brain is the cheapest source available and it is
+the one that was skipped.
