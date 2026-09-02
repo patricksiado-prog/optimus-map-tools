@@ -52,7 +52,16 @@ deletes rep tabs.
 
 ### Is the machine running?
 
-- **Scanner: DOWN ~17h on the LOGIN — and separately the WRITE is broken. Two
+- **SCANNER IS BACK — AT&T login fixed 2026-09-03 ~17:03 CT.** Run
+  `20260902-170311` reached `sweep_start` (heartbeat). **BUT that launch ran the
+  OLD build** (`build 2026-08-24 fp 3d2a6779`): the self-updater printed
+  `Update looked stale/partial (GitHub cache) -- keeping the copy you have`,
+  because raw.githubusercontent lags a push by a few minutes. So it is writing
+  `Precise Fiber` to the FULL production sheet and rows will park. **One relaunch
+  (Ctrl+Shift+S, double-click) pulls `59a92bf`/`fcc6b6e` and turns on the split.**
+  Verified the CDN carries both new builds as of 17:15 CT. Rule: **after any
+  hunter push, wait ~3 minutes before telling Patrick to launch.**
+- (superseded) **Scanner: DOWN ~17h on the LOGIN — and separately the WRITE is broken. Two
   faults, do not merge them.** MEASURED 2026-08-31 07:05 CT: no run since
   `20260830-135937` exited `LOGIN_TIMEOUT` 14:10 Sunday. Remedy: log OUT of
   youachieve.att.com, close the browser, log back in, relaunch. That does NOT

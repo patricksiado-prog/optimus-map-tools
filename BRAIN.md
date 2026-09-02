@@ -8966,3 +8966,36 @@ Console line to expect on the next scraper launch:
 
 Also retired in the sheet skill and in CLAUDE.md. The only human actions left
 in the whole flow are the two double-clicks and the AT&T login.
+
+
+---
+
+## 2026-09-03 — Hunter is back up. First launch caught the GitHub cache and ran the OLD build.
+
+Patrick's laptop console after the AT&T re-login:
+
+```
+Checking for the latest version...
+*** Update looked stale/partial (GitHub cache) -- keeping the copy you have. ***
+*** If this shows an OLD build, wait 60s and relaunch, or re-run INSTALL_OPTIMUS.bat. ***
+OPTIMUS FIBER HUNTER   build 2026-08-24   fp 3d2a6779   run 20260902-170311
+gold = CONFIRMED copper only   (9 copper / 4 fiber codes)
+```
+
+Heartbeat: `20260902-170311`, phase `sweep_start`. **The login worked. Capture is
+back after five days.**
+
+**But the self-updater kept the old build.** `fp 3d2a6779` = 2026-08-24. The
+split-sheet code (`59a92bf`) is not in it, so this run writes `Precise Fiber` to
+the full production workbook and every row parks. Cause: raw.githubusercontent
+serves a cached copy for a few minutes after a push — I saw the same lag on the
+scraper file at 17:10 (branch head `fcc6b6e`, raw still old). The hunter
+detects the mismatch and, correctly, refuses to run a half-downloaded file.
+
+**MEASURED 17:15 CT:** the raw mirror now carries `PF_SPLIT_SHEET_ID` in the
+hunter and `gh_put(...tabs.json...)` in the scraper. A relaunch will pull both.
+
+**Rule:** after pushing to the hunter repo, wait ~3 minutes before telling
+Patrick to launch, or the first launch wastes itself on the cache. The
+software already says "wait 60s and relaunch" — it was right and I should have
+read it before saying "ready".
