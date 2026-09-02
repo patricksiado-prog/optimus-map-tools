@@ -64,6 +64,14 @@ Google will not accept another row.` Grids were already auto-shrunk —
 replaying, every new row going to CSV and parking to disk.** The purge freeing
 ~118k cells is now the thing standing between the scraper and delivering rows.
 
+**THIRD FIX, hunter `55190a0` — a stale flag would have killed the next run
+silently.** `purge_prefix_gold` began `if os.path.exists(MARKER): return` with no
+message, and **the pre-09-03 build wrote that flag on a FAILED (empty) read**. Any
+PC that ever tripped it — Ara's 08-28 run is a candidate — had the purge disabled
+forever, saying nothing. Fixed: the marker is now `gold_purge_done_v2.flag`, so
+every PC gets exactly one honest retry and old flags are ignored once; a skip now
+prints WHY and how to undo it. **Do not rename the marker back.**
+
 **`SCRAPER_NO_CLEAN=1`** opts out. Backups land beside the scraper as
 `gold_confirmed_backup_*.csv`, `gold_purged_*.json` and `tab_backup_*/`.
 

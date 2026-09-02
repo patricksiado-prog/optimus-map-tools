@@ -8602,3 +8602,66 @@ the same problem.
 **A failure message must name the failure it actually saw.** A helper that
 returns a bare `None` forces its caller to guess, and the guess gets printed to
 the operator as fact. Return the reason with the result.
+
+---
+
+## 2026-09-03 — The stale done-flag: the bug that would have eaten the NEXT run too. Hunter `55190a0`.
+
+Patrick: *"fix it plzzz."* So instead of telling him to relaunch and hope, I read
+my own deployed code adversarially for what else could waste his next launch.
+Found one, and it was a good catch.
+
+### The defect
+
+```python
+def purge_prefix_gold(sh):
+    if os.path.exists(_GOLD_PURGE_MARKER) or sh is None:
+        return                      # <-- silent
+```
+
+Two things wrong at once:
+
+1. **It returns silently.** An operator cannot tell "already clean" from
+   "quietly disabled". Straight violation of NO SILENT RUNNING, in the routine
+   whose whole history is failing invisibly.
+2. **The flag it trusts is untrustworthy.** The build before today wrote
+   `gold_purge_done.flag` when the tab read as EMPTY — a FAILED read, not a clean
+   one. **Any PC that ever hit that path has the purge disabled permanently.**
+   Ara ran the Maps Scraper on 2026-08-28 while the workbook was full; that is
+   exactly the shape of run that could have written a false flag.
+
+So tonight's fix (retry + fallback) could have worked perfectly and the purge
+still would have printed nothing and done nothing.
+
+### The fix
+
+- Marker renamed to **`gold_purge_done_v2.flag`**. Old flags written by the buggy
+  build are ignored, so **every PC gets exactly one honest retry.** Renaming it
+  back would re-arm the bug — recorded here so nobody does.
+- A skip now prints what the flag said and the path to delete to force a re-run.
+- If the OLD flag is present it says so explicitly and runs anyway, once.
+- `purge_junk_tabs` got the same treatment.
+
+Verified: 13 `print()` calls across the function, marker is v2, and the three
+new messages are present.
+
+### The pattern across all three of today's fixes
+
+Every one was the same shape — **a failure that produced no signal**:
+- gated on `open_sheet()` returning `None` from a swallowed 400 → nothing said
+- a 503 reported as "no google_creds.json" → wrong signal, worse than none
+- a stale flag skipping the work → nothing said
+
+The purge logic itself was never wrong. It has been correct since 2026-08-27.
+**What was wrong every single time was the plumbing around it staying quiet.**
+That is why five builds passed with nobody able to tell it had never run.
+
+**Rule: in a routine that runs unattended, every early `return` needs a
+sentence.** "Nothing happened" is a result, and it has to be reported like one.
+
+### State
+
+Three commits deployed today: `f1e88ed` (clean attached to scraper startup and
+un-gated), `94775af` (503 retry + live-connection fallback), `55190a0` (stale
+flag ignored, no silent skips). Nothing deleted yet — 29 tabs, `Gold Confirmed`
+11,490. It runs when Patrick relaunches the Maps Scraper.
