@@ -8879,3 +8879,57 @@ version...` then the v2.1 banner. MEASURED: the self-update path pulls the new
 `maps_scraper_standalone.py` at launch and re-execs. So a push to the hunter
 repo IS a deploy to the PC within seconds of the next double-click, as the brain
 says. Awaiting the startup-clean lines on the relaunch.
+
+
+---
+
+## 2026-09-03 — THE CLEAN RAN. And the sheet was cleaner than the brain believed.
+
+Patrick's console after the relaunch, verbatim:
+
+```
+Startup clean (once per PC: junk gold rows, then junk tabs)...
+  gold purge: ignoring the OLD done-flag -- the build that wrote it could write it on a FAILED read. Running the purge once more.
+  gold purge: nothing to remove -- all 1884 rows are post-fix.
+  JUNK TABS: removing 1. Every one is saved to C:\Users\patri\maps_scraper\tab_backup_20260902-163610 first.
+    - Gold Dots                          3328 rows  (backed up)
+  JUNK TABS DONE: removed 1, backups in C:\Users\patri\maps_scraper\tab_backup_20260902-163610
+```
+
+### What worked
+
+- The deploy chain end to end: push → self-update on launch → clean before
+  `open_sheet()` → no 503 this time → both steps completed.
+- **The stale-flag catch was real.** An old `gold_purge_done.flag` WAS on this PC.
+  Without tonight's v2 marker the purge would have skipped silently again.
+- `Gold Dots` (3,328 contaminated rows) removed with a CSV backup.
+
+### What I had wrong — three corrections
+
+1. **"THE PURGE HAS NEVER RUN" — wrong.** `Gold Confirmed` holds **1,884 rows,
+   all post-2026-08-24.** The contamination was already gone. The old flag on
+   this PC was most likely written by a purge that SUCCEEDED, not a failed read.
+2. **Every sheet count I quoted today came from `tabs.json`, and that feed is
+   stale with no timestamp.** 11,490 gold rows, 29 tabs, TEST-Green 13,027 — all
+   out of date. It only refreshes when `COUNT_TABS.bat` / `sheet_feed.py` runs.
+   brain-verify even printed "no timestamp" and I read past it. **FOUR CHECKS #4
+   failed: a number with no date was treated as MEASURED.** brain-verify now
+   labels tabs.json as FEED and never says "pass" on it.
+3. **5 of the 6 junk tabs no longer existed.** Only `Gold Dots` was there to
+   delete. Something removed the TEST-* and TMP tabs since 08-27. Unknown what.
+   **If it was `CLEAN_SHEET.bat`, the 7 rep tabs are gone too — the next session
+   that can list tabs must check `Warm Backlog — Replied YES`.**
+
+### What this changes
+
+The space problem was never the junk. The workbook was full this morning with
+the junk already gone, so `Precise Fiber` (~8.4M of 10M cells) is the whole
+problem and **the split sheet (`59a92bf`) is the only fix.** It activates at the
+next hunter launch, which needs the AT&T re-login.
+
+### The rule this buys
+
+**A feed file with no timestamp is not a measurement.** `tabs.json`, `latest.json`
+at launch (the all-zero stub) — same family. Before quoting a feed number, know
+when the feed was written. If it does not say, say "the feed says" and date it
+"unknown".

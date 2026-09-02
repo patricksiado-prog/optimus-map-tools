@@ -166,8 +166,9 @@ def main():
             print("  UNVERIFIED  tabs.json unreadable: %s" % str(e)[:50])
         if rows:
             gen = (d.get("generated_at") or "no timestamp") if isinstance(d, dict) else "?"
-            print("  live: %d tabs (tabs.json %s -- refreshed only by COUNT_TABS.bat / sheet_feed.py)"
-                  % (len(rows), gen))
+            print("  FEED: %d tabs in tabs.json (%s). THIS FEED IS NOT LIVE -- it refreshes only"
+                  " when COUNT_TABS.bat / sheet_feed.py runs on a PC. On 2026-09-03 it said"
+                  " Gold Confirmed = 11,490 while the live tab had 1,884." % (len(rows), gen))
             m = re.search(r"\b(\d+) tabs\b", brain)
             if m and int(m.group(1)) != len(rows):
                 drift += 1
@@ -178,18 +179,17 @@ def main():
                     continue
                 b = int(m.group(1).replace(",", ""))
                 if b != rows[tab]:
-                    drift += 1
-                    print("  *** DRIFT   %s: brain says %s rows, live %s"
-                          % (tab, format(b, ","), format(rows[tab], ",")))
+                    print("  note        %s: brain says %s rows, FEED says %s (feed age unknown --"
+                          " the brain may be newer)" % (tab, format(b, ","), format(rows[tab], ",")))
                 else:
-                    print("  pass        %s = %s rows" % (tab, format(b, ",")))
+                    print("  feed-match  %s = %s rows (NOT a live check)" % (tab, format(b, ",")))
             junk_left = [t for t in JUNK_TABS if t in rows]
             if junk_left:
-                print("  CLEAN HAS NOT RUN: %d junk tabs still present (%s)"
+                print("  FEED still lists %d junk tabs (%s) -- the clean RAN on 2026-09-03; this is feed staleness until COUNT_TABS.bat refreshes it"
                       % (len(junk_left), ", ".join(x.strip() for x in junk_left[:3])
                          + (" ..." if len(junk_left) > 3 else "")))
             else:
-                print("  clean has run: no junk tabs remain")
+                print("  feed lists no junk tabs")
             lost = [t for t in PROTECTED_TABS if t not in rows]
             if lost:
                 drift += 1

@@ -19,66 +19,37 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
-### THE CLEAN IS DEPLOYED AND ARMED — it runs at MAPS SCRAPER LAUNCH (2026-09-03)
+### THE CLEAN RAN. GOLD IS CLEAN: 1,884 rows, all post-08-24. (MEASURED 2026-09-03, Patrick's console)
 
-**Patrick said GO and it is pushed: hunter commit `f1e88ed`.** The whole clean
-now lives INSIDE the Maps Scraper and runs by itself at launch, once per PC.
-Patrick, 2026-09-03: *"attach that software to the map scraper start up / for
-the 5th time i don't want 5 programs, 2 is enough."* **No .bat. Do not build one.**
+**The startup clean fired on Patrick's PC and completed.** Console, verbatim:
+`gold purge: ignoring the OLD done-flag` → `gold purge: nothing to remove -- all
+1884 rows are post-fix` → `JUNK TABS: removed 1 — Gold Dots 3328 rows (backed
+up)` → `JUNK TABS DONE`. Backups in `C:\Users\patri\maps_scraper\tab_backup_20260902-163610`.
 
-**THE SHEET IS STILL DIRTY UNTIL HE LAUNCHES THE SCRAPER.** Nothing has been
-deleted yet — 29 tabs, `Gold Confirmed` 11,490 rows, MEASURED 2026-09-03. The
-code is armed, not run. Check the live tab count before saying it is clean.
+**THREE CORRECTIONS, and say them out loud:**
+1. **`Gold Confirmed` = 1,884 rows, every one captured on/after 2026-08-24.** The
+   9,052 contaminated rows were ALREADY gone. The purge HAD run before on this PC
+   (that is what wrote the old flag). "THE PURGE HAS NEVER RUN" was wrong.
+2. **`optimus/_feed/sheet/tabs.json` is a STALE feed with no timestamp.** Its
+   11,490 / 29 tabs / TEST-Green 13,027 were all out of date, and every count
+   quoted from it today was stale. It refreshes ONLY when `COUNT_TABS.bat` or
+   `sheet_feed.py` runs on a PC. **Never call a tabs.json number "live".**
+   brain-verify now labels it FEED, never pass.
+3. **The 5 other junk tabs (TEST-Green, TEST-Gold, TMP Sweep Census, ZZ_TMP_GRID,
+   _temp_ash_lookup, _optimus_probe) no longer exist** — nothing to migrate,
+   nothing to delete. Who removed them is unknown; if it was `CLEAN_SHEET.bat`,
+   the 7 rep tabs may be gone too. **CHECK `Warm Backlog — Replied YES` still
+   exists** — the first session that can list tabs must do this.
 
-Three steps at launch, in order, each backing up first:
-1. **GOLD PURGE** — removes `Gold Confirmed` rows captured before 2026-08-24
-   (~9,052 of 11,490). Whole tab to CSV + removed rows to their own JSON first.
-2. **TEST-GOLD MIGRATION** — folds `TEST-Gold-*` into `Gold Confirmed`, then
-   drops the tab. If the append fails the tab is LEFT ALONE.
-3. **JUNK TAB CLEAN** — 6 tabs / 17,446 rows: `Gold Dots`, `TEST-Green-2026-08-24`,
-   `TMP Sweep Census`, `ZZ_TMP_GRID`, ` _temp_ash_lookup`, `_optimus_probe`.
-   **Named junk ONLY — a tab not on the list SURVIVES.** All 23 others live.
+**Therefore the space problem was never the junk.** The sheet was full this
+morning with the junk already gone: `Precise Fiber` (~8.4M cells) IS the
+problem, and the split sheet (hunter `59a92bf`) is the only fix. It turns on at
+the next hunter launch.
 
-**What was actually wrong, and it was never the AT&T login:** the cleanup was
-gated on `open_sheet()`, which creates `Maps Businesses` when missing —
-`add_worksheet(20000x7)` = 140,000 cells = an instant 400 on a workbook at the
-10M ceiling, swallowed by a bare `except`, returning `None`. **The sheet being
-too full stopped the routine that frees the space.** The clean now opens the
-workbook itself and runs BEFORE `open_sheet()`. Also fixed: an empty read no
-longer writes the done-marker (it used to disable the purge on that PC forever),
-and a failure now names the step instead of printing `(dedupe off: ...)`.
-
-**FIRST REAL RUN, 2026-09-03: the clean fired and lost to a transient `503`.**
-Console showed `*** STARTUP CLEAN DID NOT RUN -- could not open the workbook:
-APIError: [503]`, then wrongly blamed a missing `google_creds.json` — creds were
-fine, `open_sheet()` connected seconds later and wrote to `Maps Businesses` all
-run. **Fixed and redeployed: hunter `94775af`.** The open now retries 4x with
-backoff, and if it still loses, the clean runs a SECOND time on the connection
-`open_sheet()` already holds. Both paths simulated against tonight's exact
-failure. **So the clean now survives a Google blip — but it has still never
-completed, and nothing has been deleted.**
-
-**The same run proved the ceiling is real and biting:** `THE SHEET IS FULL.
-Google will not accept another row.` Grids were already auto-shrunk —
-`nothing left to shrink`. **367,998 fiber leads loaded, 68 parked batches
-replaying, every new row going to CSV and parking to disk.** The purge freeing
-~118k cells is now the thing standing between the scraper and delivering rows.
-
-**THIRD FIX, hunter `55190a0` — a stale flag would have killed the next run
-silently.** `purge_prefix_gold` began `if os.path.exists(MARKER): return` with no
-message, and **the pre-09-03 build wrote that flag on a FAILED (empty) read**. Any
-PC that ever tripped it — Ara's 08-28 run is a candidate — had the purge disabled
-forever, saying nothing. Fixed: the marker is now `gold_purge_done_v2.flag`, so
-every PC gets exactly one honest retry and old flags are ignored once; a skip now
-prints WHY and how to undo it. **Do not rename the marker back.**
-
-**`SCRAPER_NO_CLEAN=1`** opts out. Backups land beside the scraper as
-`gold_confirmed_backup_*.csv`, `gold_purged_*.json` and `tab_backup_*/`.
-
-**DO NOT run `CLEAN_SHEET.bat`.** MEASURED 2026-09-03: its whitelist deletes 14
-tabs / 22,457 rows including **`Warm Backlog — Replied YES` (40 people who
-already said yes)**, the Angleton call list and the Beaumont work list. The
-scraper's named-junk list is the safe one now.
+**The clean is armed on every OTHER PC** (junk_tabs_done + gold_purge_done_v2
+flags are per-PC) and will print "nothing to remove" on each. Harmless.
+**`SCRAPER_NO_CLEAN=1`** opts out. **DO NOT run `CLEAN_SHEET.bat`** — whitelist,
+deletes rep tabs.
 
 ### Is the machine running?
 
@@ -123,7 +94,7 @@ scraper's named-junk list is the safe one now.
 
 ### The gold question — answer it with the caveat, never the raw number
 
-- **`Gold Confirmed` = 11,490 rows, but only ~2,438 believed real (21%)** —
+- **`Gold Confirmed` = 1,884 rows, ALL post-08-24 (MEASURED live 2026-09-03 by the scraper's purge read). The old "11,490 / 2,438 believed real" was a stale tabs.json number** —
   MEASURED 2026-08-27 via `optimus/_feed/sheet/tabs.json` and **RE-CONFIRMED
   UNCHANGED 2026-09-03**: the last run ended `LOGIN_TIMEOUT` with all counters at
   zero, and `fileSize` has been byte-identical since 08-30, so nothing has been
