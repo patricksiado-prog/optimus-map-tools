@@ -9121,3 +9121,23 @@ Parked rows replay into the split on that launch.
 heartbeat's `build_fingerprint` and flags `3d2a6779` as "OLD BUILD — split not
 active". The new build's fingerprint is unknown until it runs once; record it
 then.
+
+---
+
+## 2026-09-03 17:50 CT — "do we have gold, green, grey?" Yes — and a gap in the split.
+
+Answered from measured state: GOLD `Gold Confirmed` 1,884 (live today); GREEN
+`Precise Fiber` 645,422 + split going forward; GREY `Grey Fiber Customers`
+~26,689 (feed, stale); `Unknown Customers` tab does not exist. Last full sweep
+(08-30) split 37,177 → 26,965 green / 9,924 grey / 208 gold / 80 unknown.
+
+**THE GAP, recorded so it is not missed:** `PF_SPLIT_SHEET_ID` redirects ONLY
+`Precise Fiber` (green). `Gold Confirmed` and `Grey Fiber Customers` still
+write to PRODUCTION, which hit the 10M ceiling. Deleting `Gold Dots` freed some
+room, but `append_rows` grows the grid, so whether new gold/grey rows land is
+UNPROVEN until the first post-relaunch batch. **Test: production `fileSize`
+must GROW after the relaunch.** If it stays flat while the split grows, gold
+and grey are still parking and the fix is to shrink/archive the old
+`Precise Fiber` grid in production (645k rows × 13 cols is still billed even
+though nothing new is written to it). The 208 gold from 08-30 are in the replay
+queue — they are the canary.
