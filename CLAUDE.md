@@ -304,6 +304,13 @@ while sending zero texts.
 
 ### Blocked on Patrick — nothing moves until he does these
 
+0. **RUN THE MAPS SCRAPER — that is what deletes the junk gold, 30 seconds.**
+   Double-click the Maps Scraper icon. The purge is the first thing it does at
+   launch. It is NOT in the hunter and the AT&T login is irrelevant to it
+   (MEASURED 2026-09-03 — this file said otherwise for six days and was wrong).
+   Watch the console: if it prints `GOLD PURGE:` it is working; if it prints
+   `(dedupe off: ...)` or nothing, the full-sheet gate is closed and
+   `patches/gold-purge-never-runs.md` has to go in first.
 1. **SPLIT SHEET — share DONE, ONE STEP LEFT, and only Patrick can do it.**
    The sheet is shared with the service account. The hunter cannot be told about
    it from a session: **`git push` to the hunter repo is now classifier-blocked,
@@ -525,14 +532,38 @@ still explains itself and nobody has to remember a colour code.
 | **GREY** | `Grey Fiber Customers` | `Existing AT&T Customer` | Not a fiber lead — but it IS written: penetration data, and the best wireless/bundle list we have |
 | **UNKNOWN** | `Unknown Customers` | `Build Code Not Decoded - Not A Lead` | Parked for review, never called |
 
-**THE PURGE HAS NEVER RUN — CONFIRMED 2026-09-03, say it that way.** It is
-scraper commit `754ecbf` and it runs at HUNTER LAUNCH, once per PC. The hunter
-has not completed a launch since 2026-08-30 (`LOGIN_TIMEOUT`), and the workbook
-has taken no writes since then either, so a delete-and-rewrite would fail anyway.
-**Fixing the AT&T login runs the purge for free.** And it cannot be done from a
-Claude session: the Drive connector is file-level only (no row or tab edits),
-Autosheet's balance is empty, and the cell ceiling blocks even a temp COUNTIF tab.
-Do not promise to clean the sheet from here.
+**THE PURGE LIVES IN THE MAPS SCRAPER, NOT THE HUNTER — MEASURED 2026-09-03,
+and this corrects what this file said for six days.** Commit `754ecbf`
+(2026-08-27) modified **exactly one file**:
+`optimus/standalone/maps_scraper_standalone.py`, +98/-0. `purge_prefix_gold()`
+is at lines 1174-1266, called at line 1836 on scraper launch.
+**`precise_fiber_hunter.py` contains ZERO occurrences of "purge". So does
+`clean_sheet.py`.** Therefore:
+- "it runs at HUNTER launch" — **WRONG, delete that idea.**
+- "fixing the AT&T login runs the purge for free" — **WRONG.** The AT&T login
+  has nothing to do with it. That line sent Patrick after the wrong fix.
+- "CLEAN_SHEET.bat cleans the gold contamination" — **WRONG.** It dedupes by
+  address; it does not date-cut. The clean and the purge are different jobs.
+
+**THE ONE ACTION THAT RUNS IT: double-click the Maps Scraper Desktop icon.**
+The purge runs in the first ~30 seconds of launch, before any scraping, backing
+the whole tab up to a local CSV and the removed rows to their own JSON first.
+
+**AND IT IS PROBABLY STILL GATED SHUT.** The purge sits behind
+`if sheet_ws is not None`, and `sheet_ws` comes from `open_sheet()`, which opens
+**`Maps Businesses`** and, if that tab is missing, calls `add_worksheet(20000x7)`
+= **140,000 cells** — which throws a 400 on a workbook at the 10M ceiling, gets
+swallowed by a bare `except`, and returns `None`. **The sheet is too full to
+open, so the cleanup that would free ~118,000 cells never runs.** Two more
+gates: any failure prints only `"(dedupe off: ...)"`, and the marker file
+`gold_purge_done.flag` is written even on an "empty tab" read, which locks the
+purge off that PC forever. Fix written, tested by reading, **NOT pushed**:
+`patches/gold-purge-never-runs.md`. Ask Patrick before pushing — RULE 0.
+
+It still cannot be done from a Claude session: the Drive connector is file-level
+only (no row or tab edits), Autosheet's balance is empty, and the cell ceiling
+blocks even a temp COUNTIF tab. Do not promise to clean the sheet from here —
+point at the Maps Scraper instead.
 
 **THE MISCLASSIFICATION WINDOW IS EVERYTHING BEFORE 2026-08-24** — the old
 `OPTIMUS_UNKNOWN_CUSTOMER=gold` setting labelled any undecodable build code GOLD

@@ -8212,3 +8212,118 @@ GitHub so Claude can read them with no Google access.
 **I still cannot run either from here** — they need the PC with the fiberscanner
 credentials. But "I can't clean the sheet" was never the right answer;
 "double-click CLEAN_SHEET.bat, it dry-runs first" is.
+
+---
+
+## 2026-09-03 — The gold purge is in the MAPS SCRAPER, not the hunter. Six days of pointing at the wrong fix.
+
+Patrick, fifth time asking: *"do it don't make me work u do it / and delete the
+junk from the gold dot tabs that's incorrect before new build for the 5th time /
+u use gold dots to see where new fiber is so it's fucking critical."*
+
+Rather than tell him again that he has to do it, I went and found out **why it
+has never run once in five builds.** The answer is that this brain has been
+naming the wrong program.
+
+### MEASURED
+
+`GET /repos/patricksiado-prog/Go-High-Level-MCP-2026-Complete/commits/754ecbf`:
+
+```
+SHA:  754ecbf86efd
+DATE: 2026-08-27T10:02:17Z
+MSG:  One-shot gold purge: remove pre-fix contamination from Gold Confirmed
+FILES: modified 98 + 0 -  optimus/standalone/maps_scraper_standalone.py
+```
+
+**One file. The maps scraper standalone.** Then, on the deployed files:
+
+| File | occurrences of "purge" |
+|---|---|
+| `precise_fiber_hunter.py` (398,472 bytes) | **0** |
+| `clean_sheet.py` (24,225 bytes) | **0** |
+| `maps_scraper.py` (7,687 bytes) | **0** |
+| `hunter_fixes.py` (8,561 bytes) | **0** |
+| `standalone/maps_scraper_standalone.py` (84,680 bytes) | **19** |
+
+`purge_prefix_gold()` is at lines 1174-1266; it is called once, at line 1836,
+inside the scraper's launch sequence.
+
+### What that makes wrong, in this file's own words
+
+- *"it runs at HUNTER LAUNCH, once per PC"* — wrong. Never in the hunter.
+- *"Fixing the AT&T login runs the purge for free"* — wrong, and expensive: it
+  told Patrick the AT&T re-login would clean the sheet. It would not. Those are
+  two unrelated programs.
+- *"CLEAN_SHEET.bat — THE CLEAN"* — it is a clean, but it is **not this clean.**
+  It dedupes `Gold Confirmed` by address. It has no date cut-off at all. The
+  9,052 pre-08-24 rows are unique addresses, so a dedupe leaves every one of
+  them in place.
+
+**This is FOUR CHECKS #2 again — count the marker, not the shape.** I read
+"scraper commit" in the brain, and the brain read "runs at launch", and nobody
+ever grepped the file for the function. The commit message said *"the scraper"*
+in plain English the whole time.
+
+### Why it still may not run when he does launch the scraper
+
+The call site:
+
+```python
+sheet_ws, sheet_seen = (open_sheet() if to_sheet else (None, set()))
+...
+if sheet_ws is not None and os.environ.get("SCRAPER_NO_DEDUPE", ...) not in (...):
+    try:
+        purge_prefix_gold(sheet_ws.spreadsheet)
+        ...
+    except Exception as e:
+        print("  (dedupe off: %s)" % str(e)[:60])
+```
+
+**The deadlock.** `open_sheet()` opens `Maps Businesses`, and if that tab is not
+there it calls `sh.add_worksheet(title=SHEET_TAB, rows="20000", cols="7")` —
+**140,000 cells.** On a workbook pinned at the 10,000,000-cell ceiling that is
+an instant 400. The bare `except` at line 475 catches it and returns
+`(None, set())`. `sheet_ws is None`, so the block is skipped and the purge never
+fires. **The workbook is too full to open, so the routine that would free
+~118,000 cells (9,052 rows x 13 columns) never gets to run.** The purge is the
+cure for the condition blocking the purge.
+
+**It also fails silently** — everything inside prints only `"(dedupe off: ...)"`,
+which reads as a minor unrelated notice, not as "the gold tab was not cleaned".
+That is exactly what NO SILENT RUNNING (2026-08-28) exists to prevent, and it
+would explain Ara's 2026-08-28 scraper session leaving the tab untouched.
+
+**And the marker locks on abnormal reads.** Line 1204 writes
+`gold_purge_done.flag` when the tab reads as fewer than 2 rows — an *empty* read
+is treated as a *clean* result. One quota blip or partial `get_all_values()` and
+the purge is disabled on that PC permanently.
+
+### The function itself is good — do not rewrite it
+
+Whole tab to a local CSV first; removed rows to their own JSON (deliberately NOT
+the replay dir, or replay would put them straight back); aborts touching nothing
+if the `Captured At` header is missing; a regex date guard so `"not a date"`
+cannot sort above `2026-08-24` as a string and survive; overwrite-then-trim, the
+same two-call pattern the dedupe uses. It is careful work. The only defect is
+that it is standing behind a door that is bolted.
+
+### Written, not pushed — RULE 0
+
+`patches/gold-purge-never-runs.md` carries the three-part fix: open the
+spreadsheet for the purge independently of `Maps Businesses`, stop writing the
+marker on an empty read, and shout when it is skipped. Not pushed. A push to
+that repo is a deploy to every PC.
+
+### What Patrick actually has to do
+
+**Double-click the Maps Scraper icon.** Not the hunter. The purge is the first
+thing it does. If the console says `GOLD PURGE: 'Gold Confirmed' has N rows...`
+it is working; if it says `(dedupe off: ...)` or says nothing about gold, the
+full-sheet gate is shut and the patch has to go in first.
+
+### The rule this buys
+
+**When the brain names a program, grep that program before repeating it.** The
+cost of not doing it here was six days of aiming Patrick at an AT&T login that
+was never going to clean anything, on the tab he uses to find new fiber.
