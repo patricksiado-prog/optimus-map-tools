@@ -8531,3 +8531,74 @@ present in the live deployed code, which is what made the diagnosis trustworthy.
 
 Nothing is deleted yet. 29 tabs, `Gold Confirmed` 11,490. The code is armed;
 Patrick launching the Maps Scraper is what runs it.
+
+---
+
+## 2026-09-03 — First real run of the startup clean: it fired, and lost to a 503. Fixed, hunter `94775af`.
+
+Patrick ran the Maps Scraper and sent a photo of the console. **The deploy landed
+and executed** — the clean is genuinely in the scraper now. It just failed, and
+the failure was mine.
+
+### What the console said, verbatim
+
+```
+Startup clean (once per PC: junk gold rows, then junk tabs)...
+*** STARTUP CLEAN DID NOT RUN -- could not open the workbook: APIError: [503]:
+*** STARTUP CLEAN SKIPPED -- no google_creds.json on this PC.
+*** The junk gold rows and junk tabs are STILL THERE.
+-> writing to the 'Maps Businesses' tab live, as it runs.
+COMBO MATCH ON: 367998 captured fiber leads loaded
+68 parked batch(es) from earlier runs -- replaying up to 60.
+sheet FULL -- shrinking over-allocated grids (deletes nothing)...
+nothing left to shrink -- the workbook truly needs archiving.
+THE SHEET IS FULL. Google will not accept another row.
+```
+
+### Two defects, both mine
+
+1. **No retry on a transient error.** `503` is Google being briefly unavailable.
+   `open_sheet()` opened the SAME workbook seconds later and wrote to
+   `Maps Businesses` for the rest of the run — so the creds, the network and the
+   permissions were all fine. One coin-flip 503 cost the entire clean.
+2. **The message was a lie.** It printed `no google_creds.json on this PC` when
+   the real cause was the 503, because `_clean_open()` returned a bare `None` and
+   the caller could not tell "no creds file" from "open failed". **A wrong reason
+   is worse than no reason — it sends the next person after the wrong fix.**
+   That is the same class of error as "the purge runs at hunter launch".
+
+### The fix
+
+- `_clean_open()` now returns `(spreadsheet, reason)` and **retries 4x with
+  backoff (3s, 6s, 9s)**. A missing creds file returns its own distinct reason.
+- `_run_startup_clean(sh)` split out so it can be called twice.
+- **SECOND CHANCE:** if the standalone open still loses, the clean runs again on
+  `sheet_ws.spreadsheet` — the handle `open_sheet()` already got. The early run
+  is still tried first because it frees cells before the open needs them, but a
+  blip can no longer cost the whole thing.
+- Only if BOTH fail does it print `*** THE JUNK GOLD ROWS AND JUNK TABS ARE
+  STILL THERE. Nothing was deleted. It retries on the next launch.`
+
+Simulated against tonight's exact sequence: 503-then-OK cleans on the first
+path; 503-every-time cleans on the second; everything-down says so honestly.
+
+### MEASURED from the same run — the ceiling is now the binding constraint
+
+- `THE SHEET IS FULL. Google will not accept another row.`
+- **Grids were already auto-shrunk and there is `nothing left to shrink`.** The
+  cheap remedy from BRAIN 22.35 is spent.
+- **367,998 captured fiber leads** loaded for the combo match.
+- **68 parked batches** replaying from earlier runs, bounded to 60 per launch.
+- Rows are still going to CSV and parking to disk — NOTHING IS LOST — but
+  nothing is being DELIVERED, exactly as the flat `fileSize` has said since 08-30.
+
+**So the gold purge is no longer just tidy-up. Freeing ~118,000 cells (9,052
+rows x 13 cols) plus ~170,000 from `TEST-Green-2026-08-24` is the thing standing
+between the scraper and writing rows again.** The clean and the dead writes are
+the same problem.
+
+### The rule this buys
+
+**A failure message must name the failure it actually saw.** A helper that
+returns a bare `None` forces its caller to guess, and the guess gets printed to
+the operator as fact. Return the reason with the result.

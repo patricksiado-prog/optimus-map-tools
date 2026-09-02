@@ -48,6 +48,22 @@ workbook itself and runs BEFORE `open_sheet()`. Also fixed: an empty read no
 longer writes the done-marker (it used to disable the purge on that PC forever),
 and a failure now names the step instead of printing `(dedupe off: ...)`.
 
+**FIRST REAL RUN, 2026-09-03: the clean fired and lost to a transient `503`.**
+Console showed `*** STARTUP CLEAN DID NOT RUN -- could not open the workbook:
+APIError: [503]`, then wrongly blamed a missing `google_creds.json` — creds were
+fine, `open_sheet()` connected seconds later and wrote to `Maps Businesses` all
+run. **Fixed and redeployed: hunter `94775af`.** The open now retries 4x with
+backoff, and if it still loses, the clean runs a SECOND time on the connection
+`open_sheet()` already holds. Both paths simulated against tonight's exact
+failure. **So the clean now survives a Google blip — but it has still never
+completed, and nothing has been deleted.**
+
+**The same run proved the ceiling is real and biting:** `THE SHEET IS FULL.
+Google will not accept another row.` Grids were already auto-shrunk —
+`nothing left to shrink`. **367,998 fiber leads loaded, 68 parked batches
+replaying, every new row going to CSV and parking to disk.** The purge freeing
+~118k cells is now the thing standing between the scraper and delivering rows.
+
 **`SCRAPER_NO_CLEAN=1`** opts out. Backups land beside the scraper as
 `gold_confirmed_backup_*.csv`, `gold_purged_*.json` and `tab_backup_*/`.
 
