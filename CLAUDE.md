@@ -564,6 +564,24 @@ out of reach. Try the methods below, in order, before saying anything.**
 
 `ATT FIBER LEADS` = `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`
 
+**0. THE TAB ORDER IS CURRENTLY BROKEN AND IT COSTS YOU THE CHEAP READ.**
+MEASURED 2026-09-03: `Precise Fiber` is tab #1 again and DASHBOARD/README are not
+in the first nine, so `read_file_content` returns 190 green apartment rows instead
+of the summary numbers. 22.33 put the small tabs in FRONT on purpose. **Drag
+DASHBOARD and README to the front and `Precise Fiber` to the end** — ten seconds,
+and it restores the whole read path.
+
+**READ IT IN PIECES — `read_file_content` returns a BOUNDED SAMPLE of the first 9
+tabs** (~190-355 rows each, ~211k chars, MEASURED 2026-09-03). It blows the tool's
+token cap, so the harness saves it to a local file — which is the point: parse it
+with python for free. Split the markdown on blank lines, one block per tab.
+It takes no tab argument and cannot reach `Gold Confirmed`.
+
+**ONE TOOL FAILING SAYS NOTHING ABOUT THE OTHERS.** Autosheet's
+`api-billing-empty-balance` is not evidence the sheet is unreachable. That exact
+mistake was made 2026-08-25 and **made again 2026-09-03**. Try every path before
+reporting a limit.
+
 **1. The Google Drive connector — THIS WORKS. Verified 2026-08-25.**
 `mcp__Google_Drive__get_file_metadata` and `mcp__Google_Drive__read_file_content`
 reach the master sheet directly, as Patrick, with no extra setup. A write→read

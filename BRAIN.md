@@ -7915,3 +7915,77 @@ three ways, not assumed. Two things unblock it, in this order:
 2. **Fix the AT&T login.** The purge (`754ecbf`) then runs itself at the next
    hunter launch — but only if the workbook can take writes, which needs the
    split sheet done first.
+
+
+## 2026-09-03 — I REPEATED THE 22.33 MISTAKE WORD FOR WORD. AND THE TAB ORDER IS BROKEN.
+
+Patrick: *"can u check the brain again and look how u made miltiple sheet options
+to read the sheet small piece at a time."*
+
+He was right and the brain had it written down already. **BRAIN 22.33, dated
+2026-08-25, records this exact failure:** *"Autosheet returned
+`api-billing-empty-balance`, and I concluded and TOLD PATRICK that I could not
+reach his sheet. That was wrong. I had never tried the Drive connector. One tool
+failing says nothing about the others."*
+
+**I did the identical thing today.** Ran Autosheet, got
+`api-billing-empty-balance`, and told him the sheet could not be read or cleaned —
+having never once called `read_file_content` on the workbook this session. The
+brain warned about it in advance, by name, and I still did it.
+
+### `read_file_content` WORKS. Here is exactly what it gives you.
+
+MEASURED 2026-09-03 on `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`:
+
+- Returns **211,334 characters** of markdown — **a BOUNDED SAMPLE of the first 9
+  tabs**, roughly 190-355 rows each, as one markdown table per tab separated by
+  blank lines.
+- The result **exceeds the tool's token cap, so the harness saves it to a local
+  file** — which means it costs almost nothing in context and can be parsed with
+  python. **That is the piece-at-a-time read.** Split on blank lines, each block
+  is a tab.
+- It does **not** take a tab argument and does **not** reach past the first 9
+  tabs, so `Gold Confirmed` (tab 29 of 29 territory) is still out of reach
+  through it.
+
+**The five ways to read the sheet, in the order to try them:**
+
+1. `read_file_content` — bounded sample of the front tabs, lands in a file. Free.
+2. `get_file_metadata` — `contentSnippet` plus the authoritative `fileSize` /
+   `modifiedTime` liveness pair.
+3. `sheet_feed.py --tab "<name>"` on a hunter PC — chunked JSON to GitHub, no
+   Google auth. Needs the hunter running, which it is not.
+4. `optimus/_feed/sheet/tabs.json` on the hunter repo — per-tab ROW COUNTS,
+   fetchable with plain curl. Stale but exact.
+5. Autosheet — the only one that can address a tab by name or write. Needs credits.
+
+### THE TAB ORDER HAS BEEN TIDIED BACK — and that is why the cheap read is useless
+
+22.33 says README and DASHBOARD were deliberately put in **FRONT** position and
+`Precise Fiber` moved **LAST**, so the cheap read lands on the summary numbers:
+*"It is an architectural decision, not cosmetics — do not 'tidy' the tab order
+back."*
+
+**MEASURED 2026-09-03: `Precise Fiber` is tab #1 again, and DASHBOARD and README
+are not in the first nine at all.** So `read_file_content` returns 190 green
+apartment addresses on Essex Ln instead of the row counts and colour splits.
+
+**The nine tabs the read currently reaches, identified by header:**
+Precise Fiber · a business tab · `Upgrade Orange Biz` (62 rows, matches the
+census exactly) · `Maps Businesses` · `Gold Dots` (no header row, A=Address
+B=Captured At C=Lat D=Lng — matches the brain's description) · a
+Beaumont/Angleton gold tab (176) · the UNDECODED Orange tab (225) · `_dispatch` ·
+`_Dedupe Lock`.
+
+**Dragging DASHBOARD and README back to the front, and `Precise Fiber` to the
+end, restores the whole cheap read path.** That is a ten-second job in the UI and
+it is worth more than it sounds.
+
+### Two things re-confirmed FIRST-HAND off the sheet, not quoted
+
+- **ORANGE 77630 IS NOT GOLD.** All **225** rows in that tab are ZIP 77630
+  (219 `ORANGE`, 6 `WEST ORANGE`) and **every single one has an EMPTY Build
+  Code** — undecoded, `Not A Lead` by the legend. The 2026-09-02 correction now
+  stands on direct evidence instead of a re-derivation.
+- **`Precise Fiber` really is green-only** — 190 of 190 rows in the sample read
+  `GREEN`. The 2026-08-26 change held.
