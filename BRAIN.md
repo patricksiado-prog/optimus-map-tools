@@ -7535,3 +7535,104 @@ history, so the edit does not go in without his go.
 call outcome (or two separate enrollments) so connected and no-answer get
 different copy, and the `sms_followup` step needs a wait so the text does not
 land on top of the call. Neither is written yet.
+
+
+## 2026-09-03 — ALPHA IS BUILT: 3,581 leads in one pool, NI now exits, callbacks loop back
+
+Patrick: *"all the best leads / all gold dots enriched / all the green around them
+and everyone biss near those patches / in a call automation / I want the ni to
+remove it / I want the thing to recycle and get call backs in a loop / anglton
+Laporte beaumont devonwood everything hot all together / large pool of leads in a
+dialer called alpha / add them in."*
+
+### What ALPHA is — MEASURED 2026-09-03
+
+**Tag `alpha` is the pool. 3,581 live contacts carry it.** Built by merging four
+sources, deduped on contact id, then filtered:
+
+| Source | Rows | How fresh |
+|---|---|---|
+| Market pull straight from GHL today | 923 | Angleton **48**, La Porte **107**, Beaumont **763**, Devonwood **5** — MEASURED 2026-09-03 |
+| The live dialer queue | 3,138 | pulled 2026-09-01 |
+| `POOL_A_BEST_LEADS.csv` | 1,381 | built 2026-09-02 |
+| `ATTNET_LIKELY_GOLD.csv` | 202 | 2026-09-02, cost 0 credits |
+
+3,891 unique candidates in, **3,801 passed the filter**, **3,581 actually tagged**
+— the other **220 came back `contact is deleted`**, stale ids from the Sep 1
+dialer snapshot. Not an error to chase.
+
+**Tier tags, dialed best-first by VALUE not by capture date:**
+
+| Tag | Count | What it is |
+|---|---|---|
+| `alpha-t1-warm` | 33 | already said YES or asked for a callback |
+| `alpha-t2-gold` | 492 | GOLD — existing AT&T customer still on copper (the upgrade) |
+| `alpha-t3-green-pocket` | 307 | GREEN sitting inside a gold pocket |
+| `alpha-t4-business` | 238 | business on a lit street |
+| `alpha-t5-green` | 2,511 | green in a hot market |
+
+**Stripped before tagging:** 73 `not interested` / do-not-call, 16
+`excluded-unsellable`/`clinic`/`vertical`, 1 with no usable phone. Zero DND.
+Grey is excluded by construction — it never enters.
+
+**DEVONWOOD IS ONLY 5 CONTACTS IN GHL**, all sourced `Devonwood green`, all with
+`address1` = the literal string **`laporte`** (the known upstream bug). Their real
+addresses live in per-address tags (`8114 devonwood ln` …) and are Houston 77070.
+Reconstructed from the tags into ALPHA. **`77536` returns ZERO contacts** — the
+Deer Park pocket addresses recovered on 9/02 went into NOTES, not `address1`.
+
+### The three ALPHA workflows — all PUBLISHED 2026-09-03
+
+| Workflow | ID | What it does |
+|---|---|---|
+| **ALPHA - Power Dialer** | `ea28081b-399e-4a28-b0ef-8fa06fbd9f13` | one `manual-call` step — this IS the rep's dial queue |
+| **ALPHA - Not Interested REMOVES from dialer** | `80525fcc-fd11-4a23-a4e5-9dd231e38456` | strips `alpha`, every `alpha-t*`, `leads`, `call back`, `pool-a-best`, `power dialer queue` and `agt1`-`agt10` |
+| **ALPHA - Call Back re-enters the dial pool** | `f9875f7d-3b01-45af-a04f-43fe2de2c72c` | adds the contact back into ALPHA - Power Dialer, **bypassing `2. Designated Agent`** and its first-branch-wins bug |
+
+**NI ALSO FIXED IN THE LIVE DATA, not just going forward: all 73 contacts tagged
+`not interested` had `leads` and their `agt*` tags removed today, 73/73.** That
+closes the defect measured 2026-09-01 where dispositioned contacts kept getting
+dialed. `D03 - Leads "Not Interested"` (`cd252247`) is the cause and is UNCHANGED
+— it adds the tag and creates an opportunity but has never removed anything. It
+was left alone deliberately (RULE 0); the new workflow does the removal instead.
+
+### THREE HARD LIMITS OF THE GHL MCP — found the expensive way, do not re-discover
+
+1. **You cannot set a workflow TRIGGER through this API.** `triggers` is accepted
+   without error and silently discarded — `ghl_get_workflow_full` comes back
+   `"triggers": []` afterwards, and every pre-existing workflow in the account
+   reads the same way. **Check the destination, not the return value.**
+   Consequence: the three ALPHA workflows exist and are published but **nothing
+   enrolls into them until a human adds the trigger in the GHL UI.**
+2. **You cannot build a multi-action workflow.** Auto-chaining writes `next` as an
+   ARRAY, and GHL's own validator then refuses to publish
+   (`non-branching-next-is-array`). Passing `next` as a string gets it stripped,
+   and publish fails with `parentkey-not-in-parent-next`. **Single-action
+   workflows publish fine.** That is why ALPHA is three one-step workflows instead
+   of one branching one. Anything needing an if_else or a wait chain has to be
+   built in the UI.
+3. **`bulk_update_contact_tags` is dead** (`404 Cannot POST /contacts/tags/bulk`).
+   The endpoint that works is exposed under the misleading name
+   **`official_contacts_create_association`**, which is really
+   `POST /contacts/bulk/tags/update/{type}` — `type` is `add` or `remove`, the body
+   key is **`contacts`** (not `ids`), **max 500 per call**, and `removeAllTags` is
+   rejected on `add`. 3,581 contacts went out in 9 calls with it.
+
+### What Patrick has to do — 3 dropdowns, and the pool starts feeding itself
+
+In GHL → Automation, open each workflow and add its trigger:
+
+1. **ALPHA - Power Dialer** → trigger `Contact Tag` = `alpha`.
+   *Then re-apply the tag to backfill*: the 3,581 already carry `alpha`, and a tag
+   trigger only fires on ADD, so tell me when it's set and I'll bulk-add a second
+   tag to pull everyone in.
+2. **ALPHA - Not Interested REMOVES from dialer** → trigger `Contact Tag` =
+   `not-interested` (and `not interested`).
+3. **ALPHA - Call Back re-enters the dial pool** → trigger `Contact Tag` =
+   `call back`.
+
+Still open: the 6-attempt recycle cadence (days 1/3/7/14/30/60) needs a wait
+chain, which limit #2 blocks — `No Answer - 6 attempts` (`cde882bb`) already
+exists for that and was left alone. `ALPHA_POOL.csv` (3,801 ranked rows with
+address, customer type and reason) was delivered to Patrick as a file; it is NOT
+in the repo because it carries customer PII.

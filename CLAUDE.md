@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 (post-call texting audited)
+# CURRENT STATE — updated 2026-09-03 (ALPHA dial pool built)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -74,7 +74,32 @@ beta" survive four sessions unchecked.
   we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
 - Full census in the BRAIN.md section dated 2026-09-02.
 
-### POOL A — the best-leads dialer pool (BUILT 2026-09-02)
+### ALPHA — the one big dial pool (BUILT 2026-09-03)
+
+- **Tag `alpha` is the pool: 3,581 contacts.** Point the dialer at that tag.
+  Tiers, best first: `alpha-t1-warm` 33 · `alpha-t2-gold` 492 ·
+  `alpha-t3-green-pocket` 307 · `alpha-t4-business` 238 · `alpha-t5-green` 2,511.
+  Angleton + La Porte + Beaumont + Devonwood + the whole dialer queue + Pool A +
+  the att.net gold, merged and deduped. 90 dropped (73 NI, 16 unsellable, 1 no
+  phone); 220 more came back `contact is deleted` — stale ids, not a bug.
+- **Three workflows, all PUBLISHED:** `ALPHA - Power Dialer`
+  (`ea28081b-399e-4a28-b0ef-8fa06fbd9f13`, the `manual-call` queue),
+  `ALPHA - Not Interested REMOVES from dialer` (`80525fcc-fd11-4a23-a4e5-9dd231e38456`),
+  `ALPHA - Call Back re-enters the dial pool` (`f9875f7d-3b01-45af-a04f-43fe2de2c72c`,
+  routes around the `2. Designated Agent` first-branch bug).
+- **NI now really exits.** All 73 contacts tagged `not interested` had `leads` and
+  their `agt*` tags stripped 2026-09-03, 73/73. `D03` still does not remove
+  anything — the new workflow does it instead. Do not "fix" D03 without asking.
+- **THE GHL MCP CANNOT SET WORKFLOW TRIGGERS** (accepted, silently discarded — every
+  workflow reads `triggers: []`) **and cannot build multi-action workflows**
+  (auto-chain writes `next` as an array; GHL's validator refuses it). Single-action
+  workflows publish fine. **So the three ALPHA workflows need Patrick to add one
+  trigger each in the UI before anything enrols.** Detail in BRAIN 2026-09-03.
+- **Bulk tagging works only through `official_contacts_create_association`** —
+  really `POST /contacts/bulk/tags/update/{type}`, body key `contacts`, max 500.
+  `bulk_update_contact_tags` is a 404.
+
+### POOL A — the best-leads dialer pool (BUILT 2026-09-02, now folded into ALPHA)
 
 - **Tag `pool-a-best` is the pool. Point the dialer at that tag.**
   1,381 leads ranked: **T1 warm 33**, T2 gold+likely-gold 472, T3 green in a gold
