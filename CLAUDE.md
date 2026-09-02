@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 23:10 CDT
+# CURRENT STATE — updated 2026-09-02 23:35 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -115,8 +115,17 @@ beta" survive four sessions unchecked.
   A hook now prints this on every message and the write counter is every 3rd
   (was 5). 4,783 credits were burnt 2026-09-02 re-deriving what this file
   already recorded — see the section dated today.
-- **DealMachine credits are EXHAUSTED** — 622 left, cycle ended 2026-09-02
-  04:14 UTC. `property_export` costs exactly **1.00 credit per record**;
+- **DealMachine credits RESET: 30,000 available**, new cycle 2026-09-02 →
+  2026-10-02 (MEASURED 2026-09-02). **The cycle-duplicate discount reset too** —
+  yesterday's free Beaumont/Angleton re-pulls are full price again.
+- **202 contacts ALREADY in GHL have an AT&T-family email — 173 of them tagged
+  GREEN and 189 never dialed.** They are almost certainly copper UPGRADES filed
+  as new-customer green. `ATTNET_LIKELY_GOLD.csv`. **Cost to find: 0 credits.**
+- **`invalid` = 1,414 contacts, and it is two problems:** 48% are Twilio 30006
+  (LANDLINE — call them, no enrichment needed), the rest have no recorded error
+  at all. Zero are opt-outs. 89% have no email.
+- **Spend nothing until the 4,997 delivered leads are imported.** (Old line for
+  reference: credits were exhausted at 622 when the previous cycle ended.) `property_export` costs exactly **1.00 credit per record**;
   cycle-duplicates are free.
 - **Colour on all 4,997 is UNVERIFIED** — DealMachine cannot see serviceability.
   They are owners in gold-dense streets, not measured dots.

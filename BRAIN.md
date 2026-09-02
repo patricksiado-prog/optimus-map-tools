@@ -7275,3 +7275,69 @@ buried 296 gold leads.
 **Commission figures are IN it** — $500 / $140 — because Christian is building
 the dialer and needs the value ordering. It carries an explicit instruction not
 to put those numbers anywhere a VA or rep can see, which is Ed's standing rule.
+
+## CREDITS RESET — AND THE BEST ENRICHMENT COSTS NOTHING (2026-09-02)
+
+Patrick: *"ok can u enrich anything else?"* Checked before answering, per the
+rule. **The cycle rolled: 30,000 credits, 0 used, new cycle
+2026-09-02 → 2026-10-02.** MEASURED via `dealmachine_usage`.
+
+**Consequence nobody should be caught by: the cycle-duplicate discount RESET.**
+Yesterday Beaumont re-pulls cost 0 and Angleton cost 301 for 900 rows because
+those addresses had already been enriched *within that cycle*. Every one of them
+is full price again today. Do not plan a batch on yesterday's effective rate.
+
+### The answer: the highest-value enrichment available needs ZERO credits
+
+**202 contacts ALREADY in GoHighLevel carry an AT&T-family email**
+(`@att.net`, `@sbcglobal.net`, `@bellsouth.net`, `@prodigy.net`, `@swbell.net`
+and friends). MEASURED 2026-09-02 across 20 contact pulls, deduplicated by
+contact id.
+
+| | |
+|---|---|
+| **173** | tagged **`type-green`** — i.e. filed as "not an AT&T customer" |
+| 24 | already correctly tagged `type-copper` |
+| 5 | carry no colour tag at all |
+| **189 of 202** | **have NEVER been dialed** |
+| 13 | dialed once |
+
+**An `@att.net` address means they are almost certainly already an AT&T
+customer.** So 173 contacts filed as new-customer GREEN are really copper
+UPGRADES — the easier sale, no competitor to beat — and 189 of the 202 have
+never been called at all. They were bought and paid for weeks ago.
+
+Written to `ATTNET_LIKELY_GOLD.csv` (202 rows: name, phone, email, address,
+current tag, agent, ever-dialed, DND, contact id) and handed to Patrick.
+
+**Cost to find: 0 credits.** The signal was sitting in the `email` field of
+contacts already in the CRM. This is the "Grab from GHL before spending
+anything" rule paying out for the first time.
+
+### The `invalid` pool, re-measured live
+
+**1,414 contacts** now carry the `invalid` tag — up from 1,376 on 2026-08-29.
+Of 500 sampled: **every one has a phone, ZERO are hard SMS opt-outs, one has
+`dnd=true`.**
+
+- **240 of 500 (48%) carry `TWILIO_ERROR_CODE 30006` — that is LANDLINE**, not
+  a bad number. They need a CALL, and no enrichment is required to know that.
+- **The other 260 have no recorded error at all.** The tag is unexplained.
+- **89% of this pool has NO email** (448 of 500) — so they cannot be texted
+  (landline) and cannot be emailed either. They are call-only today.
+
+**So `invalid` is not one problem, it is two:** half are landlines that should
+be routed to a dialer immediately at no cost, and half are untagged-for-no-reason
+and should simply be tried.
+
+### Where credits are actually worth spending, ranked
+
+1. **Nothing, until the 4,997 leads from yesterday are imported.** They are
+   built, deduped and delivered, and still not in GHL. Enriching more before
+   importing those repeats yesterday's mistake exactly.
+2. **~1,414 × 1 credit** to append emails to the `invalid` pool — opens a second
+   channel to a call-only population that has already been paid for.
+3. New markets last, not first.
+
+**Email coverage is otherwise healthy** — the agt3 and agt4 dialer queues are
+88-90% emailed, so a bulk email enrichment across the whole CRM is NOT needed.
