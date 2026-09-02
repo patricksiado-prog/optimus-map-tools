@@ -150,6 +150,29 @@ beta" survive four sessions unchecked.
   dispositioned `not interested` and rows tagged `excluded-unsellable` are
   still being dialed.
 
+### Enrichment — what it bought, MEASURED 2026-09-03
+
+- **30 credits used this cycle, 29,970 left** (cycle 2026-09-02 → 10-02). The
+  4,783-credit pull was in the PREVIOUS cycle and is NOT eating this balance.
+- **All 30 credits went on `enrich_phone` and it was the best buy on record:** 10
+  of 12 missing addresses recovered, 8 of them clustered in **DEER PARK 77536**
+  where every one had already replied YES — a door-knock route nobody could see
+  while the addresses were blank. 3 extra att.net gold signals came free.
+- **The best enrichment cost nothing: 198 contacts now tagged
+  `gold-attnet-confirmed`** — an att.net/sbcglobal/bellsouth/prodigy/swbell email
+  means they are ALREADY an AT&T customer, so a copper upgrade filed as green.
+- **THE MASTER WORKBOOK IS STILL NOT ACCEPTING WRITES.** `fileSize` 8,499,354,
+  byte-identical since 2026-08-30, while `modifiedTime` moved. Nothing has landed
+  in four days. Do not write enriched data into it.
+- **Enriched material lives in Drive folder `OPTIMUS ENRICHED — 2026-09-03`**
+  (`1PMPBkeN0abB1ej8jAAwhxLo3LsCMu1wd`), **shared with Christian**
+  (`cdpulifreelancer@gmail.com`, writer). Gmail is still disconnected so nothing
+  could be emailed; the Drive share IS the delivery.
+- **Tier 1 (33) is enrolled in ALPHA - Power Dialer**, all returned
+  `succeeded: true` — but `ghl_get_workflow_executions` is a 404 on this account,
+  so enrollment is ACCEPTED, NOT VERIFIED. **There is no bulk enrollment API**;
+  the tag trigger is the only way to move the other ~3,548.
+
 ### Leads on hand — MEASURED 2026-09-02
 
 - **4,997 NEW leads delivered, deduped against GHL, never texted.**

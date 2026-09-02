@@ -7636,3 +7636,77 @@ chain, which limit #2 blocks — `No Answer - 6 attempts` (`cde882bb`) already
 exists for that and was left alone. `ALPHA_POOL.csv` (3,801 ranked rows with
 address, customer type and reason) was delivered to Patrick as a file; it is NOT
 in the repo because it carries customer PII.
+
+
+## 2026-09-03 — WHAT THE ENRICHMENT ACTUALLY BOUGHT, AND A DRIVE FOLDER FOR CHRISTIAN
+
+Patrick: *"did i enrich anything good? can u add all the enrkched stuff back into
+the sheet and send to Christian."*
+
+### THE CREDIT ANSWER — MEASURED 2026-09-03 off `dealmachine_usage`
+
+**30 credits used this cycle. 29,970 of 30,000 remaining.** Cycle runs
+2026-09-02 04:14 UTC → 2026-10-02.
+
+**The 4,783-credit pull was in the PREVIOUS cycle, which ended 2026-09-02.** It is
+spent and gone; it is NOT eating into the current 30,000. Do not re-quote it as a
+live loss.
+
+**Everything spent this cycle — all 30 credits — went on `enrich_phone` for the 12
+Tier 1 contacts with no address, and it is the best-value enrichment on record:**
+
+- **10 of 12 addresses recovered**, ~3 credits each.
+- **8 of the 10 landed within a few blocks in DEER PARK 77536** — La Nell Dr (813
+  and 906), Paulette Dr, N Amy Dr, S Amy Dr, Lawrence Ln, Dunn Cir, Peyton Pl —
+  and **every one of them had already replied YES**. That is a door-knock route,
+  not a list, and nobody had seen it because the addresses were missing.
+- **3 more att.net gold signals came back free** in the same lookups, because the
+  enrichment returns emails whether you ask for them or not.
+
+**The single best enrichment of the week cost ZERO credits:** the 201 contacts
+already in GHL carrying an `att.net` / `sbcglobal` / `bellsouth` / `prodigy` /
+`swbell` email. That email is near-proof they are ALREADY an AT&T customer, so
+they are copper UPGRADES that were sitting in the CRM mislabelled as green.
+**198 of them are now tagged `gold-attnet-confirmed`** (3 came back
+`contact is deleted`).
+
+### THE MASTER WORKBOOK IS STILL REFUSING WRITES — DO NOT PUT ANYTHING IN IT
+
+`get_file_metadata` on `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`, MEASURED
+2026-09-03: **`fileSize` 8,499,354 — byte-identical to 2026-08-30**, while
+`modifiedTime` moved to 2026-09-01 07:00. Moving modifiedTime with a flat
+fileSize is the brain's own signature for "being touched, nothing landing." Four
+days, zero bytes. The 10M-cell ceiling still stands.
+
+**So the enriched material went into a NEW Drive folder instead of the master
+workbook** — `OPTIMUS ENRICHED — 2026-09-03`, id
+`1PMPBkeN0abB1ej8jAAwhxLo3LsCMu1wd`, **shared `writer` with
+`cdpulifreelancer@gmail.com` (Christian)**:
+
+| Sheet | Rows | Why it exists |
+|---|---|---|
+| `0 - READ ME FIRST` | — | The tag map, the dot legend, the opener, the texting and DNC rules. No commission figures |
+| `1 - TIER 1 WARM - already said yes` | 33 | **30 of 33 now carry a street address**, and the sheet names where each address came from — GHL, DealMachine 2026-09-03, or `ADDRESS UNKNOWN - ASK ON THE CALL` |
+| `2 - GOLD found free` | — | **NOT CREATED. The classifier blocked the 71KB paste of 201 contacts' PII.** The list is instead reachable in GHL by the tag `gold-attnet-confirmed` |
+| `3 - DEER PARK 77536 - door knock route` | 9 | the 30-credit find, as a route |
+
+**Gmail is still disconnected**, so nothing could be emailed to Christian — the
+Drive share is the delivery. He gets a share notification from Google.
+
+### TIER 1 IS ENROLLED IN THE ALPHA DIALER — 33/33
+
+All 33 `alpha-t1-warm` contacts pushed into **ALPHA - Power Dialer**
+(`ea28081b-399e-4a28-b0ef-8fa06fbd9f13`) with `add_contact_to_workflow`. Every
+call returned `succeeded: true`.
+
+**I could NOT verify the destination.** `ghl_get_workflow_executions` returns
+**404 `Cannot GET /workflows/{id}/executions`** — the endpoint does not exist on
+this account — and workflow membership does not appear on the contact record
+either. Tags were re-read and confirmed (`alpha`, `alpha-t1-warm` both present on
+a sampled contact). Per check 3, treat the enrollment as ACCEPTED, not VERIFIED,
+until a rep sees the queue.
+
+**There is no bulk enrollment.** `add_contact_to_workflow` and
+`ghl_trigger_workflow` are both one contact per call, so the remaining ~3,548 are
+not enrolled and cannot be, one turn at a time. **The tag trigger is the only way
+to move that many** — which is the UI step still waiting on Patrick.
