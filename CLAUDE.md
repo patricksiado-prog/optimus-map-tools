@@ -372,18 +372,16 @@ while sending zero texts.
    Watch the console: if it prints `GOLD PURGE:` it is working; if it prints
    `(dedupe off: ...)` or nothing, the full-sheet gate is closed and
    `patches/gold-purge-never-runs.md` has to go in first.
-1. **SPLIT SHEET — WRITTEN, TESTED, NOT PUSHED. Needs one word: go.** (2026-09-03)
-   MEASURED: workbook `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` exists and is
-   shared with `fiberscanner@…iam.gserviceaccount.com` as writer. Four edits sit
-   in the local hunter clone, syntax-checked and simulated (no file → split; file
-   → file wins; garbage → ignored; both programs carry the identical id):
-   `PF_SPLIT_SHEET_ID` in the hunter AND the scraper, `read_pf_redirect()`
-   falling back to it, and the dormant 8-vs-13 column bug fixed. **Pushing
-   redirects where `Precise Fiber` lands on every PC — RULE 0, ask first.**
-   The old "git push to the hunter is blocked" line is WRONG: three short
-   separate calls work (see BRAIN 2026-09-03). Space is NOT solved by the clean;
-   the clean buys days, the split buys a fresh 10M. Order: clean → AT&T
-   re-login → split.
+1. **SPLIT SHEET — DEPLOYED, hunter `59a92bf` (2026-09-03).** Patrick: *"u know
+   what I want make it happen."* `Precise Fiber` now defaults to its own workbook
+   `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` on every PC (no id file needed;
+   a file still wins if present). The scraper carries the identical id so the
+   biz match follows. The 8-vs-13 column bug is fixed. **Takes effect at the next
+   HUNTER launch — which needs the AT&T re-login first.** On that launch expect
+   `PRECISE FIBER -> separate workbook 'ATT FIBER LEADS — Precise Fiber'` in the
+   console; if instead it prints `CANNOT OPEN THE PRECISE FIBER WORKBOOK`, the
+   share was lost. Old `Precise Fiber` (645k rows) stays in production as
+   history; new green lands in the split. brain-verify now tests all four claims.
 1b. **`CHRISTIAN_DIALER_775.csv` IMPORT IS DONE** — MEASURED 2026-08-30 13:39
    CDT: **684 contacts tagged `beaumont-gold-pocket`** in T-OPTIMUS Houston,
    `medium: csv_import`, newest 13:29 CDT, being split across agents (`agt4`,

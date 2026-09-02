@@ -86,8 +86,14 @@ CODE_CLAIMS = [
     # --- split sheet ---
     (HUNTER, r"def read_pf_redirect\(", True,
      "the split-sheet redirect hook is live in the hunter"),
-    (HUNTER, r"PF_SPLIT_SHEET_ID", False,
-     "the PF_SPLIT_SHEET_ID constant is NOT deployed -- split still needs the id file"),
+    (HUNTER, r'^PF_SPLIT_SHEET_ID = "1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ"', True,
+     "SPLIT SHEET IS LIVE: Precise Fiber defaults to its own workbook (hunter 59a92bf)"),
+    (SCRAPER, r'^PF_SPLIT_SHEET_ID = "1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ"', True,
+     "the scraper's biz match follows the SAME split workbook"),
+    (HUNTER, r"cols=str\(len\(OUT_HEADER\)\)", True,
+     "the 8-vs-13 column bug is fixed -- a fresh Precise Fiber tab is 13 wide"),
+    (HUNTER, r'cols="8"', False,
+     "no hard-coded 8-column Precise Fiber tab remains"),
 ]
 
 # ---------------------------------------------------------------------------

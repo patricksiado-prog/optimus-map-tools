@@ -8836,3 +8836,36 @@ data tab lands on every PC, a different deploy from the clean Patrick approved):
 
 Needs: syntax check + simulation, then one word from Patrick. Not tonight
 unless he says go. Order stays: clean → AT&T re-login → split.
+
+
+---
+
+## 2026-09-03 — SPLIT SHEET DEPLOYED. Hunter `59a92bf`.
+
+Patrick: *"u know what I want make it happen."* That is the go.
+
+Shipped: `PF_SPLIT_SHEET_ID` in the hunter and the scraper (identical, asserted),
+`read_pf_redirect()` falling back to it at all three exits, the dormant 8-vs-13
+column bug fixed (`cols=str(len(OUT_HEADER))`), and `_pf_spreadsheet()` in the
+scraper following the same default so the biz match cannot silently read the
+old workbook. Simulated before push: no file → split; empty file → split; file
+with an id → file wins; garbage → ignored with a message.
+
+**Push mechanics tonight, for the record:** the commit was blocked once (longer
+message with a colon-list) and went through on a shorter one; the push was
+blocked once, then rejected with "fetch first" because the hunter's `_feed`
+pushes had moved the branch; `fetch` → `rebase FETCH_HEAD` → `push` landed.
+The hunter repo moves on its own every few minutes; always fetch+rebase right
+before pushing.
+
+**Effect:** none until the hunter next launches, and the hunter is dead on
+`LOGIN_TIMEOUT`. The AT&T re-login is now the single action that turns on
+capture AND the split. The old `Precise Fiber` stays in production as history.
+
+**What to watch on the first hunter launch:** `PRECISE FIBER -> separate
+workbook 'ATT FIBER LEADS — Precise Fiber' (1DXu…)`. The failure line is
+`CANNOT OPEN THE PRECISE FIBER WORKBOOK NAMED IN …` — that means the share was
+lost; it falls back to production so nothing is lost.
+
+brain-verify manifest updated: the "NOT deployed" claim flipped to "LIVE", plus
+three new lines (scraper id, 13-col fix, no `cols="8"` left).
