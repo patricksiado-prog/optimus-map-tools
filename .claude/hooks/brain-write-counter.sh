@@ -30,8 +30,8 @@ cat <<'GUARD'
     B=.claude/skills/session-continuity/scripts/brain
     $B find <topic>   $B money   $B closed   $B state   $B corrections
   REQUIRED before: spending credits · sending texts · building a lead list ·
-  quoting any count · saying something is broken. The brain is 5,000+ lines and
-  usually already has the answer — on 2026-09-02 not looking cost ~4,783 credits.
+  quoting any count · saying something is broken. History now lives in BRAIN.md (not auto-loaded);
+  the tool searches it — it usually already has the answer — on 2026-09-02 not looking cost ~4,783 credits.
   Results are NEWEST FIRST; a later section overrides an earlier one.
   Counting? Grep the marker that NAMES the thing (VERIFIED_GOLD, a Status
   string, a tag) and count UNIQUE ADDRESSES, never rows. Never infer from a ZIP,

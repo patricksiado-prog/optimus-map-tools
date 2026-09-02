@@ -20,6 +20,27 @@ word to grep for. ~4,783 DealMachine credits went to the wrong market.
 **A 5,000-line file you read once at session start and never re-open is not
 memory. It is an archive.** This skill exists to make it behave like memory.
 
+## The shape, as of 2026-09-02 — know this before you go looking
+
+`CLAUDE.md` used to be 5,250 lines / ~69,400 tokens, loaded IN FULL every
+session. **Anthropic's guidance is under 200 lines**, because a long file costs
+tokens on every turn and measurably reduces adherence to its own instructions.
+
+| File | What is in it | Auto-loaded? |
+|---|---|---|
+| `CLAUDE.md` | CURRENT STATE, standing rules, dot legend, system IDs, CLOSED decisions | **yes, every session** (~11,700 tokens) |
+| `BRAIN.md` | all dated session history — 4,445 lines moved there verbatim | **no** |
+| `OPTIMUS_SESSION_LOG.md` | older session records | no |
+
+**The `brain` tool searches all three.** That is what made the split safe:
+retrieval is decoupled from auto-loading, so history costs nothing until it is
+needed. **Never `@import` BRAIN.md into CLAUDE.md** — imported files load at
+launch too, which would restore the entire cost.
+
+**Routine maintenance, not a decision:** when `CLAUDE.md` drifts back over ~800
+lines, move the oldest dated sections to the bottom of `BRAIN.md`. Verify by line
+count that nothing was dropped, and never edit a section while moving it.
+
 ---
 
 # 1. THE PROTOCOL — search before you act
