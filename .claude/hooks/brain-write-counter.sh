@@ -26,15 +26,16 @@ EVERY=3
 
 # ---------- 1. READ GUARD — every single message ----------
 cat <<'GUARD'
-[brain] READ BEFORE YOU ACT — grep CLAUDE.md first, it is 4,700+ lines and it
-  usually already has the answer:  grep -in "<topic>" CLAUDE.md
-  - SPENDING credits / sending texts / building a lead list?
-    The brain already names the verified gold streets and already says
-    "Grab from GHL before spending anything" (thousands of paid-for contacts
-    are undialed). Re-deriving what is already recorded is how money gets burnt.
-  - QUOTING a count? Grep the marker that NAMES the thing (VERIFIED_GOLD, a
-    Status string, a tag) and count UNIQUE ADDRESSES, never rows. Never infer a
-    colour from a ZIP, a city name, a tab position or a row shape.
+[brain] SEARCH BEFORE YOU ACT — there is a tool, it takes seconds:
+    B=.claude/skills/session-continuity/scripts/brain
+    $B find <topic>   $B money   $B closed   $B state   $B corrections
+  REQUIRED before: spending credits · sending texts · building a lead list ·
+  quoting any count · saying something is broken. The brain is 5,000+ lines and
+  usually already has the answer — on 2026-09-02 not looking cost ~4,783 credits.
+  Results are NEWEST FIRST; a later section overrides an earlier one.
+  Counting? Grep the marker that NAMES the thing (VERIFIED_GOLD, a Status
+  string, a tag) and count UNIQUE ADDRESSES, never rows. Never infer from a ZIP,
+  a city name, a tab position or a row shape.
 GUARD
 
 N=0

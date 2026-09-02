@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 21:20 CDT
+# CURRENT STATE — updated 2026-09-02 21:45 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -87,7 +87,11 @@ beta" survive four sessions unchecked.
   actually marks `VERIFIED_GOLD` are **4 unique addresses**: 7631 Fuqua St
   (Houston 77075) and 800/1112 N Arcola + 611 E Myrtle (Angleton 77515).
   **3,102 of the 4,997 new leads were aimed at Orange on a bad count.**
-- **BEFORE SPENDING OR ASSERTING: grep CLAUDE.md, then measure the marker.**
+- **BEFORE SPENDING OR ASSERTING: run the brain search tool.**
+  `.claude/skills/session-continuity/scripts/brain find <topic>` — also
+  `money`, `closed`, `state`, `corrections`, `stale`. Newest result wins.
+  Patrick accepted a slower pace for this (2026-09-02). Write counter every 3rd
+  message, read guard on every message.
   A hook now prints this on every message and the write counter is every 3rd
   (was 5). 4,783 credits were burnt 2026-09-02 re-deriving what this file
   already recorded — see the section dated today.
@@ -5122,3 +5126,68 @@ full write banner on the 3rd.
 **Before spending money or asserting a number: grep the brain, then measure the
 marker.** In that order. The brain is the cheapest source available and it is
 the one that was skipped.
+
+## THE MEMORY GOT A SEARCH TOOL (Patrick, 2026-09-02)
+
+*"I want the memory to feel more powerful can u do that w a skill / I don't mind
+if things are a little slower."*
+
+**The diagnosis, and it is not the one you would expect: the brain was never
+short of facts. It was short of RETRIEVAL.** 5,124 lines, 112 sections, 133
+subsections, append-only and chronological — read once at session start and then
+never re-opened. A fact you have read once and do not consult at the moment of
+acting is functionally a fact you do not have. That is what cost 4,783 credits
+the same day.
+
+### What shipped
+
+**`.claude/skills/session-continuity/scripts/brain`** — a catalogue and search
+tool over `CLAUDE.md` + `BRAIN.md` + `OPTIMUS_SESSION_LOG.md`:
+
+| Command | What it answers |
+|---|---|
+| `brain find <topic>` | everything on a topic, **newest first**, with the date and line of the section it came from |
+| `brain state` | the CURRENT STATE block |
+| `brain rules` | standing rules, each bought with a real mistake |
+| `brain closed` | the CLOSED table — decisions Patrick killed, never re-propose |
+| `brain corrections` | every place the brain corrects its earlier self |
+| `brain money` | read before spending a single credit |
+| `brain stale [days]` | MEASURED claims going out of date |
+| `brain index` | all 112 sections with dates, newest first |
+
+**The load-bearing design decision: results are ordered NEWEST FIRST, and a
+section with no date in its heading inherits the date of the nearest PRECEDING
+dated heading — never from a date quoted in its body.** The file is append-only,
+so position is the truth. Dating a section by text it quotes would let a
+superseded claim outrank the correction that replaced it, which is precisely the
+rot this whole skill exists to stop. Verified: searching `orange` now returns the
+2026-09-02 correction ABOVE the claim it corrects.
+
+**This is not a NEW PROGRAM** in the sense the rule forbids. Nobody runs it, no
+operator has to remember it, it launches nothing and touches no customer data.
+It is a reading aid for Claude, the same class of thing as the hooks.
+
+### The protocol it enforces
+
+`SKILL.md` was rewritten around a mandatory search-before-you-act table. Four
+actions now REQUIRE a search first: **spending credits, sending texts, quoting
+any count or colour, and saying something is broken or fixed.** An empty search
+result is itself an answer — it means the thing is genuinely new, so measure it
+and write it down.
+
+The counting rule is written in as its own section, because the same bug has
+now recurred four times — gold-by-default (8/23), colour-by-default (8/29),
+agent-by-first-match (9/01), city-name-as-colour (9/02). Every one is a value
+assigned by the shape of the data rather than measured, and **nothing ever
+errors; the count just comes back looking fine.** Grep the marker that NAMES the
+thing, and count UNIQUE ADDRESSES, never rows.
+
+### The read guard now names the command
+
+`.claude/hooks/brain-write-counter.sh` prints the tool invocation on **every
+message**, not a general reminder to be careful. A nag is something to scroll
+past; a command is something to run.
+
+**Patrick explicitly traded speed for this** — *"I don't mind if things are a
+little slower."* Recorded so no future session optimises the searches away to
+look responsive.

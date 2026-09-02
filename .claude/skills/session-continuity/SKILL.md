@@ -1,92 +1,136 @@
 ---
 name: session-continuity
-description: Optimus memory discipline — how to read the brain, keep its CURRENT STATE block true, and never repeat an unverified claim to Patrick. Use this skill aggressively, not just when memory is named. Trigger it whenever Patrick says you sound like a new chat, that you are not remembering, asks to improve or strengthen the memory or the brain, asks whether something was recorded or "did you put that in the brain", tells you to record or park something, corrects a fact you had wrong, kills an idea ("no", "that's not an option", "don't do that", "stop suggesting"), or states a decision, constraint, price, promo or limit that a future session would otherwise lose. Also trigger it before you repeat any external fact you told him before — a promo, a price, a product limit, a vendor policy — because repeating something unchecked is the failure this skill exists to prevent.
+description: Optimus memory — how to SEARCH the brain before you act, keep its CURRENT STATE block true, and never repeat an unverified claim to Patrick. The brain is 5,000+ lines and the failure is no longer forgetting, it is not looking. Trigger this skill BEFORE spending DealMachine credits, sending texts, building a lead list, quoting any count, or saying something is broken — and whenever Patrick says you sound like a new chat, asks to make the memory stronger, asks whether something was recorded, tells you to record or park something, corrects a fact you had wrong, kills an idea ("no", "don't do that", "stop suggesting"), or states a decision, constraint, price, promo or limit a future session would lose. Also trigger it before repeating any external fact you have told him before.
 ---
 
-# Session continuity — don't make him repeat himself
+# Optimus memory
 
-Patrick, 2026-08-29: *"I kinda feel like I'm talking to a new chat or something."*
+Two different failures, and the second one is the expensive one.
 
-That is the failure this skill exists to prevent. Every session starts with zero
-memory of the last one. `CLAUDE.md` is the only thing that carries over. If a
-fact is not in it, it is gone — and he pays for that by explaining his own
-business back to you.
+**Forgetting.** Patrick, 2026-08-29: *"I kinda feel like I'm talking to a new
+chat or something."* Every session starts blank. `CLAUDE.md` is the only thing
+that carries over.
 
-## Three layers, because a skill alone cannot do this job
+**Not looking.** Patrick, 2026-09-02: *"u wasted credits on shit that doesn't
+need to be enriched that is already recorded in the brain."* He was right. The
+brain already said **"Grab from GHL before spending anything"** and already
+listed the measured gold streets. Neither was found, because nobody knew the
+word to grep for. ~4,783 DealMachine credits went to the wrong market.
 
-Worth knowing why the machinery is shaped the way it is, so nobody
-"simplifies" it later:
+**A 5,000-line file you read once at session start and never re-open is not
+memory. It is an archive.** This skill exists to make it behave like memory.
 
-1. **The SessionStart hook** (`.claude/hooks/session-start.sh`, registered in
-   `.claude/settings.json`) fires on every single session with no decision
-   involved. It prints live state — how old the CURRENT STATE block is, what
-   the scanner heartbeat says, what the last session shipped. **This is the
-   only layer that cannot be forgotten**, which is precisely why it exists: a
-   skill only loads when Claude decides to consult it, and the sessions that
-   need this most are the ones that open with a plain question like "is the
-   software working" and never think to reach for a skill.
-2. **The CURRENT STATE block** at the top of `CLAUDE.md` is the answer sheet.
-3. **This skill** is the discipline for keeping the block true.
+---
 
-If continuity is failing, check the layers in that order. A hook that stopped
-firing looks exactly like a model that stopped caring.
+# 1. THE PROTOCOL — search before you act
 
-## Open every session by telling him state, not by asking him anything
+There is a tool. Use it. It is at
+`.claude/skills/session-continuity/scripts/brain` and it takes seconds.
+
+```bash
+B=.claude/skills/session-continuity/scripts/brain
+$B find <topic...>    # search CLAUDE.md + BRAIN.md + the log, NEWEST FIRST
+$B state              # the CURRENT STATE block — the only part claiming "now"
+$B rules              # standing rules, each bought with a real mistake
+$B closed             # decisions Patrick killed. Never re-propose these
+$B corrections        # where the brain corrects itself. The correction wins
+$B money              # read this before spending a single credit
+$B stale [days]       # MEASURED claims going out of date — re-verify first
+$B index              # every section with its date, newest first
+```
+
+**These four actions REQUIRE a search first. No exceptions.**
+
+| Before you… | Run | Because |
+|---|---|---|
+| **spend credits / enrich / export** | `$B money` and `$B find <market>` | 4,783 credits went on ground the brain had already mapped |
+| **send texts / build a send list** | `$B find texting` and `$B find <pocket>` | copy rules, quiet hours, the live number list, who already opted out |
+| **quote a count or a colour** | `$B find <the thing>` | four separate counts have been wrong by inference |
+| **say something is broken/fixed** | `$B find <component>` | the answer is usually already measured, with a date |
+
+**And when the search comes back empty, that is a real answer.** It means the
+thing is genuinely new — so measure it, and then write it down.
+
+## Reading what comes back
+
+**Results are newest-first and stamped with the date of their section. A later
+section overrides an earlier one.** The brain is append-only and chronological,
+so position is truth. If two entries disagree, the one nearer the top of the
+output is current — say so out loud rather than silently picking one.
+
+`$B corrections` exists because the file corrects itself often. A corrected
+claim still sits in the file above its correction; quoting it is the single
+easiest way to tell Patrick something he has already told you is wrong.
+
+## Counting anything
+
+The bug that keeps recurring is **assigning a value by the shape of the data
+instead of measuring it**: gold-by-default (8/23), colour-by-default (8/29),
+agent-by-first-match (9/01), city-name-as-colour (9/02). Nothing ever errors —
+the count just comes back looking fine.
+
+- **Grep the marker that NAMES the thing** — `VERIFIED_GOLD`, a Status string,
+  a tag. Never a ZIP, a city name, a tab position or a row shape.
+- **Count UNIQUE ADDRESSES, never rows.** The sheet holds one row per sighting;
+  170 gold rows turned out to be 4 dots.
+- **Say which it is.** "170 rows / 4 unique addresses" is an answer. "170 gold"
+  is a guess wearing a number.
+
+---
+
+# 2. The layers, and why there are four
+
+Worth knowing so nobody "simplifies" it later:
+
+1. **The SessionStart hook** (`.claude/hooks/session-start.sh`) fires every
+   session with no decision involved and prints live state. **The only layer
+   that cannot be forgotten** — a skill only loads when Claude reaches for it,
+   and the sessions that need it most open with a plain question and never do.
+2. **The read guard** (`.claude/hooks/brain-write-counter.sh`) prints on EVERY
+   message: grep the brain before spending, sending or asserting. Added
+   2026-09-02, for the reason above.
+3. **The write counter**, same hook, **every 3rd message** (raised from 5 by
+   Patrick on 2026-09-02).
+4. **This skill and the `brain` tool** — the discipline and the machinery.
+
+If continuity is failing, check them in that order. A hook that stopped firing
+looks exactly like a model that stopped caring.
+
+---
+
+# 3. The CURRENT STATE block is the memory — keep it true
+
+`CLAUDE.md` opens with a **CURRENT STATE** block. It is the only part of the
+file that claims to be true *now*. Everything below is a 5,000-line
+chronological record.
+
+- **Read it first, before answering anything** (`$B state`).
+- **Update it in the SAME TURN any line in it changes** — a routine enabled, a
+  blocker cleared, a new measurement, a decision closed. Then push.
+
+Keep it short; if a line needs more than two sentences, put the detail in a
+dated section and point at it. When something stops being true, **change it
+there** — do not leave the old line standing with a new one below it. Two
+confident contradictory lines is the failure this block exists to end.
+
+**CLOSED items are load-bearing.** When he kills something it goes in the CLOSED
+table with his own words and the date, and no future session raises it again.
+
+---
+
+# 4. Open with state, not questions
 
 The tell that you did not read is a question he has already answered. The tell
 that you did is opening with a number he did not have to ask for.
 
-Before the first reply of a session, know these four and lead with whichever he
-touched: **is the scanner writing** (workbook `modifiedTime` AND `fileSize` —
-a size that has not moved means nothing is landing, whatever the console says),
-**what came back overnight** (replies and opt-outs in GHL, none of them called),
-**what is blocked on him**, and **what the last session shipped** (`git log`).
+Know these four before the first reply and lead with whichever he touched:
+**is the scanner writing** (workbook `modifiedTime` AND `fileSize` — a flat size
+means nothing is landing, whatever the console says), **what came back
+overnight**, **what is blocked on him**, **what the last session shipped**.
 
-## The CURRENT STATE block is the memory — keep it true
+---
 
-`CLAUDE.md` opens with a **CURRENT STATE** block (added 2026-08-30). It is the
-only part of the file that claims to be true *now*: is the scanner writing,
-what is live and sending, what is blocked on Patrick, what is measured-broken,
-and what is CLOSED and must never be re-proposed.
-
-Everything below it is a 3,000-line chronological log — a record, not a state.
-That log is why answers used to come out stale: "is the scanner working" was
-spread across six sections written on four days, some superseded, all sounding
-equally confident.
-
-**Two obligations, and they are the whole point:**
-
-- **Read the state block first, before answering anything.**
-- **Update it in the SAME TURN any line in it changes** — a routine enabled or
-  disabled, a blocker cleared, a new measurement, a decision closed. Then push.
-  A finding appended 2,000 lines down that never reaches the state block is a
-  finding nobody will read.
-
-Keep it short. If a line needs more than two sentences, put the detail in a
-dated section at the bottom and point at it from the block. When something in
-the block stops being true, change it there — do not leave the old line
-standing and add a new one below it. Two confident contradictory lines is the
-failure this block exists to end.
-
-**CLOSED items are load-bearing.** Patrick hates re-litigating decisions. When
-he kills something, it goes in the CLOSED table with his own words and the
-date, and no future session raises it again.
-
-## Read before you answer (60 seconds, every session)
-
-1. **`CLAUDE.md`** — loads automatically. **CURRENT STATE block first**, then
-   the dated sections at the bottom; those are the most recent findings and
-   they override older text higher up.
-2. **The bottom 200 lines specifically.** Newest findings live there. Old
-   sections above are frequently superseded and not always struck through.
-3. **`BRAIN.md`** only when you need depth on the hunter, the classifier or a
-   past session.
-4. **`git log --oneline -20`** — what the last session actually changed.
-
-**If two parts of the brain disagree, the later-dated one wins.** Say so out
-loud rather than silently picking one.
-
-## Write while you work, not at the end
+# 5. Write while you work, not at the end
 
 The old habit was one big brain-dump at the end of a session. Sessions get cut
 off, and everything unwritten dies with them. Write in small pieces as you go.
@@ -109,7 +153,7 @@ off, and everything unwritten dies with them. Write in small pieces as you go.
 Commit message says what changed. Push every time — an unpushed commit is not
 memory, it is a local file in a container that gets reclaimed.
 
-## The rot problem — an unverified claim is worse than a forgotten one
+# 6. The rot problem — an unverified claim is worse than a forgotten one
 
 Patrick, 2026-08-30: *"u keep saying 20 million cell google thing but why isn't
 that an option?"* He was right. A recommendation went into the brain once on
@@ -148,7 +192,7 @@ signal the claim was never verified** — check it before defending it. He is
 usually pushing because it has not moved, and things that do not move are
 usually things nobody could actually do.
 
-## What to write, and what not to
+# 7. What to write, and what not to
 
 **Write facts, findings, decisions and numbers.**
 
@@ -167,7 +211,7 @@ can be reproduced.
 every section. When something is superseded, say so in the old section rather
 than leaving two contradictory versions.
 
-## Sounding like you were here yesterday
+# 8. Sounding like you were here yesterday
 
 - **Never re-ask what the brain already answers.** Who Dave is, what a gold dot
   is worth, which sheet is the master, what the dot legend means. Asking those
@@ -183,7 +227,7 @@ than leaving two contradictory versions.
 - **When you do not know, say so and go look**, rather than asking him to fill
   the gap.
 
-## Before the session ends
+# 9. Before the session ends
 
 If the conversation is winding down or context is running out, do a final pass:
 anything decided, measured, corrected or shipped this session that is not yet in

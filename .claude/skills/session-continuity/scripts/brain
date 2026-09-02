@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+"""
+brain — a catalogue and search tool for the Optimus memory files.
+
+WHY THIS EXISTS. CLAUDE.md is 5,000+ lines, append-only and chronological. It is
+a library with no catalogue: a session can only find a fact by guessing the word
+to grep for. On 2026-09-02 that cost ~4,783 DealMachine credits — the file
+already said "Grab from GHL before spending anything" and already listed the
+measured gold streets, and neither was found because nobody knew to look.
+
+This is NOT a new program in the sense the NO NEW PROGRAMS rule forbids. Nobody
+runs it, no operator has to remember it, it launches nothing and touches no
+customer data. It is a reading aid for Claude, the same class of thing as the
+hooks in .claude/hooks/.
+
+THE ONE RULE IT ENCODES: the brain is chronological, so LATER DATES WIN. Every
+result is ordered newest-first and stamped with the date of the section it came
+from, so a superseded claim can never be quoted as current.
+
+  brain find <topic...>   search everything, newest first
+  brain state             the CURRENT STATE block (the only part claiming "now")
+  brain rules             standing rules — never / always / must / the hard ones
+  brain closed            decisions Patrick killed. Never re-propose these.
+  brain index             every section with its date, newest first
+  brain corrections       every place the brain corrects its earlier self
+  brain stale [days]      MEASURED claims older than N days (default 7)
+  brain money             everything that costs money before you spend
+"""
+import sys, os, re, datetime, textwrap
+
+ROOT = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
+FILES = [("CLAUDE.md", "brain"), ("BRAIN.md", "long-form"),
+         ("OPTIMUS_SESSION_LOG.md", "log")]
+DATE_RE = re.compile(r'(20\d{2})-(\d{2})-(\d{2})')
+
+def load():
+    """Return [{file,label,heading,date,start,lines[]}] — one entry per section."""
+    secs = []
+    for fn, label in FILES:
+        p = os.path.join(ROOT, fn)
+        if not os.path.exists(p):
+            continue
+        lines = open(p, encoding="utf-8", errors="replace").read().split("\n")
+        cur = {"file": fn, "label": label, "heading": "(top of file)",
+               "date": None, "start": 1, "lines": []}
+        for i, l in enumerate(lines, 1):
+            if re.match(r'^#{1,3} ', l):
+                if cur["lines"]:
+                    secs.append(cur)
+                m = DATE_RE.search(l)
+                cur = {"file": fn, "label": label, "heading": l.lstrip('#').strip(),
+                       "date": m.group(0) if m else None, "start": i, "lines": []}
+            cur["lines"].append((i, l))
+        if cur["lines"]:
+            secs.append(cur)
+    # A section with no date in its HEADING inherits the date of the nearest
+    # preceding dated heading in the same file. The brain is append-only and
+    # chronological, so position is the truth — a section that merely QUOTES an
+    # old date in its body is not itself old, and dating it that way would let a
+    # superseded claim outrank the correction that replaced it.
+    last = {}
+    for s in secs:
+        if s["date"]:
+            last[s["file"]] = s["date"]
+        else:
+            s["date"] = last.get(s["file"])
+            s["inherited"] = True
+    return secs
+
+def newest_first(secs):
+    return sorted(secs, key=lambda s: (s["date"] or "0000-00-00", s["start"]), reverse=True)
+
+def show(sec, hits, width=150):
+    d = sec["date"] or "no date"
+    print(f"\n\033[1m[{d}]\033[0m {sec['file']}:{sec['start']}  — {sec['heading'][:100]}")
+    for n, l in hits:
+        t = l.strip()
+        if t:
+            print(f"   {n:5d} | {t[:width]}")
+
+def cmd_find(terms):
+    if not terms:
+        print("usage: brain find <topic...>"); return
+    pats = [re.compile(re.escape(t), re.I) for t in terms]
+    secs = newest_first(load())
+    shown = 0
+    print(f"\n=== brain find: {' '.join(terms)} ===")
+    print("    NEWEST FIRST. A later section overrides an earlier one — if two")
+    print("    disagree, the one nearer the top of this output is current.\n")
+    for s in secs:
+        hits = [(n, l) for n, l in s["lines"] if all(p.search(l) for p in pats)]
+        if not hits:
+            body = "\n".join(l for _, l in s["lines"])
+            if all(p.search(body) for p in pats):
+                hits = [(n, l) for n, l in s["lines"] if any(p.search(l) for p in pats)][:6]
+        if hits:
+            show(s, hits[:12]); shown += 1
+            if shown >= 12:
+                print(f"\n   … more matches; narrow the search.")
+                break
+    if not shown:
+        print("   NOTHING IN THE BRAIN. That is a real answer — it means this is")
+        print("   genuinely new, so measure it and then WRITE IT DOWN.")
+
+def block(pred, title, note=None):
+    print(f"\n=== {title} ===")
+    if note: print(f"    {note}\n")
+    for s in newest_first(load()):
+        hits = [(n, l) for n, l in s["lines"] if pred(l)]
+        if hits: show(s, hits[:14])
+
+def cmd_state():
+    p = os.path.join(ROOT, "CLAUDE.md")
+    lines = open(p, encoding="utf-8", errors="replace").read().split("\n")
+    out, on = [], False
+    for l in lines:
+        if l.startswith("# CURRENT STATE"): on = True
+        elif on and re.match(r'^---\s*$', l) and len(out) > 5: break
+        if on: out.append(l)
+    print("\n".join(out) if out else "No CURRENT STATE block found.")
+
+def cmd_stale(days):
+    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    print(f"\n=== MEASURED claims older than {days} days (before {cutoff}) ===")
+    print("    Re-verify before repeating any of these to Patrick.\n")
+    for s in newest_first(load()):
+        if not s["date"] or s["date"] >= cutoff: continue
+        hits = [(n, l) for n, l in s["lines"] if re.search(r'\bMEASURED\b', l)]
+        if hits: show(s, hits[:6])
+
+def main():
+    a = sys.argv[1:]
+    if not a or a[0] in ("-h", "--help", "help"):
+        print(__doc__); return
+    c, rest = a[0], a[1:]
+    if   c == "find":        cmd_find(rest)
+    elif c == "state":       cmd_state()
+    elif c == "stale":       cmd_stale(int(rest[0]) if rest else 7)
+    elif c == "rules":
+        block(lambda l: re.search(r'\b(NEVER|ALWAYS|RULE 0|standing rule|must never|Do not|DO NOT)\b', l)
+                        and len(l.strip()) > 25,
+              "STANDING RULES", "Newest first. These were each bought with a real mistake.")
+    elif c == "closed":
+        # The CLOSED table itself, plus explicit kill language anywhere else.
+        # Deliberately narrow: a loose match here pulls in noise like "cycle
+        # closed", and a CLOSED list nobody trusts is a CLOSED list nobody reads.
+        print("\n=== CLOSED — Patrick killed these. Never raise any of them again. ===\n")
+        p_ = os.path.join(ROOT, "CLAUDE.md")
+        lines = open(p_, encoding="utf-8", errors="replace").read().split("\n")
+        intable = False
+        for i, l in enumerate(lines, 1):
+            if re.search(r'^#+.*CLOSED — do not re-propose', l, re.I):
+                intable = True; print(f"  \033[1m{l.lstrip('#').strip()}\033[0m  (CLAUDE.md:{i})"); continue
+            if intable:
+                if re.match(r'^#{1,3} ', l): intable = False
+                elif l.startswith('|') and not re.match(r'^\|[\s:|-]+\|?$', l) \
+                     and 'Why it is closed' not in l:
+                    print(f"  {i:5d} | {l.strip()[:150]}")
+        print()
+        kill = re.compile(r"do not re-propose|do not revisit|do not ask again|"
+                          r"Do not re-open|stop suggesting|struck the old|is dead —|"
+                          r"Rejected after research|do not resurrect", re.I)
+        for s_ in newest_first(load()):
+            hits = [(n, l) for n, l in s_["lines"] if kill.search(l)]
+            if hits: show(s_, hits[:6])
+    elif c == "corrections":
+        block(lambda l: re.search(r'\bCORRECT(ION|ED)\b|\bI was wrong\b|reverses an earlier', l),
+              "CORRECTIONS", "Where the brain corrects itself. The correction wins.")
+    elif c == "money":
+        block(lambda l: re.search(r'credit|spend|cost|\$[0-9]|per lead|per record|budget', l, re.I)
+                        and re.search(r'MEASURED|never|before|cost|credit', l, re.I),
+              "MONEY — read before spending anything",
+              "Grab from GHL before spending. Probe one, read credits.used, then scale.")
+    elif c == "index":
+        print("\n=== EVERY SECTION, NEWEST FIRST ===\n")
+        for s in newest_first(load()):
+            print(f"  [{s['date'] or 'no date '}] {s['file']}:{s['start']:5d}  {s['heading'][:104]}")
+    else:
+        print(__doc__)
+
+if __name__ == "__main__":
+    main()
