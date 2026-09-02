@@ -8327,3 +8327,68 @@ full-sheet gate is shut and the patch has to go in first.
 **When the brain names a program, grep that program before repeating it.** The
 cost of not doing it here was six days of aiming Patrick at an AT&T login that
 was never going to clean anything, on the tab he uses to find new fiber.
+
+---
+
+## 2026-09-03 — CLEAN_SHEET.bat would have deleted the warm leads. Checked before saying "run it".
+
+Patrick: *"get rid of it extra tabs and the junk data please."*
+
+The obvious answer was "double-click CLEAN_SHEET.bat". I applied its actual KEEP
+list to the 29 live tabs first. It would have deleted 14 tabs / 22,457 rows, and
+**7 of them are hand-built working tabs, not junk** — including
+**`Warm Backlog — Replied YES` (40 people who already told us yes)**,
+`Angleton Call List — Aug 2026`, `WORK LIST — Beaumont + Angleton`,
+`Beaumont Gold — Aug 2026`, `GOLD — CLEAN` (3,328), `HOUSTON UNVERIFIED — Aug 19`
+(1,339) and `Operator Scorecard`.
+
+They are CSV-backed-up first, so nothing is destroyed forever — but the tab
+vanishes out of the workbook and nobody would notice for weeks. Telling him to
+run it unread would have been the expensive kind of "helpful".
+
+### The design defect
+
+`clean_sheet.py` is a **whitelist**: `_keep()` returns true only for names on
+`KEEP` / `KEEP_SUBSTR`, everything else is deleted. On a workbook where reps and
+one-off scripts create tabs constantly, that deletes exactly the tabs nobody
+thought to list. **Wrong way round.** A sheet people work in needs the opposite
+default: keep everything, delete only named junk.
+
+### Re-measured today, all five read paths
+
+- Autosheet: **still `api-billing-empty-balance`** (re-tested 2026-09-03, not
+  carried forward). It is the only path that can write or address a tab by name,
+  so there is still **no write path to this workbook from a Claude session.**
+- `tabs.json` on the hunter repo: fresh, 29 tabs, exact row counts. That is where
+  the numbers above come from.
+- Note: **no `DASHBOARD`, no `README`, and no `Unknown Customers` tab exists** in
+  the live list, though CLAUDE.md and the skill both reference all three. The
+  cheap read path (front tabs) cannot work while they are absent.
+
+### The genuine junk, named
+
+7 tabs / **17,451 rows**: `Gold Dots` (3,328, RETIRED and superseded by
+`GOLD — CLEAN`), `TEST-Green-2026-08-24` (13,027), `TEST-Gold-2026-08-24` (5,
+after migration), `TMP Sweep Census` (92), `ZZ_TMP_GRID` (999),
+` _temp_ash_lookup` (0), `_optimus_probe` (0). Plus the **9,052 pre-08-24 rows**
+in `Gold Confirmed`.
+
+### Written, not pushed — `patches/clean-sheet-one-doubleclick.md`
+
+Two changes to `clean_sheet.py`:
+
+1. **Invert the whitelist to an explicit `JUNK` set + prefix match.** Unknown
+   tabs survive by default.
+2. **Move the date purge into `clean_sheet.py`.** It opens tabs by name and never
+   calls `add_worksheet`, so it does NOT hit the 140k-cell gate that keeps the
+   scraper's copy from ever running. Same logic, same backups, a home where it
+   can actually execute — and then ONE double-click does tabs AND rows.
+
+Frees 300,000+ cells against the 10M ceiling, which is also what unsticks the
+workbook's refused writes.
+
+### The rule this buys
+
+**Before telling Patrick to run a destructive tool, run its own rules against the
+live data and print what it would take.** The tool being "the right tool" is not
+the same as the tool being safe to run today.
