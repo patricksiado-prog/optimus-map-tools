@@ -480,6 +480,19 @@ still explains itself and nobody has to remember a colour code.
 | **GREY** | `Grey Fiber Customers` | `Existing AT&T Customer` | Not a fiber lead — but it IS written: penetration data, and the best wireless/bundle list we have |
 | **UNKNOWN** | `Unknown Customers` | `Build Code Not Decoded - Not A Lead` | Parked for review, never called |
 
+**THE PURGE HAS NEVER RUN — CONFIRMED 2026-09-03, say it that way.** It is
+scraper commit `754ecbf` and it runs at HUNTER LAUNCH, once per PC. The hunter
+has not completed a launch since 2026-08-30 (`LOGIN_TIMEOUT`), and the workbook
+has taken no writes since then either, so a delete-and-rewrite would fail anyway.
+**Fixing the AT&T login runs the purge for free.** And it cannot be done from a
+Claude session: the Drive connector is file-level only (no row or tab edits),
+Autosheet's balance is empty, and the cell ceiling blocks even a temp COUNTIF tab.
+Do not promise to clean the sheet from here.
+
+**THE MISCLASSIFICATION WINDOW IS EVERYTHING BEFORE 2026-08-24** — the old
+`OPTIMUS_UNKNOWN_CUSTOMER=gold` setting labelled any undecodable build code GOLD
+by default. That is **9,052 of the 11,490 `Gold Confirmed` rows, 79% of the tab.**
+
 **GOLD WAS CONTAMINATED AND IS BEING PURGED (2026-08-27).** `Gold Confirmed`
 read 9,658 rows and Patrick called it immediately: most predate working gold
 capture. Gold-by-default — gold = "could not decode the build code" — died

@@ -7766,3 +7766,77 @@ but undelivered.**
 **The only gold numbers that are both current and de-duplicated are in GHL:**
 **296 copper-upgrade contacts** (MEASURED 2026-09-01) and **198 tagged
 `gold-attnet-confirmed`** (2026-09-03), which overlap.
+
+
+## 2026-09-03 — PATRICK IS RIGHT: THE GOLD PURGE HAS NEVER RUN. STOP SAYING "MAY NOT HAVE"
+
+Patrick: *"can u check the brain cuz gold was misclassified for a period of time
+/ u had agreed to clean the sheet but I guess haven't done it / and dont remember
+the 5000 code rewrites."*
+
+He is right on all three counts and the brain confirms it. Recording this as a
+definite state so no future session hedges on it again.
+
+### 1. THE MISCLASSIFICATION WINDOW — everything captured BEFORE 2026-08-24
+
+The old setting `OPTIMUS_UNKNOWN_CUSTOMER=gold` meant **a customer whose build
+code could not be decoded was labelled GOLD as the fallback**. Not measured —
+defaulted. That rule produced the contaminated 3,328 in `Gold Dots` and the bulk
+of `Gold Confirmed`.
+
+- Killed **2026-08-23** and replaced with the UNKNOWN bucket (BRAIN 22.17).
+- Confirmed-copper capture verified working **2026-08-24**.
+- **So every gold row captured before 2026-08-24 is suspect: 9,052 of the 11,490
+  rows on `Gold Confirmed`, or 79% of the tab.**
+
+The asymmetry underneath it is worth keeping: GREEN is detected by ABSENCE (no
+`subscriber_ban`) so it essentially cannot fail; GOLD is detected by a MATCH
+against the copper build-code list, so anything unmatched fell through to the
+default. AT&T's most common build code, `unavailable`, is in neither list.
+
+### 2. THE PURGE: NEVER RUN. NOT "unknown", NOT "may not have" — NEVER.
+
+The purge exists as **scraper commit `754ecbf`**: it drops `Gold Confirmed` rows
+captured before 2026-08-24, once per PC, at hunter launch, backing the tab up to
+a local CSV first. It was written and deployed. **It has never executed**, and it
+is blocked behind two independent failures, both still live:
+
+1. **The hunter has not completed a launch since 2026-08-30.** `latest.json`, run
+   `20260830-135937`, ends `LOGIN_TIMEOUT` at 14:10:57 with every counter at
+   zero. A purge that runs at launch cannot run if launch never finishes.
+2. **The workbook has accepted no writes since 2026-08-30.** `fileSize`
+   8,499,354, byte-identical, MEASURED again 2026-09-03. A purge is a
+   delete-and-rewrite; it would fail at the same ceiling everything else fails at.
+
+**Fixing the AT&T login fixes the purge for free** — it runs itself at the next
+successful launch, provided the sheet can take writes by then. That is one more
+reason the login and the split sheet are the two things worth Patrick's time.
+
+### 3. I CANNOT CLEAN THE SHEET FROM A SESSION — record it, stop offering
+
+Checked, so no future session promises this again:
+
+- The **Google Drive connector is file-level only** — read, create, share, move,
+  trash. It cannot delete rows, edit a tab, or add a tab to an existing workbook.
+- **Autosheet** is the tool that could, and its balance is empty, so it errors.
+- The workbook is at its **10M-cell ceiling**, so even a temp COUNTIF tab to
+  *count* what needs purging cannot be added.
+
+**The purge is a hunter-side job by design and it stays that way.** From here I
+can read the sheet, measure it, and say what is wrong with it — I cannot edit it.
+
+### 4. "THE 5,000 CODE REWRITES" — there is no such entry, and here is the real number
+
+Searched CLAUDE.md, BRAIN.md and the session log: **nothing matching "5,000 code
+rewrites" is recorded anywhere.** Do not let a future session invent one.
+
+What does exist, MEASURED 2026-09-03:
+
+- **3,485 commits** on the hunter repo's live branch
+  (`Go-High-Level-MCP-2026-Complete`, branch `claude/optimus-map-tools-setup-6dcl6o`),
+  counted off the GitHub API's last-page link.
+- **236 commits** in this repo, 186 of them since 2026-08-20.
+
+So roughly **3,700 commits**, not 5,000 — and Patrick genuinely would not remember
+them, because a push to the hunter repo is a DEPLOY made by a session, not by him.
+That is exactly the surface RULE 0 exists to protect.
