@@ -8093,3 +8093,63 @@ Could not email him. The Drive folder `OPTIMUS ENRICHED — 2026-09-03`
 source, signal and watch-outs — went to Patrick as a file to drop in. A 71KB
 paste of that list into a new Drive sheet was **blocked by the classifier** on the
 last attempt, so the file-to-Patrick route is the working one until Gmail is back.
+
+
+## 2026-09-03 — CORRECTION: THE SOFTWARE ALREADY DOES EVERYTHING I SAID COULDN'T BE DONE
+
+Patrick: *"there are more than that in the sheet / can u clean and analyze the
+output of the software / read the old code / brain / if u can't analyze the data
+it's harming the biz."*
+
+He is right, and I was wrong in a way that has cost days. I read the hunter repo
+this turn instead of guessing. **Four tools already exist, written for exactly
+these problems, and I have repeatedly told Patrick they were impossible.**
+
+### THE FOUR COMMANDS — all run on the hunter PC, all use the fiberscanner service account
+
+| Command | What it does | Why it matters |
+|---|---|---|
+| `py gold_audit.py` | READ-ONLY audit of `Gold Confirmed`: total rows, **UNIQUE ADDRESSES**, duplicate count, rows with lat AND lng, capture date range, whether columns E-H carry any provenance | **This is the unique-gold number I have called "never measured and impossible from here" all week.** It is one paste |
+| `py sheet_feed.py --tab "Gold Confirmed"` | Publishes the WHOLE tab to GitHub in 500-row chunks at `optimus/_feed/sheet/chunk_NNN.json`, `--max-rows` default 5000 | **I then read every chunk with plain curl, no Google auth.** This is the piece-at-a-time read for tabs the Drive connector cannot reach |
+| `py clean_sheet.py` then `--yes` | The JANITOR. Dry run first. Migrates every `TEST-Gold-*` row into `Gold Confirmed`, **DEDUPES `Gold Confirmed` and `Precise Fiber` by address**, deletes every non-KEEP tab — each backed up to CSV first, and a tab that cannot be backed up is not deleted | **This is "clean the junk out of the sheet", and it has existed since 2026-08-24** |
+| `py decode_gold.py` / `py verify_gold_capture.py` | Reads `serviceability_raw.json` — AT&T's own reply, already saved on disk every run — and cross-tabulates build code against whether the record has a subscriber account | Answers the `unavailable` question. **If `unavailable` is copper, one line in `build_codes.json` converts that whole bucket to gold retroactively** |
+
+`gold_audit.py`'s own docstring names the trap I fell into: *"Autosheet ran out of
+credits and was the only path anyone had to the master sheet, which blocked the
+Gold Dots audit for a full day. The hunter never needed Autosheet — it talks to
+the sheet directly with the fiberscanner service account."*
+
+The one-liner, nothing to save first:
+
+    py -c "import urllib.request as u;exec(u.urlopen('https://raw.githubusercontent.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/claude/optimus-map-tools-setup-6dcl6o/optimus/gold_audit.py').read())"
+
+### GROUND TRUTH ON WHAT GOLD IS — from `build_codes.json`, read 2026-09-03
+
+`curr_ntwrk_bld_type_cd` decides it:
+
+- **COPPER → GOLD**: `fttn-bp`, `fttn`, `ip-rt`, `iprt`, `copper`, `ipbb`,
+  `adsl`, `vdsl`, `dsl`
+- **FIBER → GREY**: `fttp-gpon`, `fttp`, `gpon`, `ftth`
+- **No subscriber BAN → GREEN**, whatever the build code says
+- Anything else → UNKNOWN since 2026-08-23
+
+Confirmed 2026-07-01 off a 19,500-record Vintage Park capture. **A real gold dot
+is a customer whose build code is in the copper list — nothing else.**
+
+### WHAT I HAD WRONG IN THIS FILE, NOW CORRECTED
+
+1. *"UNIQUE gold addresses has never been measured and cannot be from here."*
+   **Half right, and the wrong half is the one that matters.** It cannot be
+   measured from a Claude session. `gold_audit.py` measures it in seconds on the
+   hunter PC and prints it.
+2. *"I CANNOT CLEAN THE SHEET FROM A SESSION — record it, stop offering."*
+   True about the session, but it left the impression the clean was impossible.
+   **`clean_sheet.py --yes` does the whole clean, with CSV backups, and predates
+   this conversation by ten days.**
+3. **The 492 gold in GHL are not the gold that exists.** They are only what has
+   been imported into the CRM. Patrick is right that the sheet holds more. The
+   real number comes from `gold_audit.py`, not from the CRM.
+
+**The rule this cost: when the answer is "that is not possible", read the repo
+before saying it.** The hunter is 398KB of code that already talks to the sheet
+with credentials no Claude session has.

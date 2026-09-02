@@ -73,7 +73,26 @@ beta" survive four sessions unchecked.
 - **The feed is fetchable with plain `curl`, no Google auth** —
   `raw.githubusercontent.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/claude/optimus-map-tools-setup-6dcl6o/optimus/_feed/{latest,sheet/tabs}.json`.
   `main` and `master` both 404 — the branch name is load-bearing.
-- **UNIQUE gold addresses has never been measured** and cannot be from here:
+- **UNIQUE gold addresses IS MEASURABLE — run `py gold_audit.py` on the hunter PC.**
+  It prints total rows, UNIQUE ADDRESSES, duplicates, lat/lng coverage and the
+  capture date range off `Gold Confirmed`, read-only, using the fiberscanner
+  service account. One-line paste, nothing to save:
+  `py -c "import urllib.request as u;exec(u.urlopen('https://raw.githubusercontent.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/claude/optimus-map-tools-setup-6dcl6o/optimus/gold_audit.py').read())"`
+  **Never again say the unique count cannot be taken.** It cannot be taken from a
+  Claude session; the software takes it in seconds.
+- **`py sheet_feed.py --tab "Gold Confirmed"`** publishes the whole tab to GitHub
+  in 500-row chunks (`optimus/_feed/sheet/chunk_NNN.json`) which Claude reads with
+  plain curl, no Google auth. That is how any tab too big for the Drive connector
+  gets analysed.
+- **`py clean_sheet.py`** (dry run) then **`--yes`** IS the sheet clean: migrates
+  `TEST-Gold-*` into `Gold Confirmed`, dedupes `Gold Confirmed` and `Precise Fiber`
+  by address, deletes every non-KEEP tab with a CSV backup first. It has existed
+  since 2026-08-24.
+- **`build_codes.json` is the ground truth on gold:** copper/GOLD = `fttn-bp`,
+  `fttn`, `ip-rt`, `iprt`, `copper`, `ipbb`, `adsl`, `vdsl`, `dsl`; fiber/GREY =
+  `fttp-gpon`, `fttp`, `gpon`, `ftth`; no subscriber BAN = GREEN regardless.
+- **The 492 gold in GHL are only what was IMPORTED.** The sheet holds more.
+- **(superseded) UNIQUE gold from a Claude session** — still not possible here:
   `Gold Confirmed` is too big to read wholesale and the workbook is at its cell
   ceiling, so no temp COUNTIF tab can be added. Never present a row count as a
   dot count.
