@@ -8869,3 +8869,13 @@ lost; it falls back to production so nothing is lost.
 
 brain-verify manifest updated: the "NOT deployed" claim flipped to "LIVE", plus
 three new lines (scraper id, 13-col fix, no `cols="8"` left).
+
+---
+
+## 2026-09-03 — Deploy confirmed reaching the PC
+
+Patrick's console: `Updated the scraper from GitHub -- relaunching with the new
+version...` then the v2.1 banner. MEASURED: the self-update path pulls the new
+`maps_scraper_standalone.py` at launch and re-execs. So a push to the hunter
+repo IS a deploy to the PC within seconds of the next double-click, as the brain
+says. Awaiting the startup-clean lines on the relaunch.
