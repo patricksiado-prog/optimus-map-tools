@@ -107,6 +107,12 @@ beta" survive four sessions unchecked.
   (auto-chain writes `next` as an array; GHL's validator refuses it). Single-action
   workflows publish fine. **So the three ALPHA workflows need Patrick to add one
   trigger each in the UI before anything enrols.** Detail in BRAIN 2026-09-03.
+- **THE 492 REAL GOLD ARE SPLIT 246/246 ACROSS AGENT 3 AND AGENT 5** (2026-09-03),
+  the only two who actually dial. Every agent tag was stripped from all 492 first,
+  so nothing carries two and the first-branch-wins router cannot misfire.
+  Enrichment needed almost nothing: only 6 lacked an address, 5 of those are
+  businesses DealMachine will not trace, and the one residential lookup cost
+  **2 credits** (29,968 left). Zero of the 492 are DND; 23 are CALL-ONLY landlines.
 - **THE agt4+agt6 DOUBLE TAG IS FIXED.** All 296 gold carried both, and the
   first-branch-wins router sent every one to Agent 4 who has no rep. `agt4`
   stripped from all 296 on 2026-09-03, verified per record. Do not re-add it.

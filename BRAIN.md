@@ -8025,3 +8025,71 @@ of delivery.
 connects, texts, opt-outs, pipeline movement, appointments, the backlog age
 curve, VA activity, and the inbox money scan. Under the routine's own rule those
 are `COULDN'T READ`, not carried-forward figures.
+
+
+## 2026-09-03 — THE REAL GOLD IS SPLIT ACROSS THE TWO AGENTS WHO ACTUALLY DIAL
+
+Patrick: *"email the good leads to Christian and put them spread out into the
+dialer that are being used i want address in notes / I want all the gold dots
+enriched dnd updated"* — then corrected himself: **"real gold dots"**.
+
+### WHAT "REAL GOLD" MEANS, SETTLED
+
+Not the 11,490 rows on `Gold Confirmed` — 79% of those are pre-08-24
+gold-by-default decode failures. **The real gold is the 492 unique contacts in
+GHL tagged `alpha-t2-gold`**, made of 198 with an AT&T-family email
+(`gold-attnet-confirmed`, near-proof of an existing customer) and 294 tagged
+copper/gold-upgrade. That is the set that got worked today.
+
+### SPREAD ACROSS AGENT 3 AND AGENT 5 — 246 EACH, DONE 2026-09-03
+
+Agents 3 and 5 are the two who actually dial (23% dialed each, MEASURED
+2026-09-01); Agent 4 has no live rep. So:
+
+1. **Stripped EVERY agent tag from all 492** — verified off `tagsRemoved`:
+   agt6 × 309, agt1 × 45, agt5 × 39, agt10 × 29, agt2 × 23, agt3 × 15, agt9 × 15,
+   agt7 × 11, agt8 × 7. 492/492 success. This kills the first-branch-wins
+   mis-route at the root instead of patching one tag.
+2. **Added `agt3` + `leads` to 246** and **`agt5` + `leads` to 246**, split
+   alternately down an alphabetical sort so neither agent gets a whole town.
+   246/246 and 246/246, both verified off `tagsAdded`.
+
+**Never let a contact carry two agent tags again** — `2. Designated Agent` is an
+if_else and silently takes the lower-numbered branch.
+
+### THE ENRICHMENT: 2 CREDITS, AND THE ANSWER WAS "ALMOST NOTHING NEEDED"
+
+Only **6 of the 492 had no address**, so this was a small job, not a big spend.
+Of those 6, **five are businesses** — DealMachine will not skip-trace a business
+line, it returns `no_match`, so buying anything for them would have been waste.
+
+**One residential lookup, 2 credits: Dwight Beck → 614 N ROCKISLAND ST, ANGLETON,
+TX 77515**, owner-occupied and he is the resident. The lookup also returned
+`do_not_call: true` on all three of his numbers (registry DNC — record and call
+anyway) and confirmed `ANTIQUEBECK@ATT.NET`, so he is genuinely an existing AT&T
+customer. **Credits now 29,968 of 30,000.**
+
+The other five got `ADDRESS UNKNOWN - ASK FOR IT ON THE CALL AND WRITE IT HERE`
+notes naming what was checked and why, per the address rule.
+
+**On DND: nothing needed updating.** ALPHA excluded `dnd: true` at build time, so
+zero of the 492 are DND. 23 carry `invalid`/`landline` and are marked CALL ONLY —
+never text. Registry DNC stays recorded-and-dialed per the standing rule.
+
+### NOTES — 6 written, 486 still to go, and there is no bulk path
+
+`create_contact_note` is one contact per call and there is no batch endpoint, so
+the remaining 486 gold notes are a long sequential run, not something one turn
+finishes. Written so far: Dwight Beck (full address, wireless, DNC flagged) and
+the five address-unknown businesses. **The addresses are already in `address1`
+for 487 of 492** — the notes are about what the rep reads before speaking, not
+about the data existing.
+
+### CHRISTIAN — STILL NO EMAIL, GMAIL IS STILL DISCONNECTED
+
+Could not email him. The Drive folder `OPTIMUS ENRICHED — 2026-09-03`
+(`1PMPBkeN0abB1ej8jAAwhxLo3LsCMu1wd`) is already shared with him as writer, and
+`GOLD_492_agent3_agent5.csv` — 492 rows, agent assignment, address, address
+source, signal and watch-outs — went to Patrick as a file to drop in. A 71KB
+paste of that list into a new Drive sheet was **blocked by the classifier** on the
+last attempt, so the file-to-Patrick route is the working one until Gmail is back.
