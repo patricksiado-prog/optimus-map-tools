@@ -265,6 +265,14 @@ beta" survive four sessions unchecked.
 Both email routines are **session-bound and therefore mortal** — they die with
 the session that made them. That is the answer to "why did my email stop".
 
+**AND AS OF 2026-09-03 THEY SEND NOTHING EVEN WHEN THEY FIRE: GMAIL IS
+DISCONNECTED.** The AM routine fired on schedule and could not deliver a single
+one of the three emails, because the Gmail MCP server is unauthenticated and a
+scheduled session cannot run OAuth. **Patrick must re-authorise Gmail in his
+claude.ai connector settings.** Until then a routine "firing" is no evidence
+anybody received anything — same trap as the SMS routine reporting `SUCCEEDED`
+while sending zero texts.
+
 ### Blocked on Patrick — nothing moves until he does these
 
 1. **SPLIT SHEET — share DONE, ONE STEP LEFT, and only Patrick can do it.**

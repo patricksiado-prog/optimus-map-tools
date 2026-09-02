@@ -7989,3 +7989,39 @@ it is worth more than it sounds.
   stands on direct evidence instead of a re-derivation.
 - **`Precise Fiber` really is green-only** — 190 of 190 rows in the sample read
   `GREEN`. The 2026-08-26 change held.
+
+
+## 2026-09-03 — THE 7AM ROUTINE FIRED AND COULD NOT SEND. GMAIL IS STILL DISCONNECTED.
+
+Routine `Optimus AM — personal + work (7am Central)`, trigger
+`trig_01JTQKnB2U5ihS1mC4rpX2qy`, fired **2026-09-02 12:14:39 UTC** (7:14am
+Central) into this session and asked for the three colour-coded HTML emails —
+Patrick personal+work, Dave work-only, Churchie work-only.
+
+**NOT ONE OF THEM WENT OUT. The Gmail MCP server is unauthenticated and this
+session is non-interactive, so the OAuth flow cannot be run from here.** The
+harness has been reporting this on every turn. Patrick has to re-authorise Gmail
+in his claude.ai connector settings; until he does, **every scheduled email
+routine is silently producing nothing.** That is the same class of failure as the
+SMS routine reporting `SUCCEEDED` while sending zero texts — the trigger fires,
+the run "completes", and no human receives anything.
+
+**Both email routines are affected** — the AM one above and the PM one
+(`trig_01RjAUBz16UNpdDzK2neCz37`, 22:30 UTC). Treat their firing as no evidence
+of delivery.
+
+### The live reads taken for that brief anyway — MEASURED at fire time
+
+- **CAPTURE IS DEAD AND NOTHING IS LANDING.** `get_file_metadata`:
+  `fileSize` **8,499,354** — unchanged since 2026-08-30 — with `modifiedTime`
+  2026-09-01T07:00:46Z. The moving-modifiedTime / flat-fileSize signature, which
+  is the authoritative "being touched, nothing written" tell.
+- Last run `20260830-135937` ended `LOGIN_TIMEOUT`, every counter zero.
+- **DealMachine: 29,970 of 30,000 credits, cycle ends 2026-10-02** — 29 days out,
+  so the 5-day expiry flag does NOT fire this morning.
+- ALPHA dial pool: **3,379 unique people**, **97% never dialed once**.
+
+**Not read live this morning, so not reported as numbers:** yesterday's calls,
+connects, texts, opt-outs, pipeline movement, appointments, the backlog age
+curve, VA activity, and the inbox money scan. Under the routine's own rule those
+are `COULDN'T READ`, not carried-forward figures.
