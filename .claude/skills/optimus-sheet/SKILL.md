@@ -69,7 +69,7 @@ account, which talks to the sheet directly — no Autosheet, no Claude creds.
 | Run this | It does |
 |---|---|
 | **`COUNT_TABS.bat`** (double-click) | row count for every tab AND publishes them to GitHub for Claude. Read-only |
-| **`CLEAN_SHEET.bat`** (double-click) | **THE CLEAN.** Dry run first, asks for YES, then migrates `TEST-Gold-*` into `Gold Confirmed`, backs every tab up to CSV, dedupes `Gold Confirmed` and `Precise Fiber` by address, deletes only DEBUG/TEST tabs. Pipeline tabs are protected by a KEEP whitelist |
+| **`CLEAN_SHEET.bat`** (double-click) | **THE CLEAN — UNSAFE UNTIL PATCHED. It deletes `Warm Backlog — Replied YES` and 6 other rep-built tabs (MEASURED 2026-09-03; see `patches/clean-sheet-one-doubleclick.md`).** Dry run first, asks for YES, then migrates `TEST-Gold-*` into `Gold Confirmed`, backs every tab up to CSV, dedupes `Gold Confirmed` and `Precise Fiber` by address, deletes only DEBUG/TEST tabs. Pipeline tabs are protected by a KEEP whitelist |
 | **`py gold_audit.py`** | READ-ONLY: total rows, **UNIQUE ADDRESSES**, duplicates, lat/lng coverage, capture date range on `Gold Confirmed`. **This is the unique-gold number.** One-line paste, nothing to save |
 | **`py decode_gold.py`** | reads AT&T's own saved reply and settles what `unavailable` means. If it is copper, one line in `build_codes.json` converts that whole bucket to gold retroactively |
 
@@ -119,3 +119,27 @@ else is gold.**
 - Is the number MEASURED today, with how, or carried forward?
 - Did you try all five read paths before saying anything is unreachable?
 - Is a `.bat` or a one-liner the real answer instead of "I can't"?
+
+
+## 7. THE LIVE TAB LIST — 29 tabs, MEASURED 2026-09-03 off `_feed/sheet/tabs.json`
+
+`Precise Fiber` 645,422 · `Maps Businesses` 38,481 · `Grey Fiber Customers` 26,689 ·
+`Backend Comm` 17,085 · `TEST-Green-2026-08-24` 13,027 · `Gold Confirmed` 11,490 ·
+`Fiber Green Biz` 7,298 · `Hunter Status` 3,599 · `Gold Dots` 3,328 ·
+`GOLD — CLEAN` 3,328 · `HOUSTON UNVERIFIED — Aug 19` 1,339 · `ZZ_TMP_GRID` 999 ·
+`Beaumont Gold — Aug 2026` 238 · `TMP Sweep Census` 92 · `Backend Analysis` 65 ·
+`Upgrade Orange Biz` 62 · `Backend Capture` 48 · `Gold Biz Campaign — READY` 45 ·
+`Warm Backlog — Replied YES` 40 · `WORK LIST — Beaumont + Angleton` 29 ·
+`Devonwood Campaign — Aug 21` 26 · `Angleton Call List — Aug 2026` 20 ·
+`Operator Scorecard` 12 · `TEST-Gold-2026-08-24` 5 · `_dispatch` 1 ·
+`_Dedupe Lock` 0 · ` _temp_ash_lookup` 0 · `_optimus_probe` 0 · `Territory Claims` 0
+
+**THE GENUINE JUNK — 7 tabs, 17,451 rows:** `Gold Dots` (RETIRED, superseded by
+`GOLD — CLEAN`), `TEST-Green-2026-08-24`, `TEST-Gold-2026-08-24` (migrate first),
+`TMP Sweep Census`, `ZZ_TMP_GRID`, ` _temp_ash_lookup`, `_optimus_probe`.
+Everything else is live or hand-built. **Plus 9,052 pre-08-24 rows inside
+`Gold Confirmed`.**
+
+**THREE TABS THIS SKILL AND CLAUDE.md BOTH NAME DO NOT EXIST:** `DASHBOARD`,
+`README` and `Unknown Customers` are absent from the live list. The "read
+DASHBOARD first" path cannot work until they are rebuilt.

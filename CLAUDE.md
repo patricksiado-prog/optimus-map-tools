@@ -634,10 +634,17 @@ sheet question, quoting ANY count, enriching or uploading anything sourced from
 it, or saying any part of it is out of reach.
 
 **The two double-click tools, because "I can't" is almost never true:**
-- **`CLEAN_SHEET.bat`** — THE CLEAN. Dry run, asks YES, then migrates `TEST-Gold-*`
-  into `Gold Confirmed`, backs every tab up to CSV, dedupes `Gold Confirmed` and
-  `Precise Fiber` by address, deletes only DEBUG/TEST tabs. Pipeline tabs are
-  whitelisted and protected.
+- **`CLEAN_SHEET.bat`** — THE CLEAN, **BUT DO NOT RUN IT UNTIL THE PATCH IS IN.**
+  MEASURED 2026-09-03 against the 29 live tabs: it deletes 14 tabs / 22,457 rows,
+  and **7 are hand-built working tabs, not junk** — including
+  **`Warm Backlog — Replied YES` (40 people who already said yes)**, the Angleton
+  call list, the Beaumont work list, `Beaumont Gold — Aug 2026`, `GOLD — CLEAN`
+  (3,328) and `HOUSTON UNVERIFIED — Aug 19`. Each is CSV-backed-up first, so
+  nothing is destroyed forever, but the tab leaves the workbook. Cause: it is a
+  **whitelist**, so it deletes every tab nobody thought to list — backwards for a
+  sheet reps work in. Fix written, NOT pushed:
+  `patches/clean-sheet-one-doubleclick.md` inverts it to a named JUNK list AND
+  moves the gold date-purge into it, so one double-click does tabs and rows.
 - **`COUNT_TABS.bat`** — row count for every tab, and publishes them to GitHub so
   Claude can read them with no Google access.
 
