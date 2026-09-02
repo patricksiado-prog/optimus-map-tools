@@ -7476,3 +7476,62 @@ Address first line, address last line, `CUSTOMER TYPE` in between. No address on
 the record means enrich it; unfindable means say so on the record with the date.
 **Never blank, never a city name** — "laporte" sat in 13 dialer address fields
 and reps were being told to read a town out loud.
+
+
+## 2026-09-03 — POST-CALL TEXTING ALREADY EXISTS, AND ITS COPY IS THE PROBLEM
+
+Patrick: *"I want the leads to be texted after they are called."* Searched the
+brain first (check 1). It already recorded that the post-call path is a separate
+workflow from the no-answer one. Read both. **MEASURED 2026-09-03.**
+
+**It is already built and PUBLISHED.** Workflow `Random Fiber SMS After Calls`,
+id `5a7f16a7-fa67-4753-9ecc-e8f58a50c715`, version 8, status PUBLISHED.
+Shape: if_else "Skip if invalid/landline" -> `branch_invalid` (dead end) /
+`branch_textable` -> action `sms_followup`. `"triggers": []` — it fires on
+ENROLLMENT ONLY, nothing auto-enrolls into it today.
+
+**`D01 - Leads "No Answer"`** (`e25a3b87-8f39-4b7e-84de-5d2f186ecd6b`, v22,
+PUBLISHED, 10 actions) contains **NO SMS action at all** — it is pure
+disposition plumbing: strips `call back`, adds `no-answer`, creates an
+opportunity in `ogd8XMevhyiryZZcAvrE`, if_else on `att-1`..`att-6`, adds to the
+`No answer - 6 attempts` campaign (`cde882bb`). Do not go looking for a text in
+there again.
+
+**The live body it sends (verbatim), and the four things wrong with it:**
+
+> Hey, it's Patrick with AT&T Fiber - great talking with you! AT&T Fiber is 1 Gig
+> in the $40s/mo, 2 months free, free install, no contract, plus up to a $200
+> reward card. Easiest next step: call or text me directly at 832-247-4060 and
+> I'll get you set up. Reply STOP to opt out.
+
+1. **276 body chars + GHL's 27-char append = 303 = TWO SEGMENTS.** Double cost on
+   every send, and it reads as a brochure.
+2. **It writes its own `Reply STOP to opt out.`** GHL appends
+   `Reply STOP to unsubscribe.` on top of it — the doubled STOP line is the
+   single clearest tell that no human wrote the message. Same defect as the copy
+   that produced the measured **7.9% opt-out rate** on 2026-09-01.
+3. **It quotes an offer nobody has verified** — 1 Gig, $40s/mo, 2 free months,
+   free install, no contract, $200 reward card. Standing rule is never quote a
+   flat price.
+4. **It says "great talking with you!" to people who never answered.** There is
+   no connected-vs-no-answer branch; the if_else only splits on
+   invalid/landline. Every no-answer gets a text thanking them for a
+   conversation that did not happen.
+
+**Replacements drafted and character-checked (body + 27 = total):**
+
+| Use | Copy | Total |
+|---|---|---|
+| CONNECTED | `Patrick with AT&T Fiber - thanks for picking up. Fiber is live at your address and copper is retiring. Questions? Just reply.` | 152, 1 seg |
+| NO ANSWER | `Patrick with AT&T Fiber - sorry I missed you. Fiber is live at your address and copper is being retired. Worth a quick call?` | 151, 1 seg |
+| GOLD / copper | `Patrick with AT&T Fiber - sorry I missed you. You're on copper at your address and fiber is live. Worth a quick call?` | 144, 1 seg |
+
+Each is one segment, carries no opt-out line of its own, quotes no price, and
+does not claim a conversation happened. **NOT DEPLOYED — waiting on Patrick.**
+RULE 0: this is a live customer-facing sender with a measured 7.9% opt-out
+history, so the edit does not go in without his go.
+
+**The structural fix that goes with it:** the if_else needs a third condition on
+call outcome (or two separate enrollments) so connected and no-answer get
+different copy, and the `sms_followup` step needs a wait so the text does not
+land on top of the call. Neither is written yet.

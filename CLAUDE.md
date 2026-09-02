@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 00:45 CDT
+# CURRENT STATE — updated 2026-09-03 (post-call texting audited)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -92,6 +92,22 @@ beta" survive four sessions unchecked.
   and never text. A STOP covers texts, not voice.
 - **Not yet done:** tiers 2-4 are ranked in `POOL_A_BEST_LEADS.csv` but not
   tagged or enrolled; the 173 att.net contacts are still mislabelled `type-green`.
+
+### Post-call texting — BUILT, LIVE, AND SENDING BAD COPY
+
+- **`Random Fiber SMS After Calls`** (`5a7f16a7-fa67-4753-9ecc-e8f58a50c715`,
+  v8, **PUBLISHED**) is the post-call texter. It already exists — do not build a
+  second one. `"triggers": []`, so it fires on ENROLLMENT only.
+- **Its body is 276 chars + GHL's 27 = 303 = TWO SEGMENTS**, writes its own
+  `Reply STOP to opt out.` on top of GHL's append, quotes an unverified promo
+  ($40s/mo, 2 free months, $200 card), and says *"great talking with you!"* to
+  people who never answered — there is no connected-vs-no-answer branch.
+  MEASURED 2026-09-03. Same defects as the copy behind the 7.9% opt-out rate.
+- **One-segment replacements are drafted and character-checked** in the BRAIN
+  section dated 2026-09-03. **NOT deployed — waiting on Patrick's go** (RULE 0).
+- **`D01 - Leads "No Answer"`** (`e25a3b87-8f39-4b7e-84de-5d2f186ecd6b`, v22)
+  contains **NO SMS at all**. It is disposition plumbing only. Stop looking for
+  a text in it.
 
 ### The dial queue
 
