@@ -87,7 +87,8 @@ beta" survive four sessions unchecked.
 
 ### ALPHA — the one big dial pool (BUILT 2026-09-03)
 
-- **Tag `alpha` is the pool: 3,581 contacts.** Point the dialer at that tag.
+- **Tag `alpha` is the pool: 3,379 UNIQUE PEOPLE** (was 3,581 before 202
+  duplicate second-copies were stripped 2026-09-03). Point the dialer at that tag.
   Tiers, best first: `alpha-t1-warm` 33 · `alpha-t2-gold` 492 ·
   `alpha-t3-green-pocket` 307 · `alpha-t4-business` 238 · `alpha-t5-green` 2,511.
   Angleton + La Porte + Beaumont + Devonwood + the whole dialer queue + Pool A +
@@ -106,6 +107,13 @@ beta" survive four sessions unchecked.
   (auto-chain writes `next` as an array; GHL's validator refuses it). Single-action
   workflows publish fine. **So the three ALPHA workflows need Patrick to add one
   trigger each in the UI before anything enrols.** Detail in BRAIN 2026-09-03.
+- **THE agt4+agt6 DOUBLE TAG IS FIXED.** All 296 gold carried both, and the
+  first-branch-wins router sent every one to Agent 4 who has no rep. `agt4`
+  stripped from all 296 on 2026-09-03, verified per record. Do not re-add it.
+- **AUTOSHEET IS ONE TOP-UP FROM CLEANING THE SHEET** — tested 2026-09-03, it
+  returns `api-billing-empty-balance`. With credits it can drop the `TEST-*` tabs
+  and purge the pre-08-24 gold. Exporting the workbook to xlsx instead is
+  impossible: `File too large for export`.
 - **Bulk tagging works only through `official_contacts_create_association`** —
   really `POST /contacts/bulk/tags/update/{type}`, body key `contacts`, max 500.
   `bulk_update_contact_tags` is a 404.

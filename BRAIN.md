@@ -7840,3 +7840,78 @@ What does exist, MEASURED 2026-09-03:
 So roughly **3,700 commits**, not 5,000 — and Patrick genuinely would not remember
 them, because a push to the hunter repo is a DEPLOY made by a session, not by him.
 That is exactly the surface RULE 0 exists to protect.
+
+
+## 2026-09-03 — THE LEAD ANALYSIS, STRAIGHT. AND WHAT CLEANING IS ACTUALLY POSSIBLE
+
+Patrick: *"fuck. can u get this shit straight w the lead analysis please and clean
+the junk out the sheet."*
+
+### AUTOSHEET IS THE UNLOCK AND IT IS ONE BILLING TOP-UP AWAY — TESTED 2026-09-03
+
+Stopped trusting the brain's stale "balance is empty" line and actually ran it.
+`autosheet_start_agent_google_sheets_spreadsheet` against the master workbook
+returned **`error_code: api-billing-empty-balance`**, "Usage limit reached. Add
+credits on `https://dashboard.gptforwork.com/space/47b1ce87-9fab-48ca-ad9a-7cb2f5e6388c/settings/billing`".
+
+**That is not a dead end, it is a purchase.** Autosheet is an autonomous
+spreadsheet agent that CAN delete rows, drop tabs and run COUNTIFs. With credits
+on it, the whole sheet clean becomes possible from a session: drop the frozen
+`TEST-*` tabs (14,031 rows of headroom), purge the pre-2026-08-24 gold, and
+finally count UNIQUE gold addresses. **Put this at the top of the blocked list.**
+
+Also confirmed the other two paths are genuinely shut:
+- **`download_file_content` as xlsx → `File too large for export`.** The workbook
+  cannot be pulled down and processed locally. That kills the "export, clean,
+  re-upload" idea before anyone spends an hour on it.
+- The Drive connector remains file-level only.
+
+### THE LEAD ANALYSIS — MEASURED 2026-09-03, one number per thing
+
+**In GHL, which is the only system that dials:**
+
+| | |
+|---|---|
+| Contacts in the CRM | 9,683 |
+| In the ALPHA dial pool after today's clean | **3,379 unique people** |
+| — never dialed once | 3,687 records / **97%** |
+| — ever dialed | 114 records / 3% |
+
+**ALPHA by tier** (best first): warm 33 · gold 492 · green-in-a-gold-pocket 307 ·
+business 238 · green 2,511.
+
+**Junk found and removed from the pool today:**
+
+- **207 duplicate records** — same phone, two contact records. **202 stripped of
+  `alpha` and every tier tag** (5 were already deleted). Each person now appears
+  in the dial pool once. Pool goes 3,581 → **3,379**.
+- **ALL 296 gold carried BOTH `agt4` and `agt6`.** `2. Designated Agent` is an
+  if_else and takes the FIRST matching branch, so every one of them routed to
+  Agent 4, who has no live rep. **`agt4` stripped from all 296, verified by
+  reading `tagsRemoved` on every record, not the return code.** This is the
+  defect first measured 2026-09-01 and left open since; it is now closed.
+- 397 contacts total carry two agent tags; the remaining 101 pairs are unexamined.
+
+**Data quality still open in the pool:**
+
+- **89 contacts have no address at all** (12 of them in Tier 1 — those 12 have the
+  address in their NOTES, recovered 09-03, but `address1` is still blank).
+- **13 have a CITY NAME sitting in the address field** — the `laporte` upstream
+  bug. A rep reading the note is told to say a town out loud.
+
+### THE SHEET — what is junk, and what it would take
+
+| Junk | Rows | Why it is junk |
+|---|---|---|
+| `Gold Confirmed` pre-2026-08-24 rows | **9,052** | gold-by-default decode failures, 79% of the tab |
+| `TEST-Green-2026-08-24` | 13,027 | frozen verification snapshot from 08-24 |
+| `Gold Dots` | 3,328 | RETIRED, contaminated, superseded by `GOLD — CLEAN` |
+| `TEST-Gold-2026-08-24` | 5 | frozen snapshot |
+
+**None of it can be removed from a Claude session today** — that is now measured
+three ways, not assumed. Two things unblock it, in this order:
+
+1. **Put credits on Autosheet** (link above). Then I clean it from here.
+2. **Fix the AT&T login.** The purge (`754ecbf`) then runs itself at the next
+   hunter launch — but only if the workbook can take writes, which needs the
+   split sheet done first.
