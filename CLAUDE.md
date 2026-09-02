@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 20:15 CDT
+# CURRENT STATE — updated 2026-09-02 20:55 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -81,9 +81,12 @@ beta" survive four sessions unchecked.
 - **4,997 NEW leads delivered, deduped against GHL, never texted.**
   `OPTIMUS_NEW_LEADS_sep2.csv` — wireless only, 454 carrying the att.net
   gold signal sorted to the top, DNC recorded not scrubbed. **Not yet imported.**
-- **ORANGE 77630 IS THE BIGGEST GOLD POCKET IN THE SHEET AND HAS ZERO CRM
-  HISTORY.** 225 of 404 sampled gold rows; `search_contacts "orange"` returns 0
-  contacts. Everything we text is Beaumont. 3,102 of the new leads are Orange.
+- **CORRECTED 2026-09-02: ORANGE 77630 IS NOT A GOLD POCKET. I counted the CITY
+  name as the colour.** All 225 Orange rows sit in the UNDECODED tab with an
+  EMPTY Build Code — `Not A Lead` by the dot legend. The only rows the sheet
+  actually marks `VERIFIED_GOLD` are **4 unique addresses**: 7631 Fuqua St
+  (Houston 77075) and 800/1112 N Arcola + 611 E Myrtle (Angleton 77515).
+  **3,102 of the 4,997 new leads were aimed at Orange on a bad count.**
 - **DealMachine credits are EXHAUSTED** — 622 left, cycle ended 2026-09-02
   04:14 UTC. `property_export` costs exactly **1.00 credit per record**;
   cycle-duplicates are free.
@@ -4990,3 +4993,76 @@ too thin. **But it does not need to.** The sheet's job is to say WHERE the gold
 is; DealMachine's job is to produce people in those ZIPs. Read the sheet for the
 pocket, then export by ZIP. That is far cheaper than trying to read 645k rows,
 and it is why Orange surfaced at all.
+
+## CORRECTION — I COUNTED A CITY NAME AS A COLOUR (2026-09-02)
+
+Patrick: *"are u sure we have that many gold dots"*. **No, and he was right to
+push. The Orange 77630 claim was wrong and it steered a 5,000-lead pull.**
+
+### What I claimed vs what is true
+
+I reported *"of 404 gold rows sampled, 225 are Orange 77630 — the biggest gold
+pocket in the sheet."* **Every one of those 225 rows is an address in the CITY of
+Orange, TEXAS. Not one is the colour orange/gold.** I counted rows by SHAPE —
+"has a lat/lng and a 7xxxx ZIP" — and then let the string ORANGE do the rest.
+
+MEASURED, re-derived from the same export:
+
+| | |
+|---|---|
+| Rows carrying the only real gold marker, `VERIFIED_GOLD` | **170** |
+| **UNIQUE gold addresses among them** | **4** |
+| Gold rows in Orange 77630 | **ZERO** |
+
+The four, with how many duplicate rows each has (the scanner re-captures the
+same dot):
+
+```
+96x  7631 FUQUA ST, HOUSTON TX 77075
+50x  800 N ARCOLA ST, ANGLETON TX 77515
+22x  611 E MYRTLE ST, ANGLETON TX 77515
+ 2x  1112 N ARCOLA ST, ANGLETON TX 77515
+```
+
+**The 225 Orange rows sit in a different tab entirely** — header
+`Address | Captured At | Lat | Lng | Build Code | City | State | ZIP | Run ID |
+Operator`, and the **Build Code cell is EMPTY on every one**. That is the
+`Unknown Customers` shape, which the dot legend defines as
+**`Build Code Not Decoded - Not A Lead`**. The scanner did sweep Orange on
+2026-08-25 (run `20260825-112411`, operator Patrick) — it just could not decode
+what it found there.
+
+**`search_contacts "orange"` returning zero is therefore not opportunity.** I
+read "no CRM history" as "unworked gold". It is equally consistent with "nobody
+has ever had a reason to work it", and on this evidence that is the better
+reading.
+
+### The cost of the error
+
+**3,102 of the 4,997 leads in `OPTIMUS_NEW_LEADS_sep2.csv` were aimed at Orange
+77630** on that bad count. They are real owners with real wireless numbers — the
+enrichment is sound — but the *targeting rationale* was not.
+
+| Slice | Leads | att.net signal | Standing |
+|---|---|---|---|
+| Houston 77075 + Angleton 77515 | **1,750** | 172 | ZIPs with genuinely verified gold in the sheet |
+| Beaumont 77706/77707 | 145 | 25 | the proven pocket |
+| **Orange 77630** | **3,102** | 257 | **only undecoded rows behind it** |
+
+**The 454 att.net-signal leads survive the error intact**, because that signal
+comes from the owner's own email domain and never depended on the sheet at all.
+That is the defensible core of the file.
+
+### How this happened, and it is the same bug three times now
+
+gold-by-default (2026-08-23), colour-by-default (2026-08-29),
+agent-by-first-match (2026-09-01), and now **city-name-as-colour**. Every one is
+a value assigned by the shape of the data rather than measured from it. The
+tell each time is that nothing errors — the count comes back looking fine.
+
+**The check that would have caught it in one line, and is now mandatory before
+quoting any colour count:** grep for the marker that actually names the colour
+(`VERIFIED_GOLD`, or the Status wording `Upgrade Customer - On Copper`), and
+**count UNIQUE ADDRESSES, never rows** — the sheet holds one row per sighting,
+so 170 rows was 4 dots. Never infer a colour from a ZIP, a city, a tab position
+or a row shape.
