@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 21:45 CDT
+# CURRENT STATE — updated 2026-09-02 22:05 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -87,6 +87,11 @@ beta" survive four sessions unchecked.
   actually marks `VERIFIED_GOLD` are **4 unique addresses**: 7631 Fuqua St
   (Houston 77075) and 800/1112 N Arcola + 611 E Myrtle (Angleton 77515).
   **3,102 of the 4,997 new leads were aimed at Orange on a bad count.**
+- **THE BRAIN IS 5,193 LINES ≈ 69,400 TOKENS, AUTO-LOADED EVERY SESSION, AND
+  GROWING ~640 LINES/DAY.** Only 198 of those lines are the state block. The fix
+  is to archive dated sections older than a week into `BRAIN.md` (not
+  auto-loaded, still fully searchable by the tool). **Waiting on Patrick's go** —
+  see the section dated today.
 - **BEFORE SPENDING OR ASSERTING: run the brain search tool.**
   `.claude/skills/session-continuity/scripts/brain find <topic>` — also
   `money`, `closed`, `state`, `corrections`, `stale`. Newest result wins.
@@ -5191,3 +5196,54 @@ past; a command is something to run.
 **Patrick explicitly traded speed for this** — *"I don't mind if things are a
 little slower."* Recorded so no future session optimises the searches away to
 look responsive.
+
+## MEMORY, ROUND TWO — A SILENT-FAILURE BUG AND THE GROWTH MATH (2026-09-02)
+
+Patrick: *"memory better"*. Read as *make it better still*, and two things came
+out of actually testing the tool rather than trusting it.
+
+### 1. The tool had the exact bug the brain keeps warning about — FIXED
+
+`brain` resolved its ROOT from `os.getcwd()`. **Run from any other directory it
+printed its header and then nothing** — which reads exactly like *"the brain has
+no entry on this"*. That is the most dangerous possible output from a tool whose
+entire job is to stop a session acting on an unchecked assumption. It failed
+silently, on its first day, in the same shape as every other bug in this file:
+**nothing errors, the answer just comes back looking fine.**
+
+Fixed two ways, because one was not enough:
+- ROOT is now resolved from the **script's own location** (walk up to the repo),
+  with `CLAUDE_PROJECT_DIR` and cwd as fallbacks — verified working from `/tmp`
+  with no environment variable set.
+- **An empty result now distinguishes itself from a broken one.** If 0 sections
+  were loaded it says `TOOL FAILURE, NOT AN ANSWER` and names the path it tried.
+  If sections were loaded it says how many were searched. "Nothing recorded" and
+  "I could not read the file" must never look the same.
+
+### 2. The real structural risk is GROWTH, and it is measurable
+
+MEASURED 2026-09-02:
+
+| | |
+|---|---|
+| `CLAUDE.md` | **5,193 lines, 277,662 chars ≈ 69,400 tokens** |
+| Loaded | **automatically, in full, at the start of EVERY session** |
+| Age | started 2026-08-22 — **7 days** |
+| Growth | 1,563 lines on 8/29, 1,114 on 9/01, ~640/day average |
+| Of which "true now" | the CURRENT STATE block: **198 lines** |
+
+**~69,000 tokens are spent every session re-loading a file that is 96%
+historical record.** At the current rate it passes 10,000 lines inside a
+fortnight. `BRAIN.md` already exists for long-form history and is **not**
+auto-loaded — and the `brain` tool searches both equally well.
+
+**So retrieval is now decoupled from what gets auto-loaded, which means the
+history no longer has to live in the file that loads.** The move that follows is
+to leave `CLAUDE.md` as state + rules + closed decisions, and archive dated
+sections older than ~7 days into `BRAIN.md`, where `brain find` still reaches
+them. Nothing is lost; the session just stops paying to carry it.
+
+**NOT DONE — this is Patrick's call, not a session's.** It restructures his
+memory file, and a careless split loses things. Recorded here with the numbers
+so the next session can act on it in one turn if he says go. Do not do it
+silently.

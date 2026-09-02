@@ -28,7 +28,25 @@ from, so a superseded claim can never be quoted as current.
 """
 import sys, os, re, datetime, textwrap
 
-ROOT = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
+def _find_root():
+    """Locate the repo whatever the cwd is.
+
+    BUG THIS FIXES (found 2026-09-02, in this tool's own first day): ROOT used to
+    fall back to os.getcwd(). Run from anywhere else, every command printed its
+    header and then NOTHING — which reads exactly like "the brain has no entry on
+    this", the most dangerous possible answer from a tool whose whole job is to
+    stop people acting on an unchecked assumption. It failed silently, which is
+    the same class of bug the brain keeps warning about.
+    """
+    for c in (os.environ.get("CLAUDE_PROJECT_DIR"),
+              os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                           "..", "..", "..", "..")),
+              os.getcwd()):
+        if c and os.path.exists(os.path.join(c, "CLAUDE.md")):
+            return c
+    return os.getcwd()
+
+ROOT = _find_root()
 FILES = [("CLAUDE.md", "brain"), ("BRAIN.md", "long-form"),
          ("OPTIMUS_SESSION_LOG.md", "log")]
 DATE_RE = re.compile(r'(20\d{2})-(\d{2})-(\d{2})')
@@ -99,8 +117,14 @@ def cmd_find(terms):
                 print(f"\n   … more matches; narrow the search.")
                 break
     if not shown:
-        print("   NOTHING IN THE BRAIN. That is a real answer — it means this is")
-        print("   genuinely new, so measure it and then WRITE IT DOWN.")
+        n = len(load())
+        if n == 0:
+            print(f"   \033[1mTOOL FAILURE, NOT AN ANSWER.\033[0m Read 0 sections from {ROOT!r} —")
+            print("   the memory files were not found, so this says NOTHING about the topic.")
+            print("   Do not treat it as 'nothing recorded'. Fix the path and re-run.")
+        else:
+            print(f"   NOTHING IN THE BRAIN on that (searched {n} sections). That is a real")
+            print("   answer — it means this is genuinely new, so measure it and WRITE IT DOWN.")
 
 def block(pred, title, note=None):
     print(f"\n=== {title} ===")
