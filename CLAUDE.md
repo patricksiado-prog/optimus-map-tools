@@ -136,7 +136,7 @@ deletes rep tabs.
   we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
 - Full census in the BRAIN.md section dated 2026-09-02.
 - **THE ANALYSIS SHEET EXISTS:** `OPTIMUS ANALYSIS — sheet + CRM (live state)`,
-  `1ckjrCAAE6gcbAifL2TT2EZ-4SwDmF6BDodOou_Erok8` (rebuilt 2026-09-03 — the 09-02 copy carried two wrong rows and is trashed), in the enriched Drive folder
+  `1lnMzr4cceYjMfvLGeUtNvRRwjURwIGYZ9Kx9y4ONbX0` (rebuilt twice 2026-09-03; the last rebuild records the clean COMPLETED and gold = 1,884; earlier copies trashed), in the enriched Drive folder
   shared with Christian. Every row carries the number, how it was measured and
   when. Update it rather than re-deriving the same figures in chat.
 
