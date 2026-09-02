@@ -103,6 +103,10 @@ beta" survive four sessions unchecked.
 - **`Upgrade Orange Biz` = 62 rows.** Gold businesses are the highest-value slice
   we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
 - Full census in the BRAIN.md section dated 2026-09-02.
+- **THE ANALYSIS SHEET EXISTS:** `OPTIMUS ANALYSIS — sheet + CRM (live state)`,
+  `1XwW5Q1QetqVPYHwSVZFbCu69ei1wBNGXUrL8e3tsc6s`, in the enriched Drive folder
+  shared with Christian. Every row carries the number, how it was measured and
+  when. Update it rather than re-deriving the same figures in chat.
 
 ### ALPHA — the one big dial pool (BUILT 2026-09-03)
 
@@ -587,6 +591,24 @@ first — it closes faster and warms the street.
 not from this repo. Hunter code pushed here reaches nobody. Worse, any file in
 `_CORE_FILES` in `precise_fiber_hunter.py` **auto-deploys to every hunter PC** on
 next launch, so a push there is a deploy, not a commit.
+
+## READING THE SHEET — LOAD THE `optimus-sheet` SKILL FIRST, EVERY TIME
+
+**Patrick, 2026-09-03: *"every fuking time I ask for data from the sheet u read it
+wrong upload or enrich wrong data."* He is right.** So the tab map, the five read
+paths in order, the four tools that already exist on his PC, the build-code
+ground truth and the full list of every way this workbook has been misread now
+live in **`.claude/skills/optimus-sheet/SKILL.md`**. Load it before answering ANY
+sheet question, quoting ANY count, enriching or uploading anything sourced from
+it, or saying any part of it is out of reach.
+
+**The two double-click tools, because "I can't" is almost never true:**
+- **`CLEAN_SHEET.bat`** — THE CLEAN. Dry run, asks YES, then migrates `TEST-Gold-*`
+  into `Gold Confirmed`, backs every tab up to CSV, dedupes `Gold Confirmed` and
+  `Precise Fiber` by address, deletes only DEBUG/TEST tabs. Pipeline tabs are
+  whitelisted and protected.
+- **`COUNT_TABS.bat`** — row count for every tab, and publishes them to GitHub so
+  Claude can read them with no Google access.
 
 ## READING THE SHEET — YOU CAN DO THIS. DO NOT SAY YOU CANNOT.
 

@@ -8153,3 +8153,62 @@ is a customer whose build code is in the copper list — nothing else.**
 **The rule this cost: when the answer is "that is not possible", read the repo
 before saying it.** The hunter is 398KB of code that already talks to the sheet
 with credentials no Claude session has.
+
+
+## 2026-09-03 — THE SHEET NOW HAS A PERMANENT READING NOTE, A SKILL, AND AN ANALYSIS SHEET
+
+Patrick: *"clean the damn sheet / use the brain and write a note about how to read
+it and what's there every fuking time I ask for data from the sheet u read it
+wrong upload or enrich wrong data take a sec to fix it / as before w new rules use
+the fukinh memory to remember / I asked to build an analysis sheet / skill extra
+sheets / u seem to forget it all / fix that."*
+
+He is right on every count. Three things were built so this stops recurring, and
+they are enforced by machinery rather than by remembering.
+
+### 1. `.claude/skills/optimus-sheet/SKILL.md` — the reading note, permanent
+
+121 lines. Carries: the full TAB MAP with row counts and what each tab is for;
+the FIVE read paths in the order to try them; the FOUR tools that already exist
+on Patrick's PC; the `build_codes.json` ground truth on what gold is; and
+**section 5, "EVERY WAY THIS SHEET HAS BEEN MISREAD"** — the seven named
+mistakes, so a session can check itself against the list before answering.
+
+### 2. The hook now prints a SHEET GUARD on EVERY message
+
+`.claude/hooks/brain-write-counter.sh` gained a second block, next to the brain
+read guard:
+
+> `[sheet]` ANY question about the ATT FIBER LEADS sheet -> LOAD THE
+> `optimus-sheet` SKILL FIRST … **NEVER say the sheet cannot be read, counted or
+> cleaned — say WHICH of the five paths you tried.**
+
+Same reasoning as the brain guard: a rule is something Claude has to remember to
+obey, and forgetting is the failure being fixed. A hook prints whether anyone
+remembers or not. CLAUDE.md's reading section now opens by pointing at the skill.
+
+### 3. `OPTIMUS ANALYSIS — sheet + CRM (live state)` — the analysis sheet he asked
+for and never got
+
+Drive id **`1XwW5Q1QetqVPYHwSVZFbCu69ei1wBNGXUrL8e3tsc6s`**, in the
+`OPTIMUS ENRICHED — 2026-09-03` folder that is already shared with Christian.
+Every row carries the NUMBER, HOW it was measured, and WHEN — so nothing in it
+can be quoted as current without its own date. Sections: CAPTURE · SHEET TABS ·
+GOLD TRUTH · WHAT IS GOLD · CRM ALPHA POOL · MONEY · BLOCKED ON PATRICK.
+
+### THE CLEAN IS A DOUBLE-CLICK AND IT ALWAYS WAS
+
+**`CLEAN_SHEET.bat`**, in the hunter folder. Shows a DRY RUN, asks for `YES`, then
+migrates every `TEST-Gold-*` row into `Gold Confirmed`, backs every tab up to a
+local CSV, dedupes `Gold Confirmed` and `Precise Fiber` by address, and deletes
+only DEBUG/TEST tabs. **Pipeline tabs are protected by a KEEP whitelist** that
+includes `ghl worked leads` — the reps' hand-typed dispositions — and
+`gold verification`, the only record of a classifier call that later proved wrong.
+A tab that cannot be backed up is not deleted.
+
+**`COUNT_TABS.bat`** is its read-only twin: row counts for every tab, published to
+GitHub so Claude can read them with no Google access.
+
+**I still cannot run either from here** — they need the PC with the fiberscanner
+credentials. But "I can't clean the sheet" was never the right answer;
+"double-click CLEAN_SHEET.bat, it dry-runs first" is.

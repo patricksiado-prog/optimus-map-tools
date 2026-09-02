@@ -36,6 +36,13 @@ cat <<'GUARD'
   Counting? Grep the marker that NAMES the thing (VERIFIED_GOLD, a Status
   string, a tag) and count UNIQUE ADDRESSES, never rows. Never infer from a ZIP,
   a city name, a tab position or a row shape.
+
+[sheet] ANY question about the ATT FIBER LEADS sheet -> LOAD THE `optimus-sheet`
+  SKILL FIRST. It has the tab map, the 5 read paths in order, and the 4 tools
+  that already exist on Patrick's PC. The clean is CLEAN_SHEET.bat (double-click,
+  dry run first). The unique gold count is `py gold_audit.py`. A whole tab is
+  `py sheet_feed.py --tab "<name>"`. NEVER say the sheet cannot be read, counted
+  or cleaned — say WHICH of the five paths you tried.
 GUARD
 
 N=0
