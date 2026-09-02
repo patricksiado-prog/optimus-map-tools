@@ -9050,3 +9050,10 @@ machine LAPTOP-FJEEPATI, `sweep_start` at 17:25.
 `fileSize` (new build, rows landing where they should) — or, worse, the
 production workbook's `fileSize` (old build, still parking). First uploader
 batch can take several minutes after `sweep_start`. Re-check both.
+
+**17:30 addendum — production `fileSize` MOVED for the first time since 08-30:**
+8,499,354 → **8,484,584** (−14,770 bytes), `modifiedTime` 22:25 UTC = 17:25 CT.
+A drop, not a rise: that is the clean's `Gold Dots` deletion showing up, and
+the 17:25 touch is the hunter writing its `Hunter Status` / `_dispatch` rows,
+which go to production regardless of the split. It does NOT show Precise Fiber
+rows landing anywhere yet. Split still 1,024. A 12-minute re-check is scheduled.
