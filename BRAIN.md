@@ -8793,3 +8793,46 @@ DRIFT is fixed in the first turn and never silenced by deletion.
   moved to 20:47 UTC (scraper touched it, nothing changed). 29 tabs, 7 junk
   present, `Gold Confirmed` 11,490. Patrick has not relaunched since the fixes,
   or the relaunch was not seen.
+
+---
+
+## 2026-09-03 — "extra sheet / extra space solved?" — No. Split sheet written in full, NOT pushed.
+
+Patrick: *"extra sheet issue extra space issue solved.?"* Answered NO on both.
+
+### SPACE — not solved, only reprieved
+
+The clean (once it runs) frees ~118k cells from the gold purge and ~170k+ from
+the junk tabs. Against a 10,000,000 ceiling with `Precise Fiber` at ~8.4M that
+is a few days of capture, not a fix. The scraper console already said it:
+*"grids were already auto-shrunk — the workbook truly needs archiving."* The
+durable fix is the split sheet.
+
+### SPLIT SHEET — every precondition is now MEASURED true, the code is written
+
+- Workbook `ATT FIBER LEADS — Precise Fiber` = `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`
+  exists (created 08-29, 1,024 bytes = empty).
+- **Shared with `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com` as
+  writer** — `get_file_permissions`, 2026-09-03. That was the step the brain
+  called "share DONE"; confirmed rather than carried forward.
+- The redirect hook `read_pf_redirect()` is live in the hunter and
+  `_pf_spreadsheet()` in the scraper (brain-verify checks both).
+
+Four edits, written and NOT pushed (RULE 0 — this redirects where the primary
+data tab lands on every PC, a different deploy from the clean Patrick approved):
+
+1. hunter: `PF_SPLIT_SHEET_ID = "1DXu-…"` under `NEW_SHEET_ID_FILE`. The id
+   file still wins when present; the constant is the default so no PC needs
+   touching.
+2. hunter: `read_pf_redirect()` returns the constant when the file is absent,
+   unreadable or empty (three return sites).
+3. hunter: the dormant 8-vs-13 column bug — `add_worksheet(… cols="8")` →
+   `cols=str(len(OUT_HEADER))`. Harmless for two years because production
+   already had the tab; the split workbook is the one place it would fire.
+4. scraper: `_pf_spreadsheet()` falls back to the SAME constant, so the biz
+   match follows the hunter. Without this the hunter writes green to the new
+   file and the scraper matches against the old one and silently finds nothing
+   — the exact failure that function's docstring warns about.
+
+Needs: syntax check + simulation, then one word from Patrick. Not tonight
+unless he says go. Order stays: clean → AT&T re-login → split.
