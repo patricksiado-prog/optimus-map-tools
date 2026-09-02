@@ -7710,3 +7710,59 @@ until a rep sees the queue.
 `ghl_trigger_workflow` are both one contact per call, so the remaining ~3,548 are
 not enrolled and cannot be, one turn at a time. **The tag trigger is the only way
 to move that many** — which is the UI step still waiting on Patrick.
+
+
+## 2026-09-03 — THE TOTAL GOLD NUMBER, RE-MEASURED AND STILL UNCHANGED
+
+Patrick: *"how many gold dots have been captured total??"*
+
+Searched first, then re-pulled the raw feed rather than quoting the brain's own
+6-day-old figure. **Source: `optimus/_feed/sheet/tabs.json` on the hunter repo,
+branch `claude/optimus-map-tools-setup-6dcl6o`** — reachable with plain `curl`,
+no Google auth. **The feed itself is stamped `2026-08-27 05:42:44`, run
+`20260827-050453`.** (`main` and `master` both 404 on that repo — the branch name
+is load-bearing.)
+
+**Gold-bearing tabs, ROW counts, MEASURED off that feed:**
+
+| Tab | Rows |
+|---|---|
+| `Gold Confirmed` (canonical) | **11,490** |
+| `Gold Dots` (RETIRED, contaminated) | 3,328 |
+| `GOLD — CLEAN` | 3,328 |
+| `Beaumont Gold — Aug 2026` | 238 |
+| `Upgrade Orange Biz` (business gold) | 62 |
+| `TEST-Gold-2026-08-24` | 5 |
+
+Whole workbook: **772,768 rows across 29 tabs**.
+
+**11,490 is still current even though the feed is stale, and here is the proof
+chain — this is why the number cannot have moved:**
+
+1. `latest.json` re-pulled today shows the last run `20260830-135937` ending
+   `LOGIN_TIMEOUT` at 14:10:57 with **every counter at zero**. Nothing captured
+   since.
+2. The 2026-08-30 morning run DID capture **208 gold** — and wrote `written: 0`.
+   Those 208 never reached the sheet.
+3. `get_file_metadata` today: `fileSize` **8,499,354**, byte-identical to
+   2026-08-30. Nothing has landed in four days.
+
+**So: rows have not changed, and roughly 208 confirmed gold are sitting captured
+but undelivered.**
+
+**THE NUMBER TO SAY OUT LOUD IS NOT 11,490.** Three deductions, in order:
+
+- **Contamination.** Gold-by-default (gold = "could not decode the build code")
+  died 2026-08-23. Most of `Gold Confirmed` predates that. Only **~2,438 (21%)**
+  are believed to be real confirmed copper, and the purge may still not have run
+  on every PC.
+- **Rows are not dots.** Still true and still the biggest factor. The one sample
+  ever taken: **170 `VERIFIED_GOLD` rows = 4 unique addresses.**
+- **Unique gold addresses across the whole workbook has never been measured**,
+  because `Gold Confirmed` cannot be read wholesale through the Drive connector
+  and the workbook is at its cell ceiling, so no temp-tab COUNTIF can be added
+  either. Anyone quoting a unique-dot total is guessing.
+
+**The only gold numbers that are both current and de-duplicated are in GHL:**
+**296 copper-upgrade contacts** (MEASURED 2026-09-01) and **198 tagged
+`gold-attnet-confirmed`** (2026-09-03), which overlap.

@@ -63,9 +63,20 @@ beta" survive four sessions unchecked.
 ### The gold question — answer it with the caveat, never the raw number
 
 - **`Gold Confirmed` = 11,490 rows, but only ~2,438 believed real (21%)** —
-  MEASURED 2026-08-27 via `optimus/_feed/sheet/tabs.json`, **now 6 days stale**
-  because the scanner is down. The other 9,052 are pre-08-24 gold-by-default
-  decode failures; the purge may not have run.
+  MEASURED 2026-08-27 via `optimus/_feed/sheet/tabs.json` and **RE-CONFIRMED
+  UNCHANGED 2026-09-03**: the last run ended `LOGIN_TIMEOUT` with all counters at
+  zero, and `fileSize` has been byte-identical since 08-30, so nothing has been
+  added. The other 9,052 are pre-08-24 gold-by-default decode failures; the purge
+  may not have run. **~208 confirmed gold from the 08-30 run were captured and
+  never written.** Other gold tabs: `Gold Dots` 3,328 (RETIRED), `GOLD — CLEAN`
+  3,328, `Beaumont Gold — Aug 2026` 238, `Upgrade Orange Biz` 62.
+- **The feed is fetchable with plain `curl`, no Google auth** —
+  `raw.githubusercontent.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/claude/optimus-map-tools-setup-6dcl6o/optimus/_feed/{latest,sheet/tabs}.json`.
+  `main` and `master` both 404 — the branch name is load-bearing.
+- **UNIQUE gold addresses has never been measured** and cannot be from here:
+  `Gold Confirmed` is too big to read wholesale and the workbook is at its cell
+  ceiling, so no temp COUNTIF tab can be added. Never present a row count as a
+  dot count.
 - **Rows are not dots.** 170 `VERIFIED_GOLD` rows in a sample were **4 unique
   addresses**. Treat any row count as an upper bound on unique gold.
 - **296 gold contacts in GHL** (MEASURED 2026-09-01, unique) — the only gold
