@@ -39,8 +39,9 @@ cat <<'GUARD'
 
 [sheet] ANY question about the ATT FIBER LEADS sheet -> LOAD THE `optimus-sheet`
   SKILL FIRST. It has the tab map, the 5 read paths in order, and the 4 tools
-  that already exist on Patrick's PC. The clean is CLEAN_SHEET.bat (double-click,
-  dry run first). The unique gold count is `py gold_audit.py`. A whole tab is
+  that already exist on Patrick's PC. THE CLEAN RUNS ITSELF AT MAPS SCRAPER LAUNCH
+  (since 2026-09-03). CLEAN_SHEET.bat is UNSAFE -- its whitelist deletes rep tabs.
+  The unique gold count is `py gold_audit.py`. A whole tab is
   `py sheet_feed.py --tab "<name>"`. NEVER say the sheet cannot be read, counted
   or cleaned — say WHICH of the five paths you tried.
 GUARD

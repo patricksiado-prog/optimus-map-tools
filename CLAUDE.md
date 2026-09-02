@@ -540,7 +540,15 @@ $B corrections      # where the brain corrects itself; the correction wins
 $B rules            # standing rules
 $B stale [days]     # MEASURED claims going out of date
 $B index            # every section, dated, newest first
+$B/brain-verify      # TESTS the brain's code claims against the LIVE files -- runs at every session start
 ```
+
+**`brain-verify` is the fix for code-claim rot (2026-09-03).** Every checkable
+claim this file makes about where code lives or what it does has a line in that
+script's manifest and is re-tested at session start against the live GitHub
+files. A `*** DRIFT` line at launch means this file is wrong RIGHT NOW -- fix it
+in the first turn. **A code claim with no manifest line is ASSUMED.** When you
+deploy a change, add its claim in the same commit.
 
 **Four actions REQUIRE a search first — this is the rule that exists because
 breaking it cost 4,783 DealMachine credits on 2026-09-02:**

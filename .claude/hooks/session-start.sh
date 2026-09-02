@@ -79,6 +79,17 @@ echo "WHAT THE LAST SESSION SHIPPED:"
 git -C "$ROOT" log --oneline -5 2>/dev/null | sed 's/^/  /' || echo "  (git unavailable)"
 echo
 
+# ---------------------------------------------------------------- brain verify
+# A test suite for the brain. Fetches the LIVE code and tab counts and checks
+# every claim CURRENT STATE makes about them. Added 2026-09-03 after six days of
+# "the purge runs at hunter launch" -- a claim nobody had grepped since it was
+# written. DRIFT = the brain is wrong right now; fix it in the first turn.
+if [ -x "$ROOT/.claude/skills/session-continuity/scripts/brain-verify" ]; then
+  timeout 60 python3 "$ROOT/.claude/skills/session-continuity/scripts/brain-verify" 2>&1 \
+    || echo "BRAIN VERIFY: could not run (timeout or error) -- every code claim is UNVERIFIED this session."
+  echo
+fi
+
 echo "--------------------------------------------------------------"
 echo "Open by telling Patrick state, not by asking him questions. If"
 echo "he tells you a decision or a constraint, write it into the"

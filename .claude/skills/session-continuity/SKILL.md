@@ -213,6 +213,40 @@ signal the claim was never verified** — check it before defending it. He is
 usually pushing because it has not moved, and things that do not move are
 usually things nobody could actually do.
 
+## 6b. THE FIX FOR CODE-CLAIM ROT: `brain-verify` (added 2026-09-03)
+
+Numbers in the brain rot slowly, because a number carries a date and a method
+and gets re-measured. **Claims about CODE rot silently**, because nobody greps
+them again. On 2026-09-03 four of them were found wrong at once -- "the purge
+runs at hunter launch", "the cross-match fix is NOT deployed", "git push to the
+hunter is blocked", "the match reads orange from Precise Fiber" -- and each had
+sent Patrick after the wrong fix.
+
+**The common tactic: test the documentation like code.**
+
+```
+.claude/skills/session-continuity/scripts/brain-verify
+```
+
+runs at EVERY session start (wired into `session-start.sh`). It fetches the live
+hunter, scraper and clean_sheet files plus `tabs.json` from GitHub and checks
+every claim in its manifest: `pass` / `*** DRIFT` / `UNVERIFIED`. It also says
+whether the sheet clean has run (junk tabs still present or not) and whether any
+protected tab has vanished. ~1.5 seconds.
+
+**The three rules that make it work forever:**
+
+1. **A code claim that is not in the manifest is ASSUMED**, no matter how
+   confidently CLAUDE.md states it. If you are about to tell Patrick where some
+   code lives or what it does, and there is no line for it, add one first.
+2. **When you deploy a change, add its claim in the SAME commit.** That is how
+   the manifest stays the truth instead of another stale document.
+3. **A DRIFT line is fixed in the first turn of the session**, in CLAUDE.md and
+   in the manifest. Never delete a line to silence it.
+
+`UNVERIFIED` means the file could not be fetched. It is "I could not look", not
+"it is fine". Say so if the answer depends on it.
+
 # 7. What to write, and what not to
 
 **Write facts, findings, decisions and numbers.**

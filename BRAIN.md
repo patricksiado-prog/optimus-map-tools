@@ -8739,3 +8739,57 @@ since it was written.** "Not deployed", "push blocked", "runs at hunter launch",
 carried a date or a method, so none was ever re-taken. The FOUR CHECKS #4
 addendum from earlier tonight stands: **a code claim with no grep behind it is
 ASSUMED.**
+
+
+---
+
+## 2026-09-03 — "fix it forever": brain-verify, a test suite for the brain
+
+Patrick: *"can u make the brain and memory work better w a skill I don't have to
+ask anymore / use a common tactic fix it forever."*
+
+### The diagnosis, from tonight's evidence
+
+Every wrong line found today was the same species: **a claim about code that
+nobody had re-checked since the day it was written.** Numbers in the brain do
+not fail this way — they carry a date and a method, so they get re-measured.
+Prose about code carries neither, so it is repeated until someone gets burned.
+
+### The common tactic: test the documentation like code
+
+`scripts/brain-verify` — 15 code claims and 2 state claims in a manifest. At
+every session start it fetches the LIVE scraper, hunter, clean_sheet and
+tabs.json from GitHub and greps/counts each one. Output is `pass` / `*** DRIFT`
+/ `UNVERIFIED`, plus "CLEAN HAS NOT RUN: N junk tabs still present" and a
+protected-tab watchdog (warm backlog, Angleton, Beaumont, GOLD — CLEAN, Gold
+Confirmed). First run: 15/15 pass, 0 drift, 1.3 seconds, and it correctly
+reported the clean has not run (7 junk tabs present).
+
+Wired into `session-start.sh` with a 60s timeout that degrades to "every code
+claim is UNVERIFIED this session" rather than a dead launch.
+
+### Why this is "forever" and the previous fixes were not
+
+The FOUR CHECKS, the hooks and the skills all rely on the session *choosing* to
+look. This runs before the session's first word, unasked, and prints a
+contradiction where the brain is wrong. Three rules keep it alive: a code claim
+with no manifest line is ASSUMED; a deploy adds its claim in the same commit; a
+DRIFT is fixed in the first turn and never silenced by deletion.
+
+### Also fixed this turn
+
+- `brain-write-counter.sh` was printing *"The clean is CLEAN_SHEET.bat
+  (double-click, dry run first)"* on EVERY message — a stale, unsafe instruction
+  repeated ~30 times a day. Now says the clean runs itself at scraper launch and
+  the .bat is unsafe.
+
+### MEASURED — scraper readiness and sheet state, 2026-09-03
+
+- **Scraper: READY.** Live file on GitHub (97,317 bytes) parses; all 9 deploy
+  checks pass — clean before open, 503 retry, live-connection fallback, v2
+  marker, no silent skip, named junk list, TEST-Gold protected, gold loaded for
+  the biz match, old gate gone.
+- **Sheet: NOT CLEANED.** `fileSize` 8,499,354 byte-identical; `modifiedTime`
+  moved to 20:47 UTC (scraper touched it, nothing changed). 29 tabs, 7 junk
+  present, `Gold Confirmed` 11,490. Patrick has not relaunched since the fixes,
+  or the relaunch was not seen.

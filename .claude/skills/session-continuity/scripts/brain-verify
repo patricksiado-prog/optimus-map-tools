@@ -1,0 +1,202 @@
+#!/usr/bin/env python3
+"""
+brain-verify -- a TEST SUITE FOR THE BRAIN. Runs at every session start.
+
+THE PROBLEM IT FIXES (Patrick, 2026-09-03: "make the brain and memory work
+better ... use a common tactic fix it forever"):
+
+Every wrong line found on 2026-09-03 was a claim about CODE that nobody had
+re-checked since the day it was written -- "the purge runs at hunter launch",
+"the cross-match fix is NOT deployed", "git push to the hunter is blocked",
+"the match reads green and orange from Precise Fiber". All four were true once.
+None carried a method, so none was ever re-taken, and each one sent Patrick
+after the wrong fix. Measured NUMBERS in the brain do not rot the same way,
+because a number carries a date and a method and gets re-measured.
+
+THE COMMON TACTIC: treat documentation like code and TEST it. Every checkable
+claim the brain makes gets one line below. On every session start this script
+fetches the LIVE files from GitHub and the LIVE tab counts, runs each claim, and
+prints PASS / DRIFT / UNVERIFIED. A DRIFT line is an instruction: fix the brain
+in this turn. A claim that is not in this manifest is ASSUMED, whatever tone it
+is written in.
+
+RULES FOR ADDING A CLAIM:
+  * Only add what can be grepped or counted. Opinions do not go here.
+  * `expect=True` means the pattern MUST be present, `expect=False` MUST be
+    absent. Say in `why` what the brain concludes from it.
+  * When you deploy a change, add its line here in the same commit.
+  * When a claim DRIFTS, update the brain AND this manifest -- never delete the
+    line to make the noise stop.
+
+Never prints PASS on a network failure: if a file cannot be fetched every claim
+against it is UNVERIFIED, which is "I could not look", not "it is fine".
+"""
+import io, json, os, re, subprocess, sys, time
+
+REPO = "patricksiado-prog/Go-High-Level-MCP-2026-Complete"
+BRANCH = "claude/optimus-map-tools-setup-6dcl6o"
+RAW = "https://raw.githubusercontent.com/%s/%s/" % (REPO, BRANCH)
+ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.path.dirname(os.path.abspath(
+    os.path.join(__file__, "..", "..", "..", ".."))))
+CLAUDE_MD = os.path.join(ROOT, "CLAUDE.md")
+
+SCRAPER = "optimus/standalone/maps_scraper_standalone.py"
+HUNTER = "optimus/precise_fiber_hunter.py"
+CLEAN = "optimus/clean_sheet.py"
+TABS = "optimus/_feed/sheet/tabs.json"
+
+# ---------------------------------------------------------------------------
+# CODE CLAIMS. (file, regex, expect_present, what the brain says because of it)
+# ---------------------------------------------------------------------------
+CODE_CLAIMS = [
+    # --- where the purge lives (six days wrong, 2026-08-27 -> 09-03) ---
+    (SCRAPER, r"def purge_prefix_gold\(", True,
+     "the gold purge lives in the MAPS SCRAPER"),
+    (HUNTER, r"purge_prefix_gold|GOLD_PURGE", False,
+     "the gold purge is NOT in the hunter -- the AT&T login does not run it"),
+    (CLEAN, r"GOLD_CUTOFF|purge_prefix", False,
+     "clean_sheet.py does NOT date-purge gold (it dedupes by address only)"),
+
+    # --- the startup clean, hunter f1e88ed / 94775af / 55190a0 ---
+    (SCRAPER, r"def _run_startup_clean\(", True,
+     "the whole sheet clean runs at scraper startup"),
+    (SCRAPER, r"gold_purge_done_v2\.flag", True,
+     "stale done-flags from the buggy build are ignored (v2 marker)"),
+    (SCRAPER, r"for attempt in range\(4\)", True,
+     "the workbook open retries a transient 503"),
+    (SCRAPER, r"_run_startup_clean\(sheet_ws\.spreadsheet\)", True,
+     "the clean gets a second chance on the live connection"),
+    (SCRAPER, r"purge_prefix_gold\(sheet_ws\.spreadsheet\)", False,
+     "the clean is NO LONGER gated behind open_sheet()'s 140k-cell add_worksheet"),
+    (SCRAPER, r"def _is_junk_tab\(", True,
+     "junk tabs are an explicit NAMED list, not a whitelist"),
+    (SCRAPER, r'low\.startswith\("test-gold"\)', True,
+     "TEST-Gold-* can only leave via migration, never deletion"),
+
+    # --- the green-dot business match ---
+    (SCRAPER, r"name, addr, phone, web, cat = _row\[:5\]", True,
+     "the cross-match ValueError slice fix IS deployed"),
+    (SCRAPER, r"sh\.worksheet\(GOLD_TAB\)\.get_all_values\(\)", True,
+     "the biz match loads gold from 'Gold Confirmed' (Precise Fiber is green-only)"),
+
+    # --- CLEAN_SHEET.bat safety ---
+    (CLEAN, r"^KEEP = \{", True,
+     "CLEAN_SHEET.bat is STILL a whitelist -> UNSAFE, deletes rep tabs. Do not run it"),
+
+    # --- split sheet ---
+    (HUNTER, r"def read_pf_redirect\(", True,
+     "the split-sheet redirect hook is live in the hunter"),
+    (HUNTER, r"PF_SPLIT_SHEET_ID", False,
+     "the PF_SPLIT_SHEET_ID constant is NOT deployed -- split still needs the id file"),
+]
+
+# ---------------------------------------------------------------------------
+# STATE CLAIMS. CURRENT STATE quotes these numbers; tabs.json has the live ones.
+# (tab name, regex that finds the brain's number in CLAUDE.md)
+# ---------------------------------------------------------------------------
+STATE_CLAIMS = [
+    ("Gold Confirmed",     r"`Gold Confirmed`\s+(?:=\s*)?([\d,]+)\s+rows"),
+    ("Upgrade Orange Biz", r"`Upgrade Orange Biz`\s+=\s+([\d,]+)\s+rows"),
+]
+JUNK_TABS = ["Gold Dots", "TEST-Green-2026-08-24", "TEST-Gold-2026-08-24",
+             "TMP Sweep Census", "ZZ_TMP_GRID", " _temp_ash_lookup", "_optimus_probe"]
+PROTECTED_TABS = ["Warm Backlog — Replied YES", "Angleton Call List — Aug 2026",
+                  "WORK LIST — Beaumont + Angleton", "GOLD — CLEAN", "Gold Confirmed"]
+
+
+def fetch(path, timeout=12):
+    try:
+        out = subprocess.run(["curl", "-sS", "--max-time", str(timeout), RAW + path],
+                             capture_output=True, text=True, timeout=timeout + 3)
+        if out.returncode == 0 and out.stdout and "404: Not Found" not in out.stdout[:200]:
+            return out.stdout
+    except Exception:
+        pass
+    return None
+
+
+def main():
+    t0 = time.time()
+    print("BRAIN VERIFY -- testing the brain's claims against the LIVE code and sheet")
+    files = {}
+    for f in {c[0] for c in CODE_CLAIMS}:
+        files[f] = fetch(f)
+    drift = unver = 0
+
+    print("\n  CODE CLAIMS")
+    for path, rx, expect, why in CODE_CLAIMS:
+        src = files.get(path)
+        if src is None:
+            unver += 1
+            print("  UNVERIFIED  %s  (could not fetch %s)" % (why, path))
+            continue
+        present = re.search(rx, src, re.M) is not None
+        if present == expect:
+            print("  pass        %s" % why)
+        else:
+            drift += 1
+            print("  *** DRIFT   %s" % why)
+            print("              live %s does %s contain /%s/ -- FIX THE BRAIN THIS TURN"
+                  % (os.path.basename(path), "NOT" if not present else "NOW", rx))
+
+    print("\n  SHEET STATE (live tabs.json vs CURRENT STATE)")
+    tabs_raw = fetch(TABS)
+    brain = ""
+    try:
+        brain = io.open(CLAUDE_MD, encoding="utf-8").read()
+    except Exception:
+        pass
+    if not tabs_raw:
+        unver += 1
+        print("  UNVERIFIED  could not fetch tabs.json")
+    else:
+        try:
+            d = json.loads(tabs_raw)
+            tabs = d.get("tabs") or d
+            rows = {t["tab"]: int(t["rows"]) for t in tabs}
+        except Exception as e:
+            rows = {}
+            unver += 1
+            print("  UNVERIFIED  tabs.json unreadable: %s" % str(e)[:50])
+        if rows:
+            gen = (d.get("generated_at") or "no timestamp") if isinstance(d, dict) else "?"
+            print("  live: %d tabs (tabs.json %s -- refreshed only by COUNT_TABS.bat / sheet_feed.py)"
+                  % (len(rows), gen))
+            m = re.search(r"\b(\d+) tabs\b", brain)
+            if m and int(m.group(1)) != len(rows):
+                drift += 1
+                print("  *** DRIFT   brain says %s tabs, live has %d" % (m.group(1), len(rows)))
+            for tab, rx in STATE_CLAIMS:
+                m = re.search(rx, brain)
+                if not m or tab not in rows:
+                    continue
+                b = int(m.group(1).replace(",", ""))
+                if b != rows[tab]:
+                    drift += 1
+                    print("  *** DRIFT   %s: brain says %s rows, live %s"
+                          % (tab, format(b, ","), format(rows[tab], ",")))
+                else:
+                    print("  pass        %s = %s rows" % (tab, format(b, ",")))
+            junk_left = [t for t in JUNK_TABS if t in rows]
+            if junk_left:
+                print("  CLEAN HAS NOT RUN: %d junk tabs still present (%s)"
+                      % (len(junk_left), ", ".join(x.strip() for x in junk_left[:3])
+                         + (" ..." if len(junk_left) > 3 else "")))
+            else:
+                print("  clean has run: no junk tabs remain")
+            lost = [t for t in PROTECTED_TABS if t not in rows]
+            if lost:
+                drift += 1
+                print("  *** PROTECTED TAB MISSING: %s -- find out what deleted it" % ", ".join(lost))
+
+    print("\n  RESULT: %d drift, %d unverified, %.1fs" % (drift, unver, time.time() - t0))
+    if drift:
+        print("  A DRIFT line means the brain is wrong RIGHT NOW. Correct CLAUDE.md and this")
+        print("  manifest in THIS turn, before answering anything that touches it.")
+    if unver:
+        print("  UNVERIFIED is 'could not look', not 'fine'. Say so if it matters.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
