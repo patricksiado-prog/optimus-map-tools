@@ -310,9 +310,11 @@ deletes rep tabs.
   old promo, 34 the "Great news! … 10x faster … just $30/month … 2 free months"
   template that also writes its own STOP line on top of GHL's. Detail in the
   section dated today.
-- **ALL FIVE OUTBOUND NUMBERS WERE REPLACED AGAIN 2026-09-01** — second full
-  swap in 26 hours. Live now: **`+13466634490` (DEFAULT)**, `+13466603376`,
-  `+13466632307`, `+13466631246`, `+13466631510`. Every number this file
+- **ALL OUTBOUND NUMBERS REPLACED A THIRD TIME 2026-09-03 11:00–11:17am CT.**
+  Live now: **`+13466145146` (DEFAULT, "dave's number 13")**, `+13464785739`,
+  `+13465729763`, `+13465222591`. Four numbers, not five. Every number this
+  file recorded before today is dead. (Superseded: the 09-01 set `+13466634490`
+  etc.) Every number this file
   recorded before today is dead and returns *"Invalid from number"*.
   `+13466631246` was created 17:37 UTC and had earned a STOP by 22:27.
   **Read the live number list before any send.**
@@ -334,8 +336,10 @@ deletes rep tabs.
 Both email routines are **session-bound and therefore mortal** — they die with
 the session that made them. That is the answer to "why did my email stop".
 
-**AND AS OF 2026-09-03 THEY SEND NOTHING EVEN WHEN THEY FIRE: GMAIL IS
-DISCONNECTED.** The AM routine fired on schedule and could not deliver a single
+**GMAIL IS CONNECTED AGAIN — MEASURED 2026-09-03 17:40 CT: `list_labels`
+answered and the 5:30pm evening edition went out as three emails.** (Superseded:
+as of the morning of 2026-09-03 it was disconnected and the AM routine delivered
+nothing.) The AM routine fired on schedule and could not deliver a single
 one of the three emails, because the Gmail MCP server is unauthenticated and a
 scheduled session cannot run OAuth. **Patrick must re-authorise Gmail in his
 claude.ai connector settings.** Until then a routine "firing" is no evidence

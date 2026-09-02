@@ -9057,3 +9057,40 @@ A drop, not a rise: that is the clean's `Gold Dots` deletion showing up, and
 the 17:25 touch is the hunter writing its `Hunter Status` / `_dispatch` rows,
 which go to production regardless of the split. It does NOT show Precise Fiber
 rows landing anywhere yet. Split still 1,024. A 12-minute re-check is scheduled.
+
+
+---
+
+## 2026-09-03 17:40 CT — Evening edition SENT (Gmail is back). Findings.
+
+The 5:30pm routine fired. **Gmail is connected again** — `list_labels`
+answered, three separate emails sent (Patrick / Dave / Churchie), no commission
+figures outside Patrick's. Corrects this morning's "Gmail disconnected".
+
+**Live reads, 17:40 CT:**
+- **0 real replies today, 13 STOPs.** Every inbound on 09-02 was an opt-out.
+  The OLD "$30/month / 2 free months" promo template is STILL sending (Carruth
+  13:06Z, Francis 13:04Z, royal oasis / rural royalty / Grasso / Hernandez /
+  Turner last night). The unknown workflow from 08-31 is still live.
+- **13 outbound dials today**, 6 of them to people who had texted STOP (allowed —
+  STOP covers texts). 3 outbound texts. 0 dispositions today; last was Majeed
+  won 08-31.
+- **All four outbound numbers replaced AGAIN at 16:00–16:17Z** ("dave's number
+  11–14"): `+13466145146` default, `+13464785739`, `+13465729763`,
+  `+13465222591`. Third full swap in three days.
+- GHL provider looks right (all `TYPE_SMS`/`TYPE_CALL`, no `TYPE_CUSTOM_SMS`).
+  Failed-send count COULDN'T READ: `get_sms_reports` is a 404 on this account.
+- Pipeline: **won 2** (Majeed Fiber 1 GIG 08-31; Dumas Fiber 300 08-29), lost 0.
+- **DealMachine: 1,031 credits used this cycle** (541 property + 490 people),
+  28,969 left. This session spent ~32. **~1,000 credits were spent today by
+  someone or something else.** Flagged to Patrick.
+- Scraper: LAPTOP-RS9EHSLO on ZIP 70797 (Baton Rouge), 0 pulled, sheet full.
+- `latest.json` belongs to run `20260902-172418`, a launch that exited in
+  seconds (all zeros, `last_phase: exit`). The live run is `172038`. Two hunter
+  launches a few minutes apart — the second was probably a double-click.
+- Outages: none found for Houston / Beaumont / Lake Charles / Pensacola.
+  New builds: nothing aimable; Amarillo 22,000 homes ground-broken (future).
+- Daily log: no post.
+
+**Open on Patrick from this edition:** kill the $30/month workflow; relaunch the
+hunter once; who spent 1,000 DealMachine credits today.
