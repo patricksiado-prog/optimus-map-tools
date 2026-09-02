@@ -19,6 +19,24 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE SHEET IS NOT CLEANED. If asked, the answer is NO. (2026-09-03)
+
+**Nothing has been deleted from `ATT FIBER LEADS`. Not one tab, not one row.**
+Patrick has asked five times. What exists is two patches, both written and
+tested by reading, **NEITHER PUSHED** — `patches/gold-purge-never-runs.md` and
+`patches/clean-sheet-one-doubleclick.md`. Until one is pushed and the .bat is
+run, `Gold Confirmed` still holds 9,052 pre-08-24 junk rows and the workbook
+still has all 29 tabs.
+
+**A future session must not report this as done.** Check the live tab count and
+`Gold Confirmed`'s row count before saying anything changed. It is blocked on
+one word from Patrick, and it has been blocked all day.
+
+**And the reason it never happened by itself:** every previous session pointed
+at the wrong program (the purge is in the Maps Scraper, not the hunter — see
+below), and the one tool that does delete tabs would have taken 7 rep-built
+tabs with it.
+
 ### Is the machine running?
 
 - **Scanner: DOWN ~17h on the LOGIN — and separately the WRITE is broken. Two

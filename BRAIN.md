@@ -8392,3 +8392,54 @@ workbook's refused writes.
 **Before telling Patrick to run a destructive tool, run its own rules against the
 live data and print what it would take.** The tool being "the right tool" is not
 the same as the tool being safe to run today.
+
+---
+
+## 2026-09-03 — "is it cleaned, for the 5th time??" — No. And an honest read on the memory.
+
+Patrick: *"how's the memory thing working?? / u fixed updated extra sheets /
+cleaned the sheet of junk tabs and error dotd and it won't happen again for the
+5x time??"*
+
+**The answer to the third question is NO, and it was answered as NO.** Nothing
+has been deleted from the workbook. 29 tabs, `Gold Confirmed` still 11,490 rows.
+Two patches written, neither pushed. Recorded at the TOP of the CURRENT STATE
+block so no future session can report it as done.
+
+### What the memory actually did today — measured, both directions
+
+**It worked, twice, and both saved real money:**
+- The hook forced the `optimus-sheet` skill to load before answering a sheet
+  question. That is why `CLEAN_SHEET.bat`'s KEEP list got run against the live
+  tabs instead of being recommended blind — which is the only reason
+  `Warm Backlog — Replied YES` (40 people who said yes) is still in the workbook.
+- `brain find` returns today's purge findings correctly, newest first.
+
+**It failed, once, and the failure lasted six days:**
+- The brain confidently said the gold purge "runs at HUNTER LAUNCH" and that
+  "fixing the AT&T login runs the purge for free." Both wrong. It is in
+  `maps_scraper_standalone.py`; `precise_fiber_hunter.py` has zero occurrences of
+  the word. That line was repeated across five sessions and sent Patrick after a
+  fix that could never have worked.
+
+**The pattern is now clear enough to name.** The memory is good at *facts that
+were measured* and bad at *claims about where code lives*, because nothing ever
+re-checked them. Measured numbers carry a date and a method, so they get
+re-taken. A sentence like "it runs at hunter launch" carries neither, so it just
+gets repeated.
+
+### The rule that follows
+
+**A claim about what a program does or where its code lives is not MEASURED
+until it has been grepped, and it goes stale like any number.** When the brain
+names a file, a function or a launch point, grep it before repeating it — the
+same way a count gets re-taken before it is quoted. Added to the FOUR CHECKS as
+part of #4 (label it MEASURED or ASSUMED): a code claim with no grep behind it
+is ASSUMED, whatever tone it is written in.
+
+### State of the memory system, measured 2026-09-03
+
+`CLAUDE.md` 1,162 lines (drifting past the ~800 line archive threshold — the
+next session should archive the oldest dated sections). `BRAIN.md` 8,394 lines.
+Six skills. Two hooks live: `session-start.sh` (prints measured state at launch)
+and `brain-write-counter.sh` (search guard every message, write prompt every 3rd).
