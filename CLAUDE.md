@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-02 22:05 CDT
+# CURRENT STATE — updated 2026-09-02 22:40 CDT
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -87,11 +87,12 @@ beta" survive four sessions unchecked.
   actually marks `VERIFIED_GOLD` are **4 unique addresses**: 7631 Fuqua St
   (Houston 77075) and 800/1112 N Arcola + 611 E Myrtle (Angleton 77515).
   **3,102 of the 4,997 new leads were aimed at Orange on a bad count.**
-- **THE BRAIN IS 5,193 LINES ≈ 69,400 TOKENS, AUTO-LOADED EVERY SESSION, AND
-  GROWING ~640 LINES/DAY.** Only 198 of those lines are the state block. The fix
-  is to archive dated sections older than a week into `BRAIN.md` (not
-  auto-loaded, still fully searchable by the tool). **Waiting on Patrick's go** —
-  see the section dated today.
+- **MEMORY SPLIT DONE 2026-09-02.** `CLAUDE.md` went 5,250 → 890 lines,
+  **69,400 → ~12,300 tokens per session (an 82% cut)**. 4,445 lines / 92 dated
+  sections moved to `BRAIN.md` verbatim; line-count and all 92 headings verified.
+  Nothing became unreachable — the `brain` tool searches BRAIN.md identically.
+  **Never `@import` BRAIN.md back in**; imports load at launch and undo it.
+  When CLAUDE.md drifts past ~800 lines, archive the oldest dated sections again.
 - **BEFORE SPENDING OR ASSERTING: run the brain search tool.**
   `.claude/skills/session-continuity/scripts/brain find <topic>` — also
   `money`, `closed`, `state`, `corrections`, `stale`. Newest result wins.
@@ -213,6 +214,41 @@ the session that made them. That is the answer to "why did my email stop".
 
 ---
 
+
+## THE FOUR CHECKS — every mistake that has cost money failed one of these
+
+Patrick, 2026-09-02: *"develop the skill and the rule to not fuck up all the dam
+time / costing me time and money and tockens."* These are the four. They are
+short on purpose. Run them, do not admire them.
+
+**1. SEARCH FIRST.** Before spending credits, sending texts, building a list,
+quoting any number, or saying something is broken:
+`.claude/skills/session-continuity/scripts/brain find <topic>`.
+*Cost of skipping it: 4,783 DealMachine credits on 2026-09-02, on ground this
+file had already mapped.*
+
+**2. COUNT THE MARKER, NOT THE SHAPE.** Grep the thing that NAMES the value
+(`VERIFIED_GOLD`, a Status string, a tag) and count **UNIQUE ADDRESSES, never
+rows**. Never infer from a ZIP, a city name, a tab position or a row shape.
+*Cost of skipping it: four separate wrong counts — gold-by-default (8/23),
+colour-by-default (8/29), agent-by-first-match (9/01), city-name-as-colour
+(9/02). Nothing errored any of those times. The count just looked fine.*
+
+**3. CHECK THE DESTINATION, NOT THE RETURN VALUE.** `success: true` from
+`send_sms` means GHL accepted the request, not that a text arrived — read
+`status` on the message. `SUCCEEDED` on a routine does not mean it sent.
+`classified: 126,628` means nothing if `written: 0`. A moving `modifiedTime`
+with a flat `fileSize` means nothing is landing.
+*Cost of skipping it: 88 texts reported sent that all failed, 2026-08-31.*
+
+**4. LABEL IT MEASURED OR ASSUMED, WITH A DATE.** A measured claim carries the
+number, the date and how it was taken so it can be re-taken. An assumed one says
+so in the same sentence. Never let the two share a voice.
+*Cost of skipping it: "register for the 20M-cell beta" was repeated confidently
+across four sessions and was never available at all.*
+
+**If one of these was skipped and it went wrong, say so plainly and name which
+one.** That is cheaper than a defence, and it is the only way the list improves.
 
 ## HOW THIS MEMORY WORKS — read this before you go looking for anything
 
