@@ -8999,3 +8999,31 @@ hunter and `gh_put(...tabs.json...)` in the scraper. A relaunch will pull both.
 Patrick to launch, or the first launch wastes itself on the cache. The
 software already says "wait 60s and relaunch" — it was right and I should have
 read it before saying "ready".
+
+
+---
+
+## 2026-09-03 — End of session: "we all set?" — mostly. One relaunch outstanding.
+
+Patrick sent the live AT&T map (Lake Charles, LA — in footprint) with the hunter
+panning and capturing. MEASURED: capture is back. Old build though, so rows park.
+
+**Where everything stands at close:**
+- Clean: RAN. `Gold Confirmed` 1,884 clean rows. `Gold Dots` deleted, backed up.
+- Split sheet: DEPLOYED (`59a92bf`), not yet active — needs one hunter relaunch
+  now that the GitHub cache has caught up.
+- Tab counts: publish themselves at scraper launch, stamped (`fcc6b6e`). Not yet
+  seen on a launch — the scraper on Patrick's PC is still on the pre-`fcc6b6e`
+  copy until it restarts.
+- Biz match loads gold (`c2ef708`) — not yet seen on a launch either.
+- brain-verify runs at every session start; 19 code claims, 0 drift.
+- Hunter: UP, sweeping, old build, rows parking to disk.
+
+**Still on Patrick:** (1) Ctrl+Shift+S and relaunch the hunter once → split
+turns on, parked rows replay. (2) Restart the Maps Scraper once → stamped tab
+counts + gold biz match go live. (3) Reconnect Gmail. (4) GHL trigger on tag
+`alpha`.
+
+**Not yet verified, say so if asked:** whether `Warm Backlog — Replied YES`
+still exists (needs the stamped tabs.json from the next scraper launch), and
+`(N gold from 'Gold Confirmed')` with N > 0 on the next scraper console.
