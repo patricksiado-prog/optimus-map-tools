@@ -79,6 +79,9 @@ CODE_CLAIMS = [
     (SCRAPER, r"sh\.worksheet\(GOLD_TAB\)\.get_all_values\(\)", True,
      "the biz match loads gold from 'Gold Confirmed' (Precise Fiber is green-only)"),
 
+    (SCRAPER, r'gh_put\("optimus/_feed/sheet/tabs\.json"', True,
+     "tab counts publish THEMSELVES at scraper launch, stamped (COUNT_TABS.bat retired, fcc6b6e)"),
+
     # --- CLEAN_SHEET.bat safety ---
     (CLEAN, r"^KEEP = \{", True,
      "CLEAN_SHEET.bat is STILL a whitelist -> UNSAFE, deletes rep tabs. Do not run it"),
@@ -165,31 +168,46 @@ def main():
             unver += 1
             print("  UNVERIFIED  tabs.json unreadable: %s" % str(e)[:50])
         if rows:
-            gen = (d.get("generated_at") or "no timestamp") if isinstance(d, dict) else "?"
-            print("  FEED: %d tabs in tabs.json (%s). THIS FEED IS NOT LIVE -- it refreshes only"
-                  " when COUNT_TABS.bat / sheet_feed.py runs on a PC. On 2026-09-03 it said"
-                  " Gold Confirmed = 11,490 while the live tab had 1,884." % (len(rows), gen))
+            gen = (d.get("generated_at") or "") if isinstance(d, dict) else ""
+            fresh = bool(gen)
+            if fresh:
+                print("  LIVE-ish: %d tabs, tabs.json stamped %s (published by the scraper at its"
+                      " last launch -- as current as that launch)." % (len(rows), gen))
+            else:
+                print("  FEED: %d tabs in tabs.json with NO timestamp. Refreshed only by a .bat"
+                      " nobody runs -- on 2026-09-03 it said Gold Confirmed = 11,490 while"
+                      " the live tab had 1,884. The scraper stamps it now; an unstamped"
+                      " file means the scraper has not launched since." % len(rows))
+            rows = {k: n for k, n in rows.items() if n is not None and n >= 0}
             m = re.search(r"\b(\d+) tabs\b", brain)
-            if m and int(m.group(1)) != len(rows):
+            if fresh and m and int(m.group(1)) != len(rows):
                 drift += 1
-                print("  *** DRIFT   brain says %s tabs, live has %d" % (m.group(1), len(rows)))
+                print("  *** DRIFT   brain says %s tabs, tabs.json (%s) has %d"
+                      % (m.group(1), gen, len(rows)))
             for tab, rx in STATE_CLAIMS:
                 m = re.search(rx, brain)
                 if not m or tab not in rows:
                     continue
                 b = int(m.group(1).replace(",", ""))
-                if b != rows[tab]:
-                    print("  note        %s: brain says %s rows, FEED says %s (feed age unknown --"
-                          " the brain may be newer)" % (tab, format(b, ","), format(rows[tab], ",")))
+                if b == rows[tab]:
+                    print("  %s  %s = %s rows" % ("pass      " if fresh else "feed-match", tab, format(b, ",")))
+                elif fresh:
+                    drift += 1
+                    print("  *** DRIFT   %s: brain says %s rows, tabs.json (%s) says %s"
+                          % (tab, format(b, ","), gen, format(rows[tab], ",")))
                 else:
-                    print("  feed-match  %s = %s rows (NOT a live check)" % (tab, format(b, ",")))
+                    print("  note        %s: brain says %s, unstamped feed says %s -- brain may be newer"
+                          % (tab, format(b, ","), format(rows[tab], ",")))
             junk_left = [t for t in JUNK_TABS if t in rows]
-            if junk_left:
-                print("  FEED still lists %d junk tabs (%s) -- the clean RAN on 2026-09-03; this is feed staleness until COUNT_TABS.bat refreshes it"
-                      % (len(junk_left), ", ".join(x.strip() for x in junk_left[:3])
-                         + (" ..." if len(junk_left) > 3 else "")))
+            if junk_left and fresh:
+                drift += 1
+                print("  *** DRIFT   %d junk tabs STILL EXIST as of %s (%s) -- the clean did not"
+                      " remove them; read the scraper console"
+                      % (len(junk_left), gen, ", ".join(x.strip() for x in junk_left[:3])))
+            elif junk_left:
+                print("  unstamped feed still lists %d junk tabs -- unknown whether real" % len(junk_left))
             else:
-                print("  feed lists no junk tabs")
+                print("  no junk tabs listed")
             lost = [t for t in PROTECTED_TABS if t not in rows]
             if lost:
                 drift += 1

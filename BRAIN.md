@@ -8933,3 +8933,36 @@ next hunter launch, which needs the AT&T re-login.
 at launch (the all-zero stub) — same family. Before quoting a feed number, know
 when the feed was written. If it does not say, say "the feed says" and date it
 "unknown".
+
+
+---
+
+## 2026-09-03 — COUNT_TABS.bat retired: tab counts publish themselves at scraper launch. Hunter `fcc6b6e`.
+
+Patrick: *"I don't like extra program can u connect it to the launch of
+something."* I had just told him to run `COUNT_TABS.bat` — a .bat a human must
+remember — one message after writing the rule against exactly that. He is right.
+
+`publish_tab_counts(sh)` is now the fourth step of `_run_startup_clean` in the
+scraper. Every launch (not once per PC — counts change, flags do not apply) it
+lists every tab, counts data rows via `col_values(1)` minus the header, and
+`gh_put`s `optimus/_feed/sheet/tabs.json` with `generated_at` and
+`source: maps_scraper startup`. Runs AFTER the clean so the feed shows the
+cleaned state. `-1` marks a tab that could not be read. If there is no
+`github_token.txt` it says so on the console instead of going quiet.
+
+**Why this matters beyond convenience:** tabs.json had no timestamp and was
+refreshed only when someone remembered the .bat. It sat at 08-27 numbers for a
+week and the brain quoted `Gold Confirmed = 11,490` as live while the tab held
+1,884. A feed nobody refreshes is a lie with a JSON extension.
+
+**brain-verify is now timestamp-aware.** A stamped tabs.json is treated as
+measured-at-that-time: count mismatches and surviving junk tabs are real DRIFT.
+An unstamped one is labelled FEED and never produces a pass. Manifest gained
+the claim for `fcc6b6e`.
+
+Console line to expect on the next scraper launch:
+`TAB COUNTS: N tabs -> published (tabs.json, stamped 2026-09-0x ...)`.
+
+Also retired in the sheet skill and in CLAUDE.md. The only human actions left
+in the whole flow are the two double-clicks and the AT&T login.

@@ -32,9 +32,8 @@ up)` → `JUNK TABS DONE`. Backups in `C:\Users\patri\maps_scraper\tab_backup_20
    (that is what wrote the old flag). "THE PURGE HAS NEVER RUN" was wrong.
 2. **`optimus/_feed/sheet/tabs.json` is a STALE feed with no timestamp.** Its
    11,490 / 29 tabs / TEST-Green 13,027 were all out of date, and every count
-   quoted from it today was stale. It refreshes ONLY when `COUNT_TABS.bat` or
-   `sheet_feed.py` runs on a PC. **Never call a tabs.json number "live".**
-   brain-verify now labels it FEED, never pass.
+   quoted from it today was stale. As of hunter `fcc6b6e` the SCRAPER republishes it, stamped, at every launch.
+   A stamped tabs.json is as current as that launch; an unstamped one is stale.
 3. **The 5 other junk tabs (TEST-Green, TEST-Gold, TMP Sweep Census, ZZ_TMP_GRID,
    _temp_ash_lookup, _optimus_probe) no longer exist** — nothing to migrate,
    nothing to delete. Who removed them is unknown; if it was `CLEAN_SHEET.bat`,
@@ -691,8 +690,11 @@ it, or saying any part of it is out of reach.
   sheet reps work in. Fix written, NOT pushed:
   `patches/clean-sheet-one-doubleclick.md` inverts it to a named JUNK list AND
   moves the gold date-purge into it, so one double-click does tabs and rows.
-- **`COUNT_TABS.bat`** — row count for every tab, and publishes them to GitHub so
-  Claude can read them with no Google access.
+- **`COUNT_TABS.bat` — RETIRED 2026-09-03.** The Maps Scraper now publishes every
+  tab's row count to `_feed/sheet/tabs.json` at every launch, WITH a
+  `generated_at` stamp (hunter `fcc6b6e`). Patrick: *"I don't like extra
+  program, connect it to the launch of something."* An UNSTAMPED tabs.json means
+  the scraper has not launched since the deploy; never quote it as live.
 
 ## READING THE SHEET — YOU CAN DO THIS. DO NOT SAY YOU CANNOT.
 

@@ -68,7 +68,7 @@ account, which talks to the sheet directly — no Autosheet, no Claude creds.
 
 | Run this | It does |
 |---|---|
-| **`COUNT_TABS.bat`** (double-click) | row count for every tab AND publishes them to GitHub for Claude. Read-only |
+| ~~`COUNT_TABS.bat`~~ RETIRED | The Maps Scraper publishes stamped tab counts to `_feed/sheet/tabs.json` at every launch (2026-09-03). Nothing to run |
 | **`CLEAN_SHEET.bat`** (double-click) | **THE CLEAN — UNSAFE UNTIL PATCHED. It deletes `Warm Backlog — Replied YES` and 6 other rep-built tabs (MEASURED 2026-09-03; see `patches/clean-sheet-one-doubleclick.md`).** Dry run first, asks for YES, then migrates `TEST-Gold-*` into `Gold Confirmed`, backs every tab up to CSV, dedupes `Gold Confirmed` and `Precise Fiber` by address, deletes only DEBUG/TEST tabs. Pipeline tabs are protected by a KEEP whitelist |
 | **`py gold_audit.py`** | READ-ONLY: total rows, **UNIQUE ADDRESSES**, duplicates, lat/lng coverage, capture date range on `Gold Confirmed`. **This is the unique-gold number.** One-line paste, nothing to save |
 | **`py decode_gold.py`** | reads AT&T's own saved reply and settles what `unavailable` means. If it is copper, one line in `build_codes.json` converts that whole bucket to gold retroactively |
