@@ -19,23 +19,42 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
-### THE SHEET IS NOT CLEANED. If asked, the answer is NO. (2026-09-03)
+### THE CLEAN IS DEPLOYED AND ARMED — it runs at MAPS SCRAPER LAUNCH (2026-09-03)
 
-**Nothing has been deleted from `ATT FIBER LEADS`. Not one tab, not one row.**
-Patrick has asked five times. What exists is two patches, both written and
-tested by reading, **NEITHER PUSHED** — `patches/gold-purge-never-runs.md` and
-`patches/clean-sheet-one-doubleclick.md`. Until one is pushed and the .bat is
-run, `Gold Confirmed` still holds 9,052 pre-08-24 junk rows and the workbook
-still has all 29 tabs.
+**Patrick said GO and it is pushed: hunter commit `f1e88ed`.** The whole clean
+now lives INSIDE the Maps Scraper and runs by itself at launch, once per PC.
+Patrick, 2026-09-03: *"attach that software to the map scraper start up / for
+the 5th time i don't want 5 programs, 2 is enough."* **No .bat. Do not build one.**
 
-**A future session must not report this as done.** Check the live tab count and
-`Gold Confirmed`'s row count before saying anything changed. It is blocked on
-one word from Patrick, and it has been blocked all day.
+**THE SHEET IS STILL DIRTY UNTIL HE LAUNCHES THE SCRAPER.** Nothing has been
+deleted yet — 29 tabs, `Gold Confirmed` 11,490 rows, MEASURED 2026-09-03. The
+code is armed, not run. Check the live tab count before saying it is clean.
 
-**And the reason it never happened by itself:** every previous session pointed
-at the wrong program (the purge is in the Maps Scraper, not the hunter — see
-below), and the one tool that does delete tabs would have taken 7 rep-built
-tabs with it.
+Three steps at launch, in order, each backing up first:
+1. **GOLD PURGE** — removes `Gold Confirmed` rows captured before 2026-08-24
+   (~9,052 of 11,490). Whole tab to CSV + removed rows to their own JSON first.
+2. **TEST-GOLD MIGRATION** — folds `TEST-Gold-*` into `Gold Confirmed`, then
+   drops the tab. If the append fails the tab is LEFT ALONE.
+3. **JUNK TAB CLEAN** — 6 tabs / 17,446 rows: `Gold Dots`, `TEST-Green-2026-08-24`,
+   `TMP Sweep Census`, `ZZ_TMP_GRID`, ` _temp_ash_lookup`, `_optimus_probe`.
+   **Named junk ONLY — a tab not on the list SURVIVES.** All 23 others live.
+
+**What was actually wrong, and it was never the AT&T login:** the cleanup was
+gated on `open_sheet()`, which creates `Maps Businesses` when missing —
+`add_worksheet(20000x7)` = 140,000 cells = an instant 400 on a workbook at the
+10M ceiling, swallowed by a bare `except`, returning `None`. **The sheet being
+too full stopped the routine that frees the space.** The clean now opens the
+workbook itself and runs BEFORE `open_sheet()`. Also fixed: an empty read no
+longer writes the done-marker (it used to disable the purge on that PC forever),
+and a failure now names the step instead of printing `(dedupe off: ...)`.
+
+**`SCRAPER_NO_CLEAN=1`** opts out. Backups land beside the scraper as
+`gold_confirmed_backup_*.csv`, `gold_purged_*.json` and `tab_backup_*/`.
+
+**DO NOT run `CLEAN_SHEET.bat`.** MEASURED 2026-09-03: its whitelist deletes 14
+tabs / 22,457 rows including **`Warm Backlog — Replied YES` (40 people who
+already said yes)**, the Angleton call list and the Beaumont work list. The
+scraper's named-junk list is the safe one now.
 
 ### Is the machine running?
 
