@@ -9094,3 +9094,30 @@ figures outside Patrick's. Corrects this morning's "Gmail disconnected".
 
 **Open on Patrick from this edition:** kill the $30/month workflow; relaunch the
 hunter once; who spent 1,000 DealMachine credits today.
+
+---
+
+## 2026-09-03 17:46 CT — Re-check: NOTHING LANDED. Old build confirmed by fingerprint.
+
+Scheduled re-check on the Pensacola run `20260902-172038`:
+- Split workbook `1DXu…`: **1,024 bytes, modified 08-30.** Unchanged.
+- Production: **8,484,584, unchanged** — but `modifiedTime` moved to 22:41Z.
+  Flat size + moving time = the "touched but nothing landing" signature from
+  CLAUDE.md, exactly.
+- Heartbeat per-run file `_feed/heartbeat_20260902-172038.json` carries
+  **`build_fingerprint: 3d2a6779`** = the 2026-08-24 build. **Correction to the
+  17:30 entry:** the feed DOES carry the build — not in `heartbeat.json`, but in
+  the per-run `heartbeat_<run_id>.json`. Read that one next time instead of
+  saying it cannot be known.
+- Phases: start 17:20:38 → LOGGED_OUT 17:21 → logged_in 17:22:33 → sheet_open
+  17:22:54 → sweep_start 17:25:33. Nothing since (heartbeat writes on phase
+  change only, so a 20-minute gap during a sweep is normal).
+
+**Verdict: capturing, parking, not landing. Old build.** The fix is one
+Ctrl+Shift+S and a relaunch; the raw CDN has carried `59a92bf` since 17:15.
+Parked rows replay into the split on that launch.
+
+**For brain-verify, next session:** add a live check that reads the per-run
+heartbeat's `build_fingerprint` and flags `3d2a6779` as "OLD BUILD — split not
+active". The new build's fingerprint is unknown until it runs once; record it
+then.
