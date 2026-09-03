@@ -45,6 +45,51 @@ tabs.json row counts (and `_feed/_landed.json` once deployed), not Drive metadat
 Split workbook still 1,024 bytes / 08-30: the hunter has still never run the
 new build.
 
+### THE FOLLOW-UP BOARD — REDESIGNED TO PATRICK'S SPEC, WRITTEN, **UNTESTED, NOT PUSHED** (2026-09-03 ~01:00 CT)
+
+- **Patrick's spec (verbatim): "I want the sheet to contain the same columns
+  grey green gold biz fiber green biz / and if it's enriched it has name cell
+  number / color coded for sales cb or ni."** Built as: `Enriched Leads` in the
+  SPLIT workbook = the hunter's own 13 columns first (Address · Dot Color ·
+  Captured At · Business · Phone · Run ID · Operator · Lat · Lng · City · State ·
+  ZIP · Status, copied from whichever tab the address sits on), then **Tab**
+  (Gold Confirmed / Grey Fiber Customers / Precise Fiber / Fiber Green Biz /
+  Upgrade Orange Biz / Maps Businesses), then **Name · Cell** · Phone Type ·
+  Enriched At · Source · Pool · GHL Contact ID · Likely Gold · DNC, then the GHL
+  block Dialed · Last Call · Disposition · DND · Dead · Status At. Whole row
+  coloured by Disposition: **green CB/MAYBE, red NO/NI/DEAD, blue PAID/SOLD.**
+  `Sales Log` = Sold At · Address · City · State · ZIP · Name · Cell · Product ·
+  Rep # · Pool · Source · GHL Contact ID · Opportunity ID · Stage · Status ·
+  Logged At, same colours. No dollar figures anywhere (Ara has the sheet).
+- **Names and cells cannot go through GitHub — BOTH repos are PUBLIC (MEASURED
+  2026-09-03, unauthenticated 200 on both).** So the feed is a Google Sheet
+  Claude creates with `create_file` (CSV → sheet) in Drive folder
+  **`OPTIMUS FEED (Claude → sheet)` = `1XOqADybKvneC5gwsxjpsGkVC6RLQ-1an`**,
+  shared writer with `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`
+  (done). File title = `OPTIMUS FEED enriched|status|sales <anything>`; first
+  tab = header row of field names + rows. The scraper lists the folder at
+  launch, lands, renames the file `LANDED …`, stamps `_feed/_landed.json` on
+  GitHub (no PII). The GitHub `_feed/enriched/` file from earlier is obsolete.
+- **STATE OF THE CODE: the rewrite exists ONLY as `patches/sheet-log/` in this
+  repo (sheet_log_block.py + test_board.py + README.md, commit 59b280d), and it
+  has NOT been compiled or run.** This session's shell was blocked by an
+  auto-mode safety check partway through (every Bash call, even read-only,
+  refused for the rest of the session), so `py_compile` and the fake-workbook
+  test could not run, and the local hunter clone holding the edit died with the
+  container. **Untested code is never pushed.** A fresh session: apply the
+  block per the README, compile, run the test, then ask Patrick for go.
+  (The earlier GitHub-feed version — tested, but without names/cells and with
+  the wrong columns — is gone with that clone; do not look for it.)
+- **What still cannot be automated:** nothing on Patrick's PC reads GHL, so the
+  status columns refresh only when Claude drops a `status` feed sheet (every
+  coverage-gap edition, per the skill). Proper fix later: scraper reads GHL at
+  launch with a `ghl_token.txt` — untestable from here.
+- **This session's git history vs this file:** commits 59b280d and this one
+  were pushed through the GitHub API, not git; a local clone from before them
+  must `git fetch` + reset before editing. The local `publish-enriched` script
+  still targets the obsolete GitHub feed — rewrite it to emit CSV for a Drive
+  `create_file` (kinds enriched|status|sales, names/cells allowed, no $).
+
 ### (superseded above) THE CLEAN RAN. GOLD IS CLEAN: 1,884 rows, all post-08-24. (MEASURED 2026-09-03, Patrick's console)
 
 **The startup clean fired on Patrick's PC and completed.** Console, verbatim:
@@ -76,7 +121,7 @@ flags are per-PC) and will print "nothing to remove" on each. Harmless.
 **`SCRAPER_NO_CLEAN=1`** opts out. **DO NOT run `CLEAN_SHEET.bat`** — whitelist,
 deletes rep tabs.
 
-### ENRICHMENT → SHEET (Patrick 2026-09-03: "when we enrich leads add that to the sheet")
+### ENRICHMENT → SHEET (superseded by the FOLLOW-UP BOARD block above; kept for the history) (Patrick 2026-09-03: "when we enrich leads add that to the sheet")
 
 - **BUILT AND TESTED, NOT PUSHED — waiting on Patrick's go (RULE 0).** The Maps
   Scraper gains a startup step `ENRICHED LEADS` (`sync_enriched_leads`, between
@@ -197,7 +242,8 @@ deletes rep tabs.
 - **`latest.json` written at launch is an all-zero STUB, not a failure.** Run
   `20260830-033946` shows every counter at 0 because it had just started.
   Check `run_id` and `generated_at` before calling capture broken.
-- **THE AUTHORITATIVE LIVENESS CHECK is `get_file_metadata` on the workbook —
+- **(CORRECTED 2026-09-03 — see the 21-tabs block: fileSize is NOT a signal.)
+  THE AUTHORITATIVE LIVENESS CHECK is `get_file_metadata` on the workbook —
   BOTH `modifiedTime` AND `fileSize`.** A moving `modifiedTime` with a flat
   `fileSize` means it is being touched but nothing is landing. Never trust
   `latest.json` or the console; both have shown healthy while zero rows were
