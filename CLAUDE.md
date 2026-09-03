@@ -60,7 +60,10 @@ deletes rep tabs.
   **GOLD IS NOT LANDING:** console shows `6012 still parked`, `3602 parked
   batch(es) left`, "real archiving is needed now". Gold/grey still write to
   production (line 3397 `sh.worksheet(GOLD_TAB)`), which is full. The split
-  covers green only. Production `fileSize` flat at 8,484,584 (23:58Z touch).
+  covers green only. Production `fileSize` flat at 8,484,584 (23:58Z touch;
+  RE-CHECKED 00:52Z 09-03: still 8,484,584, touched 00:28Z). **Split workbook
+  is 1,024 bytes, last modified 08-30 — it has NEVER been written to** (MEASURED
+  00:52Z). Both per-run heartbeats still fp `3d2a6779` = old build.
   Backfilling 49,084 locally-saved green leads. Ctrl+UP/DOWN keys are in the
   new build (lines 950–1165); the PC has never received it.
   **GOLD POCKET SEEN 19:10 CT — it is MILTON FL 32570 (Evergreen Estates),
