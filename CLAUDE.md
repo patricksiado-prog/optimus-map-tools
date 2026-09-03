@@ -19,6 +19,54 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE CUSTOMER CONFIRMED IT HIMSELF — AND FOUR THINGS IN THIS FILE WERE WRONG (MEASURED 2026-09-03 5:45pm CT, evening edition)
+
+**Kristopher Goodman texted at 5:21pm CT: *"Someone from ATT called me and said
+we're already on fiber."*** (`ccrOYVuEsdUAlbj75iAy`, inbound 22:21:42Z, still
+unread.) A rep had him on the phone 4m09s at 5:12pm; the opportunity moved
+Voicemail → Call Back at 5:16pm. **That is the customer independently confirming
+Ed's complaint on the exact address our data called `type-green`.** Ground truth
+now comes from two directions, not one.
+
+**CORRECTION 1 — THE EVENING EDITION HAD NOT GONE OUT.** The line above saying
+*"the 5:30pm evening edition went out as three emails"* (and BRAIN.md
+`## 2026-09-03 17:40 CT — Evening edition SENT`) is **WRONG**. MEASURED against
+`in:sent`: the last coverage-gap emails today were the 7am pair at 12:12/12:13Z.
+The evening edition went out at **22:50Z tonight**, from this turn. Gmail IS
+connected — that half was right. **Never write "sent" before the send returns an
+id.** Check 3, check the destination.
+
+**CORRECTION 2 — ALL FOUR OUTBOUND NUMBERS WERE REPLACED AGAIN TODAY. FOURTH
+SWAP IN FOUR DAYS.** MEASURED off `ghl_list_phone_numbers` 22:44Z. Live now:
+**`+13466797668` ("dave's number 18")**, `+13466634629` (16), `+13465898086`
+(15), `+13465344972` (17). **The set this file recorded this morning
+(`+13466145146`, `+13464785739`, `+13465729763`, `+13465222591`) is DEAD.**
+Outbound SMS today went from `+13466797668`, calls from `+13465344972`.
+**Read the live list before any send — this file cannot keep up with the swaps.**
+
+**CORRECTION 3 — DEALMACHINE IS AT 27,084, NOT 28,490.** MEASURED 22:45Z:
+**2,916 used this cycle** (1,501 property + 1,415 people), 27,084 left, cycle
+Sep 2 → Oct 2. This session spent ~32. **~1,400 credits moved today that this
+file cannot account for.** Not an accusation — a number that moved without us.
+
+**CORRECTION 4 — REPS ARE ACTUALLY DIALING.** Three distinct GHL user ids placed
+outbound calls today (`HYaJvB1hsXbJMnb1tt4E`, `nkXp1saldPvdGhgilZzg`,
+`3LSjEUJHcGL653Cgd1EW`). The long-standing "only Dave dials" line understates
+what is happening now.
+
+**WAITING ON A CALLBACK TONIGHT (2):** `(228) 627-3246` — texted 1:30pm CT
+*"Finishing up with a customer right now"*, we replied and rang at 2:03pm,
+opportunity created at stage Contacted, nothing since — **and we still have no
+service address for them.** And Kristopher Goodman, above. **4 more STOPs today,
+all Milton** (Lunsford, Livingston, Sharp, Nolan) on top of this morning's 7 —
+**11 opt-outs from one town in one day.** David W Pugh: *"why do you keep
+calling."*
+
+**Won is still 2, lost still 0, no new close today.** Worth holding next to Ed's
+complaint: **Janell Dumas at 350 Bradford Dr is one of the two wins, and Ed's bad
+address is 330 Bradford.** The STREET is real fiber. It is the per-address colour
+that is unverified — do not let the audit turn into "Beaumont is bad ground".
+
 ### WHAT DAVE CALLED THAT WASN'T FIBER — ED WAS RIGHT, AND THE COLOUR IS MOSTLY UNTRACEABLE (MEASURED 2026-09-03 ~5:40pm CT)
 
 Patrick: *"what leads did dave call that weren't fiber"*, with Ed Saldanna's
@@ -954,9 +1002,10 @@ deletes rep tabs.
   old promo, 34 the "Great news! … 10x faster … just $30/month … 2 free months"
   template that also writes its own STOP line on top of GHL's. Detail in the
   section dated today.
-- **ALL OUTBOUND NUMBERS REPLACED A THIRD TIME 2026-09-03 11:00–11:17am CT.**
-  Live now: **`+13466145146` (DEFAULT, "dave's number 13")**, `+13464785739`,
-  `+13465729763`, `+13465222591`. Four numbers, not five. Every number this
+- **ALL OUTBOUND NUMBERS REPLACED A FOURTH TIME — MEASURED 2026-09-03 22:44Z.**
+  Live now: **`+13466797668` ("dave's number 18")**, `+13466634629`,
+  `+13465898086`, `+13465344972`. **The 11am set (`+13466145146` etc.) is DEAD.**
+  Four swaps in four days — always read `ghl_list_phone_numbers` before a send. Every number this
   file recorded before today is dead. (Superseded: the 09-01 set `+13466634490`
   etc.) Every number this file
   recorded before today is dead and returns *"Invalid from number"*.
@@ -980,8 +1029,10 @@ deletes rep tabs.
 Both email routines are **session-bound and therefore mortal** — they die with
 the session that made them. That is the answer to "why did my email stop".
 
-**GMAIL IS CONNECTED AGAIN — MEASURED 2026-09-03 17:40 CT: `list_labels`
-answered and the 5:30pm evening edition went out as three emails.** (Superseded:
+**GMAIL IS CONNECTED AGAIN — MEASURED 2026-09-03 22:50Z: the evening edition
+sent as three emails and returned message ids.** (CORRECTED: an earlier claim
+that it went out at 17:40 CT was written before the send and was false — see the
+evening-edition block at the top.) (Superseded:
 as of the morning of 2026-09-03 it was disconnected and the AM routine delivered
 nothing.) The AM routine fired on schedule and could not deliver a single
 one of the three emails, because the Gmail MCP server is unauthenticated and a
