@@ -115,6 +115,39 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
+### TWO LIVE SMS WORKFLOWS ARE DEFECTIVE — AND **CLAUDE CANNOT PAUSE A WORKFLOW** (MEASURED 2026-09-03 ~1pm CT)
+
+Patrick: *"do what u think."* I inspected the live workflows and tried to pause
+the bad ones. **`ghl_update_workflow_status` is a 404 (`Cannot PATCH /workflows/<id>`)
+and `ghl_publish_workflow` only publishes — there is NO un-publish in this MCP.**
+Pausing a workflow REQUIRES Patrick or a VA in the UI: Automation → Workflows →
+open it → toggle Publish off. Emailed Churchie (cc Dave, Christian, Angel) in
+English and Tagalog with the exact IDs and steps.
+
+**GUILTY, both PUBLISHED, both still live:**
+- **`Random Fiber SMS After Calls` `5a7f16a7-fa67-4753-9ecc-e8f58a50c715`** —
+  body is 276 chars + GHL's 27 = **two segments**; writes its OWN
+  `Reply STOP to opt out.` on top of GHL's append (doubled STOP); quotes an
+  unverified promo; says *"great talking with you!"* to people who never
+  answered. **Its landline guard is broken in a way that matters: the `if_else`
+  only skips contacts tagged `invalid`.** A landline that has NEVER been texted
+  carries no such tag, so it texts landlines — which is how Michael K Mcneal got
+  a text after I excluded him.
+- **`Updated - SMS Workflow` `543457a5-30c0-46c1-824a-254723b6eafb`** — ~400
+  chars = **three segments**, bullet points, iPhone and price promos. Textbook
+  carrier-filter bait.
+
+**CLEARED by inspection, do NOT blame these:** `Fresh Green Milton Power Dialer`
+(`cad31942`) is one `manual-call` action, no SMS. `Hot Leads - Power Dialer`
+(`e72282ff`) is one `add_contact_tag`, no SMS. `1. Contact Tag "leads"`
+(`618d099a`) creates an opportunity and routes to Designated Agent, no SMS.
+
+**STILL UNIDENTIFIED:** the *"Hi, this is Patrick. I wanted to remind you about
+AT&T Fiber internet..."* text is in NONE of the five workflows read. It may be a
+Campaign rather than a workflow. Churchie asked to find it.
+**`triggers` reads `[]` on every workflow through this MCP, so a workflow that is
+firing looks identical to one that is not** — never conclude from that field.
+
 ### THE MILTON OPT-OUTS ARE OVER-CONTACT, NOT A SPAM NUMBER (MEASURED 2026-09-03 ~12:45pm CT)
 
 Patrick: *"We're texting w a spam number and people are saying remove from list
