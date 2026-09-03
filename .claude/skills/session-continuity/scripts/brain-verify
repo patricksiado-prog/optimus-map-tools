@@ -114,6 +114,9 @@ STATE_CLAIMS = [
 ]
 JUNK_TABS = ["Gold Dots", "TEST-Green-2026-08-24", "TEST-Gold-2026-08-24",
              "TMP Sweep Census", "ZZ_TMP_GRID", " _temp_ash_lookup", "_optimus_probe"]
+# 4 of these VANISHED between the 2026-09-02 16:36 clean and the 23:39 launch
+# (see CURRENT STATE). Keep them listed: the alarm stays up until Patrick
+# restores them or says they are gone for good.
 PROTECTED_TABS = ["Warm Backlog — Replied YES", "Angleton Call List — Aug 2026",
                   "WORK LIST — Beaumont + Angleton", "GOLD — CLEAN", "Gold Confirmed"]
 

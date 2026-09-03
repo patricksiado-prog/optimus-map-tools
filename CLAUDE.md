@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 evening (clean ran, split deployed, hunter back up)
+# CURRENT STATE — updated 2026-09-03 late night (21 tabs gone, backlog landed, sheet log built)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -19,7 +19,33 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
-### THE CLEAN RAN. GOLD IS CLEAN: 1,884 rows, all post-08-24. (MEASURED 2026-09-03, Patrick's console)
+### 21 TABS ARE GONE FROM PRODUCTION — 8 LEFT. (MEASURED 2026-09-03 off tabs.json STAMPED 2026-09-02 23:39:40 laptop time, published by the scraper on LAPTOP-RS9EHSLO)
+
+**The production workbook now has 8 tabs:** `Precise Fiber` 687,923 · `Grey
+Fiber Customers` 56,799 · `Maps Businesses` 39,294 · `Fiber Green Biz` 7,300 ·
+`Gold Confirmed` **4,707** · `Upgrade Orange Biz` 62 · `Territory Claims` 0 ·
+`_Dedupe Lock` 0. **Gone: `Warm Backlog — Replied YES` (40 people who said
+yes), `Angleton Call List`, `WORK LIST — Beaumont + Angleton`, `GOLD — CLEAN`,
+`Beaumont Gold — Aug 2026`, `HOUSTON UNVERIFIED — Aug 19`, `Backend Comm`,
+`Hunter Status`, `Backend Analysis`, `Backend Capture`, `Gold Biz Campaign —
+READY`, `Devonwood Campaign`, `Operator Scorecard`, `_dispatch` and the junk.**
+Not the scraper's clean (its junk list is 6 named tabs, and it printed "removed
+1"). Not `CLEAN_SHEET.bat` (its KEEP list keeps Backend Comm and Hunter
+Status, both gone). **Who deleted them is UNKNOWN — ask Patrick. If it was a
+hand delete, Google's version history (File → Version history) restores them;
+clean_sheet.py also CSV-backs-up before deleting.**
+**Consequence: the space freed let the hunter's parked backlog LAND in
+production** — gold 1,884 → 4,707 (+2,823 of the 6,012 parked), grey 26,689 →
+56,799, green +42.5k. Then it filled up again: the scraper at 00:10 laptop time
+printed `SHEET FULL -- NOTHING IS REACHING THE SHEET`, ZIP 32503 (Pensacola).
+**CORRECTION TO THE LIVENESS RULE: `fileSize` stayed 8,484,584 while ~75,000
+rows landed.** Drive's fileSize for a Google Sheet does NOT track content. A
+flat fileSize proves nothing either way. The liveness check is the STAMPED
+tabs.json row counts (and `_feed/_landed.json` once deployed), not Drive metadata.
+Split workbook still 1,024 bytes / 08-30: the hunter has still never run the
+new build.
+
+### (superseded above) THE CLEAN RAN. GOLD IS CLEAN: 1,884 rows, all post-08-24. (MEASURED 2026-09-03, Patrick's console)
 
 **The startup clean fired on Patrick's PC and completed.** Console, verbatim:
 `gold purge: ignoring the OLD done-flag` → `gold purge: nothing to remove -- all
@@ -69,8 +95,20 @@ deletes rep tabs.
   public; the GHL contact id is the pointer to the person. **Every enrichment
   from now on ends with that command.** The first batch (PCOLA FRESH, 141 rows,
   no PII, verified) is written and goes up with the deploy.
-- Columns: Address · City · State · ZIP · Enriched At · Source · Pool · GHL
-  Contact ID · Phone Type · Likely Gold · DNC · Colour · Landed At.
+- **EXTENDED 2026-09-03 late (Patrick: "use the sheet to log sales etc" + "color
+  for sales status red no / green cb maybe / blue paid"): BUILT, TESTED, NOT
+  PUSHED.** Three feeds now: `_feed/enriched/` → `Enriched Leads` (append),
+  `_feed/status/` → the same rows' Dialed · Last Call · Disposition · DND · Dead
+  · Status At (one batch write, newest file wins), `_feed/sales/` → **`Sales
+  Log`** (append: Sold At · Address · City · State · ZIP · Product · Rep # · Pool
+  · Source · GHL Contact ID · Opportunity ID · Stage · Status · Logged At).
+  **Rows colour by Status, the whole row: red = NO / NOT INTERESTED / DEAD,
+  green = CB / MAYBE, blue = PAID / SOLD.** Rules added once at tab creation.
+  Hand-typed rows on `Sales Log` are never touched. NO dollar figures on it —
+  Ara has the sheet. Tested: 141 enriched land once, 2 status rows update, 1
+  unknown id reported, hand-typed sale survives, old 13-col tab widens to 19,
+  full production prints and does not crash. Step name in the console:
+  `SHEET LOG`. Deploys at the next scraper launch after Patrick's go.
 - **Patrick's intent, 2026-09-03 (verbatim): "so now the sheet will contain the
   data enriched by deal machine so u don't enrich 2x, dnd, u can check if we
   called and if dead."** What the build covers TODAY: (1) never enrich twice —
@@ -159,7 +197,7 @@ deletes rep tabs.
 
 ### The gold question — answer it with the caveat, never the raw number
 
-- **`Gold Confirmed` = 1,884 rows, ALL post-08-24 (MEASURED live 2026-09-03 by the scraper's purge read). The old "11,490 / 2,438 believed real" was a stale tabs.json number** —
+- **`Gold Confirmed` = 4,707 rows (MEASURED off tabs.json STAMPED 2026-09-02 23:39 laptop time). It was 1,884 at the 16:36 purge; +2,823 of the 6,012 parked gold rows landed once 21 tabs vanished and freed cells. All post-08-24. Unique addresses still unmeasured — `py gold_audit.py`.** (older text follows) The old "11,490 / 2,438 believed real" was a stale tabs.json number —
   MEASURED 2026-08-27 via `optimus/_feed/sheet/tabs.json` and **RE-CONFIRMED
   UNCHANGED 2026-09-03**: the last run ended `LOGIN_TIMEOUT` with all counters at
   zero, and `fileSize` has been byte-identical since 08-30, so nothing has been

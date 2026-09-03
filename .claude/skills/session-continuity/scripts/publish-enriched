@@ -8,22 +8,35 @@ workbook at its next launch (sync_enriched_leads in maps_scraper_standalone.py).
 
 USAGE
   publish-enriched ROWS.json --pool pcola-fresh [--source "..."] [--dry-run]
-  publish-enriched --check            # did the last drop land? reads _landed.json
+  publish-enriched --kind status ROWS.json      # call status onto those rows
+  publish-enriched --kind sales  ROWS.json      # one row per sale -> 'Sales Log'
+  publish-enriched --check                      # what landed? reads _landed.json
 
-ROWS.json is a list of objects with: address, city, state, zip, enriched_at,
-ghl_contact_id, phone_type (wireless|landline), likely_gold (bool), dnc (bool),
-colour (green|gold|grey|unverified). NO names, phones or emails -- the repo is
-PUBLIC. This script refuses anything that looks like one.
+  enriched rows: address, city, state, zip, enriched_at, ghl_contact_id,
+                 phone_type (wireless|landline), likely_gold, dnc, colour
+  status rows:   ghl_contact_id, dialed, last_call, disposition, dnd, dead, status_at
+  sales rows:    sold_at, address, city, state, zip, product, rep (a NUMBER, "Rep 3"),
+                 pool, source, ghl_contact_id, opportunity_id, stage,
+                 status (NO | CB | MAYBE | PAID -- the row colours by it)
+NO names, phones, emails or DOLLAR figures -- the repo is PUBLIC and the sheet
+is shared with the team. This script refuses anything that looks like one.
 """
 import io, json, os, re, subprocess, sys, time, urllib.request
 
 CLONE = os.environ.get("HUNTER_CLONE", "/home/user/go-high-level-mcp-2026-complete")
 BRANCH = "claude/optimus-map-tools-setup-6dcl6o"
-FEED = "optimus/_feed/enriched"
+FEED = "optimus/_feed"
 RAW = ("https://raw.githubusercontent.com/patricksiado-prog/"
        "Go-High-Level-MCP-2026-Complete/%s/%s/" % (BRANCH, FEED))
-ALLOWED = {"address", "city", "state", "zip", "enriched_at", "ghl_contact_id",
-           "phone_type", "likely_gold", "dnc", "colour", "source", "pool"}
+ALLOWED = {
+    "enriched": {"address", "city", "state", "zip", "enriched_at", "ghl_contact_id",
+                 "phone_type", "likely_gold", "dnc", "colour", "source", "pool"},
+    "status": {"ghl_contact_id", "dialed", "last_call", "disposition", "dnd", "dead",
+               "status_at"},
+    "sales": {"sold_at", "address", "city", "state", "zip", "product", "rep", "pool",
+              "source", "ghl_contact_id", "opportunity_id", "stage", "status"},
+}
+MONEY = re.compile(r"\$\s?\d|\b\d+(?:\.\d\d)?\s?(?:usd|dollars)\b", re.I)
 PHONE = re.compile(r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
 
 
@@ -40,11 +53,11 @@ def check():
         print("no _landed.json yet (%s) -- the scraper has not launched since the "
               "feature deployed, or the feed is empty." % str(e)[:40])
         return
-    print("LANDED (scraper launch %s): %s rows on '%s' in the %s; %s landed that "
-          "launch from %s file(s)%s" % (
-              d.get("generated_at"), d.get("rows_on_tab"), d.get("tab"),
-              d.get("workbook"), d.get("landed_this_launch"), d.get("files_read"),
-              "; UNREADABLE: %s" % d["files_unreadable"] if d.get("files_unreadable") else ""))
+    print("LANDED at scraper launch %s in the %s:" % (d.get("generated_at"), d.get("workbook")))
+    print("  Enriched Leads: %s rows on tab; this launch %s" % (
+        d.get("enriched_rows_on_tab"), d.get("enriched")))
+    print("  status: %s" % d.get("status"))
+    print("  Sales Log: %s" % d.get("sales"))
     print("A stamp older than your drop means NO scraper launch since -- not "
           "'nothing to land'. Ask for a Maps Scraper launch.")
 
@@ -52,35 +65,49 @@ def check():
 def main(argv):
     if "--check" in argv:
         return check()
-    if not argv or argv[0].startswith("--"):
+    if not argv:
         die(__doc__)
-    path, pool, source, dry = argv[0], None, "claude session", "--dry-run" in argv
+    kind, pool, source, dry = "enriched", None, "claude session", "--dry-run" in argv
+    path = None
     for i, a in enumerate(argv):
         if a == "--pool":
             pool = argv[i + 1]
-        if a == "--source":
+        elif a == "--source":
             source = argv[i + 1]
-    if not pool:
-        die("--pool is required (the GHL tag the batch carries)")
+        elif a == "--kind":
+            kind = argv[i + 1]
+        elif a.endswith(".json") and (i == 0 or argv[i - 1] not in ("--pool", "--source", "--kind")):
+            path = a
+    if kind not in ALLOWED:
+        die("--kind must be one of %s" % ", ".join(ALLOWED))
+    if not path:
+        die("ROWS.json is required")
+    if kind == "enriched" and not pool:
+        die("--pool is required for enriched rows (the GHL tag the batch carries)")
+    pool = pool or kind
     rows = json.load(io.open(path, encoding="utf-8"))
     if not isinstance(rows, list) or not rows:
         die("ROWS.json must be a non-empty list")
     for n, r in enumerate(rows):
-        extra = set(r) - ALLOWED
+        extra = set(r) - ALLOWED[kind]
         if extra:
             die("row %d has fields that are not allowed in a public feed: %s"
                 % (n, ", ".join(sorted(extra))))
-        if not r.get("address"):
+        if kind == "enriched" and not r.get("address"):
             die("row %d has no address" % n)
+        if kind == "status" and not r.get("ghl_contact_id"):
+            die("row %d has no ghl_contact_id" % n)
         for k, v in r.items():
             s = str(v)
             if "@" in s or PHONE.search(s):
                 die("row %d field %r looks like a phone or email -- refused" % (n, k))
+            if MONEY.search(s):
+                die("row %d field %r looks like a dollar figure -- refused (Ara has the sheet)" % (n, k))
     stamp = time.strftime("%Y%m%d-%H%M%S")
     feed = {"generated_at": time.strftime("%Y-%m-%d %H:%M:%S"), "source": source,
             "pool": pool, "rows": rows}
     fname = "%s-%s.json" % (stamp, re.sub(r"[^a-z0-9-]", "", pool.lower()))
-    out = os.path.join(CLONE, FEED, fname)
+    out = os.path.join(CLONE, FEED, kind, fname)
     print("%d row(s) -> %s" % (len(rows), out))
     if dry:
         return
@@ -89,13 +116,13 @@ def main(argv):
         json.dump(feed, f, separators=(",", ":"))
     g = lambda *a: subprocess.run(["git", "-C", CLONE] + list(a), check=True,
                                   capture_output=True, text=True)
-    g("add", os.path.join(FEED, fname))
-    g("commit", "-q", "-m", "enriched feed: %s (%d rows)" % (pool, len(rows)))
+    g("add", os.path.join(FEED, kind, fname))
+    g("commit", "-q", "-m", "%s feed: %s (%d rows)" % (kind, pool, len(rows)))
     g("fetch", "origin", BRANCH)
     g("rebase", "FETCH_HEAD")
     g("push", "origin", "HEAD:" + BRANCH)
-    print("pushed. It lands on the 'Enriched Leads' tab at the next Maps Scraper "
-          "launch; run `publish-enriched --check` after that launch.")
+    print("pushed. It lands at the next Maps Scraper launch (SHEET LOG step); run "
+          "`publish-enriched --check` after that launch.")
 
 
 if __name__ == "__main__":

@@ -9308,3 +9308,46 @@ commit plus the first feed file, then add the brain-verify claim
 `Gold Confirmed` itself, and the hunter's dedupe does not consult it. Both are
 possible later by reading `Enriched Leads` from the split workbook; neither was
 asked for.
+
+---
+
+## 2026-09-03 late — 21 TABS GONE, backlog landed, fileSize is NOT a liveness signal; SALES LOG + colours built
+
+**Found by brain-verify at session start** (the manifest working as designed):
+tabs.json is now STAMPED `2026-09-02 23:39:40` (laptop time, LAPTOP-RS9EHSLO)
+— the scraper launched in ZIP 32503 (Pensacola) — and it lists **8 tabs**:
+Precise Fiber 687,923 · Grey Fiber Customers 56,799 · Maps Businesses 39,294 ·
+Fiber Green Biz 7,300 · Gold Confirmed 4,707 · Upgrade Orange Biz 62 ·
+Territory Claims 0 · _Dedupe Lock 0. Twenty-one tabs from the 16:36 list are
+gone, four of them PROTECTED (`Warm Backlog — Replied YES`, the Angleton call
+list, the Beaumont work list, `GOLD — CLEAN`), plus Backend Comm / Hunter
+Status / Backend Analysis / Backend Capture / Gold Biz Campaign — READY /
+Devonwood Campaign / Operator Scorecard / _dispatch / HOUSTON UNVERIFIED /
+Beaumont Gold — Aug 2026 and the junk.
+
+**Not the scraper** (named junk list of 6; console said "removed 1"). **Not
+CLEAN_SHEET.bat** (its KEEP list keeps Backend Comm and Hunter Status). So a
+hand delete in the Google UI, or something not in this repo. Recovery: File →
+Version history in Google Sheets restores a deleted tab; clean_sheet.py also
+writes CSV backups first if that was run. **Ask Patrick who did it before
+assuming.**
+
+**What the freed space did:** the hunter's parked backlog landed in
+production — gold 1,884 → 4,707, grey 26,689 → 56,799, green 645k → 688k —
+and then it filled up again (scraper 00:10: `SHEET FULL`, 95 rows parked).
+Split workbook still 1,024 bytes: the new hunter build has still never run.
+
+**CORRECTION to a rule this brain repeated for a week:** Drive `fileSize`
+stayed **8,484,584** while ~75,000 rows landed. fileSize does not track a
+Google Sheet's content. It was "authoritative" because it once happened to
+move; it never proved anything. Liveness = stamped tabs.json row counts
+(and `_feed/_landed.json` after the sheet-log deploy). Removed from the
+optimus-sheet method table? — no: the table already says "get_file_metadata
+… fileSize"; FIX IT (done in this commit).
+
+**Built this session, not pushed:** the scraper's `SHEET LOG` step — three
+feeds (`enriched`, `status`, `sales`) → `Enriched Leads` (append + status
+update) and `Sales Log` (append; hand-typed rows untouched); whole-row colour
+by Status per Patrick: red NO / green CB-MAYBE / blue PAID. Tested against a
+fake workbook, all cases pass. `publish-enriched` grew `--kind status|sales`
+and refuses dollar figures (Ara has the sheet). Waiting on "go".
