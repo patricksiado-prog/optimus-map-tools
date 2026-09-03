@@ -19,6 +19,51 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE WHOLE ENRICHED POOL IS NOW IN ONE LABELLED FILE — 3,511 ROWS (MEASURED 2026-09-03 evening)
+
+Patrick: *"give me a file w all the gold enriched / the new green Beaumont
+angleton laport all together labeled"*. Built and handed to him as
+`OPTIMUS_GOLD_AND_GREEN_labeled.csv` (634 KB, 3,511 rows, 16 columns).
+
+**Columns:** LABEL · COLOUR · TIER · MARKET · TYPE (resi/biz) · NAME · CELL ·
+ADDRESS · LANDLINE-CALL-ONLY · DNC(registry) · DO-NOT-CONTACT(they told us) ·
+DISPOSITION · ATTEMPTS · COLOUR SOURCE · COLOUR TRACEABLE · GHL CONTACT ID.
+Sorted **gold first, then green by market**.
+
+| | n |
+|---|---|
+| GREEN | 2,422 |
+| GOLD — copper upgrade | 318 |
+| GOLD — att.net email (already an AT&T customer) | 195 |
+| UNVERIFIED (no dot) — the Milton pool | 120 |
+| NO COLOUR MARKER | 456 |
+| **Beaumont + Angleton + La Porte together** | **2,761** |
+| Beaumont 1,388 · Angleton 696 · La Porte 677 · Milton 141 · Houston 255 | |
+| RESIDENTIAL 3,003 · BUSINESS 508 | |
+| **ALL GOLD = 513** (Beaumont 365 · La Porte 56 · Angleton 49 · Milton 21 · Houston 16), **509 callable now** | |
+
+**Only 416 of the 3,511 (11.8%) have a traceable colour source.** Same finding as
+the called-lead audit, now across the whole pool. The file carries it per row so
+a rep can see it.
+
+**253 are LANDLINES — call, never text. 30 have told us to stop** and are marked
+DO NOT CONTACT. **88 have no address at all and 94 are a bare street with no
+house number** — both now read `ADDRESS UNKNOWN - ASK FOR IT ON THE CALL` /
+`[NO HOUSE NUMBER - ASK ON THE CALL]` in the address cell so no rep reads a
+street name aloud.
+
+**CORRECTION — `alpha-t5-green` is 2,309, not 2,511.** MEASURED by paging the
+whole tag for the first time. It is also NOT pure residential green: its tail is
+`optimus-fiber-biz` / `fiber-green-biz` rows including Oklahoma 405 numbers with
+no address. Labelled BUSINESS in the file.
+
+**HOW TO PAGE A TAG BIGGER THAN 500 — this now works and is worth reusing.**
+`search_contacts` caps at 500 with no offset. `official_contacts_get_contacts`
+pages it: `{locationId, query:"<tag>", limit:100, startAfter, startAfterId}`,
+taking the next pair from `data.meta`. 24 calls for 2,309, and **every result
+lands in a file instead of the transcript, so the whole pull costs almost no
+context.** The last page returns short — that is the end, not an error.
+
 ### THE CUSTOMER CONFIRMED IT HIMSELF — AND FOUR THINGS IN THIS FILE WERE WRONG (MEASURED 2026-09-03 5:45pm CT, evening edition)
 
 **Kristopher Goodman texted at 5:21pm CT: *"Someone from ATT called me and said
@@ -497,8 +542,8 @@ blocked on a transport limit, below.
 89 landline, 33 are CB (they already said yes), 9 NI. ZERO are DND** — nobody in
 this set has told us to stop.
 
-- **`alpha-t5-green` (2,511) is NOT pulled yet.** `search_contacts` caps at 500
-  with no offset, so a tag bigger than 500 cannot be paged that way;
+- **`alpha-t5-green` IS NOW PULLED — 2,309, all with cells (MEASURED 2026-09-03
+  evening).** `search_contacts` caps at 500 with no offset, so a tag bigger than 500 cannot be paged that way;
   `official_contacts_get_contacts` pages 100 at a time with `startAfterId`.
 - **GHL has NO `address1` for the 141 `pcola-fresh`** — their address lives in
   the note. Recovered from the local plan file. **16 of the 33 warm also have no
@@ -845,7 +890,8 @@ deletes rep tabs.
 - **Tag `alpha` is the pool: 3,379 UNIQUE PEOPLE** (was 3,581 before 202
   duplicate second-copies were stripped 2026-09-03). Point the dialer at that tag.
   Tiers, best first: `alpha-t1-warm` 33 · `alpha-t2-gold` 492 ·
-  `alpha-t3-green-pocket` 307 · `alpha-t4-business` 238 · `alpha-t5-green` 2,511.
+  `alpha-t3-green-pocket` 307 · `alpha-t4-business` 238 · `alpha-t5-green` **2,309**
+  (MEASURED 2026-09-03 by paging the whole tag; the old 2,511 was wrong).
   Angleton + La Porte + Beaumont + Devonwood + the whole dialer queue + Pool A +
   the att.net gold, merged and deduped. 90 dropped (73 NI, 16 unsellable, 1 no
   phone); 220 more came back `contact is deleted` — stale ids, not a bug.
