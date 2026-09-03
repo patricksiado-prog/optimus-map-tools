@@ -115,6 +115,49 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
+### THE MILTON OPT-OUTS ARE OVER-CONTACT, NOT A SPAM NUMBER (MEASURED 2026-09-03 ~12:45pm CT)
+
+Patrick: *"We're texting w a spam number and people are saying remove from list
+creating higher reject rate and interfering w our ability to text."* He is right
+that it is happening. **The cause measures as MULTIPLE TOUCHES IN ONE HOUR, not a
+flagged number.**
+
+**AT LEAST 7 of the 119 Milton people STOP'd within ~90 minutes** (a floor, not a
+total — `get_recent_messages` only returns 30 conversations): Jacqueline A Walker,
+Peter J Nolan, Amy L Lucus Rice, Teresa A Spindler, Fayrene L Livingston,
+Donna R Lunsford, Michael D Sharp. **5.9% against a ~2% benchmark.**
+
+**What else hit the SAME Milton people in the same hour, measured off their
+conversations:**
+- the **old $30 promo** ("10x faster for just $30/month... 2 free months") — to
+  Robert F Mcconnell, Susan J Nelson, Kendra D Francis, Jessica Thompson.
+- an automated **"Hi, this is Patrick. I wanted to remind you about AT&T Fiber"**
+  follow-up — to James L Barnes, Justin M Scott, Geraldine R Robers,
+  Brandy H Bowers, **Michael K Mcneal**.
+- **David W Pugh (5421 Shamrock St) replied "why do you keep calling."** That is
+  an over-contact complaint, not a spam-filter complaint.
+
+**MICHAEL K MCNEAL IS A LANDLINE I DELIBERATELY EXCLUDED and something texted him
+anyway.** So an automation is texting landlines — every one of those is a 30006
+failure charged against the sending number. That is the mechanism that actually
+degrades deliverability here.
+
+**Three Milton workflows were built by someone else at 05:10–05:18am CT TODAY,
+before my 11:02am send:** `Evergreen Estates — Milton Power Dialer`
+(`26252805-cdb7-41ab-b2e4-6f5cc20e8f88`), `Fresh Green Milton Power Dialer`
+(`cad31942-fb78-44ff-8a70-02e44a50236f`, published), `Fresh Green Milton - Not
+Interested Exit` (`95d7078e-1881-4158-817e-52dc910bd69b`). `Hot Leads - Power
+Dialer` (`e72282ff-3e2d-42eb-b80a-4aa1110d6c67`) was created 10:59am CT, one
+minute before my first send. **Nobody told me these existed and I did not check
+for them before sending — that is my miss.**
+**`Random Fiber SMS After Calls` (`5a7f16a7-fa67-4753-9ecc-e8f58a50c715`) is STILL
+PUBLISHED** and is the prime suspect for the "reminder" text: it fires on
+enrolment, so every dialer enrolment sends a text.
+
+**STANDING RULE FROM NOW: before ANY bulk send, list the published workflows and
+check what is already touching that pool.** A clean list and clean copy mean
+nothing if three other automations are hitting the same people the same hour.
+
 ### THE MILTON TEXT WENT OUT — 119 SENT, 0 FAILURES (2026-09-03 11:02–11:08am CT, MEASURED)
 
 Patrick: *"text the Milton please randomized fiber offer make sure the number
