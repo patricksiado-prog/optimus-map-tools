@@ -11,7 +11,8 @@ def grab(name):
     assert m, name
     return m.group(1)
 
-unit = re.search(r"^_UNIT = .*$", src, re.M)
+unit = re.search(r"^_UNIT = .*?\n(?=\S)", src, re.S | re.M)
+suf  = re.search(r"^_SUF = .*?\n(?=\S)", src, re.S | re.M)
 ns = {"json": json, "time": time, "re": re, "os": os}
 code = "\n".join([
     'GH_REPO="x/y"', 'GH_BRANCH="b"', '_WRITE_STAMPS=[]', '_MACHINES=[1]',
@@ -20,6 +21,7 @@ code = "\n".join([
     'def _gh_token(): return None', 'def _sheet_throttle(max_per_min=50): pass',
     'PUTS={}', 'def gh_put(p,t): PUTS[p]=json.loads(t); return True',
     grab("_err_kind"), 'def _pf_spreadsheet(sh): return sh.split if sh.split else sh',
+    suf.group(0),
     unit.group(0) if unit else "_UNIT = re.compile(r'\\b(APT|UNIT|STE|SUITE|#)\\s*\\S+')",
     grab("_norm_addr"),
     src[src.index("FEED_FOLDER_ID = "):src.index("def publish_tab_counts")],
@@ -109,7 +111,8 @@ g = byaddr["5708 Zinnia Ave"]; print("gold row:", g[:3], g[E["Tab"]], g[E["Name"
 assert g[1] == "ORANGE" and g[E["Tab"]] == "Gold Confirmed" and g[E["Name"]] and g[E["Cell"]].startswith("+1") and g[2] == "2026-09-02 19:11"
 gr = byaddr["6381 Rosebud Rd"]; assert gr[1] == "GREY" and gr[E["Tab"]] == "Grey Fiber Customers" and gr[E["Status"]] == "Existing AT&T Customer", gr[:14]
 gn = byaddr["5656 Marigold Ave"]; assert gn[1] == "GREEN" and gn[E["Tab"]] == "Precise Fiber", gn[:14]
-bz = byaddr["5504 Willard Norris Rd"]; assert bz[E["Business"]] == "Joe's Bait" and bz[E["Tab"]] == "Fiber Green Biz", bz[:14]
+bz = [r for r in el.rows[1:] if r[0].startswith("5504 Willard Norris Rd")][0]   # the hunter row's own address wins
+assert bz[E["Business"]] == "Joe's Bait" and bz[E["Tab"]] == "Fiber Green Biz", bz[:14]
 un = [r for r in el.rows[1:] if r[1] == "UNVERIFIED"]; print("unverified rows:", len(un), "| status text:", un[0][12])
 assert un and un[0][E["City"]] == "Milton" and un[0][E["ZIP"]] == "32570"
 s0 = byaddr[erows[0][0]]; print("status on", erows[0][0], "->", s0[E["Dialed"]:E["Status At"]+1])

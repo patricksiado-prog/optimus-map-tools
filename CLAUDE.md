@@ -45,7 +45,26 @@ tabs.json row counts (and `_feed/_landed.json` once deployed), not Drive metadat
 Split workbook still 1,024 bytes / 08-30: the hunter has still never run the
 new build.
 
-### THE FOLLOW-UP BOARD — REDESIGNED TO PATRICK'S SPEC, WRITTEN, **UNTESTED, NOT PUSHED** (2026-09-03 ~01:00 CT)
+### THE MAPS SCRAPER IS RUNNING RIGHT NOW AND DELIVERING NOTHING. (MEASURED 2026-09-03 off a photo of Patrick's console)
+
+Every per-search line reads `<-- NOT ON THE SHEET, parked (N held)`, N climbing
+11 → 188 across ZIP 32503's 153 category searches. **The no-silent-running rule
+is doing exactly its job** — the run looks busy and the suffix says the truth.
+Nothing is lost; parked rows replay when there is room. Two errors in the same
+launch, both consequences of the full workbook, neither fatal:
+- adding the **`Backfilled At` header** → `APIError: [400]: Range ('Precise
+  Fiber'!...)`. The address backfill cannot widen a tab in a workbook at the
+  ceiling, so it skips.
+- `...se Fiber skipped: APIError: [500]: Internal error encountered.` Google's
+  own 500 on the Precise Fiber dedupe pass. Transient, retried next launch.
+
+**TOTALS the scraper printed (deduped):** Precise Fiber **687,923** addresses ·
+Maps Businesses **39,294** · callable unique phone **4,466** · Fiber Green Biz
+**7,300** · Upgrade Orange Biz matches **62**. Background dedupe is ON, every
+30 minutes, all tabs, phone-keyed, in a separate window-less process.
+**This launch republished tabs.json, so the live tab counts are current.**
+
+### THE FOLLOW-UP BOARD — BUILT, COMPILED, **TESTED GREEN — NOT PUSHED, waiting on Patrick's go** (2026-09-03)
 
 - **Patrick's spec (verbatim): "I want the sheet to contain the same columns
   grey green gold biz fiber green biz / and if it's enriched it has name cell
@@ -70,14 +89,23 @@ new build.
   tab = header row of field names + rows. The scraper lists the folder at
   launch, lands, renames the file `LANDED …`, stamps `_feed/_landed.json` on
   GitHub (no PII). The GitHub `_feed/enriched/` file from earlier is obsolete.
-- **STATE OF THE CODE: the rewrite exists ONLY as `patches/sheet-log/` in this
-  repo (sheet_log_block.py + test_board.py + README.md, commit 59b280d), and it
-  has NOT been compiled or run.** This session's shell was blocked by an
-  auto-mode safety check partway through (every Bash call, even read-only,
-  refused for the rest of the session), so `py_compile` and the fake-workbook
-  test could not run, and the local hunter clone holding the edit died with the
-  container. **Untested code is never pushed.** A fresh session: apply the
-  block per the README, compile, run the test, then ask Patrick for go.
+- **STATE OF THE CODE: applied to the local scraper, `py_compile` clean, and
+  `patches/sheet-log/test_board.py` prints ALL TESTS PASS (MEASURED 2026-09-03).**
+  The header is **29 columns** (13 hunter + 16), not 30. What the run proves:
+  a gold address picks up ORANGE + `Gold Confirmed` + its real `Captured At`, a
+  grey one picks up GREY + the grey tab's Status, a green one `Precise Fiber`, a
+  business row takes the biz tab's own longer address and `Fiber Green Biz`, an
+  address the hunter has never seen lands `UNVERIFIED` with the note *"Not on the
+  hunter map yet - colour unverified"* and keeps its city/ZIP; status feeds set
+  CB and Dead; a hand-typed `Sales Log` row survives; feed files are renamed
+  `LANDED …`; launch 2 lands nothing; launch 3 re-sends the same people and adds
+  **no duplicate rows** while overriding the disposition to PAID; a full
+  production workbook prints the ceiling message and lands nothing; a foreign
+  header on an existing `Enriched Leads` is left alone. **NOT PUSHED — RULE 0.**
+  Deploy = copy the block into the hunter repo's `optimus/standalone/
+  maps_scraper_standalone.py` per `patches/sheet-log/README.md`, push, then
+  Patrick relaunches the Maps Scraper. Add the brain-verify claims in the same
+  commit.
   (The earlier GitHub-feed version — tested, but without names/cells and with
   the wrong columns — is gone with that clone; do not look for it.)
 - **What still cannot be automated:** nothing on Patrick's PC reads GHL, so the
