@@ -45,6 +45,52 @@ tabs.json row counts (and `_feed/_landed.json` once deployed), not Drive metadat
 Split workbook still 1,024 bytes / 08-30: the hunter has still never run the
 new build.
 
+### WHAT IS ALREADY ENRICHED — PULLED FROM GHL 2026-09-03 (MEASURED, and 174 rows are already queued for the sheet)
+
+Patrick: *"can u go to the ghl and pull that data the sheet so u see what leads
+have been enriched."* Done for the four small tiers; the big green tier is
+blocked on a transport limit, below.
+
+**Pulled and turned into board rows: 1,211 unique people** — `alpha-t1-warm` 33 ·
+`alpha-t2-gold` 492 · `alpha-t3-green-pocket` 448 (that query returns 307 + the
+141 `pcola-fresh`, which carry the same tag) · `alpha-t4-business` 238.
+**1,153 carry a street address, 993 a ZIP. 491 are likely gold, 143 registry-DNC,
+89 landline, 33 are CB (they already said yes), 9 NI. ZERO are DND** — nobody in
+this set has told us to stop.
+
+- **`alpha-t5-green` (2,511) is NOT pulled yet.** `search_contacts` caps at 500
+  with no offset, so a tag bigger than 500 cannot be paged that way;
+  `official_contacts_get_contacts` pages 100 at a time with `startAfterId`.
+- **GHL has NO `address1` for the 141 `pcola-fresh`** — their address lives in
+  the note. Recovered from the local plan file. **16 of the 33 warm also have no
+  `address1`;** theirs are in the notes too and still need lifting.
+- **Landline is readable for free:** `dndSettings.SMS.message` =
+  `TWILIO_ERROR_CODE: 30006`. That is where the 89 came from — no credits spent.
+- **A big MCP result is written to a file instead of the transcript**, so a
+  500-contact pull costs almost no context. That is how these were taken; use it
+  again rather than paging 25 at a time.
+
+**TWO FEED SHEETS ARE ALREADY IN THE FOLDER, waiting for the deploy:**
+`OPTIMUS FEED enriched alpha-t1-warm 2026-09-03` (33 rows,
+`1yvEBc836yOE9fTdP7FPyrIjci6gm5OlTijAnBbGxHJ0`) and
+`OPTIMUS FEED enriched pcola-fresh 2026-09-03` (141 rows,
+`1battjlKWn2ffGXooLHRptEIQyD-gn3WZ2rgfnd18imI`).
+
+### THE TRANSPORT IS THE BOTTLENECK, AND THE FIX IS A TOKEN FILE (2026-09-03)
+
+**`create_file` takes its content inline, so every row has to be typed out by
+Claude.** 174 rows are loaded; ~3,548 remain. Worse, the status columns Patrick
+actually wants — called, callback, dead, sold — go stale the moment a session
+ends, because nothing on his PC can read GHL. Hand-loading does not fix that; it
+just moves it.
+
+**The fix: `ghl_token.txt` next to `github_token.txt` on the hunter PC** (a GHL
+Private Integration Token, Settings -> Private Integrations, contacts.readonly).
+The Maps Scraper then reads GHL itself at every launch and keeps the whole board
+live with nobody typing anything. Buildable and testable here against a mocked
+HTTP layer, the same way the board itself was tested. **Needs Patrick's go and
+the token — the token never travels in chat.**
+
 ### THE MAPS SCRAPER IS RUNNING RIGHT NOW AND DELIVERING NOTHING. (MEASURED 2026-09-03 off a photo of Patrick's console)
 
 Every per-search line reads `<-- NOT ON THE SHEET, parked (N held)`, N climbing
