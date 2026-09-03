@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""publish-enriched -- the Claude half of "when we enrich leads add that to the
+sheet" (Patrick, 2026-09-03).
+
+Claude cannot write the workbook. It CAN commit a small JSON to the hunter
+repo, and the Maps Scraper lands it on the 'Enriched Leads' tab of the SPLIT
+workbook at its next launch (sync_enriched_leads in maps_scraper_standalone.py).
+
+USAGE
+  publish-enriched ROWS.json --pool pcola-fresh [--source "..."] [--dry-run]
+  publish-enriched --check            # did the last drop land? reads _landed.json
+
+ROWS.json is a list of objects with: address, city, state, zip, enriched_at,
+ghl_contact_id, phone_type (wireless|landline), likely_gold (bool), dnc (bool),
+colour (green|gold|grey|unverified). NO names, phones or emails -- the repo is
+PUBLIC. This script refuses anything that looks like one.
+"""
+import io, json, os, re, subprocess, sys, time, urllib.request
+
+CLONE = os.environ.get("HUNTER_CLONE", "/home/user/go-high-level-mcp-2026-complete")
+BRANCH = "claude/optimus-map-tools-setup-6dcl6o"
+FEED = "optimus/_feed/enriched"
+RAW = ("https://raw.githubusercontent.com/patricksiado-prog/"
+       "Go-High-Level-MCP-2026-Complete/%s/%s/" % (BRANCH, FEED))
+ALLOWED = {"address", "city", "state", "zip", "enriched_at", "ghl_contact_id",
+           "phone_type", "likely_gold", "dnc", "colour", "source", "pool"}
+PHONE = re.compile(r"(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
+
+
+def die(msg):
+    print("publish-enriched: " + msg)
+    sys.exit(1)
+
+
+def check():
+    try:
+        with urllib.request.urlopen(RAW + "_landed.json", timeout=15) as r:
+            d = json.load(r)
+    except Exception as e:
+        print("no _landed.json yet (%s) -- the scraper has not launched since the "
+              "feature deployed, or the feed is empty." % str(e)[:40])
+        return
+    print("LANDED (scraper launch %s): %s rows on '%s' in the %s; %s landed that "
+          "launch from %s file(s)%s" % (
+              d.get("generated_at"), d.get("rows_on_tab"), d.get("tab"),
+              d.get("workbook"), d.get("landed_this_launch"), d.get("files_read"),
+              "; UNREADABLE: %s" % d["files_unreadable"] if d.get("files_unreadable") else ""))
+    print("A stamp older than your drop means NO scraper launch since -- not "
+          "'nothing to land'. Ask for a Maps Scraper launch.")
+
+
+def main(argv):
+    if "--check" in argv:
+        return check()
+    if not argv or argv[0].startswith("--"):
+        die(__doc__)
+    path, pool, source, dry = argv[0], None, "claude session", "--dry-run" in argv
+    for i, a in enumerate(argv):
+        if a == "--pool":
+            pool = argv[i + 1]
+        if a == "--source":
+            source = argv[i + 1]
+    if not pool:
+        die("--pool is required (the GHL tag the batch carries)")
+    rows = json.load(io.open(path, encoding="utf-8"))
+    if not isinstance(rows, list) or not rows:
+        die("ROWS.json must be a non-empty list")
+    for n, r in enumerate(rows):
+        extra = set(r) - ALLOWED
+        if extra:
+            die("row %d has fields that are not allowed in a public feed: %s"
+                % (n, ", ".join(sorted(extra))))
+        if not r.get("address"):
+            die("row %d has no address" % n)
+        for k, v in r.items():
+            s = str(v)
+            if "@" in s or PHONE.search(s):
+                die("row %d field %r looks like a phone or email -- refused" % (n, k))
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    feed = {"generated_at": time.strftime("%Y-%m-%d %H:%M:%S"), "source": source,
+            "pool": pool, "rows": rows}
+    fname = "%s-%s.json" % (stamp, re.sub(r"[^a-z0-9-]", "", pool.lower()))
+    out = os.path.join(CLONE, FEED, fname)
+    print("%d row(s) -> %s" % (len(rows), out))
+    if dry:
+        return
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with io.open(out, "w", encoding="utf-8") as f:
+        json.dump(feed, f, separators=(",", ":"))
+    g = lambda *a: subprocess.run(["git", "-C", CLONE] + list(a), check=True,
+                                  capture_output=True, text=True)
+    g("add", os.path.join(FEED, fname))
+    g("commit", "-q", "-m", "enriched feed: %s (%d rows)" % (pool, len(rows)))
+    g("fetch", "origin", BRANCH)
+    g("rebase", "FETCH_HEAD")
+    g("push", "origin", "HEAD:" + BRANCH)
+    print("pushed. It lands on the 'Enriched Leads' tab at the next Maps Scraper "
+          "launch; run `publish-enriched --check` after that launch.")
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

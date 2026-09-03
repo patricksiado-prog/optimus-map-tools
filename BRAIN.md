@@ -9253,3 +9253,58 @@ enrols until Patrick adds the tag trigger in the UI.
 Patrick's laptop). Once gold lands, cross-match the 21 att.net names against
 `Gold Confirmed` for Milton 32570 and upgrade their tag from likely to
 confirmed; then the 120 `status-unverified` greens get their real colour.
+
+---
+
+## 2026-09-03 21:00 CT — ENRICHMENT LANDS ON THE SHEET (built, tested, not pushed)
+
+Patrick: *"when we enrich leads add that to the sheet / update the software so
+that doesn't cause a prob but that way u can tell what's enrichrd."*
+
+**The problem it solves.** Every enrichment so far (Beaumont, Angleton,
+Devonwood, Pool A, ALPHA, PCOLA FRESH) lived only in GHL and in CSVs sent to
+Patrick. The sheet — the thing the hunter, the scraper, the reps and Claude all
+read — had no idea which dots had been skip-traced, loaded or dialed. So the
+same street got enriched twice (4,783 credits on 09-02 were partly that).
+
+**Why not a column on `Precise Fiber` / `Gold Confirmed`.** Production is at
+the 10M-cell ceiling: a new column on a 645k-row tab is 645k cells, a new tab is
+a 400 on creation. And Claude cannot write the workbook at all — the Drive
+connector is file-level. So the write has to be done by the software, and the
+software has to write somewhere with room.
+
+**The design.** Same channel as the live counts, in the other direction:
+1. Claude drops `optimus/_feed/enriched/<stamp>-<pool>.json` on the hunter repo
+   via `publish-enriched ROWS.json --pool <tag>` (new script in
+   session-continuity/scripts). Fields: address, city, state, zip, enriched_at,
+   source, pool, ghl_contact_id, phone_type, likely_gold, dnc, colour. The script
+   refuses any other field and anything that looks like a phone or email — the
+   repo is PUBLIC.
+2. The Maps Scraper, at every launch, runs `sync_enriched_leads` right after the
+   junk-tab clean: lists the feed dir (GitHub contents API, token optional),
+   opens the SPLIT workbook via the same `_pf_spreadsheet()` the biz match uses,
+   creates `Enriched Leads` (13 cols, 1,000 rows = 13k cells) if missing, reads
+   the keys already there, appends only new rows in 500-row batches under the
+   write throttle, and classifies errors with `_err_kind` — FULL is printed once
+   and never retried. Then it stamps `_feed/enriched/_landed.json`
+   (rows on tab, landed this launch, files read) so Claude checks the
+   DESTINATION, not the return value.
+3. Console line: `ENRICHED LEADS: 1 batch file(s) read, 141 new row(s) ->
+   'Enriched Leads' (split workbook)`. `*** ENRICHED LEADS NOT LANDED` means it
+   did not, and says why.
+
+**Tested 2026-09-03** with a fake workbook and fake GitHub against the real
+PCOLA FRESH feed file: launch 1 lands 141, launch 2 lands 0, a full production
+workbook with no split prints the ceiling message and does not crash, a row
+with no GHL id keys on `ADDRESS|ENRICHED AT`. `py_compile` clean. The scraper's
+self-updater compares bytes, so no BUILD_DATE bump is needed for it (that rule
+is the hunter's).
+
+**Not pushed** — RULE 0. Local commit in the hunter clone. Deploy = push that
+commit plus the first feed file, then add the brain-verify claim
+`def sync_enriched_leads\(` in the same commit here.
+
+**What it does NOT do (yet):** it does not mark the row on `Precise Fiber` or
+`Gold Confirmed` itself, and the hunter's dedupe does not consult it. Both are
+possible later by reading `Enriched Leads` from the split workbook; neither was
+asked for.

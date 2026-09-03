@@ -50,6 +50,28 @@ flags are per-PC) and will print "nothing to remove" on each. Harmless.
 **`SCRAPER_NO_CLEAN=1`** opts out. **DO NOT run `CLEAN_SHEET.bat`** — whitelist,
 deletes rep tabs.
 
+### ENRICHMENT → SHEET (Patrick 2026-09-03: "when we enrich leads add that to the sheet")
+
+- **BUILT AND TESTED, NOT PUSHED — waiting on Patrick's go (RULE 0).** The Maps
+  Scraper gains a startup step `ENRICHED LEADS` (`sync_enriched_leads`, between
+  JUNK TAB CLEAN and TAB COUNTS): it reads batch files Claude drops in
+  `optimus/_feed/enriched/` on the hunter repo and appends the new rows to an
+  **`Enriched Leads` tab in the SPLIT workbook** (production is at the cell
+  ceiling; a tab there is a 400). Keyed on GHL contact id, so re-runs land
+  nothing twice; a FULL workbook is said out loud and never retried; it stamps
+  `_feed/enriched/_landed.json` so Claude can confirm delivery with no Google
+  auth. Tested 2026-09-03 against a fake workbook: 141 rows land once, second
+  launch lands 0, full production prints the ceiling message and does not crash.
+  Local commit in the hunter clone, `optimus/standalone/maps_scraper_standalone.py`.
+- **Claude's half is `.claude/skills/session-continuity/scripts/publish-enriched`**:
+  `publish-enriched ROWS.json --pool <tag>` writes the feed file and pushes it;
+  `--check` reads `_landed.json`. It REFUSES names, phones, emails — the repo is
+  public; the GHL contact id is the pointer to the person. **Every enrichment
+  from now on ends with that command.** The first batch (PCOLA FRESH, 141 rows,
+  no PII, verified) is written and goes up with the deploy.
+- Columns: Address · City · State · ZIP · Enriched At · Source · Pool · GHL
+  Contact ID · Phone Type · Likely Gold · DNC · Colour · Landed At.
+
 ### Is the machine running?
 
 - **18:30 CT: SECOND RELAUNCH (run `20260902-182120`) STILL GOT THE OLD BUILD,

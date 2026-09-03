@@ -169,3 +169,27 @@ neighbouring method because it is easier.
 the date it was taken.** If the method was unavailable, say "could not measure"
 — never fall through to a weaker method silently. Rows are an upper bound on
 addresses; addresses are an upper bound on people.
+
+
+## 9. WHAT HAS BEEN ENRICHED — the `Enriched Leads` tab (2026-09-03)
+
+Patrick: *"when we enrich leads add that to the sheet."* The answer lives in
+the **SPLIT workbook** (`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`), tab
+`Enriched Leads`, one row per enriched person: Address · City · State · ZIP ·
+Enriched At · Source · Pool · GHL Contact ID · Phone Type · Likely Gold · DNC ·
+Colour · Landed At. It is written by the Maps Scraper at launch from the feed
+Claude publishes — never by hand, never by Claude directly.
+
+**After ANY enrichment (DealMachine pull, GHL load, tagging a pool):**
+```
+.claude/skills/session-continuity/scripts/publish-enriched ROWS.json --pool <ghl-tag>
+```
+ROWS.json = address, city, state, zip, enriched_at, ghl_contact_id, phone_type,
+likely_gold, dnc, colour. **No names, phones or emails** — the script refuses
+them; the repo is public. Then, after the next Maps Scraper launch,
+`publish-enriched --check` reads `_feed/enriched/_landed.json` and says how many
+rows are on the tab. A stamp older than your drop = no launch since, not
+"nothing to land".
+
+**Before enriching anywhere:** read this tab (or the feed dir) for the ZIP/pool
+first. A street already on it has already cost credits.
