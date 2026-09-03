@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 late night (twenty-one tabs gone, backlog landed, sheet log built)
+# CURRENT STATE — updated 2026-09-03 evening (Ed was right: the dialed colours are mostly untraceable)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,68 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### WHAT DAVE CALLED THAT WASN'T FIBER — ED WAS RIGHT, AND THE COLOUR IS MOSTLY UNTRACEABLE (MEASURED 2026-09-03 ~5:40pm CT)
+
+Patrick: *"what leads did dave call that weren't fiber"*, with Ed Saldanna's
+screenshots. **All four of Ed's named leads found in GHL. Every one is either a
+WRONG colour or NO colour.**
+
+| Lead | Address | Our data said | Ed says | Where the colour came from |
+|---|---|---|---|---|
+| **Kristopher Goodman** `QkOP0BQNK2yryfXy4ZJS` | 555 Belvedere Dr, Beaumont 77706 | `type-green` `green-new` `fiber-2gig` | **already has fiber** | `source: "Optimus Precise Fiber - Beaumont"`, added 2026-08-26 |
+| **Catherine Goodman** `j3TAmm3oRjwh2mMwoZGn` | same door | `type-green` `green-new` | same door | `medium: csv_import`, 08-28. NO source |
+| **Sharon Williams** `88CxaM4F4FGXDAPVeA7b` | 330 Bradford Dr, Beaumont 77707 | `type-green` `green-new` | **"AT&T Cx, doesn't have the fiber yet"** → copper, i.e. GOLD not green | `csv_import` 08-28. Now `not interested` |
+| **Justin M Scott** `bzGhgFTZ2v6jOAyT9QKS` | 5520 Shamrock St, Milton FL | `status-unverified`, NO dot | interested, warm to Ed | DealMachine `pcola-fresh` |
+| **Archie L Collum** `yxPKD6HBN3hP3OljGvsc` | 5548 Willard Norris Rd, Milton FL | `status-unverified`, NO dot | **"No fiber availible"** | DealMachine `pcola-fresh` |
+
+**GREEN means "Non-AT&T Customer - Can Get Fiber." Two of these are ALREADY AT&T
+customers. That is a GREY row in a green list — not a bad lead, a non-lead.**
+Ed's card notes and his own summary line disagree on Bradford (the note says
+"doesn't have fiber yet", his summary says "already have Fiber") — worth one text
+to pin down, but either way it is not green.
+
+**THE WIDER MEASURE, off the 1,211 pulled from GHL: 218 show call evidence
+(`att-1..6` / `no-answer` / `vmail` / `call back` / `not interested`).**
+
+- **Only 21 of the 218 (9.6%) carry a `source` naming where the colour came
+  from.** The other 197 arrived as a bare spreadsheet upload (`medium:
+  csv_import`, no source) or with no provenance recorded at all.
+- **149 of the 218 called are labelled GREEN. Only 9 of those 149 have a
+  traceable source.**
+- Across all 1,211: **462 GREEN with no traceable source · 263 gold-labelled with
+  no traceable source · 141 `status-unverified` (Milton) · 148 with a real
+  source.**
+- **Even a sourced one was wrong.** Kristopher Goodman came from
+  `Optimus Precise Fiber - Beaumont` on 2026-08-26 — and `Precise Fiber` only
+  became GREEN-ONLY that same day. Before it, that tab held EVERY colour. **Any
+  export taken from Precise Fiber before 2026-08-26 can carry grey and copper
+  rows wearing a green label.** That is the mechanism behind Ed's complaint.
+
+**CORRECTION TO MY OWN AUDIT OF YESTERDAY — CHECK 2, I counted the tag and not
+the provenance.** The 09-03 "94 non-fiber leads pulled" table treated
+`type-green`, `green-new` and **`beaumont-gold-pocket`** as "has a real dot".
+`beaumont-gold-pocket` is the CSV-import tag from `CHRISTIAN_DIALER_775.csv`, not
+a hunter capture. **So "gold tier is 100% clean — all 492 carry a real dot
+marker" is OVERSTATED: only 33 of the 492 carry a traceable source.** A missing
+`source` is not proof a colour is wrong — GHL does not record source on CSV
+imports or API updates — it means **UNVERIFIABLE**, which is the whole problem.
+
+**THE FIX IS ALREADY DEPLOYED AND IS ONE DOUBLE-CLICK AWAY.** The follow-up board
+(hunter `7a69d0a`) re-reads every address against the hunter's OWN tabs at scraper
+launch and writes the real `Dot Color` + `Tab`, stamping
+*"Not on the hunter map yet - colour unverified"* where the address is not on the
+map at all. **151 of the called leads are queued for it now** — feed sheet
+`OPTIMUS FEED enriched called-audit 2026-09-03` =
+`1Y85Jmv6pPFV6APdw26Ol9XFnS02hGmWMMCri17ioLp0` in the feed folder, service account
+confirmed as writer. The verified-copper 65 were left out on purpose; green is
+the suspect population. **Nothing settles until Patrick launches the Maps
+Scraper.**
+
+**COULDN'T READ: whether 555 Belvedere / 330 Bradford sit on `Grey Fiber
+Customers` today.** That tab is 56,799 rows and no Claude read path reaches it.
+`py sheet_feed.py --tab "Grey Fiber Customers"` on the hunter PC publishes it in
+chunks that Claude can curl — that would settle it in minutes.
 
 ### 21 TABS ARE GONE FROM PRODUCTION — 8 LEFT. (MEASURED 2026-09-03 off tabs.json STAMPED 2026-09-02 23:39:40 laptop time, published by the scraper on LAPTOP-RS9EHSLO)
 
