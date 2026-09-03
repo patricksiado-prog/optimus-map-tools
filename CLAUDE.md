@@ -1036,6 +1036,16 @@ the sheet's tabs, headers or contents, and any config on a hunter PC.
 Reading, diagnosing, writing the fix and testing it locally need no permission —
 those are free and reversible. **Pushing is the line.**
 
+## EVERY HUNTER PUSH BUMPS `BUILD_DATE` (learned 2026-09-03, the hard way)
+
+`BUILD_DATE` at the top of `precise_fiber_hunter.py` is how the self-updater
+decides a download is real. Two relaunches on 2026-09-03 printed *"Update looked
+stale/partial -- keeping the copy you have"* and ran the 08-24 build, because
+`59a92bf` and `fcc6b6e` shipped with the date untouched. **Every deploy to the
+hunter today was dead on arrival until `35f1607` bumped it.** brain-verify now
+checks the date matches the last push. Bump it in the same commit as the change,
+then wait ~3 minutes for the raw CDN before telling Patrick to launch.
+
 ## DO NOT BREAK THE HUNTER
 
 **A push to `Go-High-Level-MCP-2026-Complete` is a DEPLOY, not a commit.** Every

@@ -86,6 +86,11 @@ CODE_CLAIMS = [
     (CLEAN, r"^KEEP = \{", True,
      "CLEAN_SHEET.bat is STILL a whitelist -> UNSAFE, deletes rep tabs. Do not run it"),
 
+    # --- the self-updater only accepts a build whose date moved ---
+    (HUNTER, r'^BUILD_DATE = "2026-09-03"', True,
+     "BUILD_DATE was bumped with the last hunter push (35f1607) -- the PC will accept it. "
+     "EVERY hunter push must bump BUILD_DATE or the updater keeps the old copy"),
+
     # --- split sheet ---
     (HUNTER, r"def read_pf_redirect\(", True,
      "the split-sheet redirect hook is live in the hunter"),
