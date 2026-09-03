@@ -115,6 +115,43 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
+### 94 NON-FIBER-VERIFIED LEADS PULLED OUT OF THE DIALER (2026-09-03, 0 errors — Ed's complaint, and he was right)
+
+Ed Saldanna by text: *"So whoever pulling the data pulling stuff for that's not
+even Fiber eligible."* Patrick: *"pull the non fiber eligible shit out of the
+dialer especially non fiber eligible biss."*
+
+**MEASURED against the tag that NAMES a real hunter dot** (`type-green`,
+`green-new`, `gold-upgrade`, `type-copper`, `gold-biz`, `type-green-biz`,
+`status-verified`, `gold-attnet-confirmed`, `beaumont-gold-pocket` …), across the
+1,211 pulled from GHL:
+
+| tier | n | has a real dot | status-unverified | **NO marker at all** |
+|---|---|---|---|---|
+| warm (said yes) | 33 | 17 | 0 | **16** |
+| gold | 492 | 492 | 0 | **0** |
+| green pocket | 448 | 319 | 141 | **9** |
+| business | 238 | 153 | 0 | **85** |
+
+**PULLED FROM EVERY DIAL POOL: 94 — 85 businesses + 9 green.** Removed `alpha`,
+`alpha-t4-business`, `alpha-t3-green-pocket`, `power dialer queue`, `biz-call`,
+`manual-call` and every `agt1`–`agt10`; the 9 green also lost `seq2-dialer` /
+`seq2-t4-green`. 0 errors, verified in the per-contact responses.
+
+**WHY the businesses were the problem, exactly as Ed said:** they came from Google
+Maps scrapes and Dave's own lists (`beaumont bizz 1`, `dave new leads 08/24`,
+`optimus-fiber-biz`, `laporte leads`) and were **never matched to a fiber dot**.
+That is the same gap as `Upgrade Orange Biz` = 62 against 39,294 scraped
+businesses. **Gold tier is 100% clean — all 492 carry a real dot marker.**
+
+**LEFT IN ON PURPOSE, say so rather than quietly pulling them:**
+- **the 141 Milton `status-unverified`** — they came off the AT&T fiber map on
+  green/gold-dense streets, so the STREET is lit; only the per-address colour is
+  unconfirmed because the gold capture was parked. Patrick texted them today and
+  wants them called first. Pulling them would contradict that.
+- **the 16 warm with no marker** — they REPLIED YES. Eligibility is checked on
+  the call; a person who put their hand up is not junk data.
+
 ### FOUND THE "REMINDER" TEXTER: IT IS `No Answer - 6 attempts` — **NOT TOUCHED, NEEDS PATRICK'S CALL** (MEASURED 2026-09-03 ~1:30pm CT)
 
 **`No Answer - 6 attempts` = `cde882bb-d84a-4998-9259-50281f6ce072`, 42 actions,
