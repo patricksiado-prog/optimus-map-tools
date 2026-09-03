@@ -9141,3 +9141,59 @@ and grey are still parking and the fix is to shrink/archive the old
 `Precise Fiber` grid in production (645k rows × 13 cols is still billed even
 though nothing new is written to it). The 208 gold from 08-30 are in the replay
 queue — they are the canary.
+
+
+---
+
+## 2026-09-03 19:15 CT — Second relaunch, still the old build. Root cause: I never bumped BUILD_DATE.
+
+Patrick relaunched at 18:21 (run `20260902-182120`). Per-run heartbeat:
+`build_fingerprint: 3d2a6779` — the 2026-08-24 build, again. Two relaunches,
+two "Update looked stale/partial -- keeping the copy you have".
+
+**Root cause, mine:** `BUILD_DATE = "2026-08-24"` on line 346 of the live
+hunter, with the comment *"bump on every push so the console proves the
+version."* I pushed `59a92bf` (split) and never touched it. The self-updater
+compares the downloaded build to the local one and, seeing the same date,
+treats the download as stale. The CDN lag I blamed at 17:15 was real but
+secondary. **Every hunter deploy today was dead on arrival.** Bumped to
+2026-09-03, pushing now. **Rule: every hunter push bumps BUILD_DATE.** Adding
+a brain-verify claim so a push without a bump shows as DRIFT.
+
+**Measured off Patrick's console, run 182120:**
+- `PRESERVED FOR RETRY: 500 row(s) parked at Gold_Confirmed_20260902-182120_00NN_500.json`
+  × 12, plus a 12-row batch → **6,012 gold rows parked, 0 replayed.** "3602
+  parked batch(es) left for the next launch." "Grids were already auto-shrunk;
+  real archiving is needed now."
+- "business match ON: 27115 businesses loaded" (hunter-side match).
+- "Backfilling 49084 locally-saved leads into the sheet..."
+- Split workbook 1,024 bytes; production 8,484,584 flat, touched 23:58Z.
+
+**So the gap from 17:50 is now measured, not theoretical:** gold and grey write
+to PRODUCTION (`sh.worksheet(GOLD_TAB)` line 3397, `GREY_TAB` line 3892), which
+cannot take another row. 6,012 gold rows — the most valuable capture the
+machine makes — are sitting in JSON on a laptop.
+
+**Two ways out, Patrick's call (RULE 0):**
+(a) Redirect gold + grey writes to the split workbook too — all three colours
+    land in `ATT FIBER LEADS — Precise Fiber`, production becomes pure archive.
+    Reps look in the new workbook for new dots. ~10 lines in the hunter
+    (`_ensure_gold_tab` and the grey open use the PF spreadsheet), plus the
+    scraper's `init_match` reads gold via `_pf_spreadsheet`.
+(b) Free production by archiving the old 645k-row `Precise Fiber` tab out of it
+    (copy to its own workbook, delete the tab). Frees ~8.4M cells; gold/grey
+    keep landing where reps already look. Bigger one-time operation, needs the
+    service account and a careful copy; not a code change alone.
+Recommendation: (a) now — small, testable, and it unblocks 6,012 gold tonight;
+(b) later as housekeeping.
+
+**Ctrl+UP / Ctrl+DOWN:** present in the live file (lines 950, 985, 1068, 1091,
+1165). The PC's old build predates them; the banner Patrick saw (Ctrl+Shift+
+Pause / Ctrl+Shift+Y) is the 08-24 key map. They arrive with the first launch
+that actually pulls the new build.
+
+**Gold pocket, Pensacola, 19:10 CT (Patrick's map):** Azalea / Zinnia /
+Marigold / Sunflower / Pansy / Gardenia / Camellia Ave off Pine Blossom Rd and
+Old Florida Ln — dense ORANGE among green, grey clustered on Old Florida Ln.
+Textbook freshly-lit pocket. It is being captured; it is parked until gold can
+land.

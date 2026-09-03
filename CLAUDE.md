@@ -52,6 +52,20 @@ deletes rep tabs.
 
 ### Is the machine running?
 
+- **18:30 CT: SECOND RELAUNCH (run `20260902-182120`) STILL GOT THE OLD BUILD,
+  `fp 3d2a6779`.** Cause found: I never bumped `BUILD_DATE` (still "2026-08-24")
+  when pushing `59a92bf`/`fcc6b6e`; the self-updater treats a same-date download
+  as stale and keeps the local copy. **Every hunter deploy today was dead on
+  arrival.** Fix = bump `BUILD_DATE` and push; do this on EVERY hunter push.
+  **GOLD IS NOT LANDING:** console shows `6012 still parked`, `3602 parked
+  batch(es) left`, "real archiving is needed now". Gold/grey still write to
+  production (line 3397 `sh.worksheet(GOLD_TAB)`), which is full. The split
+  covers green only. Production `fileSize` flat at 8,484,584 (23:58Z touch).
+  Backfilling 49,084 locally-saved green leads. Ctrl+UP/DOWN keys are in the
+  new build (lines 950–1165); the PC has never received it.
+  **GOLD POCKET SEEN 19:10 CT: Pensacola "flower streets" — Azalea, Zinnia,
+  Marigold, Sunflower, Pansy, Gardenia, Camellia off Pine Blossom Rd / Old
+  Florida Ln — dense orange among green. A door-knock route once it lands.**
 - **SCANNER IS BACK — AT&T login fixed 2026-09-03 ~17:03 CT.** Run
   `20260902-170311` reached `sweep_start` (heartbeat). **BUT that launch ran the
   OLD build** (`build 2026-08-24 fp 3d2a6779`): the self-updater printed
