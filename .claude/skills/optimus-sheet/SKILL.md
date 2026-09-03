@@ -143,3 +143,29 @@ Everything else is live or hand-built. **Plus 9,052 pre-08-24 rows inside
 **THREE TABS THIS SKILL AND CLAUDE.md BOTH NAME DO NOT EXIST:** `DASHBOARD`,
 `README` and `Unknown Customers` are absent from the live list. The "read
 DASHBOARD first" path cannot work until they are rebuilt.
+
+
+## 8. HOW TO ANALYSE THE SHEET — one method per question (added 2026-09-03)
+
+Patrick: *"tell brain how to analyze sheet."* The failures were never access;
+they were picking the wrong method for the question. Match the question to the
+row below, quote the number WITH its method and date, and never substitute a
+neighbouring method because it is easier.
+
+| Question | The ONLY method | Never |
+|---|---|---|
+| **How many rows per tab / which tabs exist** | `_feed/sheet/tabs.json` **with a `generated_at` stamp** (scraper republishes it at every launch). Unstamped = stale feed, say so | Counting a Drive `read_file_content` sample; quoting an unstamped file as live |
+| **How many GOLD / GREEN / GREY** | Tab = colour: `Gold Confirmed`, `Precise Fiber` (green only since 08-26, split workbook since 09-03), `Grey Fiber Customers`. Row count from stamped tabs.json | Filtering `Precise Fiber` by a colour column; reading colour off a city name or ZIP |
+| **UNIQUE gold addresses (dots, not rows)** | `py gold_audit.py` on the hunter PC (one-line paste in CLAUDE.md). Prints rows, uniques, dupes, date range | Presenting a row count as a dot count; saying it cannot be taken |
+| **Is a specific address gold** | `Status` column on its row, or `build_codes.json` on its build code | The tab position, a neighbour's colour, a DealMachine field |
+| **Where is a gold POCKET** | Gold density per street/ZIP off `Gold Confirmed` (group by ZIP + street). Confirm the town from the lat/lng, not the sweep name — the 09-03 "Pensacola" pocket was Milton | Trusting the sweep label; counting a city name as a colour |
+| **Is the sheet GROWING (is capture landing)** | `get_file_metadata` on BOTH workbooks: `modifiedTime` AND `fileSize`. Flat size = nothing landing. Production `1FhO2…`, split `1DXu-…` | The console, `latest.json`, the heartbeat, `SUCCEEDED` |
+| **What did the last run capture** | `_feed/latest.json` → `classified_*`, `written`, `failed_writes`, `capture_truth.delivery`. Check `run_id`/`generated_at` first (a launch stub is all zeros) | Reading counters without the run id |
+| **Anything on a tab too big for Drive** | `py sheet_feed.py --tab "<name>"` → `_feed/sheet/chunk_NNN.json`, then python on the chunks | Pulling the tab whole; Autosheet on a big tab |
+| **Which contacts are dialable / dialed / opted out** | GHL `search_contacts` on the tag, then read `tags`, `dnd`, dispositions on each record | The sheet — it has no dial history |
+| **Did the clean / purge run** | The scraper console (`GOLD PURGE:` / `JUNK TABS DONE`) or a stamped tabs.json without the junk tabs | Assuming from a flag file, or from CLAUDE.md alone |
+
+**Every answer states three things: the number, the method from this table,
+the date it was taken.** If the method was unavailable, say "could not measure"
+— never fall through to a weaker method silently. Rows are an upper bound on
+addresses; addresses are an upper bound on people.

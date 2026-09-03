@@ -9197,3 +9197,59 @@ Marigold / Sunflower / Pansy / Gardenia / Camellia Ave off Pine Blossom Rd and
 Old Florida Ln — dense ORANGE among green, grey clustered on Old Florida Ln.
 Textbook freshly-lit pocket. It is being captured; it is parked until gold can
 land.
+
+---
+
+## 2026-09-03 19:35–19:51 CT — PCOLA FRESH: the gold pocket is in MILTON, and it is in the dialer
+
+Patrick: *"put this in the dialer grab the data from deal machine / call it pcola
+fresh / address in notes and cable competition."*
+
+**Correction first (FOUR CHECKS #2):** the flower streets on his map — Azalea,
+Zinnia, Marigold, Sunflower, Pansy, Gardenia, Camellia, Pine Blossom Rd, Old
+Florida Ln — are **Milton, FL 32570 (Santa Rosa County), subdivision EVERGREEN
+ESTATES**, not Pensacola. The hunter's spiral carried it east. Name stays
+"pcola fresh" because Patrick chose it; every note says Milton.
+
+**DealMachine:** no street filter exists (105 filters, only `subdivision_name`);
+Census/OSM geocoders are 403 through the proxy. `subdivision_name contains
+EVERGREEN` in zip 32570 → 128 properties / 162 owners. `property_export`
+owners, require_phone, no DNC scrub → **149 records, 149 credits** (28,820
+left). 143 rows after phone-dedupe (3 no phone, 3 exact dup); GHL's own
+phone-merge then folded 2 more (Steven Sutherland 5672 Marigold, Donnie Connor
+6325 Rosebud appeared twice in the export) → **141 unique people**.
+
+| | |
+|---|---|
+| **contacts tagged `pcola-fresh` (MEASURED 00:51Z, `search_contacts`)** | **141** |
+| wireless-first | 121 |
+| landline-only (`landline-call-only`) | 22 |
+| registry DNC (`dnc-flagged`, dialed anyway) | 123 |
+| AT&T-family email = likely GOLD (`gold-attnet-confirmed`) | 21 |
+| current Mediacom customer (@mediacombb.net email, noted) | 1 |
+| missing house number (flagged in note, confirm on call) | 3 |
+
+**Cable competition (WebSearch, 09-03):** Milton = **Mediacom** (~83% of the
+city), Cox in parts. Every note carries: *"Mediacom is the cable here (~83% of
+Milton), Cox in parts - coax, weak upload; sell symmetric fiber + the copper
+retirement clock."*
+
+**GHL load, done 00:31–00:51Z:** tags `pcola-fresh`, `alpha`,
+`alpha-t3-green-pocket`, `status-unverified` (colour per address not
+confirmed), `evergreen-estates-milton`. Source `pcola-fresh dealmachine
+2026-09-03`. Note shape per the address rule: address first, pool, customer
+type, cable competition, watch list (DNC / landline / alt phones), SAY THE
+ADDRESS OUT LOUD, address last. Loaded via `upsert_contact` +
+`create_contact_note`, one call each, 141 notes on 141 contacts (the 2 merged
+duplicates kept their first note). CSV
+`PCOLA_FRESH_evergreen_estates_milton.csv` sent to Patrick. IDs in scratchpad
+`pcola/ids.json` for this session only.
+
+**Because `alpha` is on all 141, they are in the ALPHA dial pool** — but the
+ALPHA workflows still have no trigger (the MCP cannot set one), so nothing
+enrols until Patrick adds the tag trigger in the UI.
+
+**Not verified:** these owners against the hunter's parked capture (still on
+Patrick's laptop). Once gold lands, cross-match the 21 att.net names against
+`Gold Confirmed` for Milton 32570 and upgrade their tag from likely to
+confirmed; then the 120 `status-unverified` greens get their real colour.

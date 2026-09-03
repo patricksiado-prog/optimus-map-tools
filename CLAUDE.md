@@ -63,9 +63,19 @@ deletes rep tabs.
   covers green only. Production `fileSize` flat at 8,484,584 (23:58Z touch).
   Backfilling 49,084 locally-saved green leads. Ctrl+UP/DOWN keys are in the
   new build (lines 950–1165); the PC has never received it.
-  **GOLD POCKET SEEN 19:10 CT: Pensacola "flower streets" — Azalea, Zinnia,
-  Marigold, Sunflower, Pansy, Gardenia, Camellia off Pine Blossom Rd / Old
-  Florida Ln — dense orange among green. A door-knock route once it lands.**
+  **GOLD POCKET SEEN 19:10 CT — it is MILTON FL 32570 (Evergreen Estates),
+  NOT Pensacola:** the "flower streets" Azalea, Zinnia, Marigold, Sunflower,
+  Pansy, Gardenia, Camellia off Pine Blossom Rd / Old Florida Ln are in Santa
+  Rosa County; the spiral carried the hunter east. Dense orange among green.
+  **PCOLA FRESH IS IN THE DIALER — MEASURED 2026-09-03 00:51Z via
+  `search_contacts`: 141 contacts carry tag `pcola-fresh`** (143 DealMachine
+  owners, 2 were duplicate people), every one with the address-first note,
+  the cable-competition line (Mediacom ~83% of Milton, Cox in parts) and the
+  watch list. Also tagged `alpha`, `alpha-t3-green-pocket`,
+  `status-unverified`, `evergreen-estates-milton`; 21 `gold-attnet-confirmed`,
+  22 `landline-call-only`, 123 `dnc-flagged` (call anyway). Cost 149 DealMachine
+  credits. Colour per address is UNVERIFIED until the parked gold lands —
+  detail in BRAIN 2026-09-03 PCOLA FRESH.
 - **SCANNER IS BACK — AT&T login fixed 2026-09-03 ~17:03 CT.** Run
   `20260902-170311` reached `sweep_start` (heartbeat). **BUT that launch ran the
   OLD build** (`build 2026-08-24 fp 3d2a6779`): the self-updater printed
