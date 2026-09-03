@@ -86,6 +86,48 @@ grey 161,558 · **gold 3,718 (gold capture is working)** · unknown 524 ·
 undecoded `ip-co` 1,048. **Penetration 48.3%, up from 32.1% — because the run
 was Pensacola/Milton, not Houston. A different market, NOT a classifier change.**
 
+### SEQ2 — THE MILTON-FIRST DIAL SEQUENCE IS BUILT AND TAGGED (2026-09-03, MEASURED)
+
+Patrick: *"can u give me all the gold dots enriched from deal machine / the green
+dots around them / the customers who responded yes / and this new stuff ... load
+them into a new dialer sequence / but I want the Milton stuff called first."*
+
+**946 contacts tagged `seq2-dialer`, 0 errors, in tier order:**
+`seq2-t1-milton` **141** · `seq2-t2-said-yes` **31** · `seq2-t3-gold` **482** ·
+`seq2-t4-green` **292**. Opt-outs (22) and not-interested (7) were stripped
+first. **`alpha-t4-business` (236) was deliberately NOT tagged** — he did not ask
+for businesses; add `seq2-t5-biz` if he wants them.
+- **NOTHING WAS RE-ENRICHED. All 946 already carry name + mobile in GHL.**
+  DealMachine untouched this turn — still 28,490 credits.
+- **66 are landlines: DIAL them, never text them.** 4 of the 31 who said yes carry
+  `sms-opted-out-call-only`/`dnd` — they are call-only, not dead.
+- **Workflow `SEQ2 - Milton First Dialer (Sep 3)` = `62fbc1bd-e756-4cfc-aeed-a9a75d162c9b`,
+  PUBLISHED**, one action (add tag `manual-call`). **It has NO TRIGGER and cannot
+  get one from the MCP** — Patrick adds one trigger in the UI (contact tag →
+  `seq2-t1-milton` first) or nothing enrols. Same limitation as the ALPHA three.
+- Emailed Dave + **Christian `cdpulifreelancer@gmail.com`** + **Angel
+  `aldions446267@gmail.com`** with the tier plan and the full Milton list by
+  street. No dollar figures anywhere in it.
+
+**NEW MEASURED FACT: `official_contacts_create_association` REQUIRES `locationId`
+INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape is
+`{locationId, tags:[...], contacts:[...]}`, `type: "add"`, max 500 per call. Its
+response is ~500 bytes per contact, so a 482-contact call lands in a file rather
+than the transcript — which is free, use it.
+
+### THE MILTON TEXT — 8 ONE-SEGMENT VARIANTS DRAFTED, **NOT SENT** (2026-09-03)
+
+Patrick: *"text Milton a non att randomized fiber message"* — read as **the
+Milton green pool, who are NOT AT&T customers**, so it is an availability notice,
+not a switch pitch (the dot legend calls green *"Non-AT&T Customer - Can Get
+Fiber"*). 8 variants written, each ≤133 chars of body so it stays ONE SEGMENT
+after GHL's 27-char append, checked against the longest name + street in the set.
+Each names the street or the full address; none quotes a price; none writes its
+own opt-out line. **119 textable (141 minus the 22 landlines).**
+**NOT SENT: the request arrived 07:30 CT and quiet hours start 08:00 CT**, and
+this is the exact copy path that produced 19 STOPs in 25 conversations, so it
+waits for Patrick's explicit go.
+
 ### WHAT IS ALREADY ENRICHED — PULLED FROM GHL 2026-09-03 (MEASURED, and 174 rows are already queued for the sheet)
 
 Patrick: *"can u go to the ghl and pull that data the sheet so u see what leads
