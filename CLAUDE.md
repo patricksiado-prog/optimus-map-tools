@@ -115,6 +115,36 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
+### THE MILTON DATA AUDITED — AND IT IS **NOT ON THE SHEET AT ALL** (MEASURED 2026-09-03 ~2pm CT)
+
+Patrick: *"make sure the new Milton stuff is correct on sheet."*
+
+**IT IS NOT ON THE SHEET, and that is the headline.** The only hunter run that
+ever covered Milton is `20260902-182120`, and its own feed says
+`written: 0, failed_writes: 6,012` — **the Milton dots were classified and never
+landed.** `tabs.json` is still stamped `2026-09-02 23:39:40`, unchanged all day,
+so nothing has been added since. The 141 Milton people came from DealMachine off
+the AT&T map image, **not** from the sheet, which is exactly why all 141 read
+`status-unverified`. Until the AT&T re-login + hunter relaunch replays those
+parked rows, no Milton dot colour exists on the sheet to check against.
+
+**The 141 records themselves audit CLEAN except for three things (MEASURED):**
+- **3 addresses have NO HOUSE NUMBER** — `Camellia Ave` (Karen R Berrian and
+  Gary M Berrian, same household) and `Rosebud Rd` (Martin E Taylor). A rep would
+  read a bare street name aloud, which is the exact failure the address rule
+  exists to stop. **All three now carry `address-incomplete-ask-on-call`.**
+  Neither Berrian nor Taylor got a bad text — Gary and Martin are landlines and
+  were held back, and Karen's variant used the street, not a house number.
+- **`5511 Shamrock St` is ONE MAN, Peter J Nolan, entered THREE TIMES** with
+  three different numbers (`+19545660221` landline, `+19548216913`,
+  `+17274602856`). He is being dialed three times for one household, and one of
+  his numbers STOP'd today. Consolidate to one contact.
+- **36 addresses hold 2–3 people.** That is households, not an error — but it
+  means 141 contacts are only ~105 doors.
+
+**Clean:** city/ZIP 100% consistent (all Milton FL 32570), zero duplicate phone
+numbers, zero missing names, zero missing phones, 22 landlines correctly typed.
+
 ### 94 NON-FIBER-VERIFIED LEADS PULLED OUT OF THE DIALER (2026-09-03, 0 errors — Ed's complaint, and he was right)
 
 Ed Saldanna by text: *"So whoever pulling the data pulling stuff for that's not
