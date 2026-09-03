@@ -115,14 +115,40 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
-### TWO LIVE SMS WORKFLOWS ARE DEFECTIVE — AND **CLAUDE CANNOT PAUSE A WORKFLOW** (MEASURED 2026-09-03 ~1pm CT)
+### BOTH BAD SMS WORKFLOWS ARE PAUSED — AND **CLAUDE *CAN* PAUSE A WORKFLOW** (MEASURED 2026-09-03 ~1:15pm CT)
 
-Patrick: *"do what u think."* I inspected the live workflows and tried to pause
-the bad ones. **`ghl_update_workflow_status` is a 404 (`Cannot PATCH /workflows/<id>`)
-and `ghl_publish_workflow` only publishes — there is NO un-publish in this MCP.**
-Pausing a workflow REQUIRES Patrick or a VA in the UI: Automation → Workflows →
-open it → toggle Publish off. Emailed Churchie (cc Dave, Christian, Angel) in
-English and Tagalog with the exact IDs and steps.
+Patrick: *"do what u think"* then *"fix them"*. **Both are now `status: draft`,
+verified by re-reading each — they cannot fire.**
+
+**CORRECTION, AND IT MATTERS: an earlier line in this file said Claude cannot
+pause a GHL workflow. THAT IS WRONG.** The dedicated `ghl_update_workflow_status`
+IS a 404 (`Cannot PATCH /workflows/<id>`) and `ghl_publish_workflow` only
+publishes — but **`ghl_update_workflow_actions` takes a `status` parameter, and
+`status: "draft"` pauses a live workflow.** Pass `status` ALONE with no `actions`
+and the action tree is left untouched (verified: all 4 nodes survived on
+`5a7f16a7`). That is the pause lever. Re-publishing is `ghl_publish_workflow`.
+
+**`ghl_update_workflow_actions` CANNOT rewrite a branching workflow**, though.
+Replacing the 4-node tree on `5a7f16a7` was refused
+(`INVALID_STRUCTURE`): the validator demands **real UUIDs** for step ids (the
+existing nodes are named `cond_invalid`, `sms_followup` — created before the
+validator tightened, and now unwritable) and refuses an array `next` on anything
+it does not read as a condition-node. A SINGLE-action workflow rewrites fine —
+that is how `543457a5`'s body was replaced.
+
+**FIXED COPY on `Updated - SMS Workflow` (`543457a5`), v10, verified by re-read:**
+now *"Hi, it's Patrick with AT&T Fiber. Your address qualifies for fiber. Want me
+to send you what's available?"* — 104 chars + GHL's 27 = **131, one segment**, no
+price, no bullets, no self-written STOP line, no phone number. It is paused
+anyway while the over-contact is unresolved; one click re-publishes it and the
+copy is already safe.
+
+**`Random Fiber SMS After Calls` (`5a7f16a7`) is paused with its BAD BODY STILL
+IN IT.** Do not re-publish it until the body is replaced by hand in the UI — the
+API cannot rewrite that tree. Replacement copy, one segment: *"Hi, it's Patrick
+with AT&T Fiber. I just called about fiber at your address. Want me to send the
+details?"* And widen the skip branch beyond the `invalid` tag to
+`landline-call-only` / `landline`, or it will text landlines again.
 
 **GUILTY, both PUBLISHED, both still live:**
 - **`Random Fiber SMS After Calls` `5a7f16a7-fa67-4753-9ecc-e8f58a50c715`** —
