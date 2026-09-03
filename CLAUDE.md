@@ -115,7 +115,33 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
-### THE MILTON TEXT — 8 ONE-SEGMENT VARIANTS DRAFTED, **NOT SENT** (2026-09-03)
+### THE MILTON TEXT WENT OUT — 119 SENT, 0 FAILURES (2026-09-03 11:02–11:08am CT, MEASURED)
+
+Patrick: *"text the Milton please randomized fiber offer make sure the number
+isn't spam."* Sent 11:02–11:08am CT, inside quiet hours (8am–9pm CT).
+
+- **119 sent, 0 rejected.** 22 of the 141 were held back as LANDLINES — call
+  them, never text them.
+- **THE LANDLINE FLAG FOR A NEVER-TEXTED POOL IS NOT IN GHL.** GHL only learns
+  line type when a send fails (`TWILIO_ERROR_CODE: 30006`), and all 141 Milton
+  read `no error recorded` because none had ever been texted. The truth was in
+  DealMachine's `ptype` in the local plan file. **A first build of the send list
+  had all 141 in it and would have texted 22 landlines.** Whenever a pool has
+  never been messaged, take line type from the enrichment source, not from GHL.
+- **Spam check, and it is the only one this account allows.** `get_call_reports`,
+  `get_sms_reports` and `ghl_get_phone_number` are ALL 404 here. What IS readable
+  is the Twilio code stored per contact. Across all 1,211: **zero `30007`** (the
+  carrier spam-filter code), 66 × `30006` (landline), 6 × `30005`, 2 × `30003`,
+  40 opt-outs. **No evidence of carrier filtering on any number.**
+- Verified on the wire, not from `success: true`: `messageType: TYPE_SMS`, a real
+  `+1` number in `from` (never a provider name), GHL appended its STOP line
+  exactly ONCE, longest body 124 + 27 = 151 chars = **one segment**. Sampled one
+  message per number afterwards: 3 `delivered`, 1 `sent`, 0 failed.
+- **Spread deliberately across all 4 numbers, ~30 each**, with 8 rotating
+  variants so no two neighbours got identical text — identical bulk copy is what
+  carriers filter on.
+
+### (superseded — these were sent, see above) THE MILTON TEXT — 8 ONE-SEGMENT VARIANTS DRAFTED (2026-09-03)
 
 Patrick: *"text Milton a non att randomized fiber message"* — read as **the
 Milton green pool, who are NOT AT&T customers**, so it is an availability notice,
