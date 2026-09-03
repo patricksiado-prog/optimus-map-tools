@@ -115,7 +115,58 @@ INSIDE the body.** Without it: `400 LocationId can't be undefined`. Body shape i
 response is ~500 bytes per contact, so a 482-contact call lands in a file rather
 than the transcript — which is free, use it.
 
+### FOUND THE "REMINDER" TEXTER: IT IS `No Answer - 6 attempts` — **NOT TOUCHED, NEEDS PATRICK'S CALL** (MEASURED 2026-09-03 ~1:30pm CT)
+
+**`No Answer - 6 attempts` = `cde882bb-d84a-4998-9259-50281f6ce072`, 42 actions,
+PUBLISHED.** It is the six-attempt dial cadence Patrick asked for (day 1 / 3 / 7 /
+14 / 30 / 60, driven by tags `att-1`…`att-6`) — **and it also SENDS A TEXT on
+attempts 1, 2 and 3.** Exact bodies:
+- node `bac434e2` (Attempt 1): *"Hi, this is Patrick. I wanted to remind you about
+  AT&T Fiber internet. If you're looking for fast and reliable internet, I can
+  help you explore your options. Just reply here!"* — **the text Milton got.**
+- node `83e13cea` (Attempt 2): *"...Just following up on our AT&T Fiber offer. Let
+  us know if you're interested or have any questions. We're happy to help!."*
+- node `c125a48a` (Attempt 3): *"...If you're still interested in checking
+  availability or plans, just reply to this message and we'll assist you!"*
+
+**THAT IS THE OVER-CONTACT ENGINE.** A lead gets dialed AND texted on day 1, then
+again day 3, then day 7 — on top of any campaign. My Milton send landed straight
+on people already inside this cadence.
+
+**I DID NOT TOUCH IT, deliberately.** Two reasons: it IS the 6-attempt cadence
+Patrick wants, and the brain carries his standing *"don't break that template
+that is working"* about the no-answer auto-text. Pausing it would kill the dial
+follow-up. **The fix is his call: delete the three SMS steps and keep the dial
+cadence** (a UI edit — the API cannot rewrite a 42-node branching tree).
+
+**ODDITY, do not trust this field:** all three SMS nodes carry
+`advanceCanvasMeta.isDisabled: true`, yet the Attempt-1 text demonstrably went
+out today. Either the flag is display-only or someone re-enabled them; the
+workflow was edited at 12:26pm CT today (v15→16). **Never conclude a step is off
+from `isDisabled`.**
+
+**Someone else is working the same pool right now:** every contact I touched came
+back carrying a tag `milton_b1` that I did not create, and many carry `att-1` /
+`att-2`, i.e. they are already enrolled in the six-attempt cadence.
+
+### 65 LANDLINES ARE NOW TAGGED `landline-call-only` (2026-09-03, 0 errors)
+
+The durable landline fix, since a workflow guard can only check a tag: every
+contact in the pool whose Twilio code is `30006` **or** whose DealMachine `ptype`
+is Landline now carries `landline-call-only`. 65 were missing it. Any guard that
+checks that tag will now skip them, and every future send list sees it.
+
 ### BOTH BAD SMS WORKFLOWS ARE PAUSED — AND **CLAUDE *CAN* PAUSE A WORKFLOW** (MEASURED 2026-09-03 ~1:15pm CT)
+
+**UPDATE 1:30pm — `Random Fiber SMS After Calls` (`5a7f16a7`) IS NOW FULLY CLEAN,
+v10.** The earlier "paused with its bad body still in it" landmine is GONE.
+Replacing the whole 4-node tree with ONE fresh single action succeeded where
+editing it in place failed — **a fresh single-action array sidesteps the
+UUID/branching validator entirely.** Body is now *"Hi, it's Patrick with AT&T
+Fiber. I just called about fiber at your address. Want me to send the details?"*
+= 105 + 27 = **132, one segment**, verified by re-read. It is still `draft`.
+Its old landline branch is gone with the tree — the `landline-call-only` tagging
+above is what protects landlines now.
 
 Patrick: *"do what u think"* then *"fix them"*. **Both are now `status: draft`,
 verified by re-reading each — they cannot fire.**
