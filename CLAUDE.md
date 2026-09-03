@@ -973,6 +973,8 @@ while sending zero texts.
 | **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
 | **Airtable** | Per-editor pricing compounds once VAs are in seats |
 | **Recycle leads forever** | Patrick settled it: *"6 attempts ok that's enough"* |
+| **Claude posting to FACEBOOK MARKETPLACE** | MEASURED 2026-09-03: Meta publishes **no API for Marketplace listings** — it is a manual, in-app surface only, and automating it breaks their terms and risks the account. Claude writes the listing, Patrick pastes it. Do not re-offer to post it |
+| **Posting to a Facebook PAGE through GHL instead** | `get_social_accounts` returns **0 accounts, 0 groups** (MEASURED 2026-09-03). GHL social posting exists but nothing is connected, so there is no page to post to until Patrick links one in GHL → Settings → Social Planner |
 | **A DealMachine→GHL connector** | No first-party integration exists; we already call both APIs directly, which is better |
 | **A2P as the cause of the 405** | It was a fake SMS provider. Fixed by switching to LeadConnector |
 | **`scrub_dnc` on a DealMachine export** | Registry DNC is recorded and dialed anyway; scrubbing deletes >half the list |
