@@ -45,6 +45,47 @@ tabs.json row counts (and `_feed/_landed.json` once deployed), not Drive metadat
 Split workbook still 1,024 bytes / 08-30: the hunter has still never run the
 new build.
 
+### THE PIPELINE IS NO LONGER WRITE-ONLY — 2 DEALS WON (MEASURED 2026-09-03 07:00 CT)
+
+**Won = 2.** `Shahrukh Majeed | 211 Carey Ridge Ct | Fiber 1 GIG` (opp
+`g1jkRf7iD8vn0CbKT8ME`, contact `b1B3YIvzOLJHb0Ry7jPs`, won 2026-08-31) and
+`Janell Dumas — Fiber 300 — order 99-615780212210199` (opp
+`sfNqKofFful7dVXCiO51`, contact `1R4yyfvilwmKt3vTzOh1`, won 2026-08-29).
+Open 4,400, lost 0. **The "won and lost are both zero, so nothing is
+computable" standing alarm is CLEARED** — stop printing it in the daily brief.
+Cost per customer and profit per activity are computable for the first time.
+A `sales` feed for both is queued in the Drive folder
+(`1CXash_oRfpQ9RDZS_LmVcbl63FbCoMPWD_sptyH3QsE`).
+
+### THE TEXT COPY IS BURNING THE LIST — 19 STOPs IN THE LAST 25 CONVERSATIONS (MEASURED 2026-09-03 07:00 CT)
+
+`get_recent_messages(limit 25)`: **19 of the 25 most recent conversations end in
+"Stop"/"STOP".** The copy still going out is the old promo — *"New fiber internet
+lines have been laid at your address ... 10x faster for just $30/month ... 2 free
+months"* — the same template the 7.9% opt-out rate was traced to. Sending itself
+is healthy: 4 numbers live, all Dave's, no `TYPE_CUSTOM_SMS`. **The plumbing is
+fine and the content is the defect.** Churchie was told to find and pause every
+automation still sending it.
+- **Across the 1,211 people pulled from GHL, only 22 have opted out (1.8%)** —
+  the damage is concentrated in whatever is actively sending, not in the pool.
+- **2 of the 33 who said YES have since opted out while waiting for a callback**
+  — Kevin Manuel and Joseph Ramirez. That is the cost of the follow-up gap,
+  measured.
+- **`get_call_reports` is a 404 on this account.** Dials, connects and connect
+  rate CANNOT be measured. Say `COULDN'T READ`, never estimate.
+
+### THE HUNTER HAS BEEN DOWN ~40 HOURS (MEASURED 2026-09-03 07:00 CT)
+
+Last run `20260902-182120` ended 2026-09-02 19:48 CT. `capture_truth`:
+`written: 0`, `failed_writes: 6,012`, `map_ok: false`, note **"HTTP 301
+REDIRECTED TO LOGIN -- not logged in, nothing lands"**, `auth_expired: 4`.
+Remedy is the usual one: log OUT of youachieve.att.com, close the browser, log
+back in, relaunch.
+**That run's numbers, worth keeping:** classified 338,456 · green 172,656 ·
+grey 161,558 · **gold 3,718 (gold capture is working)** · unknown 524 ·
+undecoded `ip-co` 1,048. **Penetration 48.3%, up from 32.1% — because the run
+was Pensacola/Milton, not Houston. A different market, NOT a classifier change.**
+
 ### WHAT IS ALREADY ENRICHED — PULLED FROM GHL 2026-09-03 (MEASURED, and 174 rows are already queued for the sheet)
 
 Patrick: *"can u go to the ghl and pull that data the sheet so u see what leads
