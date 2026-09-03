@@ -71,6 +71,14 @@ deletes rep tabs.
   no PII, verified) is written and goes up with the deploy.
 - Columns: Address · City · State · ZIP · Enriched At · Source · Pool · GHL
   Contact ID · Phone Type · Likely Gold · DNC · Colour · Landed At.
+- **Patrick's intent, 2026-09-03 (verbatim): "so now the sheet will contain the
+  data enriched by deal machine so u don't enrich 2x, dnd, u can check if we
+  called and if dead."** What the build covers TODAY: (1) never enrich twice —
+  YES, read `Enriched Leads` before spending; (2) DNC — the REGISTRY flag from
+  DealMachine is on the row; GHL DND (a customer STOP) is NOT; (3) called /
+  dead — NOT on the sheet. Call history and dispositions live only in GHL. To
+  put a snapshot on the sheet the scraper would update rows from a status feed
+  (Dialed · Last Call · Disposition · DND · Dead); not built, needs his go.
 
 ### Is the machine running?
 
