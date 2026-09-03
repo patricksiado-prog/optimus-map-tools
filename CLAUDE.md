@@ -439,7 +439,32 @@ Maps Businesses **39,294** · callable unique phone **4,466** · Fiber Green Biz
 30 minutes, all tabs, phone-keyed, in a separate window-less process.
 **This launch republished tabs.json, so the live tab counts are current.**
 
-### THE FOLLOW-UP BOARD — BUILT, COMPILED, **TESTED GREEN — NOT PUSHED, waiting on Patrick's go** (2026-09-03)
+### THE FOLLOW-UP BOARD IS **DEPLOYED** — hunter `7a69d0a`, 2026-09-03 ~2:50pm CT
+
+Patrick: *"yes run it."* Pushed to the hunter repo, branch
+`claude/optimus-map-tools-setup-6dcl6o`. `git ls-remote` confirms the branch head
+is `7a69d0a`. **It takes effect at the next MAPS SCRAPER launch** (the scraper
+self-updates on any byte change — no `BUILD_DATE` bump, that gate is the
+hunter's). Expect a `SHEET LOG` block in the console.
+
+**THE TRAP THAT ALMOST ATE THIS DEPLOY, and the rule that comes out of it:** the
+local hunter clone was **54 commits behind origin** and carried two of my own
+unpushed commits holding the OBSOLETE GitHub-feed version. Pushing the working
+tree would have reverted 54 commits and shipped the wrong code. **No upstream
+commit had touched `maps_scraper_standalone.py` (`git rev-list --count
+HEAD..FETCH_HEAD -- <file>` = 0), so the fix was to rebuild the edit on top of
+the CLEAN remote copy** (`git show FETCH_HEAD:<file>`), re-insert the block,
+recompile, re-test, then `git checkout -B <branch> FETCH_HEAD` and commit. The
+diff went from `+353/-241` (wrong) to **`+508/-0`, a pure addition** (right).
+**ALWAYS `git fetch` and diff the remote copy of the exact file before pushing to
+the hunter repo — a clone in this session is days stale.**
+
+**`brain-verify` reads raw.githubusercontent, which lags a push by a few
+minutes**, so the four new claims printed `*** DRIFT` immediately after the push
+while the CDN still served the 2,255-line old file. `git ls-remote` is the
+authoritative check. Re-run brain-verify after ~3 minutes and they should pass.
+
+### (superseded — now deployed, see above) THE FOLLOW-UP BOARD — BUILT, COMPILED, TESTED GREEN (2026-09-03)
 
 - **Patrick's spec (verbatim): "I want the sheet to contain the same columns
   grey green gold biz fiber green biz / and if it's enriched it has name cell

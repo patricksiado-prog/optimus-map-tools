@@ -49,6 +49,15 @@ TABS = "optimus/_feed/sheet/tabs.json"
 # CODE CLAIMS. (file, regex, expect_present, what the brain says because of it)
 # ---------------------------------------------------------------------------
 CODE_CLAIMS = [
+    # --- the follow-up board, DEPLOYED 2026-09-03 (hunter 7a69d0a) ---
+    (SCRAPER, r"def sync_sheet_log\(", True,
+     "THE FOLLOW-UP BOARD IS DEPLOYED: sync_sheet_log is in the Maps Scraper"),
+    (SCRAPER, r'FEED_FOLDER_ID = "1XOqADybKvneC5gwsxjpsGkVC6RLQ-1an"', True,
+     "the board reads the private Drive feed folder (names/cells never touch this public repo)"),
+    (SCRAPER, r"sync_sheet_log\(sheet_ws\.spreadsheet\)", True,
+     "the board runs at scraper launch, AFTER open_sheet()/init_match() so green dots resolve"),
+    (SCRAPER, r'ENRICHED_TAB = "Enriched Leads"', True,
+     "it writes 'Enriched Leads' -- and only ever appends to its own tab, never the hunter's five"),
     # --- where the purge lives (six days wrong, 2026-08-27 -> 09-03) ---
     (SCRAPER, r"def purge_prefix_gold\(", True,
      "the gold purge lives in the MAPS SCRAPER"),
