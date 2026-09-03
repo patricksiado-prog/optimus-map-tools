@@ -717,3 +717,26 @@ or GHL access, producing nothing.
 Patrick's personal 8am brief (`trig_018JYaeTgaN8NToSs3RK2T3D`) is a **different
 report** — health, goals, food, money-saving — and goes to him alone. Do not
 fold either edition into it or let them drift into covering the same ground.
+
+
+## ENDS WITH THE SHEET (added 2026-09-03 — Patrick: "we're doing an atrocious job of following up")
+
+Every edition, morning and evening, ends by pushing what GHL knows onto the
+sheet, so the follow-up board is never older than half a day:
+
+1. For every GHL contact id on the split workbook's `Enriched Leads` tab (read
+   the tab via the feed dir `optimus/_feed/enriched/` if the sheet is out of
+   reach), pull from GHL: dial attempts, last call date, disposition tag
+   (`not interested`, callback, etc.), DND, dead. Write `status.json` rows:
+   `ghl_contact_id, dialed, last_call, disposition, dnd, dead`. Disposition
+   text drives the row colour: CB/MAYBE green, NO/DEAD red, PAID/SOLD blue.
+2. For every opportunity won since the last edition (pipeline
+   `2V9thfxQpuhn6ZP0Peqt`, status won): `sales.json` rows: `sold_at, address,
+   city, state, zip, product, rep, ghl_contact_id, opportunity_id, stage,
+   status=PAID`. **Product name only — no dollar figures, Ara has the sheet.**
+3. `publish-enriched --kind status status.json --pool <tag>` and
+   `publish-enriched --kind sales sales.json --pool <tag>`. They land at the next
+   Maps Scraper launch; `publish-enriched --check` reads the receipt.
+
+Skip step 1 only if the tab has no ids yet. Never skip step 3 silently — say
+"status feed: N rows published" in the edition's machine section.

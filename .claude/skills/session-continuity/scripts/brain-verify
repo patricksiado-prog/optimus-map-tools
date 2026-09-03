@@ -187,7 +187,7 @@ def main():
                       " the live tab had 1,884. The scraper stamps it now; an unstamped"
                       " file means the scraper has not launched since." % len(rows))
             rows = {k: n for k, n in rows.items() if n is not None and n >= 0}
-            m = re.search(r"\b(\d+) tabs\b", brain)
+            m = re.search(r"workbook now has (\d+) tabs", brain) or re.search(r"\b(\d+) tabs\b", brain)
             if fresh and m and int(m.group(1)) != len(rows):
                 drift += 1
                 print("  *** DRIFT   brain says %s tabs, tabs.json (%s) has %d"

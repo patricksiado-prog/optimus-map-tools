@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 late night (21 tabs gone, backlog landed, sheet log built)
+# CURRENT STATE — updated 2026-09-03 late night (twenty-one tabs gone, backlog landed, sheet log built)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -23,7 +23,7 @@ beta" survive four sessions unchecked.
 
 **The production workbook now has 8 tabs:** `Precise Fiber` 687,923 · `Grey
 Fiber Customers` 56,799 · `Maps Businesses` 39,294 · `Fiber Green Biz` 7,300 ·
-`Gold Confirmed` **4,707** · `Upgrade Orange Biz` 62 · `Territory Claims` 0 ·
+`Gold Confirmed` = 4,707 rows · `Upgrade Orange Biz` 62 · `Territory Claims` 0 ·
 `_Dedupe Lock` 0. **Gone: `Warm Backlog — Replied YES` (40 people who said
 yes), `Angleton Call List`, `WORK LIST — Beaumont + Angleton`, `GOLD — CLEAN`,
 `Beaumont Gold — Aug 2026`, `HOUSTON UNVERIFIED — Aug 19`, `Backend Comm`,
@@ -109,6 +109,19 @@ deletes rep tabs.
   unknown id reported, hand-typed sale survives, old 13-col tab widens to 19,
   full production prints and does not crash. Step name in the console:
   `SHEET LOG`. Deploys at the next scraper launch after Patrick's go.
+- **Patrick's WHY, 2026-09-03 (verbatim): "I want ghl data and whether or not we
+  already enriched something to be obvious so the sheet seems like a good place
+  for that / and if it's sold or needs to be called back cuz we're doing an
+  atrocious job of following up."** So the sheet is the follow-up board: one row
+  per person, GREEN = call them back, BLUE = sold, RED = dead. **The gap that
+  remains: nothing on Patrick's PC can read GHL, so the status columns refresh
+  only when Claude publishes a `status` feed from GHL.** Standing rule from now:
+  EVERY coverage-gap edition (morning + evening) ends by publishing a status
+  feed for every GHL id on `Enriched Leads` and a sales feed for every won
+  opportunity (`publish-enriched --kind status|sales`). The proper fix later is
+  the scraper reading GHL itself at launch with a `ghl_token.txt` next to
+  `github_token.txt` — not built: it cannot be tested from here without the
+  token, and RULE 0 says never push untested code.
 - **Patrick's intent, 2026-09-03 (verbatim): "so now the sheet will contain the
   data enriched by deal machine so u don't enrich 2x, dnd, u can check if we
   called and if dead."** What the build covers TODAY: (1) never enrich twice —
