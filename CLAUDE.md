@@ -66,6 +66,43 @@ conversation before saying anything is "still sending."** Check 3.
 `\nReply STOP to unsubscribe.` in the BODY, and GHL appends its own. That is the
 exact tell the brain warns about, shipping from a live workflow.
 
+### WHY THE SHEET CANNOT ANSWER THE MILTON QUESTION — RE-CHECKED LIVE (Patrick 2026-09-04: *"look at the sheet u should be able to tell based on green gold grey the Pic"*)
+
+**HE IS RIGHT ABOUT THE METHOD AND THAT IS EXACTLY WHAT THE SHEET IS FOR.**
+Count the dots by colour inside the neighbourhood and you get the pocket, the
+same way his AT&T screenshot shows it. **The only reason it does not work is
+that Milton was never written.** Re-checked live this turn, not quoted:
+
+**Production read, every dot tab, grepped for MILTON / FL / 32570 / the pocket
+streets (Shamrock, Pansy, Marigold, Zinnia, Camellia, Azalea, Gardenia, Aster):**
+
+| Tab | rows in sample | Milton hits |
+|---|---|---|
+| Precise Fiber | 194 | **0** |
+| Fiber Green Biz | 359 | 0 (1 false hit: "Fl 21" = a Houston floor number) |
+| Maps / Orange Biz | 425 | 0 (same false hit pattern) |
+| Gold Confirmed | 180 | **0** |
+| Grey Fiber Customers | 234 | **0** |
+
+That is a BOUNDED SAMPLE, so on its own it only proves "not in the sample."
+**The authoritative proof is the feed: `_feed/latest.json`, run
+`20260904-090820`, `generated_at 2026-09-04 09:20:12` — `auth_ok: false`,
+`delivery: PARSE_ERROR`, `classified: 0`, `written: 0`,
+notes `"HTTP 301 REDIRECTED TO LOGIN -- not logged in, nothing lands"`.** No run
+has landed a Milton row, so there is nothing to count.
+
+**SO THE ANSWER TO "IS IT ONLY 133" IS: 133 IS THE WHOLE NEIGHBOURHOOD, AND IT
+IS NOT SMALL.** Evergreen Estates is **117 properties / 147 people** (measured
+off `subdivision_name`). We hold **141 contacts, 133 callable — about 1.1
+contacts per door.** The list is not thin; the neighbourhood is that size. What
+is missing is not names, it is the COLOUR on each name — and only the hunter can
+supply that.
+
+**THIS IS THE CLEAREST STATEMENT OF WHAT THE AT&T LOGIN COSTS: with it, Milton
+lands on the five colour tabs and the green/gold/grey split of these 133 doors
+answers itself. Without it, all 133 ship as UNVERIFIED except the 43 att.net
+rows.** One human clearing the access chooser converts the whole list.
+
 ### CORRECTION — THE MILTON NEIGHBOURHOOD IS 117 PROPERTIES, NOT 418. WE ALREADY HAVE ALL OF IT. (Patrick 2026-09-04: *"that's how big the neighborhood is? can u verify that?"*)
 
 **HE WAS RIGHT TO PUSH AND MY 418 WAS AN ARTIFACT OF MY OWN CIRCLE.** I drew a
