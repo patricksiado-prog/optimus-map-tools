@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 18:25Z (CORRECTION: the 482 gold are the GHL pool, NOT the sheet tab; sheet_feed.py still never run)
+# CURRENT STATE — updated 2026-09-04 18:35Z (sheet's gold dots enriched: 10 addresses -> 5 people, 12 credits; 7631 Fuqua is NOT a real property)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,43 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE SHEET'S GOLD DOTS ARE NOW ACTUALLY ENRICHED — 10 ADDRESSES, 5 PEOPLE, 12 CREDITS (2026-09-04 18:3xZ)
+
+Patrick asked twice. **Stop describing the blocker and enrich what IS readable**
+— that is the lesson. `dealmachine_enrich_address` on every unique address in the
+readable `Gold Confirmed` sample, `contact_audience: owners`.
+
+| | n |
+|---|---|
+| Unique gold addresses readable off the tab | 10 |
+| Attempted (Edmond OK skipped — outside the markets) | 9 |
+| Matched a property | **7** |
+| **NO MATCH in DealMachine** | **2** (7631 Fuqua ×96 rows, 6214 Nyoka) |
+| Matched but **ZERO owner contacts** — commercial / not owner-occupied | 3 |
+| **Addresses that produced a callable person** | **4** |
+| **People with a name and a phone** | **5** |
+
+**COST: 12 CREDITS TOTAL.** Per-address: 1 credit for a property-only match,
+2-3 when contacts come back (1 property + 1 per person). Balance 27,084.
+
+**THE FINDING THAT MATTERS MORE THAN THE FIVE NAMES:**
+**`7631 FUQUA ST` — the single most-written address on the tab, 96 rows —
+returns `no_match` from DealMachine. There is no property there.** So the most
+duplicated "gold dot" we own may not be a real address at all. `6214 Nyoka` is
+the same. **A row on `Gold Confirmed` is not proof a house exists.**
+
+**AND THE GOLD LABEL GOT ITS FIRST INDEPENDENT CONFIRMATION EVER:**
+`611 E MYRTLE ST` owners **Jack and Gloria Franklin both carry
+`EAWORTH21@SBCGLOBAL.NET`** — an AT&T-family email. That is a hunter gold dot and
+a skip-trace agreeing, from two unrelated sources. First time that has happened.
+
+**BEST ROW: `6302 NYOKA ST`, Pedro Aguila, owner-occupied, wireless
+832-859-1859, and NEITHER number is on the DNC registry.**
+
+**THE YIELD RATE TO QUOTE BEFORE ANY BIG GOLD ENRICH: 10 addresses → 5 people,
+and 3 of 10 were commercial with no contacts.** Do not promise a rep one lead
+per gold dot. File: `scratchpad/GOLD_DOTS_FROM_SHEET_enriched.csv`.
 
 ### CORRECTION — WHAT I SHIPPED IS THE GHL GOLD POOL, NOT THE SHEET'S GOLD DOTS (Patrick 2026-09-04: *"gold dots enriched from sheet enrich them / are u sure"*)
 
