@@ -29,6 +29,21 @@ dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
 
+### A SECOND PINNED PC: THE HP LAPTOP IS ON THE 08-24 BUILD (photo 2026-09-04, laptop clock 2:50 PM)
+
+Console: *"Update looked stale/partial (GitHub cache) -- keeping the copy you
+have"* · **`OPTIMUS FIBER HUNTER build 2026-08-24 fp 3d2a6779 run
+20260904-145042`** · *"SELF-UPDATE FAILED -- THIS RUN IS USING THE CODE ON DISK
+... git said: fatal: not a git repository"* · *"pushed
+optimus/_feed/heartbeat.json to GitHub"*. **Same launcher pin, different PC,
+different stale build: the desktop is on 08-18, this laptop on 08-24.** Its
+self_update has no git and that build predates the HTTPS fallback, so it can
+never heal itself; only the installer or the sentinel fix moves it. **It DOES
+push the heartbeat/feed, so runs I read from here may be this laptop, not the
+desktop.** Patrick: *"run it again??"* — no: relaunching just repeats the
+rejection. Pick ONE PC for tonight — the desktop, which is already logged into
+the AT&T map on Milton — and do step 2 there.
+
 ### STEP 2 MECHANICS, VERIFIED FROM THE BAT FILES (2026-09-04 20:4xZ)
 
 `INSTALL_OPTIMUS.bat` writes the hunter to **`%USERPROFILE%\optimus_hunter`** and
