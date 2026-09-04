@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 evening (WE CALL DND — new rule; Milton 134 callable; gold+grey dedup unpushed)
+# CURRENT STATE — updated 2026-09-04 evening (WE CALL DND; Milton 134 sent, pocket=418 sized but NOT pulled; dedup fix unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,33 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE MILTON POCKET IS 418 HOUSEHOLDS — SIZED FOR FREE, NOT PULLED (Patrick 2026-09-04: *"the entire pocket"* -> then *"nothing yet, send the 134 I have"*)
+
+**DECISION: NO CREDITS SPENT. He chose to work the 134 first.** Do not re-offer
+the pull unasked; ask again only after Dave has worked the list.
+
+**THE POCKET IS MEASURED AND THE CENTRE IS SAVED, so nobody re-derives it:**
+`5520 Shamrock St, Milton FL 32570` (the address in his AT&T map screenshot) =
+**lat 30.662186, lng -87.091835**. Geocoded via `dealmachine_enrich_address`
+with `contact_audience: none` and it cost **0 credits** — already licensed,
+`deduplicated: 1`. **The Census geocoder is BLOCKED from this environment**
+(`geocoding.geo.census.gov` -> `connect_rejected`, egress policy), so
+DealMachine with `contact_audience: none` is the free geocode path from here.
+
+| Radius from that point | properties | people |
+|---|---|---|
+| **0.5 mi — the flower-street subdivision, THIS IS THE POCKET** | **418** | 534 |
+| 1.0 mi — pulls in unrelated town | 1,496 | 1,821 |
+| ZIP 32570 — all of Milton | 15,889 | 15,969 |
+
+**COST TO PULL ALL 418 WITH OWNER CONTACTS: ~2,508 credits** (`estimate_cost:
+true`, free). Live balance **27,084 of 30,000**, cycle Sep 2 -> Oct 2, 2,916
+used. **141 of the 418 are already in GHL, so the buy is ~277 NEW doors.**
+
+**`dealmachine_property_count` and `estimate_cost: true` are BOTH FREE.** Size
+every area this way before proposing a spend — that is the habit that would have
+prevented the 4,783-credit mistake on 09-02.
 
 ### MILTON DELIVERED — 126 CALLABLE OF 141, AND EVERY COLOUR ON IT IS UNVERIFIED (2026-09-04)
 
