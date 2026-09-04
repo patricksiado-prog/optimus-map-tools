@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 afternoon (fiber green biz found: 7,300 on the tab, 3,767 enriched, 3 in the call list)
+# CURRENT STATE — updated 2026-09-04 afternoon (green-biz tab = the new-fiber detector; its gold half is dead at 62 rows)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,49 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE GREEN-BIZ TAB IS THE NEW-FIBER DETECTOR — AND ITS GOLD HALF IS DEAD (Patrick 2026-09-04: *"fiber green tab is how u detect new fiber Green and gold concentrations"*)
+
+**This is the tab's PURPOSE and I had been treating it as just another lead
+list.** Record it as the method, not as a fact about one tab.
+
+**HOW THE DETECTOR WORKS.** The Maps Scraper pulls businesses off Google Maps
+into `Maps Businesses` (39,294), then cross-matches every business address
+against the hunter's own dot tabs. A green match writes `Fiber Green Biz`; a
+gold match writes `Upgrade Orange Biz`. **So a CLUSTER of green businesses is a
+block where fiber is lit and nobody is on AT&T — and it is a better beacon than
+a residential dot, because businesses are sparse, named, and sit on the main
+road of whatever neighbourhood just got built.** Find the green-biz cluster,
+then work the residential green and gold around it.
+
+**THE GOLD HALF OF THE DETECTOR HAS BEEN PRODUCING NOTHING: `Upgrade Orange Biz`
+= 62 against 39,294 businesses.** Cause is already recorded — `init_match` read
+dot colours from `Precise Fiber`, which has been GREEN ONLY since 08-26, so the
+orange side scanned a tab with zero orange in it. **Fixed 2026-09-03 (gold now
+loads from `Gold Confirmed`), NEVER RUN.** It needs one Maps Scraper launch.
+Until then Patrick's method only works on the green half.
+
+**WHAT THE TAB ACTUALLY CARRIES — MEASURED 2026-09-04 off `read_file_content`,
+and it is thinner than the hunter tabs:** `Business Name | Phone | Address |
+Website | Category | <hand-typed call status>`. **NO `Captured At`, NO Lat/Lng,
+NO Dot Color, NO City/State/ZIP.** So you cannot date a green business off this
+tab and you cannot map one precisely — the colour was decided at match time and
+not written down. **That is the gap to close if the detector is to be trusted**
+(the hunter's own tabs carry all four).
+
+**THE READABLE SAMPLE, 356 of 7,300 — a BOUNDED SAMPLE IN SCRAPE ORDER, NOT the
+tab.** 330 of 356 have a phone. Two distinct populations: an **Oklahoma City**
+block at the top (405 numbers, bare streets like `1524 SE 44TH ST`, no city at
+all — 120 of the 356 have no parseable city) and then **Houston, concentrated
+hard: 77027 = 121 · 77046 = 45 · 77006 = 40 · 77002 = 30.** 77027 is
+Galleria/Uptown. **DO NOT extrapolate those ZIP counts to the tab** (Check 2) —
+the sample is the first ~355 rows, so it reflects scrape order.
+
+**THE TWO COMMANDS THAT TURN THE DETECTOR BACK ON, both on the hunter PC:**
+`py sheet_feed.py --tab "Fiber Green Biz"` (publishes all 7,300 in chunks Claude
+reads with plain curl — that is the real concentration map) and **one Maps
+Scraper launch** to repopulate `Upgrade Orange Biz` with the fixed match. Add
+`--tab "Upgrade Orange Biz"` after it runs.
 
 ### THE FIBER GREEN BIZ IS THE BIGGEST UNWORKED THING WE OWN — 7,300 ON THE TAB, 3,767 ENRICHED, 3 IN THE CALL LIST (MEASURED 2026-09-04 16:0xZ)
 
