@@ -19,6 +19,41 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### CLAUDE IS BEING PUT ON PATRICK'S OWN PC — THE STRUCTURAL FIX (2026-09-04, from two screenshots)
+
+Patrick opened the Claude desktop app and is picking a folder for a LOCAL
+session. **This is the fix for the thing that has blocked every sheet request
+this week.** From here the Drive connector is file-level only — Claude cannot
+write a tab or a cell — which is why `Enriched Leads` waits on a Maps Scraper
+launch. **Claude running LOCALLY in `C:\Users\patrick siado\maps_scraper` has
+the fiberscanner service account sitting right there**, the same credentials
+`gold_audit.py` and `sheet_feed.py` already use, so it can write the workbook
+directly and run the scraper itself. Tell him to pick that folder.
+
+**HIS USER FOLDER (MEASURED off the screenshot):** `C:\Users\patrick siado\`
+holds `maps_scraper`, TWO folders starting `optimu…`, plus the usual Windows
+ones. **A LOCAL SESSION DOES NOT INHERIT A CHAT** — it starts blank and takes
+its memory from a `CLAUDE.md` in the folder it opens. `maps_scraper` has the
+tools but not the brain, so the first thing a local session must do is
+`git clone https://github.com/patricksiado-prog/optimus-map-tools` and read it.
+
+**THE DOT FOLDER HE ASKED ABOUT IS `.claude`** — 55.9 MB, created 2026-09-01
+1:02 AM, containing `backups / projects / session-env / sessions` and
+`.last-cleanup`. That is Claude Code's OWN data directory: session history and
+project settings. **Never pick it as a work folder and never delete it.**
+
+**SEVERAL DESKTOP SESSIONS ARE STUCK ON A SINGLE UNTAPPED PERMISSION** — the
+list shows `Needs input` / `Waiting on permission: mcp__…` on **Deploy scraper:
+full address backfill**, a **Google Sheets document**, **Deploy hunter keys
+(Ctrl+arrows + working GO)**, **Deploy hunter v2: aim-start-forever**, and
+**Deploy hunter fixes (one approval needed)**. That is finished work that never
+landed because nobody pressed Allow. Worth ten minutes.
+
+**THE ROUTINES UI IS IN THE SAME APP** (left sidebar, clock icon). Routines
+created there keep their connectors permanently AND are Patrick's own action, so
+that is the one place the autonomous auto-texter can legitimately be created —
+it solves the mortality problem and the classifier block at the same time.
+
 ### ONGOING TASKS — TWO ROUTINES BUILT, AND THE AUTO-TEXTER WAS BLOCKED (2026-09-04 05:50Z)
 
 Patrick: *"can i have u or cowork do ongoing tasks like monitor the production and
