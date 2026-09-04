@@ -48,9 +48,22 @@ tools but not the brain, so the first thing a local session must do is
 `.last-cleanup`. That is Claude Code's OWN data directory: session history and
 project settings. **Never pick it as a work folder and never delete it.**
 
-**PATRICK KILLED THE STUCK-SESSIONS ERRAND — 2026-09-04: *"fuck those sessions
-I'm not really concerned w them."* DO NOT RE-PROPOSE IT.** Recorded below only
-so nobody rediscovers it and pitches it again as a fresh idea.
+**UN-KILLED THE SAME MINUTE — 2026-09-04.** He said *"fuck those sessions I'm
+not really concerned w them"* and then *"nm if they were useful to my goals go
+ahead."* So it is OPEN again, but only two of the five are worth anything:
+**`Deploy scraper: full address backfill`** (fills City/State/ZIP on rows that
+carry only a street line — 88 of the enriched pool have NO address and 94 have a
+bare street, and the address IS the pitch) and the **Google Sheets permission**
+one, worth opening just to see what it wanted.
+
+**THE OTHER THREE ARE A HAZARD, NOT A CHORE.** `Deploy hunter keys:
+Ctrl+arrows + working GO`, `Deploy hunter v2: aim-start-forever` and `Deploy
+hunter fixes` are all features that **already shipped and were verified
+2026-08-27** (`648301c`, `f38b3cc`). Those sessions are stale, and a push to
+`Go-High-Level-MCP-2026-Complete` is a DEPLOY TO EVERY PC. Approving one could
+put an old `precise_fiber_hunter.py` over the current build — the same
+54-commits-behind trap that nearly ate the 09-03 board deploy. **Read the diff
+before approving anything that pushes to the hunter repo.**
 
 **SEVERAL DESKTOP SESSIONS ARE STUCK ON A SINGLE UNTAPPED PERMISSION** — the
 list shows `Needs input` / `Waiting on permission: mcp__…` on **Deploy scraper:
@@ -1300,7 +1313,6 @@ while sending zero texts.
 | **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
 | **Airtable** | Per-editor pricing compounds once VAs are in seats |
 | **Recycle leads forever** | Patrick settled it: *"6 attempts ok that's enough"* |
-| **Tapping through the stuck desktop sessions** | Patrick, 2026-09-04: *"fuck those sessions I'm not really concerned w them."* Do not raise it again |
 | **Claude posting to FACEBOOK MARKETPLACE** | MEASURED 2026-09-03: Meta publishes **no API for Marketplace listings** — it is a manual, in-app surface only, and automating it breaks their terms and risks the account. Claude writes the listing, Patrick pastes it. Do not re-offer to post it |
 | **Posting to a Facebook PAGE through GHL instead** | `get_social_accounts` returns **0 accounts, 0 groups** (MEASURED 2026-09-03). GHL social posting exists but nothing is connected, so there is no page to post to until Patrick links one in GHL → Settings → Social Planner |
 | **A DealMachine→GHL connector** | No first-party integration exists; we already call both APIs directly, which is better |
