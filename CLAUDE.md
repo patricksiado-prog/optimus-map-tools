@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 17:55Z (HUNTER IS SWEEPING, past the login; seq2-dialer 938 = 414 real dots / 86 unverified / 0 unmarked)
+# CURRENT STATE — updated 2026-09-04 18:15Z (482 enriched gold shipped in 5 chunks, 192 strongest; hunter sweeping, landing unproven)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,40 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE ENRICHED GOLD SHIPPED — 482 IN 5 CHUNKS, SORTED BY EVIDENCE (2026-09-04 18:1xZ)
+
+Patrick: *"give me the gold dots enriched / in 5 chunks csv files."* Built off a
+LIVE GHL pull of `alpha-t2-gold` — **492 records, 492 with a phone, 492 with a
+name, 0 with `address1`** (that endpoint does not return it; the street was
+joined back by GHL contact id from the 3,511-row labelled file — **addresses on
+hand for 3,511 contacts**).
+
+**10 STRIPPED under RULE 0b: 8 said NOT INTERESTED, and 2 are the addresses the
+follow-up board proved GREY — `7550 CHELSEA PL` and `1055 WISTERIA DR`.** Those
+two never ship again in anything; they are hard-coded out of the builder.
+
+| Chunk | rows | evidence |
+|---|---|---|
+| `GOLD_1_of_5.csv` | 97 | **STRONGEST — att.net/sbcglobal on file** |
+| `GOLD_2_of_5.csv` | 97 | 95 STRONGEST + 2 MEDIUM |
+| `GOLD_3_of_5.csv` | 97 | MEDIUM |
+| `GOLD_4_of_5.csv` | 97 | MEDIUM |
+| `GOLD_5_of_5.csv` | 94 | 72 MEDIUM + **22 WEAK** |
+
+**THE EVIDENCE SPLIT, and it is the whole point of the ordering: 192 STRONGEST ·
+268 MEDIUM · 22 WEAK.** Strongest = an AT&T-family email proves they are an AT&T
+customer (it does NOT prove copper vs fiber). Medium = a copper/gold dot marker
+or the Beaumont "verified copper upgrade" export, never re-checked on the map.
+Weak = the word gold was typed in a spreadsheet — those 22 sit at the BOTTOM of
+chunk 5 on purpose.
+
+**476 of 482 carry a real street address**; 6 say `ADDRESS UNKNOWN - ASK FOR IT
+ON THE CALL`. **26 are landline CALL-ONLY.** Markets: Beaumont 356 · La Porte 56
+· Angleton 49 · Houston 15.
+
+**Files: `scratchpad/GOLD_CHUNKS/GOLD_N_of_5.csv`.** Same builder can re-chunk at
+any size; it reads GHL live every time, so dispositions are never stale.
 
 ### THE HUNTER IS PAST THE LOGIN AND SWEEPING — FIRST TIME SINCE 09-02 (2026-09-04 12:26 CT)
 
