@@ -19,6 +19,28 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE LOCAL SESSION CAN RUN THE WHOLE MACHINE ITSELF (Patrick 2026-09-04: *"can this folder deploy the scraper ... and scrape refresh ect on its own"*)
+
+**YES, and this is the end of the double-click dependency.** Standing in
+`maps_scraper`, a local Claude can LAUNCH the Maps Scraper, write the workbook
+with the fiberscanner service account, run `gold_audit.py` (the real UNIQUE gold
+count), `sheet_feed.py` (publish any tab, including the 56,799-row grey one that
+no Claude read path reaches), the dedupe/clean, and push to the hunter repo. It
+can also create a **Windows Scheduled Task on the EXISTING scraper** so it
+relaunches every few hours — that is not a new program, it is the removal of the
+human, which is exactly what the NO-NEW-PROGRAMS rule asks for.
+
+**THE ONE THING IT CANNOT DO ALONE IS THE AT&T LOGIN.** The hunter needs a live
+session at youachieve.att.com; it has been dead ~46h and 6,012 rows are parked
+behind it. Relaunching does not fix an expired session. Whether saved
+credentials re-auth it or a human must type a code is UNMEASURED — the local
+session was asked to find out and report which.
+
+**STANDING RULE GIVEN TO THE LOCAL SESSION: never push to
+`Go-High-Level-MCP-2026-Complete` without showing the diff first.** A push there
+is a DEPLOY TO EVERY PC. That is RULE 0 restated for the machine that now has
+the token in its own folder.
+
 ### CLAUDE IS BEING PUT ON PATRICK'S OWN PC — THE STRUCTURAL FIX (2026-09-04, from two screenshots)
 
 **LIVE 2026-09-04 ~07:00Z: he has DONE it.** The desktop app shows the chips
