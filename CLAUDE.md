@@ -19,6 +19,38 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE LOCAL SESSION IS NOW THE OPERATOR — HUNTER ALL DAY (Patrick 2026-09-04: *"can u tell this claude to run precise hunter all day"*)
+
+**His decision: the local session runs the hunter continuously.** That matches
+the hunter's own contract (aim, start, forever — *"we never stop until the pc
+dies"*), so nothing new was built; the human was removed from the loop.
+
+**THE GATE IS THE AT&T LOGIN, NOT THE LAUNCH.** Last feed still says
+`written: 0`, `failed_writes: 6012`, note *"HTTP 301 REDIRECTED TO LOGIN"*.
+Relaunching does not revive an expired session — log OUT of youachieve.att.com,
+close the browser, log back in. **UNMEASURED and asked of the local session:
+whether saved credentials re-auth it or a human must type a code.**
+
+**IT WAS TOLD TO PROVE THE RUN, NOT ANNOUNCE IT** — read `heartbeat.json` to
+`sweep_start`, then `latest.json` for `written` / `failed_writes` /
+`classified_gold` / `auth_expired`. Check 3: a launch is not a delivery.
+
+**A WATCHDOG WAS ASKED FOR:** a Windows Scheduled Task that re-launches the
+hunter when `heartbeat.updated_at` is >45 min stale. That is attached to the
+EXISTING program, so it satisfies NO-NEW-PROGRAMS rather than breaking it.
+
+**EXPECT GOLD AND GREY TO PARK EVEN ON A GOOD RUN.** Green now goes to the split
+workbook, but gold and grey still write to production, which is at the ceiling.
+Every line ending `NOT ON THE SHEET, parked` is the no-silent-running rule
+working, not a crash.
+
+**ALSO DECIDED THIS TURN:** the local session offered to land all four Drive
+feeds straight into the split workbook (`Leads` + `Sales Log`, colour rules) in
+~2 minutes and Patrick was told to say go. It independently reached the same
+conclusion this file holds — production returns a 400 on a new tab because
+`Precise Fiber` alone is 687,924 rows — which is the first outside confirmation
+of that ceiling behaviour.
+
 ### `main` HAS NO BRAIN ON IT — THE BRANCH IS LOAD-BEARING (MEASURED 2026-09-04 07:20Z)
 
 The local session opened on this repo showing **`optimus-map-tools main`** and a
