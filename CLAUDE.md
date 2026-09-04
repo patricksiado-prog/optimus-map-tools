@@ -19,6 +19,39 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE CHASER'S FIRST RUN — AND IT CAUGHT MY OWN BAD COUNT (MEASURED 2026-09-04 14:1xZ)
+
+`trig_019Cwaq6UkA1CSatiEnWyiQt` fired at 14:06Z, its first run. Worked.
+
+**CORRECTION TO THE MORNING EDITION I SENT TWO HOURS EARLIER: I said 4 replies
+were waiting on a call. It is ONE.** I read `unreadCount` as "unanswered" instead
+of pulling each conversation and checking whether the last INBOUND had an
+outbound after it. **`unreadCount` means nobody clicked it in the GHL inbox, not
+that nobody replied.** Never count owed-callbacks off that field again.
+
+**THE ONE REAL ONE — GLOVERA ESTHETIC `(713) 425-9813`, contact
+`QctIofOl1A9axniMVgRF`, conv `Yjzkj8xbJ2jriSrsqLJe`.** 1500 S Dairy Ashford Rd
+Ste 188, Houston 77077, and the new board reads it **GREEN on Fiber Green Biz** —
+a real non-AT&T business. Sequence: 18:04Z inbound voicemail → 18:05Z inbound
+text *"sorry I missed your call, let me know how can I help you"* → 18:06Z we
+replied → **18:19:03Z THEY CALLED BACK, status `no-answer` — we missed it** →
+nothing since. `lastMessageDirection: inbound`. **Three approaches from them, 19
+hours cold.**
+
+**ANSWERED, NOT OWED (the three I got wrong):** Razzle Dazzle called back 17:10Z
+and was dispositioned **Not Interested**; Wilton Cooper texted *"Yo"* 20:38:41Z
+and we replied 20:38:58Z — **17 seconds**; `(228) 627-3246` was replied to and
+called. **Kristopher Goodman got a 5-second callback at 22:37Z** and reads GREY
+on the new tab — change his disposition and pull him, he is not a fiber sale.
+
+**CADENCE TEXTS DUE: ZERO.** Every `seq2-dialer` contact was texted Wednesday, so
+the **5-day over-contact guard** blocks the whole pool until 09-08. That guard is
+the reason there were zero new opt-outs overnight after eleven in one day.
+
+**Phone numbers UNCHANGED for the first day in four** — `+13466797668`,
+`+13466634629`, `+13465898086`, `+13465344972`. No new STOPs. Patrick texted at
+`+18322474060` (message id `sbfEFprkZGEIsqnBLyLb`) and emailed the full list.
+
 ### IT LANDED. THE SHEET IS ENRICHED — AND THE BOARD PROVED ED RIGHT (MEASURED 2026-09-04 12:20Z)
 
 **The split workbook went 1,024 bytes → 20,328, modified 2026-09-04 07:59:07Z**
