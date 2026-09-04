@@ -19,6 +19,47 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### "4,500 GOLD" DOES NOT EXIST AS 4,500 DOORS — MEASURED OFF THE TAB ITSELF (2026-09-04)
+
+Patrick asked three times for "the 4500 golds". **All five read paths tried.
+Path 1 WORKED:** `read_file_content` on production now returns all 8 tabs, and
+`Gold Confirmed` comes back as block 4 — **176 rows containing 10 UNIQUE
+ADDRESSES.**
+
+| rows | address |
+|---|---|
+| **96** | 7631 FUQUA ST, HOUSTON TX 77075 |
+| **50** | 800 N ARCOLA ST, ANGLETON TX 77515 |
+| **22** | 611 E MYRTLE ST, ANGLETON TX 77515 |
+| 2 | 1112 N ARCOLA ST, ANGLETON |
+| 1 each | Sommermeyer · Nyoka x2 · Edmond OK · Jersey Village |
+
+**170 of the 176 carry `Tier: VERIFIED_GOLD`** — the real marker, just written
+over and over. **`Build Code` and `Status` are EMPTY on all 176.** Only 2 have a
+phone; 170 have City and Lat/Lng.
+
+**THIS IS THE SECOND INDEPENDENT SAMPLE TO LAND ON THE SAME FOUR ADDRESSES.** The
+brain already recorded "170 VERIFIED_GOLD rows in a sample were 4 unique
+addresses: 7631 Fuqua, 800/1112 N Arcola, 611 E Myrtle". **Confirmed today from a
+different read.** So `Gold Confirmed` = 4,707 is a SIGHTING count, not a door
+count, and the duplication is enormous — one address written 96 times.
+
+**DO NOT extrapolate a unique total from this** (Check 2). The sample is bounded.
+What is proven is only that the tab is heavily duplicated and 4,707 ≠ 4,707 doors.
+
+**THE TWO THINGS THAT SETTLE IT, both one line on the PC:**
+`py gold_audit.py` (rows vs UNIQUE addresses vs duplicates, ~10s, read-only) and
+`py sheet_feed.py --tab "Gold Confirmed"` (publishes the whole tab in chunks
+Claude reads with plain curl). **Neither has ever been run** — `_feed/sheet/`
+holds only `tabs.json`, every chunk URL is a 404.
+
+**AUTOSHEET RE-TESTED LIVE 2026-09-04 and it is STILL `api-billing-empty-balance`.**
+That is path 5 closed until a card goes on it.
+
+**WHAT IS ACTUALLY CALLABLE: the 505 gold in GHL with a name and a cell** —
+delivered as `2_GOLD.csv`, 432 never dialed. The raw tab has no names and almost
+no phones, so a row there is not a lead until it is enriched.
+
 ### THE AT&T LOGIN NEEDS A HUMAN — MEASURED AT LAST (run `20260904-090820`, 2026-09-04 09:20Z)
 
 The hunter DID launch this morning at 09:08 and **died 12 minutes later**.
