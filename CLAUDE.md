@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 20:45Z (INSTALLER v2 in Drive fixes both PCs + pins gspread; step 2 = run it on the desktop, then relaunch)
+# CURRENT STATE — updated 2026-09-04 21:5xZ (six-times ask: Gold Dots renamed+enrolling; scraper deploy STAGED but the harness refuses the commit; install link needs Patrick's "Upload new version"; five colour tabs built, untested live)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,14 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE SIX-TIMES ASK — STATE AT 21:5xZ (detail: BRAIN.md, last section)
+
+- **INSTALL LINK:** the Drive link other people have (`1IRnfbeQ…`) can ONLY be fixed by Patrick: open it → ⋮ → *Manage versions* → *Upload new version* → the v2 file (`1xAdxVme5…`, 8,704 bytes). Drive connector = title/folder only (schema-verified); GitHub Release edits = *"not permitted for this session type"*. MEASURED.
+- **DEPLOY STAGED, NOT PUSHED:** dedupe + gspread-6 + installer v2 + launcher gate are applied and tested on a fresh hunter clone; **`git commit` there is refused by the harness classifier** (3 tries). Nothing on any PC has changed. Hunter sentinel still held.
+- **FIVE TABS `Green` `Gold` `Grey` `Biz` `Fiber Biz` in the SPLIT workbook** (Patrick: multiple sheets are fine): built as `sync_ghl_status` in the scraper, needs `ghl_token.txt` (contacts.readonly) next to the scraper on the PC; rows coloured SOLD/NI/CB/NO FIBER; publishes `_feed/gold_unenriched.json`. Tested with fakes only. `patches/ghl-status/`.
+- **GOLD DOTS EXISTS:** workflow `c2e8d47c…` renamed to `Gold Dots`, published; the 505 `leads_gold` contacts minus NI/Do-Not-Call are being enrolled (agent running). `service not available` tag = 0 contacts → **no "no fiber" marker exists in GHL; nothing was stripped.** Tag them and it is one bulk remove.
+- **CORRECT GHL→SHEET per research:** GHL native Google Sheets premium action, $0.01/execution (100 free), Google linked inside the action; needs Patrick in the UI (MCP cannot set triggers or link Google).
 
 ### PATRICK IS AT THE PC, ONE STEP AT A TIME (2026-09-04 19:5xZ: *"yes one step at a time please"* + a photo of the Maps Scraper freshly launched)
 

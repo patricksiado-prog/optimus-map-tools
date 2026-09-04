@@ -1,0 +1,104 @@
+header cols: 23 | tabs: ('Green', 'Gold', 'Grey', 'Biz', 'Fiber Biz') | NO FIBER rule sits before red
+  GHL STATUS: no ghl_token.txt next to the scraper -- the GHL columns stay as they are. (GHL -> Settings -> Private Integrations, scope contacts.readonly; paste the token into ghl_token.txt)
+1. no token: one line, nothing written, no network call
+  (GHL STATUS: rate limited -- holding 10s)
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  SHEET LOG: created tab 'Green' in the split workbook.
+  SHEET LOG: 'Green' rows colour by Disposition (green CB / red NI / blue PAID).
+  GHL STATUS: 'Green': 2 people (2 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber)
+  SHEET LOG: created tab 'Gold' in the split workbook.
+  SHEET LOG: 'Gold' rows colour by Disposition (green CB / red NI / blue PAID).
+  GHL STATUS: 'Gold': 2 people (2 enriched, 1 sold, 1 CB, 0 NI, 0 no fiber)
+  SHEET LOG: created tab 'Grey' in the split workbook.
+  SHEET LOG: 'Grey' rows colour by Disposition (green CB / red NI / blue PAID).
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber)
+  SHEET LOG: created tab 'Biz' in the split workbook.
+  SHEET LOG: 'Biz' rows colour by Disposition (green CB / red NI / blue PAID).
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  SHEET LOG: created tab 'Fiber Biz' in the split workbook.
+  SHEET LOG: 'Fiber Biz' rows colour by Disposition (green CB / red NI / blue PAID).
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+2. five tabs in the split only; gold/grey/green/unverified/dual routing, SOLD/NO FIBER/CB/NI, DND, Enriched YES/NO all right
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  GHL STATUS: 'Green': 2 people (2 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 2 people (2 enriched, 1 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+3. second run: row counts identical, no duplicate ids, colour rules not re-added
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  GHL STATUS: 1 contact(s) on no hunter tab and carrying no colour tag -- not placed.
+  GHL STATUS: 'Green': 1 people (1 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 2 people (2 enriched, 0 sold, 1 CB, 1 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+4. tag change moves the person; no-map no-tag contact counted and not placed
+  GHL STATUS: 5200 contact(s) read from GoHighLevel in 0s.
+  GHL STATUS: 'Green': 5200 people (5200 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 0 in GHL (enriched), 3 not yet enriched -> _feed/gold_unenriched.json
+5. 5,200 rows -> 2 update blocks, grid resized to fit
+  GHL STATUS: 5200 contact(s) read from GoHighLevel in 0s.
+  GHL STATUS: 'Green': 5200 people (5200 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 0 in GHL (enriched), 3 not yet enriched -> _feed/gold_unenriched.json
+5b. gold backlog list capped, said so, counts still whole
+  GHL STATUS: GoHighLevel answered HTTP 401 -- using the 3 contact(s) read so far.
+  GHL STATUS: 3 contact(s) read from GoHighLevel in 0s (PARTIAL).
+  GHL STATUS: 'Green': 1 people (1 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 1 people (1 enriched, 1 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+  GHL STATUS: -1 minutes is enough -- using the 0 contact(s) read so far.
+  GHL STATUS: 0 contact(s) read from GoHighLevel in 0s (PARTIAL).
+6. HTTP 401 and the time box both stop the pull and keep what was read
+  GHL STATUS: the split workbook did not open -- the five GHL tabs are never written into production. Nothing written.
+7. split did not open: one line, nothing written, GHL not even called
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  *** SHEET LOG NOT LANDED: the split workbook is at the 10,000,000-cell ceiling, so 'Green' cannot be created there. Share the split workbook with the service account and relaunch.
+  GHL STATUS: 'Green': 2 people (2 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber) -- NOT WRITTEN
+  *** SHEET LOG NOT LANDED: the split workbook is at the 10,000,000-cell ceiling, so 'Gold' cannot be created there. Share the split workbook with the service account and relaunch.
+  GHL STATUS: 'Gold': 2 people (2 enriched, 1 sold, 1 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  *** SHEET LOG NOT LANDED: the split workbook is at the 10,000,000-cell ceiling, so 'Grey' cannot be created there. Share the split workbook with the service account and relaunch.
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber) -- NOT WRITTEN
+  *** SHEET LOG NOT LANDED: the split workbook is at the 10,000,000-cell ceiling, so 'Biz' cannot be created there. Share the split workbook with the service account and relaunch.
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  *** SHEET LOG NOT LANDED: the split workbook is at the 10,000,000-cell ceiling, so 'Fiber Biz' cannot be created there. Share the split workbook with the service account and relaunch.
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  *** GHL STATUS: 'Green' NOT written -- workbook FULL (cell ceiling), [400] would increase the number of cells above the
+  *** GHL STATUS: the split workbook is at the 10,000,000-cell ceiling -- the remaining tabs are skipped this launch.
+  GHL STATUS: 'Green': 2 people (2 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber) -- NOT WRITTEN
+  GHL STATUS: 'Gold': 2 people (2 enriched, 1 sold, 1 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber) -- NOT WRITTEN
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber) -- NOT WRITTEN
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+8. FULL workbook: printed once, the other tabs skipped, nothing retried
+  (GHL STATUS: socket melted)
+  GHL STATUS: GoHighLevel answered HTTP error -- using the 0 contact(s) read so far.
+  GHL STATUS: 0 contact(s) read from GoHighLevel in 0s (PARTIAL).
+  (GHL STATUS skipped: workbook exploded)
+9. network and workbook failures are one printed line each, nothing raises
+  GHL STATUS: 5 contact(s) read from GoHighLevel in 0s.
+  GHL STATUS: 'Green': 2 people (2 enriched, 0 sold, 0 CB, 1 NI, 0 no fiber)
+  GHL STATUS: 'Gold': 2 people (2 enriched, 1 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Grey': 1 people (0 enriched, 0 sold, 0 CB, 0 NI, 1 no fiber)
+  GHL STATUS: 'Biz': 0 people (0 enriched, 0 sold, 0 CB, 0 NI, 0 no fiber)
+  GHL STATUS: 'Fiber Biz': 1 people (1 enriched, 0 sold, 1 CB, 0 NI, 0 no fiber)
+  GHL STATUS: gold dots on the map: 3 unique, 1 in GHL (enriched), 2 not yet enriched -> _feed/gold_unenriched.json
+10. GHL_PIT_TOKEN fallback works, token never printed
+ALL TESTS PASS
