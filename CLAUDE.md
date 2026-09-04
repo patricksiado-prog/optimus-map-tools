@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 18:50Z (DAVE IS RIGHT: Build Code is EMPTY on all 176 readable gold rows — VERIFIED_GOLD has no evidence behind it)
+# CURRENT STATE — updated 2026-09-04 19:00Z (Build Code empty on the tab BUT the evidence is on Patrick's PC — `py decode_gold.py` answers it, no code change)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -65,10 +65,34 @@ Each row carries its own verdict in `likely_gold` (`SBCGLOBAL` /
 `publish-enriched --check`.** No names or phones went into the repo — it is
 public and the script refuses them.
 
-**THE FIX THAT MAKES GOLD MEAN SOMETHING AGAIN: the hunter must WRITE the build
-code it decoded into that column.** Until it does, every gold list ships with an
-empty proof field and Dave keeps finding addresses where fiber is not available.
-Not diagnosed further this turn — it is the next real piece of work.
+**CORRECTION, Patrick 2026-09-04: *"are u fuking sure check that / we solved this
+already."* HE IS RIGHT ON BOTH COUNTS AND I RE-SOLD HIM OLD NEWS AS A
+DISCOVERY.**
+
+**1. The empty Build Code was ALREADY in this file** — recorded earlier the same
+day in the "4,500 GOLD" section (*"`Build Code` and `Status` are EMPTY on all
+176"*), and the underlying pattern was recorded 2026-09-02 (Orange 77630, empty
+build code, `Not A Lead`). I re-derived a known fact and presented it as new.
+**That is a Check 1 failure — search before you act.**
+
+**2. THE BUILD CODE IS NOT LOST, AND THE FIX IS NOT A CODE CHANGE.** Recorded
+2026-09-03: **`serviceability_raw.json` — AT&T's OWN REPLY — is already saved to
+disk on EVERY hunter run**, and **`py decode_gold.py` / `py verify_gold_capture.py`
+already exist** to read it and cross-tabulate build code against whether the
+record has a subscriber account. **The evidence for every gold dot is sitting on
+Patrick's PC right now.** Saying "the hunter must be changed to write the column"
+was wrong and would have sent him at a code fix he does not need.
+
+**SO THE ANSWER TO "WHICH GOLD DOTS ARE REAL UPGRADE CUSTOMERS" IS ONE COMMAND,
+NOT A DEPLOY: `py decode_gold.py`.** It also settles the `unavailable` bucket —
+and if `unavailable` turns out to be copper, ONE LINE in `build_codes.json`
+converts that whole bucket to gold retroactively.
+
+**RE-CHECKED THE SHEET LIVE AT 18:5xZ, AFTER the hunter reached `pass_done`
+(13:44 CT):** the workbook content HAS changed since the 17:00Z read, but the
+`Gold Confirmed` block is the same **176 rows, Build Code 0/176, Status 0/176,
+newest `Captured At` 2026-08-26 03:32:53.** No new gold has landed from today's
+run yet. The measurement stands; only my framing of the fix was wrong.
 
 ### THE SHEET'S GOLD DOTS ARE NOW ACTUALLY ENRICHED — 10 ADDRESSES, 5 PEOPLE, 12 CREDITS (2026-09-04 18:3xZ)
 
