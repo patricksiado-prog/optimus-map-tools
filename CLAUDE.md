@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 19:20Z (SHEET IS FULL, 1,987 parked; gspread-6 bug killed the split redirect + Enriched Leads board in the scraper — fix tested, unpushed)
+# CURRENT STATE — updated 2026-09-04 19:45Z (HUNTER IS STILL BLIND — sweep_start ≠ AT&T login; sheet FULL; 2nd sheet has NO Precise Fiber tab; gspread-6 fix unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -31,7 +31,8 @@ beta" survive four sessions unchecked.
 - **Dialer is clean of unmarked junk**: `seq2-dialer` 938 = real dots + the 141 Milton unverified; `manual-call` 0; `alpha-t4-business` 153 stays in (his call).
 - **Four hand-built tabs are still missing** (`Warm Backlog — Replied YES`, Angleton list, Beaumont work list, `GOLD — CLEAN`). Version history restores them. **Ask Patrick whether he deleted them.**
 - **DealMachine 27,072 credits** (27,084 − 12 spent on the gold enrich), cycle Sep 2 → Oct 2. `property_count` and `estimate_cost` are FREE.
-- **Hunter**: past the AT&T login today (someone cleared the chooser), full pass done 13:44 CT, wrote 0 because the sheet is full. `serviceability_raw.json` holds the LATEST AT&T reply only.
+- **HUNTER IS STILL BLIND — CORRECTED 19:4xZ, my 10th correction today.** I said it was "past the AT&T login" three times. It is not. Its own feed for run `20260904-121609` (`_feed/20260904-121609.json`, written 13:44:40) reads `auth_ok: True` (that is GOOGLE — it opened the sheet), `map_ok: False`, `raw_features: 0`, `classified: 0`, `written: 0`, `delivery: PARSE_ERROR`, notes *"HTTP 301 REDIRECTED TO LOGIN"* + the `<!DOCTYPE html>` access chooser. **A heartbeat phase of `sweep_start` / `pass_done` means the Google sheet opened, NOT that AT&T let it in. Only `capture_truth.raw_features > 0` proves AT&T.** The hunter has captured nothing since 2026-09-02. A human still has to click through the chooser.
+- **THE TWO SHEETS, MEASURED 19:3xZ:** the split workbook `1DXu-nuQ…` ("ATT FIBER LEADS — Precise Fiber") exists, is shared, and holds exactly **two tabs: `Enriched Leads` (84 rows, landed 07:59Z by the local session) and `Sales Log` (header only). There is NO `Precise Fiber` tab in it and it has never received a hunter row** — `modifiedTime 2026-09-04T07:59:07Z`, `fileSize 20,328`. Cause: the hunter has had zero captures since the split deployed (09-03), so its redirect (code-clean) has **never been exercised at runtime**; and the scraper's redirect is dead (gspread 6). The design is deployed; the second sheet is empty because nothing upstream can write.
 - **Redo count today: 36 commits, 9 corrections, CURRENT STATE rewritten 18×.** This file was 2,589 → 1,360 → 1,936 → archived again now. **Past ~800 lines, archive in the turn you notice — routine, not a question.**
 
 
@@ -53,8 +54,10 @@ line.** Console: *"THE SHEET IS FULL. Google will not accept another row.
 were already auto-shrunk. The workbook now genuinely needs archiving"* ·
 `LIVE_COUNTS_scraper.txt` 14:06:12: **1,987 rows parked this run, 0 added; 203
 batches parked from earlier runs.** NOTHING IS LOST (CSV + parked files), but
-nothing lands. **This is why today's hunter run reached `pass_done` and the
-counts did not move:** tabs.json WAS republished at **14:04:33** (hunter commit
+nothing lands. **Today's hunter run reached `pass_done` with `raw_features: 0` — it captured
+NOTHING (AT&T still redirects to the login chooser; see the STILL TRUE list).
+The sheet being full is why the SCRAPER's 1,987 rows parked; it is not why the
+hunter wrote 0.** tabs.json WAS republished at **14:04:33** (hunter commit
 `acd6aef`) with **identical counts** — Gold Confirmed 4,707, Precise Fiber
 687,923. The raw CDN served the 03:08:57 copy for 15+ minutes after; read
 `git show FETCH_HEAD:optimus/_feed/sheet/tabs.json` from the clone when it

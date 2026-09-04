@@ -62,7 +62,7 @@ if [ -n "${HB:-}" ] && printf '%s' "$HB" | grep -q run_id; then
   echo "SCANNER heartbeat: run $RID | phase '$PH' | heartbeat written $UP"
   case "$PH" in
     start|"") echo "  Stuck at launch is a known failure — if this has not advanced, the run died early." ;;
-    sweep_start|pass_done) echo "  Reached the sweep. That means it logged in and opened the sheet." ;;
+    sweep_start|pass_done) echo "  Reached the sweep. That means it opened the GOOGLE sheet -- it says NOTHING about the AT&T login. Only capture_truth.raw_features > 0 in _feed/<run_id>.json proves AT&T let it in (2026-09-04: a full pass_done run had raw_features 0 and a 301-to-login)." ;;
   esac
 else
   echo "SCANNER heartbeat: COULDN'T READ (network blocked or feed empty) — say so, do not guess."
