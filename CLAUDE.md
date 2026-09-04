@@ -21,6 +21,12 @@ beta" survive four sessions unchecked.
 
 ### CLAUDE IS BEING PUT ON PATRICK'S OWN PC — THE STRUCTURAL FIX (2026-09-04, from two screenshots)
 
+**LIVE 2026-09-04 ~07:00Z: he has DONE it.** The desktop app shows the chips
+`Local` + `maps_scraper` under the prompt box, and the clone instruction pasted
+in, waiting on Enter. So a local session on `maps_scraper` exists from here on —
+the next session should ask what it reported back rather than re-explaining the
+setup.
+
 Patrick opened the Claude desktop app and is picking a folder for a LOCAL
 session. **This is the fix for the thing that has blocked every sheet request
 this week.** From here the Drive connector is file-level only — Claude cannot
