@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 evening (Milton 126 callable delivered; gold+grey dedup fix tested, unpushed)
+# CURRENT STATE — updated 2026-09-04 evening (WE CALL DND — new rule; Milton 134 callable; gold+grey dedup unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -630,6 +630,40 @@ and ZERO came back confirmed gold.** Gold is no safer than green was.
 
 **THE NAMING IS THE CONTROL.** A rep reading `C-UNVERIFIED` cannot mistake it for
 proof. Never ship a file called `GOLD_*` again unless the map says gold.
+
+## WE CALL DND. (Patrick, 2026-09-04: *"we call dnd / put that in the brain"*)
+
+**This overrides the older line in this file that said GHL DND is "absolute,
+forever." That was too broad and it was costing us leads.** A DND in
+GoHighLevel is almost always an **SMS opt-out**, and an SMS opt-out is not a
+call opt-out.
+
+**MEASURED THE SAME TURN, and it is why he is right.** All 8 DND rows in the
+Milton pool read `dndSettings: {"SMS": {"message": "STOP_KEYWORD", "status":
+"permanent"}, "RCS": ...}` and **`dnd: false` on the master flag.** They replied
+STOP to a text. Nothing about that record blocks a phone call, and GHL itself
+does not treat them as globally suppressed.
+
+**THE RULE, three lines, and they do not collapse into each other:**
+
+| Signal | Text? | Call? |
+|---|---|---|
+| **Registry DNC** (`dnc-flagged`, DealMachine DNC=yes) | YES | **YES** — a third party's list, standing rule since 08-29 |
+| **GHL DND / STOP_KEYWORD on SMS** | **NEVER** | **YES — WE CALL DND** |
+| **They told a human "stop calling me"** — disposition `Do Not Call`, or `not interested` | NEVER | **NO. Absolute, forever** |
+
+**NEVER TEXTING A STOP IS NOT A POLICY CHOICE — the carrier and GHL enforce it
+at the channel.** A send to a STOP'd number fails or, worse, ships and gets the
+sending number flagged. So a DND row goes in a CALL list and never in a send
+list, and every list must say which it is.
+
+**WHAT CHANGED IN PRACTICE:** stop stripping `dnd` from call files. Keep
+stripping `not interested` and `Do Not Call` — those are a person saying no to
+us, which is a different thing and still ends the lead. The `Do Not Call`
+disposition must still set DND automatically; that has legal weight and stays.
+
+**Milton was rebuilt the same turn: 126 → 134 callable, the 8 STOP'd rows back
+in, each carrying `DND - SMS STOP, CALL ONLY - NEVER TEXT`.**
 
 ## RULE 0b — NEVER SHIP AN UNVERIFIED COLOUR. NEVER PUT GREY IN A CALL LIST.
 
@@ -1449,7 +1483,7 @@ software must make, and the wording now sitting in the routine prompt:
 | | |
 |---|---|
 | **Registry DNC** — tag `dnc-flagged` / `dnc`, or DealMachine DNC=yes | **Record it and send/dial anyway.** A third party's list. |
-| **They told US to stop** — GHL DND, permanent STOP/unsubscribe, inbound "stop"/"remove", tags `not interested` / `wavv-not-interested` | **Absolute, forever.** The customer talking to us. |
+| **They told US to stop** — inbound "stop"/"remove", tags `not interested` / `wavv-not-interested`, disposition `Do Not Call` | **Absolute, forever.** The customer talking to us. **CORRECTED 2026-09-04: GHL DND / SMS STOP_KEYWORD is NOT in this row — see "WE CALL DND" above. A STOP blocks TEXTS only; we call them.** |
 
 The difference is *who asked*. Never collapse the two. Never `scrub_dnc` on a
 DealMachine export — it throws away roughly a third of the callable leads.
