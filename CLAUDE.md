@@ -60,9 +60,23 @@ La Porte 58 · Angleton 50.
 **WHY THIS NEEDED A QUESTION RATHER THAN A PULL:** the only rows the instruction
 would remove are the 141 Milton `status-unverified` — the exact people Patrick
 told me to text 40 minutes earlier and wants CALLED first, and the ones the
-running hunter may colour within the hour. Pulling them now and re-adding them
-after the sweep is pure churn. **Left in on the same reasoning as 09-03, pending
-his call.**
+running hunter may colour within the hour.
+
+**HIS DECISION: HOLD MILTON. NOTHING WAS PULLED.** He did not take the
+businesses either, so **`alpha-t4-business` = 153 stays in the dial pool** even
+though he said this morning *"not bizz were focused on resi"* — do not pull it
+on your own initiative, and do not re-offer unasked. **The dialer is unchanged
+as of 2026-09-04 18:00Z.**
+
+**LIVENESS RE-CHECKED 18:20Z AND IT IS STILL UNPROVEN — do not tell him it is
+working.** `modifiedTime` is moving (2026-09-04T18:20:17, minutes old) so
+something IS touching the workbook, but **`fileSize` 8,484,584 is flat and that
+is NOT a signal on a Google Sheet** (corrected 09-03 — it sat flat while ~75,000
+rows landed). `_feed/latest.json` is still the 12:25:59 launch stub, all zeros,
+and **`tabs.json` is still stamped 2026-09-04 03:08:57** — the scraper has not
+relaunched, so the counts have not been republished. **The proof will be a
+tabs.json with a NEW stamp and higher row counts, or `written > 0` in the feed.
+Neither exists yet.**
 
 ### THE MILTON RE-TEXT WENT OUT — 98 SENT, 0 FAILURES, ALL SIX 850 NUMBERS (2026-09-04 17:27-17:36Z / 12:27pm CT)
 
