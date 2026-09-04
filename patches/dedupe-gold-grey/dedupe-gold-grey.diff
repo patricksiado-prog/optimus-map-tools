@@ -1,0 +1,25 @@
+--- /dev/fd/63	2026-09-04 16:43:09.582585812 +0000
++++ maps_scraper_standalone.py	2026-09-04 16:42:23.089872216 +0000
+@@ -925,11 +925,20 @@
+         return 0                            # another machine is deduping now
+     biz_key, biz_score, pf_key, pf_score, maps_key = _dd_keys()
+     _DD_PASS[0] += 1
++    # GOLD AND GREY WERE NEVER IN THIS LIST -- found 2026-09-04. That is why
++    # 'Gold Confirmed' read 4,707 rows while a 176-row readable sample held TEN
++    # unique addresses (7631 Fuqua alone was written 96 times). Every other tab
++    # has been deduped every 30 minutes for weeks; the two colour tabs a rep
++    # actually calls off were the two nothing cleaned. Both are address-first,
++    # so they use the SAME key+score already proven on 'Precise Fiber': keep the
++    # FULLEST copy of each address, not the earliest.
+     jobs = [("Maps Businesses", maps_key, None),
+             ("Fiber Green Biz", biz_key, biz_score),
+-            ("Upgrade Orange Biz", biz_key, biz_score)]
+-    if _DD_PASS[0] == 1 or _DD_PASS[0] % 6 == 0:   # huge tab: clean less often
++            ("Upgrade Orange Biz", biz_key, biz_score),
++            ("Gold Confirmed", pf_key, pf_score)]
++    if _DD_PASS[0] == 1 or _DD_PASS[0] % 6 == 0:   # huge tabs: clean less often
+         jobs.insert(0, ("Precise Fiber", pf_key, pf_score))
++        jobs.insert(1, ("Grey Fiber Customers", pf_key, pf_score))
+     total = 0
+     for tab, kf, sf in jobs:
+         try:
