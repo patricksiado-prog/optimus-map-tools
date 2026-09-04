@@ -19,6 +19,51 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### WHAT IS ACTUALLY RUNNING ON A SCHEDULE — 15 ROUTINES READ LIVE (MEASURED 2026-09-04 06:40Z)
+
+Patrick: *"can i have u or cowork do ongoing tasks like monitor the production and
+text customers that need following up with"*. Read `list_triggers` before
+answering. **12 are enabled. 8 of them are FRESH-SESSION and they genuinely run.**
+
+| Routine | id | cron (UTC) | last run |
+|---|---|---|---|
+| Fiber inbox watch — notify on interest | `trig_01UhaqVy9Aaxf2rukgxoKngu` | `31 */2 * * *` | **SUCCEEDED 2026-09-04 04:31** |
+| Optimus SMS — 200/day | `trig_018JYeQpvcgfrmBxc46Vv967` | `0 16,21 * * *` | SUCCEEDED 09-03 21:09 |
+| daily gold cluster sweep | `trig_019hQhMhfiGobxDXaN1e7mAp` | `7 14 * * 1-5` | SUCCEEDED 09-03 14:10 |
+| cable outages + new fiber | `trig_01DfRVRoPajmieDYNfY1xtmQ` | `0 14 * * *` | SUCCEEDED 09-03 14:17 |
+| daily new-fiber email | `trig_01MfufwTL7NxwKPW3tYiHNYy` | `0 13 * * *` | SUCCEEDED 09-03 13:05 |
+| Fiber Green Biz dedupe | `trig_0166v3uSachDJv8YtRbFqcSX` | `0 11 * * *` | SUCCEEDED 09-03 11:06 |
+| Applicant chase 2x daily | `trig_017qj6LqY7bpayftBeAAeYYz` | `0 14,21 * * *` | SUCCEEDED 09-03 21:10 |
+| Morning Brief — Patrick | `trig_019vheHFZBKyGnzbu6tVjPjb` | `0 13 * * 1-5` | **ABANDONED 09-03 13:18** |
+| Houston–Colombia fare sweep | `trig_011Friai35C2Zd5jWeg9xwBX` | `0 13 1 * *` | **ABANDONED 09-01** |
+
+**CORRECTION — "a fresh-session routine carries no connectors on this org and
+would produce nothing" IS WRONG.** Eight unbound routines ran to SUCCEEDED
+yesterday, one of them two hours ago. That claim (in the daily-coverage-gap
+skill and repeated in this file) blocked the obvious fix for months. **What is
+true is narrower: the AM/PM coverage-gap pair
+(`trig_01JTQKnB2U5ihS1mC4rpX2qy`, `trig_01RjAUBz16UNpdDzK2neCz37`) and the
+`rjdb1972` follow-up are bound to `session_01GRgAKeNm1SCYDrD16GcSTX` and die
+with it.** `create_trigger` now takes a `connectors` list — that is the way to
+rebuild them unbound. NOT DONE, needs Patrick's go.
+
+**`ABANDONED` is a real failure mode and nobody was watching it.** The Morning
+Brief routine has been firing and abandoning; that is why a personal email can
+go quiet without any error reaching anyone. Check `last_run.status` on every
+routine, not just `enabled`.
+
+**`Optimus SMS — 200/day` reports SUCCEEDED and the brain separately measured it
+sending ZERO.** Do not read SUCCEEDED on a routine as evidence a text went out —
+same trap as `success: true` from `send_sms`. Check 3.
+
+**STANDING CAUTION BEFORE ANY NEW AUTO-TEXTER:** 19 STOPs in the last 25
+conversations, 11 Milton opt-outs in one day, `No Answer - 6 attempts`
+(`cde882bb-d84a-4998-9259-50281f6ce072`) still texts on attempts 1/2/3, and the
+old $30 promo is still sending from somewhere nobody has found. **Adding another
+scheduled sender into that pours fuel on the fire.** The follow-up that is
+actually leaking money is inbound: people who REPLIED and never got called back.
+That population is tiny, carries no spam risk, and is where a monitor should aim.
+
 ### THE WHOLE ENRICHED POOL IS NOW IN ONE LABELLED FILE — 3,511 ROWS (MEASURED 2026-09-03 evening)
 
 Patrick: *"give me a file w all the gold enriched / the new green Beaumont
