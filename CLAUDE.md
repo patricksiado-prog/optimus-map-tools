@@ -29,6 +29,18 @@ dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
 
+### STEP 2 MECHANICS, VERIFIED FROM THE BAT FILES (2026-09-04 20:4xZ)
+
+`INSTALL_OPTIMUS.bat` writes the hunter to **`%USERPROFILE%\optimus_hunter`** and
+`RUN_HUNTER.bat` runs from **the same folder** (`APP=%USERPROFILE%\optimus_hunter`),
+so the installer's 09-03 copy is exactly what the next launch runs. The launcher
+is a loop: **any non-zero exit relaunches the hunter automatically**, only exit
+0 (`q`, closed on purpose) stops it. So: run the installer FIRST while the old
+hunter idles at its Enter prompt, THEN Ctrl+C the hunter console — Windows asks
+*"Terminate batch job (Y/N)?"*; **N** lets the loop relaunch on the new code, Y
+means double-click Scout by hand. The AT&T map in the browser showed the Milton
+pocket with green, grey and a few orange dots at 20:4xZ — still logged in.
+
 ### STEP 1 DONE — PATRICK IS LOGGED INTO THE AT&T FIBER MAP, ON MILTON (2026-09-04 20:3xZ, six photos)
 
 Chooser → *AT&T Employee* → Global Logon (his AT&T Employee credentials,
