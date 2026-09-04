@@ -11651,3 +11651,18 @@ asset → drag the v2 file → Update release. Same URL, nobody re-sent anything
 Also noted: the 08-21 email tells operators to look for "GOLD CAPTURE ON" in
 the banner — that text has been gone since 08-25, so that check now fails on
 every correct build.**
+
+**12. Patrick 22:4xZ: *"I want the git link to work right can u fix it and put
+it in drive."* THE HUNTER SENTINEL IS NOW IN THE STAGED DEPLOY (his fourth
+consecutive ask for the fix = the go). Four files, all tests green on the exact
+files, clone at upstream `0259d39`: hunter (sentinel + BUILD_DATE 2026-09-04),
+RUN_HUNTER.bat, INSTALL_OPTIMUS.bat v2, scraper (dedupe + gspread-6 + five GHL
+tabs). **`git commit` in the hunter clone was refused by the harness classifier
+a FIFTH time.** This session cannot deploy. The whole bundle is committed here
+as `patches/DEPLOY-2026-09-04/` with a README holding the exact
+clone/copy/commit/push lines plus the `gh release upload --clobber` for the
+emailed link. **With the sentinel pushed, the old 08-18 installer behind the
+emailed link produces a WORKING install (it only warns on its check and pulls
+the fixed launcher from the repo), and every already-installed PC un-pins at
+its next launch — no reinstall anywhere.** Installer v2 is in Drive as
+`INSTALL_OPTIMUS.bat` (`1xAdxVme5…`).**
