@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 18:35Z (sheet's gold dots enriched: 10 addresses -> 5 people, 12 credits; 7631 Fuqua is NOT a real property)
+# CURRENT STATE — updated 2026-09-04 18:50Z (DAVE IS RIGHT: Build Code is EMPTY on all 176 readable gold rows — VERIFIED_GOLD has no evidence behind it)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,57 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### DAVE IS RIGHT AND HERE IS THE MECHANISM: THE GOLD TAB HAS NO BUILD CODE ON IT (MEASURED 2026-09-04 18:4xZ)
+
+Dave to Patrick: *"I checked the Gold Dot list, and it looks like you sent a lot
+of leads with the same error. It seems that fiber isn't available at those
+addresses."* Patrick: *"I want the gold dots from my software that are actually
+real upgrade customers."*
+
+**THE CAUSE, MEASURED OFF THE TAB AND CONFIRMED NOT TO BE A READ ARTIFACT:**
+
+| Column on `Gold Confirmed` | filled |
+|---|---|
+| `Tier` | **170 / 176 = `VERIFIED_GOLD`** |
+| **`Build Code`** | **0 / 176** |
+| **`Status`** | **0 / 176** |
+| `Business` / `Phone` | 2 / 176 |
+
+**Every row parses to all 14 columns, so those cells are present and genuinely
+EMPTY — not truncated by the reader.** `build_codes.json` is the ONLY ground
+truth on gold: copper (`fttn`, `ip-rt`, `adsl`, `vdsl`…) = GOLD, fibre
+(`fttp-gpon`, `gpon`…) = GREY. **With `Build Code` blank, not one readable gold
+row can be proven to be a copper upgrade customer.** `VERIFIED_GOLD` is a label
+the writer stamped without the evidence field behind it.
+
+**SO THE ANSWER TO "GIVE ME THE ONES THAT ARE ACTUALLY REAL UPGRADE CUSTOMERS"
+IS: OF THE READABLE SAMPLE, ZERO CAN BE PROVEN FROM THE SHEET.** Three
+independent sources now agree — Dave's AT&T check, DealMachine (2 of 10
+addresses do not exist at all), and the tab's own empty proof column.
+
+**THE ONE THAT SURVIVES EVERY CHECK: `611 E MYRTLE ST, ANGLETON` — Jack and
+Gloria Franklin, both carrying `EAWORTH21@SBCGLOBAL.NET`.** An AT&T-family email
+is independent proof of an AT&T customer. That is the ONLY sheet gold dot that
+is corroborated by anything outside the sheet.
+
+**THE REAL PROVABLE UPGRADE POOL IS IN GHL, NOT ON THE TAB: the 192
+`att.net`/`sbcglobal` rows** (`GOLD_CHUNKS/GOLD_1_of_5.csv` and most of
+`GOLD_2_of_5.csv`). Hand those out; they are the only gold we own with evidence
+attached.
+
+**PUBLISHED TO THE SHEET the sanctioned way** — `publish-enriched`, 9 rows,
+`optimus/_feed/enriched/20260904-184759-sheet-gold.json`, pool `sheet-gold`.
+Each row carries its own verdict in `likely_gold` (`SBCGLOBAL` /
+`UNPROVEN - Build Code empty` / `NO OWNER CONTACTS` / `NO PROPERTY EXISTS`).
+**Lands on `Enriched Leads` at the next Maps Scraper launch; verify with
+`publish-enriched --check`.** No names or phones went into the repo — it is
+public and the script refuses them.
+
+**THE FIX THAT MAKES GOLD MEAN SOMETHING AGAIN: the hunter must WRITE the build
+code it decoded into that column.** Until it does, every gold list ships with an
+empty proof field and Dave keeps finding addresses where fiber is not available.
+Not diagnosed further this turn — it is the next real piece of work.
 
 ### THE SHEET'S GOLD DOTS ARE NOW ACTUALLY ENRICHED — 10 ADDRESSES, 5 PEOPLE, 12 CREDITS (2026-09-04 18:3xZ)
 
