@@ -1558,7 +1558,50 @@ while sending zero texts.
 | **`scrub_dnc` on a DealMachine export** | Registry DNC is recorded and dialed anyway; scrubbing deletes >half the list |
 | **Naming the dealership in a customer text** | *"don't say optimus / we're att"* |
 
-### The three rules that outrank everything below
+### RULE 0b — NEVER SHIP AN UNVERIFIED COLOUR. NEVER PUT GREY IN A CALL LIST.
+
+**Patrick, 2026-09-04: *"Never send me garbage again... I can't call gray."***
+This sits next to RULE 0 because it is the same class of failure: something goes
+out the door that should not have.
+
+**A colour is a CLAIM until the hunter's own tabs say otherwise.** A `type-green`
+tag in GoHighLevel is a value somebody typed into a spreadsheet column. It is not
+a dot. On 2026-09-04 the follow-up board checked 84 of them against the map:
+**21 came back GREY — existing AT&T customers who can never buy fiber — 55 came
+back "not on the map at all", and the only 8 confirmed greens were businesses.
+Zero residential greens were confirmed.** Ed said this first, then a customer
+texted it, then the software wrote it down.
+
+**THE RULE, and it applies to every list, file, email, tag and dialer load:**
+
+1. **GREY NEVER SHIPS.** An address the hunter has marked `Grey Fiber Customers`
+   / "Existing AT&T Customer" is not a lead and never goes in a call list, a text
+   list, a dialer tag or a door-knock route. Strip it, and say how many you
+   stripped.
+2. **EVERY ROW CARRIES ITS PROOF.** Every list gets a column that says, per row,
+   either `VERIFIED <colour> - <run id> <date>` or
+   `UNVERIFIED - ASK WHO THEY HAVE TODAY`. No blank, no implication, no colour
+   word standing on its own.
+3. **THE COVER MESSAGE STATES THE SPLIT** — how many verified, how many not, out
+   of how many. If it is "241 of 4,278", say 241 of 4,278.
+4. **NEVER PRESENT A ROW COUNT AS A DOT COUNT** (`Gold Confirmed` = 4,707 rows
+   was 10 unique addresses in the readable sample) and never infer a colour from
+   a ZIP, a city name, a tab position or a neighbour's dot.
+5. **WHEN IN DOUBT THE ROW IS UNVERIFIED.** Downgrading a lead costs a question
+   on the call. Upgrading one costs Dave four minutes and the customer's trust.
+
+**THE VERIFICATION IS ONE COMMAND AND IT IS NOT OPTIONAL BEFORE A BIG LIST:**
+`py sheet_feed.py --tab "Grey Fiber Customers"` (then `Precise Fiber`, then
+`Gold Confirmed`) on the hunter PC publishes each tab in chunks Claude reads with
+plain curl. **Until those chunks exist, say plainly that the colour is unproven
+rather than shipping it as fact.**
+
+**THE OPENER THAT SURVIVES A WRONG COLOUR:** *"Who do you have for internet
+today?"* Thirty seconds, and it turns a bad green into a known gold, grey or
+prospect before anyone pitches. Put it at the top of every list that ships with
+unverified rows.
+
+## The three rules that outrank everything below
 
 1. **RULE 0 — ASK BEFORE YOU PUSH.** Reading, diagnosing, writing and testing a
    fix are free. Pushing is the line. Patrick: *"don't ever break software!!"*
