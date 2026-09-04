@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 evening (gold + grey have NEVER been deduped; fix written, tested, unpushed)
+# CURRENT STATE — updated 2026-09-04 evening (Milton 126 callable delivered; gold+grey dedup fix tested, unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,45 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### MILTON DELIVERED — 126 CALLABLE OF 141, AND EVERY COLOUR ON IT IS UNVERIFIED (2026-09-04)
+
+Patrick: *"can u give me the new fiber area in milton look phone numbers and
+info."* Built `MILTON_NEW_FIBER_callable.csv` off a LIVE GHL pull of the
+`evergreen-estates-milton` tag (141 records, 141 with a phone, **0 with
+`address1` — the street lives only in the file I built 09-04**, joined back by
+GHL contact id).
+
+**15 STRIPPED under RULE 0b: 7 said NOT INTERESTED, 8 are DND.** Never re-add
+them. 126 remain.
+
+| Tier | n | What it is |
+|---|---|---|
+| 1 REPLIED YES | **3** | already answered a text — call today |
+| 2 AT&T CUSTOMER (`att.net`/`att-1`) | **41** | the ONLY hard evidence on this list — an upgrade, no competitor to beat |
+| 3 NEVER CONNECTED | 56 | fresh in the pocket |
+| 4 TRIED, NO ANSWER | 26 | texted/dialed, never connected |
+
+**22 are landline CALL-ONLY** (never text — Twilio 30006). **110 carry registry
+DNC — call anyway**, standing rule. **3 have no house number**; the row says ask
+on the call.
+
+**STREET DENSITY = the pocket, and it matches Patrick's own AT&T map screenshot:
+PANSY DR 20 · MARIGOLD AVE 17 · SHAMROCK ST 12 · ZINNIA AVE 11 · CAMELLIA AVE 10
+· ASTER ST 9 · AZALEA AVE 9 · WILLARD NORRIS RD 8 · GARDENIA AVE 7.**
+(`5520 Shamrock St` was the address in his screenshot.)
+
+**THE HONEST CAVEAT, AND IT GOES ON THE COVER EVERY TIME: MILTON IS NOT ON THE
+HUNTER SHEET AT ALL.** Measured across all 5 read paths 2026-09-04 — zero
+Milton/FL/32570 rows on any of the 8 tabs. The only run covering it
+(`20260902-182120`) classified 338,456 addresses and wrote **0** — everything
+parked behind the AT&T login. So 85 of the 126 rows carry
+`UNVERIFIED - ASK WHO THEY HAVE TODAY`; only the 41 att.net rows carry real
+evidence.
+
+**DO NOT TEXT THIS LIST AGAIN.** 119 of these people were texted 2026-09-03 and
+**at least 7 STOP'd within 90 minutes** — over-contact, not a bad number. The
+file flags every texted row `ALREADY TEXTED - do not text again, CALL`.
 
 ### THE FIVE COLOURS, DEDUP, AND GHL-BACK-TO-THE-SHEET — CHECKED AGAINST THE LIVE SOURCE (2026-09-04)
 
