@@ -11666,3 +11666,14 @@ emailed link produces a WORKING install (it only warns on its check and pulls
 the fixed launcher from the repo), and every already-installed PC un-pins at
 its next launch — no reinstall anywhere.** Installer v2 is in Drive as
 `INSTALL_OPTIMUS.bat` (`1xAdxVme5…`).**
+
+**13. A WORKING GIT INSTALL LINK EXISTS NOW (MEASURED 22:5xZ, 200 / 8,704
+bytes, public, no login):**
+`https://raw.githubusercontent.com/patricksiado-prog/optimus-map-tools/claude/new-session-8z4pyb/patches/DEPLOY-2026-09-04/optimus/install/INSTALL_OPTIMUS.bat`
+— installer v2 served from THIS repo (which this session CAN push to). On a
+fresh PC it installs Python, pulls the 09-03 hunter (BUILD_DATE gate passes),
+repairs the launcher, pins gspread<6, pulls the scraper. Raw links open as text
+in Chrome: right-click → Save link as, or open the blob page and use the
+Download button. The emailed release link still serves the 08-18 file (200 /
+7,204) and the live hunter is still BUILD_DATE 2026-09-03 — the desktop Claude
+has NOT pushed the deploy yet.**
