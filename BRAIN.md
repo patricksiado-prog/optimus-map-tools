@@ -11609,3 +11609,16 @@ exists or `py sheet_feed.py --tab "Gold Confirmed"` runs.
 212 `gold-attnet-confirmed`, **168 also tagged `type-green`** (the pool's gold
 claim is a tag, not a dot), 20 `status-unverified`. Raw pages and
 `LEADS_GOLD_pool.csv` are in the session scratchpad only (PII, never the repo).
+
+**9. Patrick 22:1xZ, three photos (red HP laptop freshly reset on Windows
+Security; white HP laptop signed into Claude desktop as Brandon Holland; the
+desktop laptop on the stand + monitor running Claude Code with the hunter repo
+`go-high-level-mcp-2026-complete` open in its sidebar): *"do I have my new
+sheet w the tabs I want or both sheets? / do I need to reinstall on all 3
+pcs?"* MEASURED: the split workbook `1DXu…` still holds `Sheet1` + `Enriched
+Leads` + `Sales Log`, modified 07:59Z — the five tabs exist on NO sheet yet;
+they are created by the scraper at launch once the push lands and
+`ghl_token.txt` is on the PC. ANSWER GIVEN: run installer v2 on all three
+(repairs the launcher pin + pins gspread<6; keeps the AT&T login profile); the
+desktop's Claude Code has the hunter repo and is the machine that can push the
+three staged files from `patches/`.**
