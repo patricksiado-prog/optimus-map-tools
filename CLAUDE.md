@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 evening (WE CALL DND; Milton 134 sent, pocket=418 sized but NOT pulled; dedup fix unpushed)
+# CURRENT STATE — updated 2026-09-04 17:20Z (12 outbound numbers, 5th swap, 6 are FL 850; account throttled 09-03; Milton 133 of a 418 pocket)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,53 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### CHASER RUN 2026-09-04 17:05Z — NOTHING OWED, BUT THE NUMBERS CHANGED A FIFTH TIME AND THE ACCOUNT GOT THROTTLED
+
+**ZERO REPLIES OWED A CALL.** Every inbound across the 30 most recent
+conversations is a STOP or a business autoresponder (Liberty Tax, Mederna). The
+one real reply — Robert F Mcconnell `??,??` at 2026-09-03 16:40Z — **was already
+answered by a 212-second phone call at 18:13Z** and he is now in the DNC stage.
+Per the routine's own rule, no text and no email were sent. 12:05pm CT, inside
+quiet hours.
+
+**1. THE OUTBOUND NUMBERS WERE REPLACED A FIFTH TIME — AND THE SHAPE CHANGED.**
+MEASURED off `ghl_list_phone_numbers`. **Twelve numbers now, not four**, titled
+1-6 twice — **six Texas 346 and SIX FLORIDA 850**:
+`+13464893489 +13465852672 +13465857098 +13466393567 +13466592865 +13466631038`
+· `+18502035831 +18503184119 +18504468236 +18506951985 +18507896934 +18508096942`
+**Every number the brain listed is dead** (`+13466797668 +13466634629
++13465898086 +13465344972`). The 850s are local-presence numbers for the Milton
+/ Pensacola pocket — somebody bought them deliberately. **NEVER quote a number
+from this file; read `ghl_list_phone_numbers` every single time.**
+
+**2. THE ACCOUNT HIT A PROVIDER SENDING LIMIT ON 09-03 — this is new and it is
+the real cost of the over-contact.** A send to `+18503058066` at
+2026-09-03 16:40Z came back `status: failed`, error: **"Your account has reached
+today's opt-out/error limit. Please review your messages and try again after
+2026-09-03 17:23:23 America/Chicago."** Too many STOPs in one day and the
+provider stops accepting sends. That is an account-level throttle, not one bad
+number.
+
+**3. TEN STOPs IN THE LAST 30 CONVERSATIONS**, heavily 850/Milton: Lunsford ·
+Livingston · Sharp · Nolan · Walker · Lucus Rice · Spindler · Tolbirt · Grounds,
+plus **David W Pugh: *"why do you keep calling. fuck ofg"*** (inbound SMS).
+
+**PUGH IS THE LIMIT OF THE "WE CALL DND" RULE AND HE PROVES WHY THE THIRD TIER
+EXISTS.** He objected to the CALLS, not the texts — that is a person telling us
+to stop, which is absolute. **Removed from the Milton file the same turn:
+134 → 133.** The rule stands as written: an SMS STOP_KEYWORD is a text block and
+we call them; a human saying stop calling ends the lead.
+
+**4. THE OLD $30 PROMO COPY IS DATED 09-03, NOT TODAY — I nearly claimed
+otherwise.** It shows as `lastMessageBody` on 8 of 30 conversations, but the
+message timestamps are all 2026-09-03 (`lastMessageDate` 18:29Z, the send
+16:40Z). **A conversation-list `lastMessageBody` carries NO date — pull the
+conversation before saying anything is "still sending."** Check 3.
+
+**5. OUR OWN OUTBOUND CARRIED A DOUBLED STOP.** The 09-03 Shamrock text ends
+`\nReply STOP to unsubscribe.` in the BODY, and GHL appends its own. That is the
+exact tell the brain warns about, shipping from a live workflow.
 
 ### THE MILTON POCKET IS 418 HOUSEHOLDS — SIZED FOR FREE, NOT PULLED (Patrick 2026-09-04: *"the entire pocket"* -> then *"nothing yet, send the 134 I have"*)
 
