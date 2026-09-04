@@ -48,6 +48,10 @@ tools but not the brain, so the first thing a local session must do is
 `.last-cleanup`. That is Claude Code's OWN data directory: session history and
 project settings. **Never pick it as a work folder and never delete it.**
 
+**PATRICK KILLED THE STUCK-SESSIONS ERRAND — 2026-09-04: *"fuck those sessions
+I'm not really concerned w them."* DO NOT RE-PROPOSE IT.** Recorded below only
+so nobody rediscovers it and pitches it again as a fresh idea.
+
 **SEVERAL DESKTOP SESSIONS ARE STUCK ON A SINGLE UNTAPPED PERMISSION** — the
 list shows `Needs input` / `Waiting on permission: mcp__…` on **Deploy scraper:
 full address backfill**, a **Google Sheets document**, **Deploy hunter keys
@@ -1296,6 +1300,7 @@ while sending zero texts.
 | **Sub-sheets joined by IMPORTRANGE** | Crawls past ~50 formulas, needs a manual Allow-access click per file, would need 37 of them |
 | **Airtable** | Per-editor pricing compounds once VAs are in seats |
 | **Recycle leads forever** | Patrick settled it: *"6 attempts ok that's enough"* |
+| **Tapping through the stuck desktop sessions** | Patrick, 2026-09-04: *"fuck those sessions I'm not really concerned w them."* Do not raise it again |
 | **Claude posting to FACEBOOK MARKETPLACE** | MEASURED 2026-09-03: Meta publishes **no API for Marketplace listings** — it is a manual, in-app surface only, and automating it breaks their terms and risks the account. Claude writes the listing, Patrick pastes it. Do not re-offer to post it |
 | **Posting to a Facebook PAGE through GHL instead** | `get_social_accounts` returns **0 accounts, 0 groups** (MEASURED 2026-09-03). GHL social posting exists but nothing is connected, so there is no page to post to until Patrick links one in GHL → Settings → Social Planner |
 | **A DealMachine→GHL connector** | No first-party integration exists; we already call both APIs directly, which is better |
