@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 18:15Z (482 enriched gold shipped in 5 chunks, 192 strongest; hunter sweeping, landing unproven)
+# CURRENT STATE — updated 2026-09-04 18:25Z (CORRECTION: the 482 gold are the GHL pool, NOT the sheet tab; sheet_feed.py still never run)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,52 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### CORRECTION — WHAT I SHIPPED IS THE GHL GOLD POOL, NOT THE SHEET'S GOLD DOTS (Patrick 2026-09-04: *"gold dots enriched from sheet enrich them / are u sure"*)
+
+**He was right to ask and the answer is NO. The 482 in `GOLD_CHUNKS/` are the
+`alpha-t2-gold` contacts in GoHighLevel. They are NOT the `Gold Confirmed` tab.**
+Two different populations, and I shipped one while he asked about the other.
+
+**PROOF THEY CANNOT EVEN BE TRACED TO THE SHEET — MEASURED off the `source`
+field on all 492:**
+
+| source | n |
+|---|---|
+| **NO SOURCE RECORDED** | **437** |
+| "Beaumont gold pocket - verified copper upgrade Aug 30" | 32 |
+| "Optimus gold biz" | 22 |
+| "Optimus Precise Fiber - Beaumont" | 1 |
+
+**437 of 492 have no recorded origin at all**, so nothing links them to a hunter
+dot. The evidence column on the chunks is still true as written (192 att.net =
+a real AT&T customer) — but "these are the sheet's gold dots" would have been a
+lie, and it is exactly the conflation that produced the bad `COLOUR PROOF`
+column earlier today.
+
+**WHY THE REAL ASK CANNOT BE DONE FROM HERE YET, THE WHOLE CHAIN:**
+
+1. **`Gold Confirmed` = 4,707 rows; only 176 are readable via the Drive
+   connector, and those 176 are TEN unique addresses** (re-counted this turn:
+   7631 Fuqua ×96 · 800 N Arcola ×50 · 611 E Myrtle ×22 · 1112 N Arcola ×2 ·
+   plus 6 singletons in Houston / Jersey Village / Edmond OK).
+2. **The tab carries almost no contact data: 2 of 176 rows have a phone, and
+   the `Business` column is empty on the rest.** A gold row is an ADDRESS, not a
+   lead — it has to be skip-traced before anyone can call it.
+3. **`py sheet_feed.py --tab "Gold Confirmed"` HAS STILL NEVER BEEN RUN** —
+   re-checked live this turn, `_feed/sheet/chunk_000.json` and every variant
+   return **HTTP 404**. Without it the other ~4,531 rows cannot be read at all.
+4. So the enrich cannot be sized, let alone costed: **the unique-address count
+   for the whole tab is unknown**, and `dealmachine_enrich_address` has no
+   `estimate_cost` flag — you probe one and read `credits.used`.
+
+**THE THREE STEPS, IN ORDER, AND STEP 1 IS ON PATRICK'S PC:**
+`py gold_audit.py` (unique addresses, ~10s, read-only) → `py sheet_feed.py
+--tab "Gold Confirmed"` (publishes all 4,707 in chunks readable by curl) → then
+I dedupe, probe ONE address for the real per-row credit cost, quote the total,
+and enrich on his go. **The dedupe patch in `patches/dedupe-gold-grey/` would
+collapse the tab first and cut the enrich bill by whatever the duplication
+factor turns out to be — on the readable sample that factor is 17.6x.**
 
 ### THE ENRICHED GOLD SHIPPED — 482 IN 5 CHUNKS, SORTED BY EVIDENCE (2026-09-04 18:1xZ)
 
