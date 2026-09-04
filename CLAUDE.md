@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 afternoon (green-biz tab = the new-fiber detector; its gold half is dead at 62 rows)
+# CURRENT STATE — updated 2026-09-04 afternoon (RESI is the product; the green-biz tab is a compass, not a call list)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,43 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### RESI IS THE PRODUCT. THE BIZ TAB IS A COMPASS, NOT A CALL LIST. (Patrick 2026-09-04: *"not bizz were focused on resi"*)
+
+**KILLED THE SAME TURN I OFFERED IT: the 3,767-row Fiber Green Biz call file is
+NOT wanted. Do not build it, do not re-offer it.** He confirmed the green-biz
+tab's job in the previous message (*"how u detect new fiber Green and gold
+concentrations"*) and then drew the line: **it points at the ground, we sell the
+HOUSES on that ground.** Same shape as the gold rule — gold is the compass,
+green is the money — one level up.
+
+**SO THE READING ORDER IS: green-biz cluster tells you WHERE, then you work
+`Precise Fiber` (resi green) and `Gold Confirmed` (resi copper) inside it.**
+Never hand a rep a business list off the back of a detector reading.
+
+**WHAT THE BRAIN ALREADY HOLDS ON THE RESI SIDE — searched, not re-derived:**
+
+| Population | Where | n | State |
+|---|---|---|---|
+| resi GREEN | `Precise Fiber` (green-only since 08-26; new green → split workbook) | **687,923 rows** | unreadable from a Claude session — needs `sheet_feed.py` |
+| resi GOLD | `Gold Confirmed` | **4,707 rows** | a SIGHTING count — 176 readable rows were 10 unique addresses |
+| resi GREY | `Grey Fiber Customers` | **56,799 rows** | never dial, and it is the scrub list |
+
+**THE RESI CONCENTRATION MAP IS ALREADY BUILT AND IT IS GOLD DENSITY PER STREET**
+(measured 2026-09-04, in the call-list section below): Beaumont carries **365 of
+the 513 gold**. Densest streets **Chatwood 22 · Stacewood 19 · Monterrey 16 ·
+Norwood 16 · Shakespeare 14 · Brandywine 13 · Galway 12 · Potter 12**, then
+Armstrong / Eldridge / Todd / Norvell 9 each. **That is the residential version
+of exactly what he is describing, and it is the door-knock map as well as the
+dial map.** Gold density = fiber lit recently, nobody converted it.
+
+**THE ONE THING THAT MAKES RESI HONEST IS STILL NOT RUN.** Under RULE 0b the
+resi green is the WEAKEST population we own — of 84 board-checked addresses,
+**21 came back GREY and ZERO residential rows came back GREEN.** The fix is
+`py sheet_feed.py --tab "Grey Fiber Customers"` then `--tab "Precise Fiber"`
+then `--tab "Gold Confirmed"` on the hunter PC. **`_feed/sheet/` still holds only
+`tabs.json`; every chunk URL is a 404.** Until those chunks exist, every resi
+list ships with unverified rows and has to say so.
 
 ### THE GREEN-BIZ TAB IS THE NEW-FIBER DETECTOR — AND ITS GOLD HALF IS DEAD (Patrick 2026-09-04: *"fiber green tab is how u detect new fiber Green and gold concentrations"*)
 
