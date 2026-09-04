@@ -11622,3 +11622,15 @@ they are created by the scraper at launch once the push lands and
 (repairs the launcher pin + pins gspread<6; keeps the AT&T login profile); the
 desktop's Claude Code has the hunter repo and is the machine that can push the
 three staged files from `patches/`.**
+
+**10. Patrick 22:2xZ: *"I don't want a different link I want the one from
+before fixed"* and *"why do I need a new installer ... I thought they update
+from git."* DECISION: the v2 Drive link is NOT acceptable; the original Drive
+file `1IRnfbeQ…` must be fixed in place (owner's Manage versions → Upload new
+version, or the desktop Claude drives the clicks). ANSWER GIVEN: the programs
+do self-update; the LAUNCHER does not, and its accept-check has thrown away
+every hunter update since 08-25, so the PCs are frozen on 08-18/08-24 code, not
+damaged. Two ways out: re-run the installer once per PC, OR push the one-line
+hunter sentinel (`patches/launcher-sentinel`), which un-pins every PC with no
+reinstall — that push is the better answer and is blocked only by this
+session's permissions.**
