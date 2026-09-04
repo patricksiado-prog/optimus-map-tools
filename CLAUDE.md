@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 20:35Z (STEP 1 DONE: logged into the AT&T map on Milton; hunter is the 08-18 build, do NOT press Enter; step 2 = reinstall)
+# CURRENT STATE — updated 2026-09-04 20:45Z (INSTALLER v2 in Drive fixes both PCs + pins gspread; step 2 = run it on the desktop, then relaunch)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -28,6 +28,28 @@ Agreed order: **1** clear the AT&T access chooser on the hunter (human click) �
 dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
+
+### INSTALLER v2 IS BUILT AND IN DRIVE — IT UNPINS BOTH PCs WITH NO REPO PUSH (2026-09-04 20:1xZ)
+
+Patrick: *"fix the install link for both and drop in drive"* then *"same link as
+before but fix it"*. **THE SAME LINK WAS NOT POSSIBLE and he must be told: the
+Google Drive connector's `update_file` only changes a file's TITLE and FOLDER —
+it cannot replace contents.** So a new file was created and the old one renamed.
+
+| | |
+|---|---|
+| **NEW — use this** | `1xAdxVme5mNB810PLTXANIxMhrwcY_Ve3` · 8,704 bytes · sha256 `e9db926d…` |
+| OLD, renamed `OLD-BROKEN-DO-NOT-USE_INSTALL_OPTIMUS_aug23.bat` | `1IRnfbeQ…` · 7,204 bytes, 08-23 |
+
+**THREE FIXES, all inside the one .bat, so nothing needs pushing to the hunter
+repo:**
+1. **Its own accept-gate `findstr /C:"GOLD CAPTURE ON"` → `findstr /C:"BUILD_DATE = "`.** No more false *"WARNING: still got OLD hunter code"*.
+2. **It REPAIRS `RUN_HUNTER.bat` after downloading it** — one PowerShell string swap of the same dead sentinel. Launchers never self-update, so this is the only way to un-pin a PC. Prints `launcher repaired` or `launcher already OK`.
+3. **`pip install "gspread<6"`** (was unpinned) — gspread 6 is what made `Spreadsheet.client` an `HTTPClient` and killed the scraper's split-workbook redirect AND the Enriched Leads board. **This alone should get the second sheet working again at the next scraper launch, without deploying the `_gc()` helper.**
+
+Copy kept at `patches/installer-v2/`. Written CRLF, 115 lines, byte-verified by
+sha256 before upload. **The `patches/launcher-sentinel/` hunter fix is still the
+permanent fleet-wide answer and is still UNPUSHED (RULE 0).**
 
 ### A SECOND PINNED PC: THE HP LAPTOP IS ON THE 08-24 BUILD (photo 2026-09-04, laptop clock 2:50 PM)
 
