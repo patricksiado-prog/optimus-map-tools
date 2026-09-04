@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 19:45Z (HUNTER IS STILL BLIND — sweep_start ≠ AT&T login; sheet FULL; 2nd sheet has NO Precise Fiber tab; gspread-6 fix unpushed)
+# CURRENT STATE — updated 2026-09-04 20:05Z (Patrick at the AT&T chooser; THIS PC's hunter is the 08-18 build and refuses the update; sheet FULL; gspread-6 fix unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -28,6 +28,39 @@ Agreed order: **1** clear the AT&T access chooser on the hunter (human click) �
 dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
+
+### STEP 1 IN PROGRESS — AND THIS PC'S HUNTER IS ON THE AUGUST 18 BUILD (2026-09-04 20:0xZ, off three console photos)
+
+**Patrick is at the AT&T access chooser right now.** It is `youachieve.att.com`,
+titled *"Choose your method of access..."*, three buttons: **AT&T Employee** (the
+one), *AT&T Retiree/Affiliate with login*, *AT&T Retiree/Affiliate without
+login*, with Chromium's *"Restore pages?"* popup on top (dismiss with X). The
+hunter's own console prints these exact steps at `LOGGED_OUT` (hunter line
+8301-8309) and waits `LOGIN_WAIT_SECS` for *"Logged in -- map is up."*
+
+**THE HUNTER ON THIS PC IS TWO WEEKS STALE AND ITS UPDATER IS REFUSING THE
+DOWNLOAD.** Console: *"Checking for the latest version... Update looked
+stale/partial (GitHub cache) -- keeping the copy you have. If this shows an OLD
+build, wait 60s and relaunch, or re-run INSTALL_OPTIMUS.bat"* then **`CODE
+UPDATED 2026-08-18`**, *"GOLD DOTS TAB ON: every gold dot -> 'Gold Dots' tab"*.
+That build predates green-only Precise Fiber (08-26), `Gold Confirmed` +
+Build Code/Status (08-23/08-26), the split workbook (09-03) and the login-wait.
+**If it logs in it will write gold to `Gold Dots` — a tab the clean deleted —
+and nothing to the split workbook.** MEASURED the other side: the raw CDN
+serves `BUILD_DATE = "2026-09-03"`, 399,476 bytes, `x-cache: HIT` — so the
+refusal is NOT the CDN serving old code. Cause is inside `self_update()`
+(hunter line 6171), being read now. Fix per the console: relaunch after 60 s,
+else re-run `INSTALL_OPTIMUS.bat`. **Confirm the console prints `CODE UPDATED
+2026-09-03` before trusting anything this PC captures.**
+
+This is a DIFFERENT machine from the one whose feed I read (that run carried the
+09-03 login-wait code). Patrick has several hunter PCs (hostnames seen:
+LAPTOP-RS9EHSLO, LAPTOP-FJEEPATI, DESKTOP-VCRE1E8); **each updates on its own
+and any of them can be stale. Ask which PC before reasoning about a console.**
+
+**Patrick, same photo: *"id like u to run hunter later watch steps please."***
+He wants a babysat hunter run tonight, step by step, verified from the feed at
+each step. Not started; step 1 (the login) is in progress.
 
 ### STILL TRUE TONIGHT — one line each, detail is in BRAIN.md via `brain find` (2026-09-04 19:3xZ)
 
