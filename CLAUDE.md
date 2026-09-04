@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 morning (the sheet IS enriched; the board confirmed Ed in writing)
+# CURRENT STATE — updated 2026-09-04 afternoon (fiber green biz found: 7,300 on the tab, 3,767 enriched, 3 in the call list)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,56 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE FIBER GREEN BIZ IS THE BIGGEST UNWORKED THING WE OWN — 7,300 ON THE TAB, 3,767 ENRICHED, 3 IN THE CALL LIST (MEASURED 2026-09-04 16:0xZ)
+
+Patrick: *"what happened to the fiber green stuff??"* and *"fiber green on a
+separate sheet?"* Both answered by measurement.
+
+**IT IS NOT ON A SEPARATE SHEET AND NOTHING HAPPENED TO IT. `Fiber Green Biz` =
+7,300 rows, still tab 2 of 8 on PRODUCTION** (stamped tabs.json 2026-09-04
+03:08:57). It survived the 21-tab deletion untouched. **The ONLY tab ever moved
+to its own workbook is `Precise Fiber`** (split workbook
+`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`, hunter `59a92bf`). Fiber Green
+Biz is ~95,000 cells against Precise Fiber's ~8.4M, so splitting it frees
+nothing — but it WOULD make it readable in one pull, which is the only argument
+for doing it.
+
+**IN GHL IT IS ALREADY ENRICHED AND ALREADY IN THE DIALER, and I did not put it
+in front of him.** `official_contacts_get_contacts` `meta.total`:
+
+| tag | n in GHL |
+|---|---|
+| **`optimus-fiber-biz`** | **3,767** |
+| `fiber-green-biz` | 216 |
+
+Page-1 sample of 100, every one carrying the exact tag: **100 have a phone, 99
+have an address1, 89 are already in the `alpha` pool** (64 `alpha-t5-green`,
+25 `alpha-t4-business`), 43 carry `invalid`, 10 `not interested`.
+
+**THE GAP, MEASURED: of 500 sampled `optimus-fiber-biz` ids, 264 are in the
+3,511-row labelled file (all correctly typed BUSINESS) — and only 3 reached the
+1,937-row `OPTIMUS_CALL_LIST_Sep4.csv`.** That is not a bug, it is the filter I
+was asked for (gold + yes-replies + new-fiber residential streets), but it means
+**the whole green-business population has been sitting outside every list this
+week.**
+
+**AND IT IS THE BEST-EVIDENCED GREEN WE OWN.** When the follow-up board checked
+84 addresses against the hunter's own tabs, **8 came back confirmed GREEN and
+every single one was a business on `Fiber Green Biz`** (SMK Wireless, Razzle
+Dazzle, Liberty Tax, Texas Quality Seamless Gutters, Roshan Towers, M&W
+Painting, Glovera Esthetic, Asrani Group). **ZERO residential rows confirmed
+green.** So under RULE 0b the biz green is the one green population that is not
+a claim.
+
+**STILL BROKEN NEXT DOOR: `Upgrade Orange Biz` = 62 against 39,294 scraped
+businesses.** Gold businesses are the highest-value slice we have and that tab
+is effectively empty. The `Gold Confirmed` load fix went in 2026-09-03; it needs
+a scraper launch to show whether the match finally populates.
+
+**NOT BUILT: a labelled Fiber Green Biz call file.** Pulling all 3,767 is ~38
+paging calls of 100, each landing in a file so it costs almost no context.
+Waiting on Patrick's go rather than shipping half of it.
 
 ### "4,500 GOLD" DOES NOT EXIST AS 4,500 DOORS — MEASURED OFF THE TAB ITSELF (2026-09-04)
 
