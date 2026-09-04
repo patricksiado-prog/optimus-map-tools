@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 17:30Z (CORRECTION: Milton neighbourhood is 117 doors, not 418 — we already hold all of it)
+# CURRENT STATE — updated 2026-09-04 17:40Z (Milton re-texted: 98 sent from the six FL 850s, 0 failures — watch the opt-out rate)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,51 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE MILTON RE-TEXT WENT OUT — 98 SENT, 0 FAILURES, ALL SIX 850 NUMBERS (2026-09-04 17:27-17:36Z / 12:27pm CT)
+
+**Patrick asked, I raised the risk once, he decided: *"Retext different message to
+the ones that didn't optout."* Sent.** Record the decision: **a one-day gap
+between touches is ACCEPTED by Patrick when the copy is new and the opt-outs are
+excluded.** Do not re-litigate it; watch the opt-out rate instead.
+
+| | n |
+|---|---|
+| Planned | 101 |
+| **Delivered / sent** | **98** |
+| Blocked by GHL: *"Cannot send message as DND is active for SMS"* | 2 |
+| Skipped by me — opportunity moved to the **DNC stage** after a 212-sec call 09-03 | 1 (Robert Mcconnell) |
+| Not texted at all: landline 22 · SMS-STOP 8 · not interested 7 · no house number 1 | 38 |
+
+**THE THROTTLE HAD CLEARED — verified before the batch, not assumed.** Probe
+send returned `status: delivered`, so the 09-03
+`"account has reached today's opt-out/error limit"` was a daily counter that
+reset. **Always probe ONE and read `status` before a batch** (Check 3).
+
+**LOCAL PRESENCE WORKS AND IS NOW THE DEFAULT FOR FLORIDA.** GHL's own pick sent
+the probe from a Texas 346. Every other send was routed explicitly with
+`fromNumber` **rotating across the six FL 850s** — verified `from: +1850…`,
+`status: delivered`, 850→850. **Rotating also spreads volume so no single number
+carries the batch — the direct fix for what got the account throttled.**
+
+**COPY RULES HELD, verified on the wire:** body max 129 chars, ONE segment;
+**zero duplicate bodies across 98 sends** (16 templates × name × street);
+"Patrick with AT&T Fiber", never Optimus; address in every message; **no opt-out
+line in the body — GHL appended its own `\nReply STOP to unsubscribe.`, so no
+doubled STOP**; gold got the copper-upgrade pitch (35), green the availability
+notice (66); no price, no "10x faster", no "$30/month", no free months.
+
+**TWO NEW EXCLUSION SIGNALS THIS RUN, both worth keeping:**
+1. **GHL enforces SMS DND at the API** — 2 contacts my tag/`dndSettings` snapshot
+   showed as clean were refused with a 400. **The platform is the backstop; a
+   send attempt is never how you discover consent, but it does catch drift.**
+2. **An opportunity moved to a `DNC` STAGE is a Do-Not-Call disposition** and is
+   NOT visible in tags or `dndSettings`. Robert Mcconnell was in the send plan
+   and had to be pulled by hand. **Check the pipeline stage, not only tags.**
+
+**WATCH THIS:** 10 STOPs came from the 09-03 send. If this batch produces a
+similar rate the list is burning and the next touch must be a CALL. Re-check
+`get_recent_messages` in a few hours.
 
 ### CHASER RUN 2026-09-04 17:05Z — NOTHING OWED, BUT THE NUMBERS CHANGED A FIFTH TIME AND THE ACCOUNT GOT THROTTLED
 
