@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 17:20Z (12 outbound numbers, 5th swap, 6 are FL 850; account throttled 09-03; Milton 133 of a 418 pocket)
+# CURRENT STATE — updated 2026-09-04 17:30Z (CORRECTION: Milton neighbourhood is 117 doors, not 418 — we already hold all of it)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -65,6 +65,46 @@ conversation before saying anything is "still sending."** Check 3.
 **5. OUR OWN OUTBOUND CARRIED A DOUBLED STOP.** The 09-03 Shamrock text ends
 `\nReply STOP to unsubscribe.` in the BODY, and GHL appends its own. That is the
 exact tell the brain warns about, shipping from a live workflow.
+
+### CORRECTION — THE MILTON NEIGHBOURHOOD IS 117 PROPERTIES, NOT 418. WE ALREADY HAVE ALL OF IT. (Patrick 2026-09-04: *"that's how big the neighborhood is? can u verify that?"*)
+
+**HE WAS RIGHT TO PUSH AND MY 418 WAS AN ARTIFACT OF MY OWN CIRCLE.** I drew a
+half-mile radius and called the properties inside it "the neighbourhood." It is
+not a neighbourhood — it is whatever fell inside a circle I chose.
+
+**THE DENSITY CHECK THAT EXPOSED IT (all free `dealmachine_property_count`):**
+
+| radius | properties | per sq mile |
+|---|---|---|
+| 0.25 mi | 89 | ~1,424 |
+| 0.50 mi | 418 | ~1,672 |
+| 0.75 mi | 859 | ~1,527 |
+| 1.00 mi | 1,496 | ~1,496 |
+
+**Density is flat in every direction (~1,500/sq mi), so the circle never found an
+edge.** A real neighbourhood shows as a density break. This one does not, because
+suburban Milton just keeps going. **Any "the pocket is N houses" claim built from
+a radius is a claim about the radius, not the ground.**
+
+**THE REAL BOUNDARY IS THE SUBDIVISION, AND DEALMACHINE CARRIES IT.**
+`dealmachine_enrich_address` on 5520 Shamrock St (0 credits, already licensed)
+returns **`subdivision_name: "EVERGREEN ESTATES"`, `property_type: Single
+Family`**. Counting on that field, inside ZIP 32570:
+
+- **`subdivision_name` = "EVERGREEN ESTATES" -> 117 properties, 147 people.**
+- contains "EVERGREEN" (catches phased names) -> 128 properties, 163 people.
+
+**SO THE NEIGHBOURHOOD IS ~117-128 DOORS AND WE HOLD 141 CONTACTS ON IT. WE
+ALREADY HAVE THE WHOLE POCKET — there is nothing meaningful left to buy there,
+and the ~2,508-credit pull I quoted would have been buying the surrounding town,
+not the neighbourhood.** Patrick's instinct to say "nothing yet" saved the spend.
+
+**THE METHOD THAT REPLACES THE RADIUS, use it every time:** enrich ONE known
+address with `contact_audience: none` (free when already licensed) to read its
+`subdivision_name`, then `dealmachine_property_count` on that subdivision inside
+the ZIP. `subdivision_name` is filter id `subdivision_name` (STRING); useful
+neighbours are `property_type`, `is_owner_occupied`, `is_vacant_home`.
+**340 filters exist — `dealmachine_filters` is free, read it before guessing.**
 
 ### THE MILTON POCKET IS 418 HOUSEHOLDS — SIZED FOR FREE, NOT PULLED (Patrick 2026-09-04: *"the entire pocket"* -> then *"nothing yet, send the 134 I have"*)
 
