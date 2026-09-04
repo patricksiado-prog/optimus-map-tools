@@ -1558,7 +1558,47 @@ while sending zero texts.
 | **`scrub_dnc` on a DealMachine export** | Registry DNC is recorded and dialed anyway; scrubbing deletes >half the list |
 | **Naming the dealership in a customer text** | *"don't say optimus / we're att"* |
 
-### RULE 0b — NEVER SHIP AN UNVERIFIED COLOUR. NEVER PUT GREY IN A CALL LIST.
+### THE GOLD LABEL FAILED THE SAME WAY THE GREEN ONE DID (MEASURED 2026-09-04)
+
+Patrick: *"are u sure it's right?? u know the sheet was fucked up. check and
+rename it."* He was right to push, twice over.
+
+**CORRECTION TO MY OWN COLUMN, SHIPPED AN HOUR EARLIER.** The `COLOUR PROOF`
+column I put on every file read *"VERIFIED <colour> - traced to a hunter
+capture"* on 241 rows. **That was WRONG.** All it actually meant was that
+GoHighLevel had a `source` string on the contact — provenance of the IMPORT, not
+verification of the DOT. I conflated the two and shipped it. Corrected the same
+turn; the files now carry `HOW SOLID IS THIS` with a truthful sentence per row.
+
+**WHERE THE "GOLD" ON 513 ROWS ACTUALLY COMES FROM:**
+
+| n | source |
+|---|---|
+| **263** | a spreadsheet somebody uploaded — NO source recorded |
+| **195** | an **att.net / sbcglobal email** on the contact = they ARE an AT&T customer |
+| 32 | export named "Beaumont gold pocket - verified copper upgrade" |
+| 22 | export named "Optimus gold biz" |
+| 1 | "Optimus Precise Fiber - Beaumont" |
+
+**AND THE BOARD AGREES WITH ED AGAIN.** Of the gold-labelled rows the follow-up
+board could check against the hunter's own tabs: **2 came back GREY (7550 Chelsea
+Pl, 1055 Wisteria Dr — both were tagged `t2-gold`), 14 came back "not on the map",
+and ZERO came back confirmed gold.** Gold is no safer than green was.
+
+**THE FILES ARE NOW NAMED FOR WHAT THEY ARE.** 507 rows, 16 chunks of ~50, the
+2 confirmed-grey golds stripped:
+
+- **`A-ATT-CUSTOMER_*` — 192.** att.net/sbcglobal email on file. This is the ONLY
+  independently verifiable gold signal we own: the email proves they are an AT&T
+  customer. It does NOT prove copper vs fiber. **Hand these out first.**
+- **`B-COPPER-EXPORT_*` — 52.** Came from an export whose NAME claims verified
+  copper. Never re-checked against the map.
+- **`C-UNVERIFIED_*` — 263.** The word "gold" was typed into a spreadsheet.
+
+**THE NAMING IS THE CONTROL.** A rep reading `C-UNVERIFIED` cannot mistake it for
+proof. Never ship a file called `GOLD_*` again unless the map says gold.
+
+## RULE 0b — NEVER SHIP AN UNVERIFIED COLOUR. NEVER PUT GREY IN A CALL LIST.
 
 **Patrick, 2026-09-04: *"Never send me garbage again... I can't call gray."***
 This sits next to RULE 0 because it is the same class of failure: something goes
