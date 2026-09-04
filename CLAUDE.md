@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 20:25Z (LAUNCHER REJECTS EVERY HUNTER PUSH SINCE 08-25 — sentinel fix unpushed; Patrick at the AT&T chooser; sheet FULL)
+# CURRENT STATE — updated 2026-09-04 20:35Z (STEP 1 DONE: logged into the AT&T map on Milton; hunter is the 08-18 build, do NOT press Enter; step 2 = reinstall)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -28,6 +28,31 @@ Agreed order: **1** clear the AT&T access chooser on the hunter (human click) �
 dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
+
+### STEP 1 DONE — PATRICK IS LOGGED INTO THE AT&T FIBER MAP, ON MILTON (2026-09-04 20:3xZ, six photos)
+
+Chooser → *AT&T Employee* → Global Logon (his AT&T Employee credentials,
+"Remember me" ticked — **never record the ID or password**) → youRefer →
+*AT&T Fiber Availability Map* tile → **the map is up, search box reads "Milton,
+Florida, United States", green and grey dots visible.** First AT&T map session
+since 09-02. It lives in the hunter's Chromium profile `<hunter dir>\att_profile`
+(`PROFILE_DIR`, hunter line 112 — **same path in the 08-18 build and in
+today's**, so the login survives the update; `INSTALL_OPTIMUS.bat` deletes only
+its TEMP extract dir and an old .lnk, never the hunter folder).
+
+**BUT THE HUNTER THAT OPENED THAT BROWSER IS THE 08-18 BUILD, and it is now
+sitting at its old manual prompt: *"STEP 2 -> When the map is sitting on the
+right spot, come back to THIS window and press Enter to scan it."*** Its
+console also printed *"(serviceability reply 301 -- skipping)"* (from before the
+login), the sheet-full `[400] This action would increase the number of cells`
+on a biz write, and the old-format TOTALS block (687,923 / 39,294 / 7,300 / 62,
+plus **4,466 callable unique-phone matches**). **DECISION: DO NOT PRESS ENTER ON
+THIS BUILD.** It would sweep Milton into pre-08-23 formats, write gold to the
+deleted `Gold Dots` tab and all colours to the full main workbook, and know
+nothing about the split. Nothing would land and the parked files would be in a
+shape the new build may not replay. Step 2 = close it, re-run the installer,
+relaunch on 09-03 code, which then auto-aims from the current view and needs
+no Enter (10-second hold, Ctrl+Up to skip).
 
 ### THE LAUNCHER HAS REJECTED EVERY HUNTER UPDATE SINCE 08-25 — THIS IS WHY THE PC IS ON THE 08-18 BUILD (PROVEN 2026-09-04 20:2xZ)
 
