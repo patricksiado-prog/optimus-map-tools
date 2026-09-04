@@ -7,6 +7,10 @@ ns = {}
 # execute only the dedupe block (no selenium / gspread imports)
 start = src.index('# PERIODIC BACKGROUND DEDUPE')
 end   = src.index('def start_periodic_dedupe')
+# the GHL STATUS block (2026-09-04) sits between the dedupe code and
+# start_periodic_dedupe and needs the whole module; stop before it.
+if '# GHL STATUS (2026-09-04)' in src[start:end]:
+    end = src.index('# GHL STATUS (2026-09-04)')
 ns["HERE"] = "/tmp/fix"
 exec("import os, csv, time, socket, json\n" + src[start:end], ns)
 

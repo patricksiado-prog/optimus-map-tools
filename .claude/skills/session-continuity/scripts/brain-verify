@@ -116,6 +116,15 @@ CODE_CLAIMS = [
      "the split-workbook redirect does NOT call sh.client.open_by_key (gspread-6 landmine: 'HTTPClient' object has no attribute 'open_by_key')"),
     (SCRAPER, r"^    client = sh\.client$", False,
      "the SHEET LOG / Enriched Leads board does NOT take sh.client as a gspread Client (gspread-6 landmine: HTTPClient has no list_spreadsheet_files)"),
+    # 2026-09-04 late: dedupe of the two colour tabs and the five GHL tabs in the split
+    # workbook. Both staged in the hunter clone, tested, NOT pushed (harness refused the
+    # commit); they read DRIFT until that push lands -- patches/dedupe-gold-grey, patches/ghl-status.
+    (SCRAPER, r'\("Gold Confirmed", pf_key, pf_score\)', True,
+     "Gold Confirmed is in the scraper's dedupe job list (patches/dedupe-gold-grey)"),
+    (SCRAPER, r'\("Grey Fiber Customers", pf_key, pf_score\)', True,
+     "Grey Fiber Customers is in the scraper's dedupe job list (patches/dedupe-gold-grey)"),
+    (SCRAPER, r"^def sync_ghl_status\(sh\):", True,
+     "the five GHL tabs Green/Gold/Grey/Biz/Fiber Biz are built by the scraper at launch (patches/ghl-status; needs ghl_token.txt on the PC)"),
     # 2026-09-04: RUN_HUNTER.bat / INSTALL_OPTIMUS.bat refuse any hunter download that
     # lacks the literal "GOLD CAPTURE ON" (findstr). The banner carrying it was cut on
     # 08-25 (67bf57b); 25 pushes since then never reached a launcher-updated PC.
