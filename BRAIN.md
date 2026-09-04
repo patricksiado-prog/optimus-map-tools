@@ -11602,3 +11602,10 @@ is one bulk tag-remove.
 6 of 492 lacked an address on 09-03). The SHEET's gold beyond the 10 readable
 addresses is unenriched and unreadable from here until `gold_unenriched.json`
 exists or `py sheet_feed.py --tab "Gold Confirmed"` runs.
+
+**8. ENROLMENT DONE (MEASURED ~22:0xZ):** all 505 `leads_gold` contacts paged
+(3 pages), 5 excluded as Not Interested, **500 enrolled into `Gold Dots`,
+500/500 OK, 0 errors**, 0 without a phone, 0 without an address. Of the 500:
+212 `gold-attnet-confirmed`, **168 also tagged `type-green`** (the pool's gold
+claim is a tag, not a dot), 20 `status-unverified`. Raw pages and
+`LEADS_GOLD_pool.csv` are in the session scratchpad only (PII, never the repo).
