@@ -106,7 +106,16 @@ CODE_CLAIMS = [
     (HUNTER, r'^PF_SPLIT_SHEET_ID = "1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ"', True,
      "SPLIT SHEET IS LIVE: Precise Fiber defaults to its own workbook (hunter 59a92bf)"),
     (SCRAPER, r'^PF_SPLIT_SHEET_ID = "1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ"', True,
-     "the scraper's biz match follows the SAME split workbook"),
+     "the scraper CARRIES the split workbook id (presence only -- see the two gspread-6 checks below for whether it can OPEN it)"),
+    # 2026-09-04, off Patrick's console photo: gspread 6 made Spreadsheet.client an
+    # HTTPClient with no open_by_key / list_spreadsheet_files. Any `sh.client.<Client
+    # method>` in the scraper is DEAD on every PC (unpinned pip -> 6.x). These two must
+    # be ABSENT; while they are present the split redirect AND the Enriched Leads board
+    # both fail at runtime even though every presence check above passes.
+    (SCRAPER, r"sh\.client\.open_by_key", False,
+     "the split-workbook redirect does NOT call sh.client.open_by_key (gspread-6 landmine: 'HTTPClient' object has no attribute 'open_by_key')"),
+    (SCRAPER, r"^    client = sh\.client$", False,
+     "the SHEET LOG / Enriched Leads board does NOT take sh.client as a gspread Client (gspread-6 landmine: HTTPClient has no list_spreadsheet_files)"),
     (HUNTER, r"cols=str\(len\(OUT_HEADER\)\)", True,
      "the 8-vs-13 column bug is fixed -- a fresh Precise Fiber tab is 13 wide"),
     (HUNTER, r'cols="8"', False,

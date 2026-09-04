@@ -1,0 +1,8 @@
+gspread 6.2.1
+reproduced (old path): 'HTTPClient' object has no attribute 'open_by_key'
+reproduced (old path): 'HTTPClient' object has no attribute 'list_spreadsheet_files'
+fixed (gspread 6): _gc(sh) -> Client with open_by_key + list_spreadsheet_files, same creds
+gspread 5 shape: returned the existing Client unchanged
+both call sites now go through _gc(sh); no sh.client.open_by_key left
+
+ALL TESTS PASS

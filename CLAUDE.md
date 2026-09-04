@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 19:00Z (Build Code empty on the tab BUT the evidence is on Patrick's PC — `py decode_gold.py` answers it, no code change)
+# CURRENT STATE — updated 2026-09-04 19:20Z (SHEET IS FULL, 1,987 parked; gspread-6 bug killed the split redirect + Enriched Leads board in the scraper — fix tested, unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,86 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### PATRICK'S CONSOLE PHOTOS, 14:04-14:06 CT: THE SHEET IS FULL, AND ONE gspread BUG HAS KILLED TWO DEPLOYED FEATURES (MEASURED 2026-09-04 19:1xZ)
+
+Patrick: *"recheck all that memory is fucked check the brain the code how many
+redo we did the memory the sheet"* — then two photos of the live Maps Scraper
+console. Everything below is read off those photos and verified against the
+live source and the hunter repo's own git log.
+
+**THE REDO COUNT HE ASKED FOR (git, today):** 36 commits · **9 carry a
+correction of something this file or I had said** · the CURRENT STATE header
+was rewritten **18 times**. That is the honest number. This file is back to
+1,936 lines (archive is due again).
+
+**1. THE PRODUCTION SHEET IS FULL — the software says so, loudly, on every
+line.** Console: *"THE SHEET IS FULL. Google will not accept another row.
+(10,000,000-cell limit … no number of retries can ever succeed.)"* · *"Grids
+were already auto-shrunk. The workbook now genuinely needs archiving"* ·
+`LIVE_COUNTS_scraper.txt` 14:06:12: **1,987 rows parked this run, 0 added; 203
+batches parked from earlier runs.** NOTHING IS LOST (CSV + parked files), but
+nothing lands. **This is why today's hunter run reached `pass_done` and the
+counts did not move:** tabs.json WAS republished at **14:04:33** (hunter commit
+`acd6aef`) with **identical counts** — Gold Confirmed 4,707, Precise Fiber
+687,923. The raw CDN served the 03:08:57 copy for 15+ minutes after; read
+`git show FETCH_HEAD:optimus/_feed/sheet/tabs.json` from the clone when it
+matters. (Scraper is sweeping outward into **ZIP 36605, Mobile AL**.)
+
+**2. ONE gspread-6 BUG HAS SILENTLY KILLED THE SPLIT-WORKBOOK REDIRECT *AND* THE
+ENRICHED LEADS BOARD IN THE SCRAPER.** Console, twice: *"(Precise Fiber redirect
+1DXu…: `'HTTPClient' object has no attribute 'open_by_key'` — falling back to
+the main workbook)"* and *"SHEET LOG: feed folder not readable (`'HTTPClient'
+object has no attribute 'li…'`)"*. **Mechanism, proven locally on gspread
+6.2.1** (what an unpinned `pip install gspread` gives every PC): gspread 6 made
+`Spreadsheet.client` an **`HTTPClient`**, which has **no `open_by_key` and no
+`list_spreadsheet_files`**. The scraper calls both on `sh.client`
+(`maps_scraper_standalone.py` line 540 `return sh.client.open_by_key(sid)`;
+line 1798 `client = sh.client` → line 1505 `client.list_spreadsheet_files`).
+So on every PC: green-biz writes fall back to the FULL main workbook and park,
+and **`sync_sheet_log` cannot read the feed folder — the 9-row `sheet-gold`
+drop from 18:47Z and every earlier feed WILL NOT LAND** until this is fixed.
+**The hunter is clean** — it keeps its own `client` and calls
+`client.open_by_key` directly (lines 4212-4386); the split workbook works for
+green.
+
+**brain-verify said `pass` on both features because it checks PRESENCE, not
+runtime.** Added two NEGATIVE claims (`sh.client.open_by_key` and
+`client = sh.client` must be ABSENT from the scraper); **they read `*** DRIFT`
+now and will until the fix is deployed — that is correct, the live scraper is
+broken.** The old "scraper follows the split workbook" claim is reworded
+"carries the id (presence only)".
+
+**FIX WRITTEN, TESTED, NOT PUSHED (RULE 0): `patches/gspread6-client/`.** One
+11-line helper `_gc(sh)` that returns a real `gspread.Client` on gspread 5 AND
+6 (`gspread.Client(auth=sh.client.auth, session=…)`), and the two call sites
+switched to `_gc(sh)`. Test reproduces both console errors verbatim on gspread
+6.2.1, then proves `_gc(sh)` has `open_by_key` + `list_spreadsheet_files` with
+the same service-account creds, and that a gspread-5-shaped client passes
+through unchanged. `py_compile` clean. **Scraper file → self-updates on any
+byte change → a push is a deploy to every PC. Patrick's go, then push.**
+Pinning `gspread<6` in the installer would also work but touches every PC's
+environment; the helper is the smaller blast radius.
+
+**3. WHAT THE CONSOLE CONFIRMS IS WORKING:** *"gold purge: already done on this
+PC (Wed Sep 2 16:36:10 2026)"* · *"junk tabs: already done"* · *"TAB COUNTS: 8
+tabs -> published"* · **"COMBO MATCH ON: 368,155 captured fiber leads loaded
+(158 gold from 'Gold Confirmed')"** — the 09-03 gold-match fix WORKS; the gold
+half of the detector is loading. It just cannot write anywhere (sheet full).
+
+**4. THE BUILD CODE QUESTION, SETTLED FROM THE HUNTER REPO'S GIT LOG, NOT FROM
+ME:** the gold writer (`write_gold_dots`, hunter line 4046) has written the
+`Build Code` cell since **`3208658` 2026-08-23 21:55Z** and the `Status` cell
+since **`9f43cc5` 2026-08-26 17:26Z**. **All 176 readable rows are dated
+2026-08-24 10:59 → 2026-08-26 03:32 — every one older than `9f43cc5`**, so an
+empty `Status` on them is expected, not a bug. An empty `Build Code` on the
+08-24/25 rows means the value was empty at capture (the record carried no
+decodable code); **only `py decode_gold.py` against `serviceability_raw.json`
+on the PC can say what those were** — and note that file is overwritten on
+each serviceability response (`open(..., "w")`, hunter line 2668): it holds
+the LATEST reply, not an archive. Rows written since 08-26 should carry both
+cells; the Drive read cannot reach them (it returns the top/oldest 176 of
+4,707). `py sheet_feed.py --tab "Gold Confirmed"` proves it either way.
 
 ### DAVE IS RIGHT AND HERE IS THE MECHANISM: THE GOLD TAB HAS NO BUILD CODE ON IT (MEASURED 2026-09-04 18:4xZ)
 
