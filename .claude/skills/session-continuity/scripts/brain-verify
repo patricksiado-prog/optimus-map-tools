@@ -116,6 +116,11 @@ CODE_CLAIMS = [
      "the split-workbook redirect does NOT call sh.client.open_by_key (gspread-6 landmine: 'HTTPClient' object has no attribute 'open_by_key')"),
     (SCRAPER, r"^    client = sh\.client$", False,
      "the SHEET LOG / Enriched Leads board does NOT take sh.client as a gspread Client (gspread-6 landmine: HTTPClient has no list_spreadsheet_files)"),
+    # 2026-09-04: RUN_HUNTER.bat / INSTALL_OPTIMUS.bat refuse any hunter download that
+    # lacks the literal "GOLD CAPTURE ON" (findstr). The banner carrying it was cut on
+    # 08-25 (67bf57b); 25 pushes since then never reached a launcher-updated PC.
+    (HUNTER, r'^LAUNCHER_SENTINEL = "GOLD CAPTURE ON"', True,
+     "the launcher sentinel is back in the hunter -- without it every launcher-updated PC silently keeps its old copy (patches/launcher-sentinel)"),
     (HUNTER, r"cols=str\(len\(OUT_HEADER\)\)", True,
      "the 8-vs-13 column bug is fixed -- a fresh Precise Fiber tab is 13 wide"),
     (HUNTER, r'cols="8"', False,

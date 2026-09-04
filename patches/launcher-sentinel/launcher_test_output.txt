@@ -1,0 +1,7 @@
+reproduced: deployed RUN_HUNTER.bat / INSTALL_OPTIMUS.bat REJECT the current hunter (no 'GOLD CAPTURE ON')
+fixed: every deployed launcher ACCEPTS the patched hunter without any launcher change
+BUILD_DATE bumped 2026-09-03 -> 2026-09-04
+new launcher/installer check (BUILD_DATE) accepts both today's and the patched hunter
+py_compile clean
+
+ALL TESTS PASS

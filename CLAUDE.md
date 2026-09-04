@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 20:05Z (Patrick at the AT&T chooser; THIS PC's hunter is the 08-18 build and refuses the update; sheet FULL; gspread-6 fix unpushed)
+# CURRENT STATE — updated 2026-09-04 20:25Z (LAUNCHER REJECTS EVERY HUNTER PUSH SINCE 08-25 — sentinel fix unpushed; Patrick at the AT&T chooser; sheet FULL)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -28,6 +28,36 @@ Agreed order: **1** clear the AT&T access chooser on the hunter (human click) �
 dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
+
+### THE LAUNCHER HAS REJECTED EVERY HUNTER UPDATE SINCE 08-25 — THIS IS WHY THE PC IS ON THE 08-18 BUILD (PROVEN 2026-09-04 20:2xZ)
+
+**Mechanism:** `RUN_HUNTER.bat` (the Desktop launcher — launchers never
+self-update) and `INSTALL_OPTIMUS.bat` line 56 both accept a downloaded hunter
+ONLY if it contains the literal text **`GOLD CAPTURE ON`**
+(`findstr /C:"GOLD CAPTURE ON"`). That text was in the launch banner. **Commit
+`67bf57b` (2026-08-25, "Cut the launch banner") removed it** — git grep: parent 1
+hit, 67bf57b 0, today 0. **So all 25 hunter pushes since 08-25 were thrown away
+as "stale/partial" by every PC that updates through its launcher**, while the
+raw CDN served the correct file the whole time. The 09-03 "bump BUILD_DATE"
+lesson fixed the hunter's INTERNAL updater; nobody knew the launcher had a
+second gate. PCs with git self-heal via `self_update()`'s `git reset --hard`
+(that is why some runs today carried 09-03 code); no-git PCs are pinned.
+
+**FIX WRITTEN, TESTED, UNPUSHED (RULE 0): `patches/launcher-sentinel/`.** Put
+`LAUNCHER_SENTINEL = "GOLD CAPTURE ON"` back in the hunter next to BUILD_DATE
+(bumped to 2026-09-04) — every existing launcher on every PC then accepts the
+next download, no launcher change needed. Plus both launchers switched to check
+`BUILD_DATE = ` so a banner edit can never re-pin the fleet. Test reproduces
+the rejection on today's file and proves acceptance of the patched one.
+brain-verify now carries the claim; it reads DRIFT until deployed.
+
+**TONIGHT'S WORKAROUND ON THE STALE PC, NO PUSH:** re-run `INSTALL_OPTIMUS.bat`.
+It curls the hunter straight to disk and only WARNS on the sentinel check (does
+not revert). It WILL print *"WARNING: still got OLD hunter code"* — that warning
+IS this bug and is wrong; proof is the next launch printing `BUILD_DATE :
+2026-09-03`. **Until one of these happens, nothing this PC captures can be
+trusted: the 08-18 build writes gold to the deleted `Gold Dots` tab and knows
+nothing about the split workbook.**
 
 ### STEP 1 IN PROGRESS — AND THIS PC'S HUNTER IS ON THE AUGUST 18 BUILD (2026-09-04 20:0xZ, off three console photos)
 
@@ -74,6 +104,7 @@ each step. Not started; step 1 (the login) is in progress.
 - **Dialer is clean of unmarked junk**: `seq2-dialer` 938 = real dots + the 141 Milton unverified; `manual-call` 0; `alpha-t4-business` 153 stays in (his call).
 - **Four hand-built tabs are still missing** (`Warm Backlog — Replied YES`, Angleton list, Beaumont work list, `GOLD — CLEAN`). Version history restores them. **Ask Patrick whether he deleted them.**
 - **DealMachine 27,072 credits** (27,084 − 12 spent on the gold enrich), cycle Sep 2 → Oct 2. `property_count` and `estimate_cost` are FREE.
+- **THE LAUNCHER PIN (above) explains most of this week: no launcher-updated PC has run any hunter code newer than 08-25.** Fix in `patches/launcher-sentinel/`, unpushed; workaround = re-run `INSTALL_OPTIMUS.bat`.
 - **HUNTER IS STILL BLIND — CORRECTED 19:4xZ, my 10th correction today.** I said it was "past the AT&T login" three times. It is not. Its own feed for run `20260904-121609` (`_feed/20260904-121609.json`, written 13:44:40) reads `auth_ok: True` (that is GOOGLE — it opened the sheet), `map_ok: False`, `raw_features: 0`, `classified: 0`, `written: 0`, `delivery: PARSE_ERROR`, notes *"HTTP 301 REDIRECTED TO LOGIN"* + the `<!DOCTYPE html>` access chooser. **A heartbeat phase of `sweep_start` / `pass_done` means the Google sheet opened, NOT that AT&T let it in. Only `capture_truth.raw_features > 0` proves AT&T.** The hunter has captured nothing since 2026-09-02. A human still has to click through the chooser.
 - **THE TWO SHEETS, MEASURED 19:3xZ:** the split workbook `1DXu-nuQ…` ("ATT FIBER LEADS — Precise Fiber") exists, is shared, and holds exactly **two tabs: `Enriched Leads` (84 rows, landed 07:59Z by the local session) and `Sales Log` (header only). There is NO `Precise Fiber` tab in it and it has never received a hunter row** — `modifiedTime 2026-09-04T07:59:07Z`, `fileSize 20,328`. Cause: the hunter has had zero captures since the split deployed (09-03), so its redirect (code-clean) has **never been exercised at runtime**; and the scraper's redirect is dead (gspread 6). The design is deployed; the second sheet is empty because nothing upstream can write.
 - **Redo count today: 36 commits, 9 corrections, CURRENT STATE rewritten 18×.** This file was 2,589 → 1,360 → 1,936 → archived again now. **Past ~800 lines, archive in the turn you notice — routine, not a question.**
