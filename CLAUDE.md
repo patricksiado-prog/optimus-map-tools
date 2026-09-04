@@ -19,6 +19,46 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### THE AT&T LOGIN NEEDS A HUMAN — MEASURED AT LAST (run `20260904-090820`, 2026-09-04 09:20Z)
+
+The hunter DID launch this morning at 09:08 and **died 12 minutes later**.
+Phases: `LOGGED_OUT` → `LOGIN_TIMEOUT` → `exit`. `auth_ok: false`,
+`delivery: PARSE_ERROR`, classified 0, written 0.
+
+**THE NEW DETAIL THAT SETTLES IT — `capture_truth.notes` says:
+*"access chooser, not the map"*** and *"NOT JSON — AT&T sent something this
+parser cannot read. First 120 chars: `<!DOCTYPE html>`"*. **AT&T is serving an
+ACCESS CHOOSER page — an account/role picker a person has to click through.**
+
+**So the question the brain listed as UNMEASURED is now MEASURED: saved
+credentials alone do NOT get in. A human has to log in and pick.** Relaunching,
+watchdogs and scheduled tasks cannot solve this one — they will each burn 12
+minutes and exit. Patrick or the local session with a human at the keyboard has
+to clear the chooser once; after that the hunter runs itself.
+
+### THE CALL LIST HE ASKED FOR — 1,937 NAMES, 3 SECTIONS (built 2026-09-04)
+
+Patrick: *"can I get a list of deals we should call all the gold replies yes /
+all the gold w cell / the new fiber areas anglton Beaumont and any other new
+fiber."* Delivered as `OPTIMUS_CALL_LIST_Sep4.csv` (468 KB).
+
+| Section | n |
+|---|---|
+| **A — SAID YES, call first** | **31** (2 of them GOLD asking for a call back: gary george 1185 Galway, chrissie hartman 375 Armstrong) |
+| **B — GOLD with a mobile** | **505**, never-dialed sorted first; 30 gold landlines flagged CALL-NEVER-TEXT |
+| **C — NEW-FIBER STREETS** | **1,401** — all Angleton + all La Porte + the gold-dense Beaumont blocks |
+| Markets: Angleton 692 · La Porte 671 · Beaumont 513 · Houston 22 · Milton 21 |
+| **1,650 of the 1,937 have never been dialed.** 65 landlines flagged |
+
+**THE 21 CONFIRMED GREY ADDRESSES ARE STRIPPED OUT — 31 rows removed.** First
+list ever built that excludes them.
+
+**GOLD DENSITY = WHERE FIBER WAS LIT RECENTLY AND NOBODY CONVERTED IT.** Beaumont
+carries 365 of the 513 gold. Densest streets: **Chatwood 22 · Stacewood 19 ·
+Monterrey 16 · Norwood 16 · Shakespeare 14 · Brandywine 13 · Galway 12 ·
+Potter 12**, then Armstrong / Eldridge / Todd / Norvell 9 each. That is the
+door-knock map as well as the dial map.
+
 ### THE CHASER'S FIRST RUN — AND IT CAUGHT MY OWN BAD COUNT (MEASURED 2026-09-04 14:1xZ)
 
 `trig_019Cwaq6UkA1CSatiEnWyiQt` fired at 14:06Z, its first run. Worked.
