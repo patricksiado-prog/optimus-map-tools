@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 evening (sheet is clean and the software does it; CLAUDE.md archived 2,589 -> 1,300)
+# CURRENT STATE — updated 2026-09-04 evening (gold + grey have NEVER been deduped; fix written, tested, unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,62 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE FIVE COLOURS, DEDUP, AND GHL-BACK-TO-THE-SHEET — CHECKED AGAINST THE LIVE SOURCE (2026-09-04)
+
+Patrick: *"green grey gold bis fiber green biz / sofware reflects this / also
+dedup / ghl enriched leads are reflected."* Answered by reading the LIVE
+`maps_scraper_standalone.py` (2,763 lines) and `precise_fiber_hunter.py` (8,710)
+off raw.githubusercontent, not by trusting this file.
+
+**1. THE FIVE COLOURS — the software DOES reflect them, all five, both ways.**
+Hunter writes `Precise Fiber` (green) · `Gold Confirmed` (gold) ·
+`Grey Fiber Customers` (grey) · `Unknown Customers`, each row carrying its
+`STATUS_*` wording (hunter lines 123-140). Scraper writes `Fiber Green Biz` and
+`Upgrade Orange Biz` (lines 486-487). **And the follow-up board READS all of
+them back** — line 1549 `for tab in (GOLD_TAB, GREY_TAB)`, line 1557
+`for tab in (GREEN_BIZ_TAB, ORANGE_BIZ_TAB, MAPS_BIZ_TAB)`, plus Precise Fiber —
+so an enriched row picks up its true `Dot Color` AND a `Tab` column naming which
+of the five it sits on. That is his spec, and it is already in the deployed code.
+
+**2. DEDUP — THE REAL GAP, AND IT EXPLAINS THE GOLD PROBLEM.**
+`dedupe_all_tabs()` (scraper line 920) runs every 30 min in a background
+process, holds the cross-machine `_Dedupe Lock`, CSV-backs-up before touching
+anything, caps at 6,000 removals per pass. Its job list is **Maps Businesses ·
+Fiber Green Biz · Upgrade Orange Biz · Precise Fiber (every 6th pass)**.
+
+**`Gold Confirmed` and `Grey Fiber Customers` ARE NOT IN IT AND NEVER HAVE
+BEEN.** The two colour tabs a rep actually calls off are the two nothing has
+ever cleaned. **That is the mechanism behind "4,707 gold rows = 10 unique
+addresses"** — 7631 Fuqua written 96 times, 800 N Arcola 50, 611 E Myrtle 22.
+Grey is 56,799 rows on the same footing, and grey is the SCRUB list.
+
+**FIX WRITTEN AND TESTED, NOT PUSHED (RULE 0):**
+`patches/dedupe-gold-grey/`. Two lines added to `jobs`, reusing the
+`pf_key`/`pf_score` already proven on Precise Fiber (keep the FULLEST copy of an
+address, not the earliest). Test runs the REAL `_dd_dedupe_tab` against a fake
+workbook seeded with the measured duplication: **172 gold rows → 5 unique, 41
+grey → 2, the fullest 7631 row beats its skinny twin, second pass removes 0,
+missing tab safe. ALL TESTS PASS, py_compile clean.** It is the SCRAPER, so no
+`BUILD_DATE` bump; it self-updates on any byte change.
+
+**3. GHL ENRICHED LEADS REFLECTED — HALF DONE, and the missing half is a token.**
+`Enriched Leads` is LIVE in the split workbook with all 29 columns
+(`ENRICHED_HEADER`, scraper line 1463): the hunter's own 13 + `Tab` + Name ·
+Cell · Phone Type · Enriched At · Source · Pool · GHL Contact ID · Likely Gold ·
+DNC + **Dialed · Last Call · Disposition · DND · Dead · Status At**, whole row
+coloured green CB / red NI-DEAD / blue SOLD. `Sales Log` alongside it.
+
+**But `sync_sheet_log` reads a Drive feed folder that CLAUDE has to drop
+(`FEED_FOLDER_ID = 1XOqADybKvneC5gwsxjpsGkVC6RLQ-1an`). Nothing on Patrick's PC
+reads GoHighLevel.** So the six GHL columns are only as fresh as the last time a
+session published a `status` feed — they go stale the moment a chat ends. **The
+real fix is `ghl_token.txt` next to `github_token.txt`** (GHL → Settings →
+Private Integrations, contacts.readonly); the scraper then reads GHL itself at
+every launch and the board stays live with nobody typing anything. Not built —
+it cannot be tested from here without the token, and RULE 0 says never push
+untested code. **Needs Patrick's go and the token, and the token never travels
+in chat.**
 
 ### THE SHEET IS CLEAN. THE SOFTWARE DOES IT ITSELF. THE BRAIN FILE WAS THE PART STILL BROKEN — FIXED THIS TURN (2026-09-04)
 
