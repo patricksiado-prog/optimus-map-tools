@@ -19,6 +19,16 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### PATRICK IS AT THE PC, ONE STEP AT A TIME (2026-09-04 19:5xZ: *"yes one step at a time please"* + a photo of the Maps Scraper freshly launched)
+
+**Working rule for the rest of tonight: give him ONE step, wait for him to say it
+is done, verify it from primary evidence, then the next.** No lists of five.
+Agreed order: **1** clear the AT&T access chooser on the hunter (human click) →
+**2** push the gspread-6 fix (needs his "go" by name) → **3** push the gold+grey
+dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
+**5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
+RULE 0 — each push gets its own yes.
+
 ### STILL TRUE TONIGHT — one line each, detail is in BRAIN.md via `brain find` (2026-09-04 19:3xZ)
 
 - **PRODUCTION SHEET IS FULL** (10M cells). 1,987 rows parked this run, 203 earlier batches parked, nothing lands until it is archived. Console says so on every line.
