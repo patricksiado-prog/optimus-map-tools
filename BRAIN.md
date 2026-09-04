@@ -11677,3 +11677,18 @@ in Chrome: right-click → Save link as, or open the blob page and use the
 Download button. The emailed release link still serves the 08-18 file (200 /
 7,204) and the live hunter is still BUILD_DATE 2026-09-03 — the desktop Claude
 has NOT pushed the deploy yet.**
+
+**14. Patrick 22:5xZ: *"I'm using chat to get all 3 pcs ready for u to run the
+hunter and scraper from a file u access that's shared on one drive."* DECISION
+RECORDED: the three PCs (red HP laptop just reset, white HP laptop signed in as
+Brandon Holland, the desktop on the stand) each get a local Claude that runs
+the hunter and the scraper; the control channel is ONE shared file. CONSTRAINT
+TO TELL HIM: this remote session has NO OneDrive connector — only Google Drive
+(read + create, cannot edit a file in place) and GitHub (this repo: full push).
+So the file I can WRITE is in this repo; a OneDrive folder synced to the PCs is
+what the LOCAL Claudes read. Proposed: `ORDERS.md` at the root of
+optimus-map-tools = the orders file (this session writes it, each PC's Claude
+pulls it at every check); the PCs already answer through the hunter repo
+`_feed/` (heartbeat.json, latest.json, _ghl_status.json) which this session
+reads with plain curl. First order for the desktop: run
+`patches/DEPLOY-2026-09-04/README.md`.**
