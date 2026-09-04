@@ -6,8 +6,8 @@ description: How to read, count, clean and analyse the ATT FIBER LEADS workbook 
 # THE ATT FIBER LEADS SHEET — read it right or do not quote it
 
 Workbook `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`, owner
-`patricksiado@gmail.com`. ~772,768 rows across 29 tabs, 8.5 MB, at its
-10,000,000-cell ceiling.
+`patricksiado@gmail.com`. **8 TABS, ~796,085 rows, at its 10,000,000-cell
+ceiling.**
 
 **Patrick, repeatedly:** *"every fuking time I ask for data from the sheet u read
 it wrong upload or enrich wrong data."* Every one of those misreads is listed at
@@ -15,29 +15,38 @@ the bottom of this file. Read them before you answer.
 
 ---
 
-## 1. THE TAB MAP — what is actually in there
+## 1. THE TAB MAP — MEASURED 2026-09-04 off `tabs.json` STAMPED 2026-09-04 03:08:57
 
-**Hunter-owned. Never edit by hand, never read wholesale.**
+**THERE ARE EIGHT TABS. 21 WERE DELETED ON 2026-09-02/03 BY SOMEBODY UNKNOWN.**
+This table used to list 29 and was a week stale; that staleness is what made the
+"11,490 gold" and "645k Precise Fiber" numbers keep coming back.
 
 | Tab | Rows | What it is | Dot |
 |---|---|---|---|
-| `Precise Fiber` | ~645k | every captured dot. **GREEN ONLY since 2026-08-26** | GREEN $500 |
-| `Gold Confirmed` | 11,490 | **THE call list.** Has a header row. 79% is pre-08-24 contamination | GOLD $140 |
-| `Grey Fiber Customers` | — | existing AT&T fiber customers. Penetration data, **never dial** | GREY |
-| `Unknown Customers` | — | build code would not decode. **Not a lead** | — |
-| `Gold Dots` | 3,328 | **RETIRED.** Contaminated. No header row. A=Address B=Captured At C=Lat D=Lng | — |
-| `GOLD — CLEAN` | 3,328 | cleaned copy of the retired tab | — |
-| `Beaumont Gold — Aug 2026` | 238 | market slice | GOLD |
-| `Upgrade Orange Biz` | 62 | **gold BUSINESSES — the highest-value slice we own, and it is nearly empty** | GOLD |
-| `Maps Businesses` | 38,481 | scraped businesses, unmatched to any dot | — |
-| `Fiber Green Biz` | 7,298 | green businesses | GREEN |
-| the UNDECODED tab | 225 | **all ZIP 77630 Orange, every Build Code EMPTY. NOT GOLD** | — |
-| `TEST-Green-2026-08-24` | 13,027 | frozen snapshot, deletable | — |
-| `_dispatch`, `_Dedupe Lock` | 0-1 | machine coordination | — |
+| `Precise Fiber` | **687,923** | every captured dot. **GREEN ONLY since 2026-08-26.** New green goes to the SPLIT workbook `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` | GREEN $500 |
+| `Grey Fiber Customers` | **56,799** | existing AT&T fiber customers. **Never dial — this is the SCRUB list** | GREY |
+| `Maps Businesses` | **39,294** | scraped businesses, unmatched to any dot | — |
+| `Fiber Green Biz` | **7,300** | green businesses. **This is the NEW-FIBER DETECTOR** — a cluster means fiber was just lit there. Columns are only `Business Name / Phone / Address / Website / Category / <hand-typed call status>` — NO Captured At, NO lat/lng, NO city/state/ZIP | GREEN |
+| `Gold Confirmed` | **4,707** | resi copper. **A SIGHTING COUNT, NOT DOORS** — 176 readable rows were 10 unique addresses. Purge ran; all post-08-24 | GOLD $140 |
+| `Upgrade Orange Biz` | **62** | gold BUSINESSES — the gold half of the detector, **and it is dead**: 62 against 39,294 businesses. `init_match` fix went in 09-03, never run | GOLD |
+| `Territory Claims` | 0 | machine coordination | — |
+| `_Dedupe Lock` | 0 | machine coordination | — |
 
-**Three tabs that do not exist and never did:** `Enriched Leads`,
-`New Fiber Alerts`, `Fiber Zones`, `Outage Signals`. Do not write code against a
-tab without checking the live list.
+**TABS THAT NO LONGER EXIST — do not read them, do not write code against them,
+do not tell Patrick a number is on one of them:** `Unknown Customers` ·
+`Gold Dots` · `GOLD — CLEAN` · `Beaumont Gold — Aug 2026` ·
+`TEST-Green-2026-08-24` · `TEST-Gold-2026-08-24` · `Backend Comm` ·
+`Backend Analysis` · `Backend Capture` · `Hunter Status` ·
+`HOUSTON UNVERIFIED — Aug 19` · `ZZ_TMP_GRID` · `TMP Sweep Census` ·
+`Gold Biz Campaign — READY` · `Devonwood Campaign` · `Operator Scorecard` ·
+`_dispatch` · ` _temp_ash_lookup` · `_optimus_probe` · **and four hand-built
+working tabs that should NOT have gone: `Warm Backlog — Replied YES` (40 people
+who said yes), `Angleton Call List — Aug 2026`, `WORK LIST — Beaumont +
+Angleton`, `GOLD — CLEAN`.** Google's File → Version history restores them.
+
+**`DASHBOARD` and `README` DO NOT EXIST EITHER.** Any instruction anywhere to
+"read DASHBOARD first" is dead — it was the recommended read path for a week
+against tabs that are not there.
 
 ## 2. THE FIVE READ PATHS — try them in this order
 
@@ -99,13 +108,13 @@ else is gold.**
 2. **Counting a CITY NAME as a colour.** 225 rows in *Orange, Texas* were
    reported as orange dots. They are ZIP 77630 with an EMPTY build code — not
    leads at all.
-3. **Quoting 11,490 as the gold count.** 9,052 of those are pre-2026-08-24
-   gold-by-default decode failures. **The purge that removes them has never run.**
+3. **Quoting a stale gold count.** 11,490 was never right after the purge, and
+   4,707 is a SIGHTING count, not doors. `py gold_audit.py` gives uniques.
 4. **Believing a tool failure means no access.** See section 2.
-5. **Trusting the first tab.** `Precise Fiber` is tab #1 again, so the cheap read
-   returns green apartment addresses instead of numbers. DASHBOARD and README
-   were deliberately moved to the FRONT — **if they are not there, the order got
-   tidied back and the read path is broken.**
+5. **Trusting the first tab.** `Precise Fiber` is tab #1, so the cheap read
+   returns green apartment addresses instead of numbers. **There is no DASHBOARD
+   and no README to fall back to — those tabs were deleted.** Path 3
+   (`tabs.json`) is the counts answer now.
 6. **Reading `latest.json` at launch.** It is an all-zero STUB. Check `run_id`
    and `generated_at` before calling capture broken.
 7. **A moving `modifiedTime` with a FLAT `fileSize`** means it is being touched
@@ -121,29 +130,11 @@ else is gold.**
 - Is a `.bat` or a one-liner the real answer instead of "I can't"?
 
 
-## 7. THE LIVE TAB LIST — 29 tabs, MEASURED 2026-09-03 off `_feed/sheet/tabs.json`
+## 7. (removed 2026-09-04) — the 29-tab list lived here and was a week stale
 
-`Precise Fiber` 645,422 · `Maps Businesses` 38,481 · `Grey Fiber Customers` 26,689 ·
-`Backend Comm` 17,085 · `TEST-Green-2026-08-24` 13,027 · `Gold Confirmed` 11,490 ·
-`Fiber Green Biz` 7,298 · `Hunter Status` 3,599 · `Gold Dots` 3,328 ·
-`GOLD — CLEAN` 3,328 · `HOUSTON UNVERIFIED — Aug 19` 1,339 · `ZZ_TMP_GRID` 999 ·
-`Beaumont Gold — Aug 2026` 238 · `TMP Sweep Census` 92 · `Backend Analysis` 65 ·
-`Upgrade Orange Biz` 62 · `Backend Capture` 48 · `Gold Biz Campaign — READY` 45 ·
-`Warm Backlog — Replied YES` 40 · `WORK LIST — Beaumont + Angleton` 29 ·
-`Devonwood Campaign — Aug 21` 26 · `Angleton Call List — Aug 2026` 20 ·
-`Operator Scorecard` 12 · `TEST-Gold-2026-08-24` 5 · `_dispatch` 1 ·
-`_Dedupe Lock` 0 · ` _temp_ash_lookup` 0 · `_optimus_probe` 0 · `Territory Claims` 0
-
-**THE GENUINE JUNK — 7 tabs, 17,451 rows:** `Gold Dots` (RETIRED, superseded by
-`GOLD — CLEAN`), `TEST-Green-2026-08-24`, `TEST-Gold-2026-08-24` (migrate first),
-`TMP Sweep Census`, `ZZ_TMP_GRID`, ` _temp_ash_lookup`, `_optimus_probe`.
-Everything else is live or hand-built. **Plus 9,052 pre-08-24 rows inside
-`Gold Confirmed`.**
-
-**THREE TABS THIS SKILL AND CLAUDE.md BOTH NAME DO NOT EXIST:** `DASHBOARD`,
-`README` and `Unknown Customers` are absent from the live list. The "read
-DASHBOARD first" path cannot work until they are rebuilt.
-
+It listed 21 tabs that no longer exist and three (`DASHBOARD`, `README`,
+`Unknown Customers`) that never did. **Section 1 above is the live map.** Never
+re-add a tab list that is not read from a STAMPED `tabs.json` in the same turn.
 
 ## 8. HOW TO ANALYSE THE SHEET — one method per question (added 2026-09-03)
 

@@ -1402,7 +1402,7 @@ deletes rep tabs.
 - **296 gold contacts in GHL** (MEASURED 2026-09-01, unique) — the only gold
   number that is both current and de-duplicated.
 - **`Upgrade Orange Biz` = 62 rows.** Gold businesses are the highest-value slice
-  we have and that tab is empty, while 38,481 scraped businesses sit unmatched.
+  we have and that tab is empty, while 39,294 scraped businesses sit unmatched.
 - Full census in the BRAIN.md section dated 2026-09-02.
 - **THE ANALYSIS SHEET EXISTS:** `OPTIMUS ANALYSIS — sheet + CRM (live state)`,
   `1lnMzr4cceYjMfvLGeUtNvRRwjURwIGYZ9Kx9y4ONbX0` (rebuilt twice 2026-09-03; the last rebuild records the clean COMPLETED and gold = 1,884; earlier copies trashed), in the enriched Drive folder
@@ -1613,13 +1613,11 @@ while sending zero texts.
 
 ### Blocked on Patrick — nothing moves until he does these
 
-0. **RUN THE MAPS SCRAPER — that is what deletes the junk gold, 30 seconds.**
-   Double-click the Maps Scraper icon. The purge is the first thing it does at
-   launch. It is NOT in the hunter and the AT&T login is irrelevant to it
-   (MEASURED 2026-09-03 — this file said otherwise for six days and was wrong).
-   Watch the console: if it prints `GOLD PURGE:` it is working; if it prints
-   `(dedupe off: ...)` or nothing, the full-sheet gate is closed and
-   `patches/gold-purge-never-runs.md` has to go in first.
+0. **(DONE — DELETE THIS ASK.) The gold purge RAN and COMPLETED** on Patrick's
+   PC: console printed *"nothing to remove -- all 1884 rows are post-fix"*.
+   `Gold Confirmed` is 4,707 rows, all post-08-24. **The scraper launch that is
+   still wanted is for a different reason** — it repopulates `Upgrade Orange Biz`
+   with the 09-03 gold-match fix (62 rows against 39,294 businesses today).
 1. **SPLIT SHEET — DEPLOYED, hunter `59a92bf` (2026-09-03).** Patrick: *"u know
    what I want make it happen."* `Precise Fiber` now defaults to its own workbook
    `1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ` on every PC (no id file needed;
@@ -1636,11 +1634,9 @@ while sending zero texts.
    `agt5`). The dialer queue was 199 yesterday. Still open: import
    `ENRICHED_TAB.csv` as a workbook tab, and `OPTIMUS_DIALER_2000_labeled.csv`
    (2,000 rows) remains the bigger pool behind the 775.
-3. **DealMachine credits expire TUE 1 SEP 11:14pm CT — 7,137 unspent of
-   30,000.** MEASURED 2026-08-31 off `dealmachine_usage`: cycle ends
-   `2026-09-02T04:14:15Z`, which is **Tuesday 1 Sep night Central**. They do not roll over. Bulk export runs under 1 credit per
-   lead. **Best remaining use: `enrich_phone` to type the Beaumont pocket,
-   which is ~47% landline.**
+3. **(EXPIRED — DELETE THIS ASK.) That cycle ended 2026-09-02.** The credits
+   reset. Live number MEASURED 2026-09-03 22:45Z: **27,084 left**, cycle
+   Sep 2 → Oct 2, 2,916 used. Nothing is about to expire.
 4. **A phone number for the flyer** — both sheets say `[YOUR PHONE]`.
 5. **Call Antonio, 713-474-3899** — said *"come replace"* his copper, still not
    called back.
@@ -1975,7 +1971,7 @@ point at the Maps Scraper instead.
 
 **THE MISCLASSIFICATION WINDOW IS EVERYTHING BEFORE 2026-08-24** — the old
 `OPTIMUS_UNKNOWN_CUSTOMER=gold` setting labelled any undecodable build code GOLD
-by default. That is **9,052 of the 11,490 `Gold Confirmed` rows, 79% of the tab.**
+by default. That is **9,052 rows when the tab read 11,490. THE PURGE HAS SINCE RUN — the tab is 4,707 rows, all post-08-24 (MEASURED 2026-09-04).**
 
 **GOLD WAS CONTAMINATED AND IS BEING PURGED (2026-08-27).** `Gold Confirmed`
 read 9,658 rows and Patrick called it immediately: most predate working gold
@@ -2068,12 +2064,13 @@ out of reach. Try the methods below, in order, before saying anything.**
 
 `ATT FIBER LEADS` = `1FhO2BTMXGefm1tLwKbbMPXvzT1160882Auauzep7ooA`
 
-**0. THE TAB ORDER IS CURRENTLY BROKEN AND IT COSTS YOU THE CHEAP READ.**
-MEASURED 2026-09-03: `Precise Fiber` is tab #1 again and DASHBOARD/README are not
-in the first nine, so `read_file_content` returns 190 green apartment rows instead
-of the summary numbers. 22.33 put the small tabs in FRONT on purpose. **Drag
-DASHBOARD and README to the front and `Precise Fiber` to the end** — ten seconds,
-and it restores the whole read path.
+**0. THERE IS NO `DASHBOARD` AND NO `README` TAB. THEY DO NOT EXIST.**
+MEASURED 2026-09-04 off tabs.json stamped 03:08:57 — the workbook has EIGHT tabs
+and neither is among them. **Every instruction in this file to "read DASHBOARD
+first" or to "drag DASHBOARD and README to the front" is dead** and was the
+recommended read path for a week against tabs that are not there. `Precise Fiber`
+is tab #1, so `read_file_content` opens on green apartment rows. **The counts
+answer is path 3 (`tabs.json`), not a summary tab.**
 
 **READ IT IN PIECES — `read_file_content` returns a BOUNDED SAMPLE of the first 9
 tabs** (~190-355 rows each, ~211k chars, MEASURED 2026-09-03). It blows the tool's
@@ -2091,9 +2088,9 @@ reporting a limit.
 reach the master sheet directly, as Patrick, with no extra setup. A write→read
 round trip was proven the same day. Reading a small tab returns every value.
 
-**2. `DASHBOARD` and `README` tabs — read these FIRST.** Front position, small,
-live formulas (no IMPORTRANGE, nothing to authorise). DASHBOARD carries row
-counts per tab and the dot-color split, which answers most questions outright.
+**2. (DEAD PATH — `DASHBOARD` and `README` do not exist.)** Use
+`_feed/sheet/tabs.json` for row counts per tab instead. If those tabs are ever
+rebuilt, this becomes the cheap read again; until then do not look for them.
 
 **3. `sheet_feed.py` on a hunter PC** — publishes bounded JSON chunks to
 `optimus/_feed/sheet/` on GitHub, readable with no Google auth at all.
@@ -2108,8 +2105,7 @@ CONNECT, so `optimus_web_intel.gather()` returns zero from here every time.
 That says NOTHING about the operator's laptop — check
 `curl "$HTTPS_PROXY/__agentproxy/status"` before calling the feed broken.
 
-**The one real limit is SIZE, not access.** `Precise Fiber` is ~474k rows /
-7.7 MB — never pull it whole (that is what killed Autosheet twice). Ask for a
+**The one real limit is SIZE, not access.** `Precise Fiber` is **687,923 rows** — never pull it whole (that is what killed Autosheet twice). Ask for a
 bounded range, a ZIP, or read DASHBOARD instead. Claude's spreadsheet ceiling is
 about 30 MB, so the file is comfortably under; it is the single tab that is too
 long to swallow at once.
@@ -2125,28 +2121,38 @@ long to swallow at once.
   Check `_feed/heartbeat.json` (run_id, machine, fingerprint) for what is
   actually running now.
 
-## Sheet tabs
+## Sheet tabs — EIGHT OF THEM (MEASURED 2026-09-04 off tabs.json stamped 03:08:57)
 
-**Hunter-owned — do not edit, do not read wholesale:** `Precise Fiber` (~474k
-rows; **GREEN ONLY since 2026-08-26** — it used to hold every colour),
-`Gold Confirmed` (canonical gold: new-rule confirmed copper only, header row,
-this is the call list), `Grey Fiber Customers` (existing AT&T fiber customers,
-own tab since 2026-08-26 with a Status column), `Unknown Customers` (undecodable
-customers), `Gold Dots` (RETIRED — contaminated with gold-by-default rows,
-BRAIN 22.14; 3,328 rows, A=Address B=Captured At C=Lat D=Lng, no header; do
-not add to it, old enrichment history only), `Maps Businesses`,
-`Fiber Green Biz`, `Upgrade Orange Biz`, `Backend Capture`,
-`Backend Analysis`, `Hunter Status`, `Backend Comm`, `_Dedupe Lock`,
-`_dispatch`. The `TEST-*-2026-08-24` tabs are frozen verification snapshots —
-safe to delete once Patrick is done with them (today's 72+ gold live in
-`TEST-Gold-2026-08-24` until folded into `Gold Confirmed`).
+| Tab | Rows |
+|---|---|
+| `Precise Fiber` — **GREEN ONLY since 08-26**; new green goes to the split workbook | 687,923 |
+| `Grey Fiber Customers` — never dial, this is the SCRUB list | 56,799 |
+| `Maps Businesses` — scraped, unmatched to any dot | 39,294 |
+| `Fiber Green Biz` — the NEW-FIBER DETECTOR | 7,300 |
+| `Gold Confirmed` — a SIGHTING count, not doors | 4,707 |
+| `Upgrade Orange Biz` — the gold half of the detector, dead | 62 |
+| `Territory Claims` · `_Dedupe Lock` | 0 |
 
-**Three tabs this file used to name do not exist.** `Enriched Leads` and
-`New Fiber Alerts` were never real. `Fiber Zones` and `Outage Signals` are read
-by the hunter's opening-intel banner and are absent too, which is why that banner
-prints nothing every launch. Do not write code against a tab without checking the
-live tab list first — the full verified list as of 2026-08-22 is in `BRAIN.md`
-part 24.
+**TWENTY-ONE TABS WERE DELETED 2026-09-02/03 BY SOMEBODY UNKNOWN.** Anything
+this file or the sheet skill ever named that is not in the table above is GONE:
+`Unknown Customers` · `Gold Dots` · `GOLD — CLEAN` · `Beaumont Gold — Aug 2026` ·
+`TEST-Green-2026-08-24` · `TEST-Gold-2026-08-24` · `Backend Comm` ·
+`Backend Analysis` · `Backend Capture` · `Hunter Status` ·
+`HOUSTON UNVERIFIED — Aug 19` · `ZZ_TMP_GRID` · `TMP Sweep Census` ·
+`Gold Biz Campaign — READY` · `Devonwood Campaign` · `Operator Scorecard` ·
+`_dispatch` · ` _temp_ash_lookup` · `_optimus_probe`. **Four of those were
+hand-built working tabs that should not have gone — `Warm Backlog — Replied YES`
+(40 people who said yes), `Angleton Call List — Aug 2026`, `WORK LIST — Beaumont
++ Angleton`, `GOLD — CLEAN`. Google File → Version history restores them; ASK
+PATRICK whether he deleted them.**
+
+**`DASHBOARD`, `README`, `Enriched Leads`, `New Fiber Alerts`, `Fiber Zones` and
+`Outage Signals` are NOT tabs on production.** DASHBOARD and README never
+existed and were this file's recommended first read path for a week.
+`Enriched Leads` and `Sales Log` are REAL but live in the **SPLIT workbook**
+`1DXu-nuQvVKrqQVk8LDNwLztG31ddi6sAyo8vXDFKcmQ`, not here. `Fiber Zones` and
+`Outage Signals` are read by the hunter's opening-intel banner, which is why it
+prints nothing every launch.
 
 For anything big: make ONE temp tab, put bounded QUERY/COUNTIF formulas in it,
 read the small result, delete the temp tab. Autosheet has died twice pulling
