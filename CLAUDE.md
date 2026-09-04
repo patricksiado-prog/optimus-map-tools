@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-03 evening (Ed was right: the dialed colours are mostly untraceable)
+# CURRENT STATE — updated 2026-09-04 morning (the sheet IS enriched; the board confirmed Ed in writing)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,51 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### IT LANDED. THE SHEET IS ENRICHED — AND THE BOARD PROVED ED RIGHT (MEASURED 2026-09-04 12:20Z)
+
+**The split workbook went 1,024 bytes → 20,328, modified 2026-09-04 07:59:07Z**
+(2:59am CT). It had been untouched since 08-30. **`Enriched Leads` is LIVE with
+all 29 columns**, `Sales Log` created. Three feed files renamed **LANDED** at
+07:59 (called-audit, pcola-fresh, alpha-t1-warm). The **local session** did it,
+not the scraper. The Maps Scraper separately launched at **03:08:57** (tabs.json
+stamp moved off 09-02 23:39:40 for the first time).
+**The SALES feed did NOT land** — `_landed.json` reads `sales: files 0, landed 0`.
+
+**THE FINDING, and it is the whole week's argument settled. Of the 84 rows the
+Drive read returns (a BOUNDED SAMPLE, not the tab):**
+
+| Board wrote | n | Means |
+|---|---|---|
+| **GREY — "Existing AT&T Customer"** | **21** | **NOT A LEAD.** Already on AT&T fiber |
+| UNVERIFIED — "Not on the hunter map yet" | 55 | The colour was never real |
+| GREEN | 8 | **every one a BUSINESS** |
+
+**ZERO residential rows came back GREEN.** **`555 BELVEDERE DR` reads GREY**,
+captured 2026-08-26, run `20260826-023936`, real lat/lng — Ed's address, and the
+customer's own text said the same thing. **Three independent sources now agree
+and the dial list was the odd one out.**
+
+**The 21 greys, all of which were in the dial pool:** 555 & 1495 Belvedere ·
+1135, 1060, 1020, 1185, 1085, 1080 Norwood · 7550 Chelsea · 1055 Wisteria ·
+850 & 1095 Iris · 5765 & 5795 Longwood · 565, 415, 575 Potter · 355 Littlejohn ·
+350 Georgetown · 380 Langham · 1090 Lockwood. **Sent to Dave and Churchie to
+scrub.**
+
+**DO NOT extrapolate 25% grey to the whole tab** — that is Check 2. The real
+proportion needs `py sheet_feed.py --tab "Enriched Leads"` on the PC.
+
+**Everything else this morning:** hunter still down (heartbeat frozen at
+2026-09-02 19:48, `written 0` / `failed_writes 6012`, HTTP 301 to login) ·
+won 2 / lost 0, no new close · **zero new opt-outs overnight** after 11 in one
+day · 4 replies waiting on a call ((228) 627-3246, Glovera, Razzle Dazzle,
+Wilton Cooper) · DealMachine 27,084 unchanged overnight · **the $30 promo is
+STILL sending, day 2** · no live cable outage in any of our markets ·
+production `fileSize` 8,484,584 flat with `modifiedTime` moving, which is NOT an
+alarm (fileSize does not track content on a Google Sheet).
+
+**Morning edition sent 12:2xZ as three emails.** The DAILY LOG is still empty —
+last dated entry 08-27, GOALS block still blank.
 
 ### THE LOCAL SESSION IS NOW THE OPERATOR — HUNTER ALL DAY (Patrick 2026-09-04: *"can u tell this claude to run precise hunter all day"*)
 
