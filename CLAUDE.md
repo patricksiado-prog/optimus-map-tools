@@ -19,6 +19,47 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### ONGOING TASKS — TWO ROUTINES BUILT, AND THE AUTO-TEXTER WAS BLOCKED (2026-09-04 05:50Z)
+
+Patrick: *"can i have u or cowork do ongoing tasks like monitor the production and
+text customers that need following up with"*, then *"text me too"*. He was
+offered alert-only / inbound-only / full auto-texting and **chose FULL follow-up
+texting**, and chose to rebuild the AM/PM editions unbound. Both answers recorded
+as his decision after the deliverability concern was stated once.
+
+**BUILT AND LIVE:**
+- **`trig_01Dm9Y29L4zNAraMsJHjAuCS` — production monitor, every 2h at :44,
+  FRESH SESSION.** Curl + git only (no connectors, see above), which is enough:
+  it reads heartbeat / latest / tabs / _landed and **speaks only on a state
+  change** — scraper launched, board landed, hunter down >6h, a tab shrank.
+  Silent otherwise. Its completion summary **push-notifies Patrick's phone**;
+  that is the alert channel, and push works with no connectors.
+- **`trig_019Cwaq6UkA1CSatiEnWyiQt` — follow-up chaser, 14:00/17:00/20:00 UTC
+  (9am/12pm/3pm CT), BOUND to `session_01GRgAKeNm1SCYDrD16GcSTX`** so it inherits
+  every connector. Finds replies with no answer, works the six-attempt cadence,
+  drafts each message, texts Patrick at **`+18322474060`** and emails the list.
+
+**THE AUTO-SEND WAS REFUSED BY THE HARNESS, NOT BY ME.** Creating a routine that
+autonomously texts customers returned *"Permission for this action was denied by
+the Claude Code auto mode classifier."* **Do not try to route around it.** The
+chaser therefore identifies and DRAFTS; a human presses send. Two ways to get
+what Patrick actually asked for, both his to do: add a permission rule in
+settings, or create the sending routine himself in the **claude.ai Routines UI**
+— which also solves the connector problem, since UI-created routines carry them.
+
+**PATRICK'S MOBILE IS `+18322474060`** (GHL contact `pTf15HQ88QisY5RuCbf1`) — it
+is the number already used in outbound copy. That is where "text me too" goes.
+
+**THE GUARDS WRITTEN INTO THE CHASER, because "full sending" is only safe with
+them:** never a landline (tag or Twilio 30006 — they fail and the failure counts
+against the sending number); never a DND/STOP/not-interested; **never anyone
+texted in the last 5 days from ANY source** (the over-contact guard — 11 Milton
+opt-outs in one day came from several automations hitting the same people the
+same hour); registry DNC is NOT an exclusion; quiet hours 8am–9pm CT; read
+`ghl_list_phone_numbers` live every run; one segment, no self-written STOP, no
+"Optimus", no flat price, no two messages identical; **circuit breaker — 3+ new
+opt-outs and the run stands down.**
+
 ### WHAT IS ACTUALLY RUNNING ON A SCHEDULE — 15 ROUTINES READ LIVE (MEASURED 2026-09-04 06:40Z)
 
 Patrick: *"can i have u or cowork do ongoing tasks like monitor the production and
@@ -37,8 +78,20 @@ answering. **12 are enabled. 8 of them are FRESH-SESSION and they genuinely run.
 | Morning Brief — Patrick | `trig_019vheHFZBKyGnzbu6tVjPjb` | `0 13 * * 1-5` | **ABANDONED 09-03 13:18** |
 | Houston–Colombia fare sweep | `trig_011Friai35C2Zd5jWeg9xwBX` | `0 13 1 * *` | **ABANDONED 09-01** |
 
-**CORRECTION — "a fresh-session routine carries no connectors on this org and
-would produce nothing" IS WRONG.** Eight unbound routines ran to SUCCEEDED
+**I WAS WRONG TO CALL THAT A CORRECTION — RE-CORRECTED 2026-09-04 05:45Z.**
+The original claim was RIGHT. `create_trigger` refuses the `connectors`
+parameter on this org (`not available for this organization`), and every
+fresh-session routine it makes returns **`mcp_connections: []`** with the
+warning *"the sessions it fires will run without connector tools."* So an
+unbound routine has NO GHL, NO Gmail, NO Drive. **The 8 unbound routines
+reporting SUCCEEDED prove nothing about whether they had access or did anything**
+— that is the same `SUCCEEDED`-means-nothing trap as the SMS routine, and I fell
+for it an hour earlier by reading a status instead of a capability. Routines
+created in the **claude.ai Routines UI** can carry connectors; ones created from
+this MCP tool cannot. The old text follows for the record:
+
+~~**CORRECTION — "a fresh-session routine carries no connectors on this org and
+would produce nothing" IS WRONG.**~~ Eight unbound routines ran to SUCCEEDED
 yesterday, one of them two hours ago. That claim (in the daily-coverage-gap
 skill and repeated in this file) blocked the obvious fix for months. **What is
 true is narrower: the AM/PM coverage-gap pair
