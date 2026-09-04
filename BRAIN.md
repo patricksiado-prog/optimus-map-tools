@@ -10696,3 +10696,802 @@ long to swallow at once.
   Check `_feed/heartbeat.json` (run_id, machine, fingerprint) for what is
   actually running now.
 
+## 2026-09-04 evening — ARCHIVED FROM CLAUDE.md, second pass today (file had regrown 1,360 → 1,936)
+
+Verbatim. Nothing deleted. The one-line summaries live in CLAUDE.md "STILL TRUE TONIGHT".
+
+### THE SHEET'S GOLD DOTS ARE NOW ACTUALLY ENRICHED — 10 ADDRESSES, 5 PEOPLE, 12 CREDITS (2026-09-04 18:3xZ)
+
+Patrick asked twice. **Stop describing the blocker and enrich what IS readable**
+— that is the lesson. `dealmachine_enrich_address` on every unique address in the
+readable `Gold Confirmed` sample, `contact_audience: owners`.
+
+| | n |
+|---|---|
+| Unique gold addresses readable off the tab | 10 |
+| Attempted (Edmond OK skipped — outside the markets) | 9 |
+| Matched a property | **7** |
+| **NO MATCH in DealMachine** | **2** (7631 Fuqua ×96 rows, 6214 Nyoka) |
+| Matched but **ZERO owner contacts** — commercial / not owner-occupied | 3 |
+| **Addresses that produced a callable person** | **4** |
+| **People with a name and a phone** | **5** |
+
+**COST: 12 CREDITS TOTAL.** Per-address: 1 credit for a property-only match,
+2-3 when contacts come back (1 property + 1 per person). Balance 27,084.
+
+**THE FINDING THAT MATTERS MORE THAN THE FIVE NAMES:**
+**`7631 FUQUA ST` — the single most-written address on the tab, 96 rows —
+returns `no_match` from DealMachine. There is no property there.** So the most
+duplicated "gold dot" we own may not be a real address at all. `6214 Nyoka` is
+the same. **A row on `Gold Confirmed` is not proof a house exists.**
+
+**AND THE GOLD LABEL GOT ITS FIRST INDEPENDENT CONFIRMATION EVER:**
+`611 E MYRTLE ST` owners **Jack and Gloria Franklin both carry
+`EAWORTH21@SBCGLOBAL.NET`** — an AT&T-family email. That is a hunter gold dot and
+a skip-trace agreeing, from two unrelated sources. First time that has happened.
+
+**BEST ROW: `6302 NYOKA ST`, Pedro Aguila, owner-occupied, wireless
+832-859-1859, and NEITHER number is on the DNC registry.**
+
+**THE YIELD RATE TO QUOTE BEFORE ANY BIG GOLD ENRICH: 10 addresses → 5 people,
+and 3 of 10 were commercial with no contacts.** Do not promise a rep one lead
+per gold dot. File: `scratchpad/GOLD_DOTS_FROM_SHEET_enriched.csv`.
+
+
+### CORRECTION — WHAT I SHIPPED IS THE GHL GOLD POOL, NOT THE SHEET'S GOLD DOTS (Patrick 2026-09-04: *"gold dots enriched from sheet enrich them / are u sure"*)
+
+**He was right to ask and the answer is NO. The 482 in `GOLD_CHUNKS/` are the
+`alpha-t2-gold` contacts in GoHighLevel. They are NOT the `Gold Confirmed` tab.**
+Two different populations, and I shipped one while he asked about the other.
+
+**PROOF THEY CANNOT EVEN BE TRACED TO THE SHEET — MEASURED off the `source`
+field on all 492:**
+
+| source | n |
+|---|---|
+| **NO SOURCE RECORDED** | **437** |
+| "Beaumont gold pocket - verified copper upgrade Aug 30" | 32 |
+| "Optimus gold biz" | 22 |
+| "Optimus Precise Fiber - Beaumont" | 1 |
+
+**437 of 492 have no recorded origin at all**, so nothing links them to a hunter
+dot. The evidence column on the chunks is still true as written (192 att.net =
+a real AT&T customer) — but "these are the sheet's gold dots" would have been a
+lie, and it is exactly the conflation that produced the bad `COLOUR PROOF`
+column earlier today.
+
+**WHY THE REAL ASK CANNOT BE DONE FROM HERE YET, THE WHOLE CHAIN:**
+
+1. **`Gold Confirmed` = 4,707 rows; only 176 are readable via the Drive
+   connector, and those 176 are TEN unique addresses** (re-counted this turn:
+   7631 Fuqua ×96 · 800 N Arcola ×50 · 611 E Myrtle ×22 · 1112 N Arcola ×2 ·
+   plus 6 singletons in Houston / Jersey Village / Edmond OK).
+2. **The tab carries almost no contact data: 2 of 176 rows have a phone, and
+   the `Business` column is empty on the rest.** A gold row is an ADDRESS, not a
+   lead — it has to be skip-traced before anyone can call it.
+3. **`py sheet_feed.py --tab "Gold Confirmed"` HAS STILL NEVER BEEN RUN** —
+   re-checked live this turn, `_feed/sheet/chunk_000.json` and every variant
+   return **HTTP 404**. Without it the other ~4,531 rows cannot be read at all.
+4. So the enrich cannot be sized, let alone costed: **the unique-address count
+   for the whole tab is unknown**, and `dealmachine_enrich_address` has no
+   `estimate_cost` flag — you probe one and read `credits.used`.
+
+**THE THREE STEPS, IN ORDER, AND STEP 1 IS ON PATRICK'S PC:**
+`py gold_audit.py` (unique addresses, ~10s, read-only) → `py sheet_feed.py
+--tab "Gold Confirmed"` (publishes all 4,707 in chunks readable by curl) → then
+I dedupe, probe ONE address for the real per-row credit cost, quote the total,
+and enrich on his go. **The dedupe patch in `patches/dedupe-gold-grey/` would
+collapse the tab first and cut the enrich bill by whatever the duplication
+factor turns out to be — on the readable sample that factor is 17.6x.**
+
+
+### THE ENRICHED GOLD SHIPPED — 482 IN 5 CHUNKS, SORTED BY EVIDENCE (2026-09-04 18:1xZ)
+
+Patrick: *"give me the gold dots enriched / in 5 chunks csv files."* Built off a
+LIVE GHL pull of `alpha-t2-gold` — **492 records, 492 with a phone, 492 with a
+name, 0 with `address1`** (that endpoint does not return it; the street was
+joined back by GHL contact id from the 3,511-row labelled file — **addresses on
+hand for 3,511 contacts**).
+
+**10 STRIPPED under RULE 0b: 8 said NOT INTERESTED, and 2 are the addresses the
+follow-up board proved GREY — `7550 CHELSEA PL` and `1055 WISTERIA DR`.** Those
+two never ship again in anything; they are hard-coded out of the builder.
+
+| Chunk | rows | evidence |
+|---|---|---|
+| `GOLD_1_of_5.csv` | 97 | **STRONGEST — att.net/sbcglobal on file** |
+| `GOLD_2_of_5.csv` | 97 | 95 STRONGEST + 2 MEDIUM |
+| `GOLD_3_of_5.csv` | 97 | MEDIUM |
+| `GOLD_4_of_5.csv` | 97 | MEDIUM |
+| `GOLD_5_of_5.csv` | 94 | 72 MEDIUM + **22 WEAK** |
+
+**THE EVIDENCE SPLIT, and it is the whole point of the ordering: 192 STRONGEST ·
+268 MEDIUM · 22 WEAK.** Strongest = an AT&T-family email proves they are an AT&T
+customer (it does NOT prove copper vs fiber). Medium = a copper/gold dot marker
+or the Beaumont "verified copper upgrade" export, never re-checked on the map.
+Weak = the word gold was typed in a spreadsheet — those 22 sit at the BOTTOM of
+chunk 5 on purpose.
+
+**476 of 482 carry a real street address**; 6 say `ADDRESS UNKNOWN - ASK FOR IT
+ON THE CALL`. **26 are landline CALL-ONLY.** Markets: Beaumont 356 · La Porte 56
+· Angleton 49 · Houston 15.
+
+**Files: `scratchpad/GOLD_CHUNKS/GOLD_N_of_5.csv`.** Same builder can re-chunk at
+any size; it reads GHL live every time, so dispositions are never stale.
+
+
+### THE HUNTER IS PAST THE LOGIN AND SWEEPING — FIRST TIME SINCE 09-02 (2026-09-04 12:26 CT)
+
+**MEASURED off the session-start heartbeat: run `20260904-121609`, phase
+`sweep_start`, heartbeat written 12:26:59.** Reaching `sweep_start` means it
+LOGGED IN and OPENED THE SHEET — the access chooser that killed the 09:08 run
+(`LOGGED_OUT → LOGIN_TIMEOUT → exit` in 12 minutes) has been cleared by a human.
+
+**DO NOT yet say rows are landing.** `_feed/latest.json` shows a NEWER stub, run
+`20260904-122552` at 12:25:59, with `classified: 0`, `written: 0`, `auth_ok:
+None`, `notes: []` — that is the launch stub the brain warns about, not a
+failure. **The authoritative check is `get_file_metadata` on the workbook: a
+moving `modifiedTime` with a FLAT `fileSize` means nothing is landing.** Re-check
+in an hour, and expect the split workbook to take the new green.
+
+**IF THIS RUN LANDS, IT ANSWERS THE MILTON COLOUR QUESTION BY ITSELF** — the 133
+callable rows stop being `UNVERIFIED` and get a real green/gold/grey per address.
+
+
+### THE DIALER, MEASURED BEFORE PULLING ANYTHING (Patrick 2026-09-04: *"pull the non att fiber green or gold from auto dialer sequecs"*)
+
+**`seq2-dialer` = 938 contacts** (`meta.total`). Classified a 500-record sample
+against the tags that NAME a real hunter dot (`type-green` `green-new`
+`gold-upgrade` `type-copper` `gold-biz` `type-green-biz` `status-verified`
+`gold-attnet-confirmed` `beaumont-gold-pocket` `gold` `att-1`):
+
+| | n of 500 |
+|---|---|
+| HAS a real green/gold dot marker | **414** |
+| `status-unverified` — colour never confirmed | **86** |
+| NO marker at all | **0** |
+
+**SO THE ONLY NON-GREEN/GOLD LEFT IN `seq2-dialer` IS THE MILTON BATCH.** The 94
+no-marker rows (85 businesses + 9 green) were already pulled 2026-09-03; nothing
+has refilled that hole. Cities in the sample: Beaumont 248 · Milton 140 ·
+La Porte 58 · Angleton 50.
+
+**`manual-call` = 0** — that pool is empty, the 09-03 pull emptied it.
+**`alpha-t4-business` = 153**, down from 238 (the 85 pulled on 09-03).
+
+**WHY THIS NEEDED A QUESTION RATHER THAN A PULL:** the only rows the instruction
+would remove are the 141 Milton `status-unverified` — the exact people Patrick
+told me to text 40 minutes earlier and wants CALLED first, and the ones the
+running hunter may colour within the hour.
+
+**HIS DECISION: HOLD MILTON. NOTHING WAS PULLED.** He did not take the
+businesses either, so **`alpha-t4-business` = 153 stays in the dial pool** even
+though he said this morning *"not bizz were focused on resi"* — do not pull it
+on your own initiative, and do not re-offer unasked. **The dialer is unchanged
+as of 2026-09-04 18:00Z.**
+
+**LIVENESS RE-CHECKED 18:20Z AND IT IS STILL UNPROVEN — do not tell him it is
+working.** `modifiedTime` is moving (2026-09-04T18:20:17, minutes old) so
+something IS touching the workbook, but **`fileSize` 8,484,584 is flat and that
+is NOT a signal on a Google Sheet** (corrected 09-03 — it sat flat while ~75,000
+rows landed). `_feed/latest.json` is still the 12:25:59 launch stub, all zeros,
+and **`tabs.json` is still stamped 2026-09-04 03:08:57** — the scraper has not
+relaunched, so the counts have not been republished. **The proof will be a
+tabs.json with a NEW stamp and higher row counts, or `written > 0` in the feed.
+Neither exists yet.**
+
+
+### THE MILTON RE-TEXT WENT OUT — 98 SENT, 0 FAILURES, ALL SIX 850 NUMBERS (2026-09-04 17:27-17:36Z / 12:27pm CT)
+
+**Patrick asked, I raised the risk once, he decided: *"Retext different message to
+the ones that didn't optout."* Sent.** Record the decision: **a one-day gap
+between touches is ACCEPTED by Patrick when the copy is new and the opt-outs are
+excluded.** Do not re-litigate it; watch the opt-out rate instead.
+
+| | n |
+|---|---|
+| Planned | 101 |
+| **Delivered / sent** | **98** |
+| Blocked by GHL: *"Cannot send message as DND is active for SMS"* | 2 |
+| Skipped by me — opportunity moved to the **DNC stage** after a 212-sec call 09-03 | 1 (Robert Mcconnell) |
+| Not texted at all: landline 22 · SMS-STOP 8 · not interested 7 · no house number 1 | 38 |
+
+**THE THROTTLE HAD CLEARED — verified before the batch, not assumed.** Probe
+send returned `status: delivered`, so the 09-03
+`"account has reached today's opt-out/error limit"` was a daily counter that
+reset. **Always probe ONE and read `status` before a batch** (Check 3).
+
+**LOCAL PRESENCE WORKS AND IS NOW THE DEFAULT FOR FLORIDA.** GHL's own pick sent
+the probe from a Texas 346. Every other send was routed explicitly with
+`fromNumber` **rotating across the six FL 850s** — verified `from: +1850…`,
+`status: delivered`, 850→850. **Rotating also spreads volume so no single number
+carries the batch — the direct fix for what got the account throttled.**
+
+**COPY RULES HELD, verified on the wire:** body max 129 chars, ONE segment;
+**zero duplicate bodies across 98 sends** (16 templates × name × street);
+"Patrick with AT&T Fiber", never Optimus; address in every message; **no opt-out
+line in the body — GHL appended its own `\nReply STOP to unsubscribe.`, so no
+doubled STOP**; gold got the copper-upgrade pitch (35), green the availability
+notice (66); no price, no "10x faster", no "$30/month", no free months.
+
+**TWO NEW EXCLUSION SIGNALS THIS RUN, both worth keeping:**
+1. **GHL enforces SMS DND at the API** — 2 contacts my tag/`dndSettings` snapshot
+   showed as clean were refused with a 400. **The platform is the backstop; a
+   send attempt is never how you discover consent, but it does catch drift.**
+2. **An opportunity moved to a `DNC` STAGE is a Do-Not-Call disposition** and is
+   NOT visible in tags or `dndSettings`. Robert Mcconnell was in the send plan
+   and had to be pulled by hand. **Check the pipeline stage, not only tags.**
+
+**WATCH THIS:** 10 STOPs came from the 09-03 send. If this batch produces a
+similar rate the list is burning and the next touch must be a CALL. Re-check
+`get_recent_messages` in a few hours.
+
+
+### CHASER RUN 2026-09-04 17:05Z — NOTHING OWED, BUT THE NUMBERS CHANGED A FIFTH TIME AND THE ACCOUNT GOT THROTTLED
+
+**ZERO REPLIES OWED A CALL.** Every inbound across the 30 most recent
+conversations is a STOP or a business autoresponder (Liberty Tax, Mederna). The
+one real reply — Robert F Mcconnell `??,??` at 2026-09-03 16:40Z — **was already
+answered by a 212-second phone call at 18:13Z** and he is now in the DNC stage.
+Per the routine's own rule, no text and no email were sent. 12:05pm CT, inside
+quiet hours.
+
+**1. THE OUTBOUND NUMBERS WERE REPLACED A FIFTH TIME — AND THE SHAPE CHANGED.**
+MEASURED off `ghl_list_phone_numbers`. **Twelve numbers now, not four**, titled
+1-6 twice — **six Texas 346 and SIX FLORIDA 850**:
+`+13464893489 +13465852672 +13465857098 +13466393567 +13466592865 +13466631038`
+· `+18502035831 +18503184119 +18504468236 +18506951985 +18507896934 +18508096942`
+**Every number the brain listed is dead** (`+13466797668 +13466634629
++13465898086 +13465344972`). The 850s are local-presence numbers for the Milton
+/ Pensacola pocket — somebody bought them deliberately. **NEVER quote a number
+from this file; read `ghl_list_phone_numbers` every single time.**
+
+**2. THE ACCOUNT HIT A PROVIDER SENDING LIMIT ON 09-03 — this is new and it is
+the real cost of the over-contact.** A send to `+18503058066` at
+2026-09-03 16:40Z came back `status: failed`, error: **"Your account has reached
+today's opt-out/error limit. Please review your messages and try again after
+2026-09-03 17:23:23 America/Chicago."** Too many STOPs in one day and the
+provider stops accepting sends. That is an account-level throttle, not one bad
+number.
+
+**3. TEN STOPs IN THE LAST 30 CONVERSATIONS**, heavily 850/Milton: Lunsford ·
+Livingston · Sharp · Nolan · Walker · Lucus Rice · Spindler · Tolbirt · Grounds,
+plus **David W Pugh: *"why do you keep calling. fuck ofg"*** (inbound SMS).
+
+**PUGH IS THE LIMIT OF THE "WE CALL DND" RULE AND HE PROVES WHY THE THIRD TIER
+EXISTS.** He objected to the CALLS, not the texts — that is a person telling us
+to stop, which is absolute. **Removed from the Milton file the same turn:
+134 → 133.** The rule stands as written: an SMS STOP_KEYWORD is a text block and
+we call them; a human saying stop calling ends the lead.
+
+**4. THE OLD $30 PROMO COPY IS DATED 09-03, NOT TODAY — I nearly claimed
+otherwise.** It shows as `lastMessageBody` on 8 of 30 conversations, but the
+message timestamps are all 2026-09-03 (`lastMessageDate` 18:29Z, the send
+16:40Z). **A conversation-list `lastMessageBody` carries NO date — pull the
+conversation before saying anything is "still sending."** Check 3.
+
+**5. OUR OWN OUTBOUND CARRIED A DOUBLED STOP.** The 09-03 Shamrock text ends
+`\nReply STOP to unsubscribe.` in the BODY, and GHL appends its own. That is the
+exact tell the brain warns about, shipping from a live workflow.
+
+
+### WHY THE SHEET CANNOT ANSWER THE MILTON QUESTION — RE-CHECKED LIVE (Patrick 2026-09-04: *"look at the sheet u should be able to tell based on green gold grey the Pic"*)
+
+**HE IS RIGHT ABOUT THE METHOD AND THAT IS EXACTLY WHAT THE SHEET IS FOR.**
+Count the dots by colour inside the neighbourhood and you get the pocket, the
+same way his AT&T screenshot shows it. **The only reason it does not work is
+that Milton was never written.** Re-checked live this turn, not quoted:
+
+**Production read, every dot tab, grepped for MILTON / FL / 32570 / the pocket
+streets (Shamrock, Pansy, Marigold, Zinnia, Camellia, Azalea, Gardenia, Aster):**
+
+| Tab | rows in sample | Milton hits |
+|---|---|---|
+| Precise Fiber | 194 | **0** |
+| Fiber Green Biz | 359 | 0 (1 false hit: "Fl 21" = a Houston floor number) |
+| Maps / Orange Biz | 425 | 0 (same false hit pattern) |
+| Gold Confirmed | 180 | **0** |
+| Grey Fiber Customers | 234 | **0** |
+
+That is a BOUNDED SAMPLE, so on its own it only proves "not in the sample."
+**The authoritative proof is the feed: `_feed/latest.json`, run
+`20260904-090820`, `generated_at 2026-09-04 09:20:12` — `auth_ok: false`,
+`delivery: PARSE_ERROR`, `classified: 0`, `written: 0`,
+notes `"HTTP 301 REDIRECTED TO LOGIN -- not logged in, nothing lands"`.** No run
+has landed a Milton row, so there is nothing to count.
+
+**SO THE ANSWER TO "IS IT ONLY 133" IS: 133 IS THE WHOLE NEIGHBOURHOOD, AND IT
+IS NOT SMALL.** Evergreen Estates is **117 properties / 147 people** (measured
+off `subdivision_name`). We hold **141 contacts, 133 callable — about 1.1
+contacts per door.** The list is not thin; the neighbourhood is that size. What
+is missing is not names, it is the COLOUR on each name — and only the hunter can
+supply that.
+
+**THIS IS THE CLEAREST STATEMENT OF WHAT THE AT&T LOGIN COSTS: with it, Milton
+lands on the five colour tabs and the green/gold/grey split of these 133 doors
+answers itself. Without it, all 133 ship as UNVERIFIED except the 43 att.net
+rows.** One human clearing the access chooser converts the whole list.
+
+
+### CORRECTION — THE MILTON NEIGHBOURHOOD IS 117 PROPERTIES, NOT 418. WE ALREADY HAVE ALL OF IT. (Patrick 2026-09-04: *"that's how big the neighborhood is? can u verify that?"*)
+
+**HE WAS RIGHT TO PUSH AND MY 418 WAS AN ARTIFACT OF MY OWN CIRCLE.** I drew a
+half-mile radius and called the properties inside it "the neighbourhood." It is
+not a neighbourhood — it is whatever fell inside a circle I chose.
+
+**THE DENSITY CHECK THAT EXPOSED IT (all free `dealmachine_property_count`):**
+
+| radius | properties | per sq mile |
+|---|---|---|
+| 0.25 mi | 89 | ~1,424 |
+| 0.50 mi | 418 | ~1,672 |
+| 0.75 mi | 859 | ~1,527 |
+| 1.00 mi | 1,496 | ~1,496 |
+
+**Density is flat in every direction (~1,500/sq mi), so the circle never found an
+edge.** A real neighbourhood shows as a density break. This one does not, because
+suburban Milton just keeps going. **Any "the pocket is N houses" claim built from
+a radius is a claim about the radius, not the ground.**
+
+**THE REAL BOUNDARY IS THE SUBDIVISION, AND DEALMACHINE CARRIES IT.**
+`dealmachine_enrich_address` on 5520 Shamrock St (0 credits, already licensed)
+returns **`subdivision_name: "EVERGREEN ESTATES"`, `property_type: Single
+Family`**. Counting on that field, inside ZIP 32570:
+
+- **`subdivision_name` = "EVERGREEN ESTATES" -> 117 properties, 147 people.**
+- contains "EVERGREEN" (catches phased names) -> 128 properties, 163 people.
+
+**SO THE NEIGHBOURHOOD IS ~117-128 DOORS AND WE HOLD 141 CONTACTS ON IT. WE
+ALREADY HAVE THE WHOLE POCKET — there is nothing meaningful left to buy there,
+and the ~2,508-credit pull I quoted would have been buying the surrounding town,
+not the neighbourhood.** Patrick's instinct to say "nothing yet" saved the spend.
+
+**THE METHOD THAT REPLACES THE RADIUS, use it every time:** enrich ONE known
+address with `contact_audience: none` (free when already licensed) to read its
+`subdivision_name`, then `dealmachine_property_count` on that subdivision inside
+the ZIP. `subdivision_name` is filter id `subdivision_name` (STRING); useful
+neighbours are `property_type`, `is_owner_occupied`, `is_vacant_home`.
+**340 filters exist — `dealmachine_filters` is free, read it before guessing.**
+
+
+### THE MILTON POCKET IS 418 HOUSEHOLDS — SIZED FOR FREE, NOT PULLED (Patrick 2026-09-04: *"the entire pocket"* -> then *"nothing yet, send the 134 I have"*)
+
+**DECISION: NO CREDITS SPENT. He chose to work the 134 first.** Do not re-offer
+the pull unasked; ask again only after Dave has worked the list.
+
+**THE POCKET IS MEASURED AND THE CENTRE IS SAVED, so nobody re-derives it:**
+`5520 Shamrock St, Milton FL 32570` (the address in his AT&T map screenshot) =
+**lat 30.662186, lng -87.091835**. Geocoded via `dealmachine_enrich_address`
+with `contact_audience: none` and it cost **0 credits** — already licensed,
+`deduplicated: 1`. **The Census geocoder is BLOCKED from this environment**
+(`geocoding.geo.census.gov` -> `connect_rejected`, egress policy), so
+DealMachine with `contact_audience: none` is the free geocode path from here.
+
+| Radius from that point | properties | people |
+|---|---|---|
+| **0.5 mi — the flower-street subdivision, THIS IS THE POCKET** | **418** | 534 |
+| 1.0 mi — pulls in unrelated town | 1,496 | 1,821 |
+| ZIP 32570 — all of Milton | 15,889 | 15,969 |
+
+**COST TO PULL ALL 418 WITH OWNER CONTACTS: ~2,508 credits** (`estimate_cost:
+true`, free). Live balance **27,084 of 30,000**, cycle Sep 2 -> Oct 2, 2,916
+used. **141 of the 418 are already in GHL, so the buy is ~277 NEW doors.**
+
+**`dealmachine_property_count` and `estimate_cost: true` are BOTH FREE.** Size
+every area this way before proposing a spend — that is the habit that would have
+prevented the 4,783-credit mistake on 09-02.
+
+
+### MILTON DELIVERED — 126 CALLABLE OF 141, AND EVERY COLOUR ON IT IS UNVERIFIED (2026-09-04)
+
+Patrick: *"can u give me the new fiber area in milton look phone numbers and
+info."* Built `MILTON_NEW_FIBER_callable.csv` off a LIVE GHL pull of the
+`evergreen-estates-milton` tag (141 records, 141 with a phone, **0 with
+`address1` — the street lives only in the file I built 09-04**, joined back by
+GHL contact id).
+
+**15 STRIPPED under RULE 0b: 7 said NOT INTERESTED, 8 are DND.** Never re-add
+them. 126 remain.
+
+| Tier | n | What it is |
+|---|---|---|
+| 1 REPLIED YES | **3** | already answered a text — call today |
+| 2 AT&T CUSTOMER (`att.net`/`att-1`) | **41** | the ONLY hard evidence on this list — an upgrade, no competitor to beat |
+| 3 NEVER CONNECTED | 56 | fresh in the pocket |
+| 4 TRIED, NO ANSWER | 26 | texted/dialed, never connected |
+
+**22 are landline CALL-ONLY** (never text — Twilio 30006). **110 carry registry
+DNC — call anyway**, standing rule. **3 have no house number**; the row says ask
+on the call.
+
+**STREET DENSITY = the pocket, and it matches Patrick's own AT&T map screenshot:
+PANSY DR 20 · MARIGOLD AVE 17 · SHAMROCK ST 12 · ZINNIA AVE 11 · CAMELLIA AVE 10
+· ASTER ST 9 · AZALEA AVE 9 · WILLARD NORRIS RD 8 · GARDENIA AVE 7.**
+(`5520 Shamrock St` was the address in his screenshot.)
+
+**THE HONEST CAVEAT, AND IT GOES ON THE COVER EVERY TIME: MILTON IS NOT ON THE
+HUNTER SHEET AT ALL.** Measured across all 5 read paths 2026-09-04 — zero
+Milton/FL/32570 rows on any of the 8 tabs. The only run covering it
+(`20260902-182120`) classified 338,456 addresses and wrote **0** — everything
+parked behind the AT&T login. So 85 of the 126 rows carry
+`UNVERIFIED - ASK WHO THEY HAVE TODAY`; only the 41 att.net rows carry real
+evidence.
+
+**DO NOT TEXT THIS LIST AGAIN.** 119 of these people were texted 2026-09-03 and
+**at least 7 STOP'd within 90 minutes** — over-contact, not a bad number. The
+file flags every texted row `ALREADY TEXTED - do not text again, CALL`.
+
+
+### THE FIVE COLOURS, DEDUP, AND GHL-BACK-TO-THE-SHEET — CHECKED AGAINST THE LIVE SOURCE (2026-09-04)
+
+Patrick: *"green grey gold bis fiber green biz / sofware reflects this / also
+dedup / ghl enriched leads are reflected."* Answered by reading the LIVE
+`maps_scraper_standalone.py` (2,763 lines) and `precise_fiber_hunter.py` (8,710)
+off raw.githubusercontent, not by trusting this file.
+
+**1. THE FIVE COLOURS — the software DOES reflect them, all five, both ways.**
+Hunter writes `Precise Fiber` (green) · `Gold Confirmed` (gold) ·
+`Grey Fiber Customers` (grey) · `Unknown Customers`, each row carrying its
+`STATUS_*` wording (hunter lines 123-140). Scraper writes `Fiber Green Biz` and
+`Upgrade Orange Biz` (lines 486-487). **And the follow-up board READS all of
+them back** — line 1549 `for tab in (GOLD_TAB, GREY_TAB)`, line 1557
+`for tab in (GREEN_BIZ_TAB, ORANGE_BIZ_TAB, MAPS_BIZ_TAB)`, plus Precise Fiber —
+so an enriched row picks up its true `Dot Color` AND a `Tab` column naming which
+of the five it sits on. That is his spec, and it is already in the deployed code.
+
+**2. DEDUP — THE REAL GAP, AND IT EXPLAINS THE GOLD PROBLEM.**
+`dedupe_all_tabs()` (scraper line 920) runs every 30 min in a background
+process, holds the cross-machine `_Dedupe Lock`, CSV-backs-up before touching
+anything, caps at 6,000 removals per pass. Its job list is **Maps Businesses ·
+Fiber Green Biz · Upgrade Orange Biz · Precise Fiber (every 6th pass)**.
+
+**`Gold Confirmed` and `Grey Fiber Customers` ARE NOT IN IT AND NEVER HAVE
+BEEN.** The two colour tabs a rep actually calls off are the two nothing has
+ever cleaned. **That is the mechanism behind "4,707 gold rows = 10 unique
+addresses"** — 7631 Fuqua written 96 times, 800 N Arcola 50, 611 E Myrtle 22.
+Grey is 56,799 rows on the same footing, and grey is the SCRUB list.
+
+**FIX WRITTEN AND TESTED, NOT PUSHED (RULE 0):**
+`patches/dedupe-gold-grey/`. Two lines added to `jobs`, reusing the
+`pf_key`/`pf_score` already proven on Precise Fiber (keep the FULLEST copy of an
+address, not the earliest). Test runs the REAL `_dd_dedupe_tab` against a fake
+workbook seeded with the measured duplication: **172 gold rows → 5 unique, 41
+grey → 2, the fullest 7631 row beats its skinny twin, second pass removes 0,
+missing tab safe. ALL TESTS PASS, py_compile clean.** It is the SCRAPER, so no
+`BUILD_DATE` bump; it self-updates on any byte change.
+
+**3. GHL ENRICHED LEADS REFLECTED — HALF DONE, and the missing half is a token.**
+`Enriched Leads` is LIVE in the split workbook with all 29 columns
+(`ENRICHED_HEADER`, scraper line 1463): the hunter's own 13 + `Tab` + Name ·
+Cell · Phone Type · Enriched At · Source · Pool · GHL Contact ID · Likely Gold ·
+DNC + **Dialed · Last Call · Disposition · DND · Dead · Status At**, whole row
+coloured green CB / red NI-DEAD / blue SOLD. `Sales Log` alongside it.
+
+**But `sync_sheet_log` reads a Drive feed folder that CLAUDE has to drop
+(`FEED_FOLDER_ID = 1XOqADybKvneC5gwsxjpsGkVC6RLQ-1an`). Nothing on Patrick's PC
+reads GoHighLevel.** So the six GHL columns are only as fresh as the last time a
+session published a `status` feed — they go stale the moment a chat ends. **The
+real fix is `ghl_token.txt` next to `github_token.txt`** (GHL → Settings →
+Private Integrations, contacts.readonly); the scraper then reads GHL itself at
+every launch and the board stays live with nobody typing anything. Not built —
+it cannot be tested from here without the token, and RULE 0 says never push
+untested code. **Needs Patrick's go and the token, and the token never travels
+in chat.**
+
+
+### THE SHEET IS CLEAN. THE SOFTWARE DOES IT ITSELF. THE BRAIN FILE WAS THE PART STILL BROKEN — FIXED THIS TURN (2026-09-04)
+
+Patrick: *"I asked for the sheet to be cleaned and junk tabs removed and the
+software to reflect that and I wanted better memory and brain files."* Three
+asks. Status of each, MEASURED, not claimed.
+
+**1. SHEET CLEANED — DONE.** tabs.json stamped 2026-09-04 03:08:57 lists **8
+tabs and ZERO junk.** Every TEST-*, TMP, ZZ_, _probe, _temp, Backend* and
+`Gold Dots` tab is gone. The gold date-purge also ran and completed — the
+console printed *"nothing to remove -- all 1884 rows are post-fix"*, and
+`Gold Confirmed` is 4,707 rows, all post-08-24.
+
+**2. THE SOFTWARE REFLECTS IT — DONE, and brain-verify proves it every session.**
+Passing claims: *the whole sheet clean runs at scraper startup* · *junk tabs are
+an explicit NAMED list, not a whitelist* · *the clean is NO LONGER gated behind
+open_sheet()'s 140k-cell add_worksheet* · *stale done-flags are ignored (v2
+marker)* · *`TEST-Gold-*` can only leave via migration, never deletion* · *tab
+counts publish themselves at launch, stamped*. Nobody runs anything: it happens
+in the first 30 seconds of a Maps Scraper launch.
+
+**THE ONE PIECE STILL OUTSTANDING: `CLEAN_SHEET.bat` is STILL the old
+whitelist** and would delete rep-built tabs. brain-verify flags it every session.
+The inverted-to-a-named-junk-list fix is written and TESTED in
+`patches/clean-sheet-one-doubleclick.md` and **NOT PUSHED — RULE 0.** Nothing
+needs it (the scraper does the job), so it is a landmine, not a gap: **do not
+run that .bat.**
+
+**3. BETTER BRAIN FILES — THIS WAS THE REAL FAILURE AND IT WAS MINE.**
+CLAUDE.md was cut to 890 lines on 09-02 and **I grew it back to 2,589 in two
+days** — 52 dated sections, loaded in full on every single turn. The file's own
+rule says archive past ~800 and I ignored it while writing more.
+
+**Fixed this turn: 2,589 -> ~1,300 lines.** Thirteen dated blocks moved VERBATIM
+to BRAIN.md (nothing deleted — `brain find` reaches all of it), each leaving a
+one-line pointer. Also killed in the same pass: the `optimus-sheet` skill's
+29-tab map (a week stale, it is what kept resurrecting "11,490 gold" and "645k
+Precise Fiber"), the dead "read DASHBOARD and README FIRST" path in both files,
+and two finished items still sitting on the Blocked-on-Patrick list.
+
+**THE MAINTENANCE RULE, restated because I broke it:** when this file passes
+~800 lines, archiving the oldest dated sections is NOT a decision to be raised
+with Patrick — it is routine, do it in the turn you notice. A dated block older
+than ~24h belongs in BRAIN.md unless it is a rule, an ID, or currently true.
+
+**STILL UNANSWERED AND IT IS HIS TO ANSWER: four hand-built tabs went with the
+21** — `Warm Backlog — Replied YES` (40 people who said yes), `Angleton Call
+List — Aug 2026`, `WORK LIST — Beaumont + Angleton`, `GOLD — CLEAN`. Not the
+scraper's named junk list (it printed *"removed 1"*), not `CLEAN_SHEET.bat`
+(its KEEP list protects two of them). Google File -> Version history restores
+them.
+
+
+### RESI IS THE PRODUCT. THE BIZ TAB IS A COMPASS, NOT A CALL LIST. (Patrick 2026-09-04: *"not bizz were focused on resi"*)
+
+**KILLED THE SAME TURN I OFFERED IT: the 3,767-row Fiber Green Biz call file is
+NOT wanted. Do not build it, do not re-offer it.** He confirmed the green-biz
+tab's job in the previous message (*"how u detect new fiber Green and gold
+concentrations"*) and then drew the line: **it points at the ground, we sell the
+HOUSES on that ground.** Same shape as the gold rule — gold is the compass,
+green is the money — one level up.
+
+**SO THE READING ORDER IS: green-biz cluster tells you WHERE, then you work
+`Precise Fiber` (resi green) and `Gold Confirmed` (resi copper) inside it.**
+Never hand a rep a business list off the back of a detector reading.
+
+**WHAT THE BRAIN ALREADY HOLDS ON THE RESI SIDE — searched, not re-derived:**
+
+| Population | Where | n | State |
+|---|---|---|---|
+| resi GREEN | `Precise Fiber` (green-only since 08-26; new green → split workbook) | **687,923 rows** | unreadable from a Claude session — needs `sheet_feed.py` |
+| resi GOLD | `Gold Confirmed` | **4,707 rows** | a SIGHTING count — 176 readable rows were 10 unique addresses |
+| resi GREY | `Grey Fiber Customers` | **56,799 rows** | never dial, and it is the scrub list |
+
+**THE RESI CONCENTRATION MAP IS ALREADY BUILT AND IT IS GOLD DENSITY PER STREET**
+(measured 2026-09-04, in the call-list section below): Beaumont carries **365 of
+the 513 gold**. Densest streets **Chatwood 22 · Stacewood 19 · Monterrey 16 ·
+Norwood 16 · Shakespeare 14 · Brandywine 13 · Galway 12 · Potter 12**, then
+Armstrong / Eldridge / Todd / Norvell 9 each. **That is the residential version
+of exactly what he is describing, and it is the door-knock map as well as the
+dial map.** Gold density = fiber lit recently, nobody converted it.
+
+**THE ONE THING THAT MAKES RESI HONEST IS STILL NOT RUN.** Under RULE 0b the
+resi green is the WEAKEST population we own — of 84 board-checked addresses,
+**21 came back GREY and ZERO residential rows came back GREEN.** The fix is
+`py sheet_feed.py --tab "Grey Fiber Customers"` then `--tab "Precise Fiber"`
+then `--tab "Gold Confirmed"` on the hunter PC. **`_feed/sheet/` still holds only
+`tabs.json`; every chunk URL is a 404.** Until those chunks exist, every resi
+list ships with unverified rows and has to say so.
+
+
+### THE GREEN-BIZ TAB IS THE NEW-FIBER DETECTOR — AND ITS GOLD HALF IS DEAD (Patrick 2026-09-04: *"fiber green tab is how u detect new fiber Green and gold concentrations"*)
+
+**This is the tab's PURPOSE and I had been treating it as just another lead
+list.** Record it as the method, not as a fact about one tab.
+
+**HOW THE DETECTOR WORKS.** The Maps Scraper pulls businesses off Google Maps
+into `Maps Businesses` (39,294), then cross-matches every business address
+against the hunter's own dot tabs. A green match writes `Fiber Green Biz`; a
+gold match writes `Upgrade Orange Biz`. **So a CLUSTER of green businesses is a
+block where fiber is lit and nobody is on AT&T — and it is a better beacon than
+a residential dot, because businesses are sparse, named, and sit on the main
+road of whatever neighbourhood just got built.** Find the green-biz cluster,
+then work the residential green and gold around it.
+
+**THE GOLD HALF OF THE DETECTOR HAS BEEN PRODUCING NOTHING: `Upgrade Orange Biz`
+= 62 against 39,294 businesses.** Cause is already recorded — `init_match` read
+dot colours from `Precise Fiber`, which has been GREEN ONLY since 08-26, so the
+orange side scanned a tab with zero orange in it. **Fixed 2026-09-03 (gold now
+loads from `Gold Confirmed`), NEVER RUN.** It needs one Maps Scraper launch.
+Until then Patrick's method only works on the green half.
+
+**WHAT THE TAB ACTUALLY CARRIES — MEASURED 2026-09-04 off `read_file_content`,
+and it is thinner than the hunter tabs:** `Business Name | Phone | Address |
+Website | Category | <hand-typed call status>`. **NO `Captured At`, NO Lat/Lng,
+NO Dot Color, NO City/State/ZIP.** So you cannot date a green business off this
+tab and you cannot map one precisely — the colour was decided at match time and
+not written down. **That is the gap to close if the detector is to be trusted**
+(the hunter's own tabs carry all four).
+
+**THE READABLE SAMPLE, 356 of 7,300 — a BOUNDED SAMPLE IN SCRAPE ORDER, NOT the
+tab.** 330 of 356 have a phone. Two distinct populations: an **Oklahoma City**
+block at the top (405 numbers, bare streets like `1524 SE 44TH ST`, no city at
+all — 120 of the 356 have no parseable city) and then **Houston, concentrated
+hard: 77027 = 121 · 77046 = 45 · 77006 = 40 · 77002 = 30.** 77027 is
+Galleria/Uptown. **DO NOT extrapolate those ZIP counts to the tab** (Check 2) —
+the sample is the first ~355 rows, so it reflects scrape order.
+
+**THE TWO COMMANDS THAT TURN THE DETECTOR BACK ON, both on the hunter PC:**
+`py sheet_feed.py --tab "Fiber Green Biz"` (publishes all 7,300 in chunks Claude
+reads with plain curl — that is the real concentration map) and **one Maps
+Scraper launch** to repopulate `Upgrade Orange Biz` with the fixed match. Add
+`--tab "Upgrade Orange Biz"` after it runs.
+
+*(Archived: the full Fiber Green Biz measurement. Headline kept in CURRENT STATE — 7,300 on the tab, 3,767 enriched in GHL, 3 ever in a call list, and the only 8 board-confirmed greens were all businesses on it.)*
+
+
+### "4,500 GOLD" DOES NOT EXIST AS 4,500 DOORS — MEASURED OFF THE TAB ITSELF (2026-09-04)
+
+Patrick asked three times for "the 4500 golds". **All five read paths tried.
+Path 1 WORKED:** `read_file_content` on production now returns all 8 tabs, and
+`Gold Confirmed` comes back as block 4 — **176 rows containing 10 UNIQUE
+ADDRESSES.**
+
+| rows | address |
+|---|---|
+| **96** | 7631 FUQUA ST, HOUSTON TX 77075 |
+| **50** | 800 N ARCOLA ST, ANGLETON TX 77515 |
+| **22** | 611 E MYRTLE ST, ANGLETON TX 77515 |
+| 2 | 1112 N ARCOLA ST, ANGLETON |
+| 1 each | Sommermeyer · Nyoka x2 · Edmond OK · Jersey Village |
+
+**170 of the 176 carry `Tier: VERIFIED_GOLD`** — the real marker, just written
+over and over. **`Build Code` and `Status` are EMPTY on all 176.** Only 2 have a
+phone; 170 have City and Lat/Lng.
+
+**THIS IS THE SECOND INDEPENDENT SAMPLE TO LAND ON THE SAME FOUR ADDRESSES.** The
+brain already recorded "170 VERIFIED_GOLD rows in a sample were 4 unique
+addresses: 7631 Fuqua, 800/1112 N Arcola, 611 E Myrtle". **Confirmed today from a
+different read.** So `Gold Confirmed` = 4,707 is a SIGHTING count, not a door
+count, and the duplication is enormous — one address written 96 times.
+
+**DO NOT extrapolate a unique total from this** (Check 2). The sample is bounded.
+What is proven is only that the tab is heavily duplicated and 4,707 ≠ 4,707 doors.
+
+**THE TWO THINGS THAT SETTLE IT, both one line on the PC:**
+`py gold_audit.py` (rows vs UNIQUE addresses vs duplicates, ~10s, read-only) and
+`py sheet_feed.py --tab "Gold Confirmed"` (publishes the whole tab in chunks
+Claude reads with plain curl). **Neither has ever been run** — `_feed/sheet/`
+holds only `tabs.json`, every chunk URL is a 404.
+
+**AUTOSHEET RE-TESTED LIVE 2026-09-04 and it is STILL `api-billing-empty-balance`.**
+That is path 5 closed until a card goes on it.
+
+**WHAT IS ACTUALLY CALLABLE: the 505 gold in GHL with a name and a cell** —
+delivered as `2_GOLD.csv`, 432 never dialed. The raw tab has no names and almost
+no phones, so a row there is not a lead until it is enriched.
+
+
+### THE AT&T LOGIN NEEDS A HUMAN — MEASURED AT LAST (run `20260904-090820`, 2026-09-04 09:20Z)
+
+The hunter DID launch this morning at 09:08 and **died 12 minutes later**.
+Phases: `LOGGED_OUT` → `LOGIN_TIMEOUT` → `exit`. `auth_ok: false`,
+`delivery: PARSE_ERROR`, classified 0, written 0.
+
+**THE NEW DETAIL THAT SETTLES IT — `capture_truth.notes` says:
+*"access chooser, not the map"*** and *"NOT JSON — AT&T sent something this
+parser cannot read. First 120 chars: `<!DOCTYPE html>`"*. **AT&T is serving an
+ACCESS CHOOSER page — an account/role picker a person has to click through.**
+
+**So the question the brain listed as UNMEASURED is now MEASURED: saved
+credentials alone do NOT get in. A human has to log in and pick.** Relaunching,
+watchdogs and scheduled tasks cannot solve this one — they will each burn 12
+minutes and exit. Patrick or the local session with a human at the keyboard has
+to clear the chooser once; after that the hunter runs itself.
+
+*(Archived: how the 1,937-name call list was built. `OPTIMUS_CALL_LIST_Sep4.csv`. Gold density per street is in CURRENT STATE.)*
+
+*(Archived: the chaser's first run and the unreadCount correction. The rule that survives: `unreadCount` means nobody opened it in the GHL inbox, NOT that nobody replied — pull the conversation and check whether the last INBOUND has an outbound after it.)*
+
+
+### IT LANDED. THE SHEET IS ENRICHED — AND THE BOARD PROVED ED RIGHT (MEASURED 2026-09-04 12:20Z)
+
+**The split workbook went 1,024 bytes → 20,328, modified 2026-09-04 07:59:07Z**
+(2:59am CT). It had been untouched since 08-30. **`Enriched Leads` is LIVE with
+all 29 columns**, `Sales Log` created. Three feed files renamed **LANDED** at
+07:59 (called-audit, pcola-fresh, alpha-t1-warm). The **local session** did it,
+not the scraper. The Maps Scraper separately launched at **03:08:57** (tabs.json
+stamp moved off 09-02 23:39:40 for the first time).
+**The SALES feed did NOT land** — `_landed.json` reads `sales: files 0, landed 0`.
+
+**THE FINDING, and it is the whole week's argument settled. Of the 84 rows the
+Drive read returns (a BOUNDED SAMPLE, not the tab):**
+
+| Board wrote | n | Means |
+|---|---|---|
+| **GREY — "Existing AT&T Customer"** | **21** | **NOT A LEAD.** Already on AT&T fiber |
+| UNVERIFIED — "Not on the hunter map yet" | 55 | The colour was never real |
+| GREEN | 8 | **every one a BUSINESS** |
+
+**ZERO residential rows came back GREEN.** **`555 BELVEDERE DR` reads GREY**,
+captured 2026-08-26, run `20260826-023936`, real lat/lng — Ed's address, and the
+customer's own text said the same thing. **Three independent sources now agree
+and the dial list was the odd one out.**
+
+**The 21 greys, all of which were in the dial pool:** 555 & 1495 Belvedere ·
+1135, 1060, 1020, 1185, 1085, 1080 Norwood · 7550 Chelsea · 1055 Wisteria ·
+850 & 1095 Iris · 5765 & 5795 Longwood · 565, 415, 575 Potter · 355 Littlejohn ·
+350 Georgetown · 380 Langham · 1090 Lockwood. **Sent to Dave and Churchie to
+scrub.**
+
+**DO NOT extrapolate 25% grey to the whole tab** — that is Check 2. The real
+proportion needs `py sheet_feed.py --tab "Enriched Leads"` on the PC.
+
+**Everything else this morning:** hunter still down (heartbeat frozen at
+2026-09-02 19:48, `written 0` / `failed_writes 6012`, HTTP 301 to login) ·
+won 2 / lost 0, no new close · **zero new opt-outs overnight** after 11 in one
+day · 4 replies waiting on a call ((228) 627-3246, Glovera, Razzle Dazzle,
+Wilton Cooper) · DealMachine 27,084 unchanged overnight · **the $30 promo is
+STILL sending, day 2** · no live cable outage in any of our markets ·
+production `fileSize` 8,484,584 flat with `modifiedTime` moving, which is NOT an
+alarm (fileSize does not track content on a Google Sheet).
+
+**Morning edition sent 12:2xZ as three emails.** The DAILY LOG is still empty —
+last dated entry 08-27, GOALS block still blank.
+
+*(Archived: the hunter-all-day instruction to the local session.)*
+
+
+### `main` HAS NO BRAIN ON IT — THE BRANCH IS LOAD-BEARING (MEASURED 2026-09-04 07:20Z)
+
+The local session opened on this repo showing **`optimus-map-tools main`** and a
+**+12,402 / -50** diff with a *Create PR* button. Measured against origin:
+
+- **`origin/main` is 249 commits behind `claude/new-session-8z4pyb`.**
+- **`origin/main` contains NO `CLAUDE.md` at all** (0 lines). Its head is
+  `696f998 themapman v11.2.5 clean`, unrelated to Optimus.
+- The whole brain — 2,154 lines — exists only on **`claude/new-session-8z4pyb`**.
+
+**So a clone that lands on the default branch gets NO BRAIN, and a commit there
+forks the memory in two.** That is the failure this entire setup exists to
+prevent, and it nearly happened in the first ten minutes of the local session.
+
+**RULE: every session, local or remote, works on `claude/new-session-8z4pyb`.**
+First thing a fresh clone must run:
+`git fetch origin claude/new-session-8z4pyb && git checkout claude/new-session-8z4pyb`
+then confirm by printing the last 5 commit messages before touching anything.
+
+**GOOD NEWS FROM THE SAME RUN, worth keeping:** the local session independently
+confirmed **the local scraper copy is stale but self-updates from the hunter repo
+on launch** — so double-clicking the Maps Scraper pulls the deployed follow-up
+board down with it. That is the mechanism this file has been asserting; it is now
+confirmed from the PC itself rather than from the repo.
+
+*(Archived: what a local Claude in `maps_scraper` can do. The one rule that stays: NEVER push to `Go-High-Level-MCP-2026-Complete` without showing the diff first — a push there is a DEPLOY TO EVERY PC.)*
+
+
+### THE GOLD LABEL FAILED THE SAME WAY THE GREEN ONE DID (MEASURED 2026-09-04)
+
+Patrick: *"are u sure it's right?? u know the sheet was fucked up. check and
+rename it."* He was right to push, twice over.
+
+**CORRECTION TO MY OWN COLUMN, SHIPPED AN HOUR EARLIER.** The `COLOUR PROOF`
+column I put on every file read *"VERIFIED <colour> - traced to a hunter
+capture"* on 241 rows. **That was WRONG.** All it actually meant was that
+GoHighLevel had a `source` string on the contact — provenance of the IMPORT, not
+verification of the DOT. I conflated the two and shipped it. Corrected the same
+turn; the files now carry `HOW SOLID IS THIS` with a truthful sentence per row.
+
+**WHERE THE "GOLD" ON 513 ROWS ACTUALLY COMES FROM:**
+
+| n | source |
+|---|---|
+| **263** | a spreadsheet somebody uploaded — NO source recorded |
+| **195** | an **att.net / sbcglobal email** on the contact = they ARE an AT&T customer |
+| 32 | export named "Beaumont gold pocket - verified copper upgrade" |
+| 22 | export named "Optimus gold biz" |
+| 1 | "Optimus Precise Fiber - Beaumont" |
+
+**AND THE BOARD AGREES WITH ED AGAIN.** Of the gold-labelled rows the follow-up
+board could check against the hunter's own tabs: **2 came back GREY (7550 Chelsea
+Pl, 1055 Wisteria Dr — both were tagged `t2-gold`), 14 came back "not on the map",
+and ZERO came back confirmed gold.** Gold is no safer than green was.
+
+**THE FILES ARE NOW NAMED FOR WHAT THEY ARE.** 507 rows, 16 chunks of ~50, the
+2 confirmed-grey golds stripped:
+
+- **`A-ATT-CUSTOMER_*` — 192.** att.net/sbcglobal email on file. This is the ONLY
+  independently verifiable gold signal we own: the email proves they are an AT&T
+  customer. It does NOT prove copper vs fiber. **Hand these out first.**
+- **`B-COPPER-EXPORT_*` — 52.** Came from an export whose NAME claims verified
+  copper. Never re-checked against the map.
+- **`C-UNVERIFIED_*` — 263.** The word "gold" was typed into a spreadsheet.
+
+**THE NAMING IS THE CONTROL.** A rep reading `C-UNVERIFIED` cannot mistake it for
+proof. Never ship a file called `GOLD_*` again unless the map says gold.
+
