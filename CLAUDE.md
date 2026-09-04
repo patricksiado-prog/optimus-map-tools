@@ -19,6 +19,31 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
+### `main` HAS NO BRAIN ON IT — THE BRANCH IS LOAD-BEARING (MEASURED 2026-09-04 07:20Z)
+
+The local session opened on this repo showing **`optimus-map-tools main`** and a
+**+12,402 / -50** diff with a *Create PR* button. Measured against origin:
+
+- **`origin/main` is 249 commits behind `claude/new-session-8z4pyb`.**
+- **`origin/main` contains NO `CLAUDE.md` at all** (0 lines). Its head is
+  `696f998 themapman v11.2.5 clean`, unrelated to Optimus.
+- The whole brain — 2,154 lines — exists only on **`claude/new-session-8z4pyb`**.
+
+**So a clone that lands on the default branch gets NO BRAIN, and a commit there
+forks the memory in two.** That is the failure this entire setup exists to
+prevent, and it nearly happened in the first ten minutes of the local session.
+
+**RULE: every session, local or remote, works on `claude/new-session-8z4pyb`.**
+First thing a fresh clone must run:
+`git fetch origin claude/new-session-8z4pyb && git checkout claude/new-session-8z4pyb`
+then confirm by printing the last 5 commit messages before touching anything.
+
+**GOOD NEWS FROM THE SAME RUN, worth keeping:** the local session independently
+confirmed **the local scraper copy is stale but self-updates from the hunter repo
+on launch** — so double-clicking the Maps Scraper pulls the deployed follow-up
+board down with it. That is the mechanism this file has been asserting; it is now
+confirmed from the PC itself rather than from the repo.
+
 ### THE LOCAL SESSION CAN RUN THE WHOLE MACHINE ITSELF (Patrick 2026-09-04: *"can this folder deploy the scraper ... and scrape refresh ect on its own"*)
 
 **YES, and this is the end of the double-click dependency.** Standing in
