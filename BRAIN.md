@@ -11634,3 +11634,20 @@ damaged. Two ways out: re-run the installer once per PC, OR push the one-line
 hunter sentinel (`patches/launcher-sentinel`), which un-pins every PC with no
 reinstall — that push is the better answer and is blocked only by this
 session's permissions.**
+
+**11. CORRECTION (MEASURED off Patrick's SENT mail, 22:3xZ): THE LINK EVERYONE
+HAS IS THE GITHUB RELEASE, NOT DRIVE.** Threads `1a016b1d…` (08-20 → Ed, Ara),
+`1a02587a…` (08-21 → Dave, Ed, Zack, Ara, Daniel), `1a03d1de…`/`1a03d1c0…`
+(08-26 → Churchie), `1a04b6f2…` (08-29 → Christian) all carry
+`github.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/releases/download/installer/INSTALL_OPTIMUS.bat`.
+No email carries the Drive link. The brain's "Drive link other people have"
+line was wrong, and so was my reply built on it. That release asset (id
+`518730728`) is still the 08-18 7,204-byte file. Replacing it from this session
+is blocked by the egress proxy (*"Creating, editing, or deleting releases is
+not permitted for this session type"*). **FIX = the repo owner, or the desktop
+Claude Code with `gh`:** `gh release upload installer INSTALL_OPTIMUS.bat
+--clobber` in the hunter repo, or on the release page → Edit → drop the old
+asset → drag the v2 file → Update release. Same URL, nobody re-sent anything.
+Also noted: the 08-21 email tells operators to look for "GOLD CAPTURE ON" in
+the banner — that text has been gone since 08-25, so that check now fails on
+every correct build.**
