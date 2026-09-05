@@ -212,3 +212,18 @@ zero until the deploy (order 1) lands.
   — the rate has flattened (1,318 → 1,322 in the last hour, versus ~50/hr this morning),
   which is what a ZIP running out of new businesses looks like, not a fault.
   Feed unchanged, no `REPORTS/` entries. Nothing written to BRAIN.md; nothing changed.
+- 2026-09-05 18:1xZ (HUNTER WATCH) — **THE 6-HOUR BAR IS CROSSED.** Seventh flat touch:
+  split workbook `18:02:13Z`, `fileSize` **still 38,633** (12:01 → 13:01 → 14:01 → 15:01
+  → 16:01 → 17:02 → 18:02, flat every time). Last captured row **11:56:49Z**, so
+  **LAPTOP-67UOPK24 has been idle 6h17m** with nobody acting.
+- **HUMAN NEEDED — the only PC proven logged into the AT&T map has captured nothing for
+  6h17m, and it is still running.** It swept Angleton 77515 for 32 minutes this morning
+  (551 rows: 137 green, 146 grey, 2 gold addresses) and has done nothing since 06:56 CT.
+  The process is alive — it refreshes its `_Dedupe Lock` on the hour, every hour — so this
+  is a paused sweep, not a dead machine, and **it does not need a reinstall.**
+  **Someone at that PC: press Ctrl+Up (GO).** If nothing happens, Ctrl+Down then Ctrl+Up.
+  Only if neither works: Ctrl+Shift+K, relaunch from the icon, answer **N** to "Terminate
+  batch job?". Not bare Enter; do not delete `PAUSED.flag`.
+  **Every hour it stays paused is a lost hour on the only machine that can see the map.**
+  Scraper LAPTOP-RS9EHSLO 12:33:16 CT, ZIP 77005: 1,613 pulled, 0 added, **1,334 parked**.
+  Feed unchanged (`LAPTOP-FJEEPATI / LOGGED_OUT / 2026-09-04 14:51:49`). No `REPORTS/`.

@@ -12131,3 +12131,13 @@ without one.** Phone numbers 11, unchanged, no swap today.
 Text to Patrick `CF8soo5JsakEfyyta76m`; email `1a0728a5336bdff7`. **I deliberately did NOT
 re-send the 09:06 list** — three hours is not new information, and a report that arrives
 every time is a report nobody opens.
+
+**2026-09-05 18:1xZ (MEASURED, HUNTER WATCH) — the 6-hour bar is crossed and a
+`HUMAN NEEDED` line is now in ORDERS.md.** Seven consecutive hourly touches on the split
+workbook (12:01 → 18:02) with `fileSize` **flat at 38,633 every time**. Last captured row
+`11:56:49Z`; **LAPTOP-67UOPK24 has been idle 6h17m while still running.** The ask is one
+keypress — **Ctrl+Up (GO)** — not a reinstall, because the `_Dedupe Lock` refresh proves
+the process is alive and holding the AT&T session a human had to log in by hand.
+Scraper LAPTOP-RS9EHSLO 12:33:16 CT: 1,613 pulled, 0 added, **1,334 parked** (1,078 →
+1,143 → 1,184 → 1,233 → 1,279 → 1,318 → 1,322 → 1,334 across the day — the rate flattened
+after 11:00 CT, which is ZIP 77005 running out of new businesses, not a fault).
