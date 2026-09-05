@@ -12548,3 +12548,60 @@ Last Updated Synced At` + `Enriched`, colours SOLD / NI / CB / NO FIBER, needs
 **Division of labour, stated to Patrick:** Claude owns the two programs and the brain;
 ChatGPT owns the GHL scrub and the dialer lock. Patrick flagged token spend — keep turns
 short, no re-reading what is already measured.
+
+## 2026-09-05 21:4xZ — DEPLOYED 3ab3686: THE TWO STATE WORKBOOKS. "DO IT FIX IT ALL … WE DON'T TWEAK SHIT AFTER THIS."
+
+Patrick: *"do it fix it all and put it in the brain, tell me when finished, we don't tweak
+shit after this, besides automated from desktop."* That was the go for build AND push.
+
+**PUSHED to the hunter repo, `claude/optimus-map-tools-setup-6dcl6o`, commit `3ab3686`**
+— one file, `optimus/standalone/maps_scraper_standalone.py`, +198/−39. **The scraper
+self-updates at launch, so this is on every PC at its next scraper launch.** The hunter is
+UNTOUCHED (no BUILD_DATE bump needed) — its split-workbook write is the one path proven
+today and it stays exactly as it is.
+
+**THE TWO WORKBOOKS — created by this session (the ChatGPT shells could not be shared
+by the Drive connector: "caller does not have permission" — it can only manage files it
+created), both shared with `fiberscanner@fiberscanner-493900.iam.gserviceaccount.com`
+as writer:**
+
+| | id | link |
+|---|---|---|
+| **OPTIMUS LEADS — TEXAS** | `1qMjCktlTnpMk2dxO8MpdmubqyhC7M9QWs6Lsi22UY1k` | https://docs.google.com/spreadsheets/d/1qMjCktlTnpMk2dxO8MpdmubqyhC7M9QWs6Lsi22UY1k |
+| **OPTIMUS LEADS — NON-TEXAS** | `1kE7Xsjc7fL905G4Asq0zntZxEnPywosxZ8WIKy_eHJo` | https://docs.google.com/spreadsheets/d/1kE7Xsjc7fL905G4Asq0zntZxEnPywosxZ8WIKy_eHJo |
+
+ChatGPT's two 1,024-byte shells (`1XkiFxn5…`, `1rVvg5Na…`) are NOT the targets and can be
+deleted or ignored.
+
+**WHAT THE CODE DOES (all in `sync_ghl_status`, runs at every scraper launch):**
+1. Opens both books via `_gc(sh)` (gspread-5/6 safe). A book that will not open is
+   announced in a loud block and skipped; **production is never written.**
+2. **Seeds every gold dot and every Fiber Biz row** from the hunter tabs as
+   `Enriched = NO` rows — so the WHOLE gold list is on the sheet whether or not a number
+   has been pulled. `Enriched = NO` is the DealMachine backlog, visible to a human.
+3. Overlays GoHighLevel contacts: a contact at a seeded address REPLACES the seed with
+   the enriched row (Name, Cell, Email, GHL Contact ID, Disposition, DND); everyone else
+   lands as before. Green / Grey / Biz carry GHL-touched rows only — the raw pools
+   (687k / 57k / 39k) stay in the hunter tabs and would blow the 10M-cell cap.
+4. **Routes every row by `State`**: `TX`/`TEXAS` → TEXAS; any other state → NON-TEXAS;
+   blank state → by ZIP (75-79xxx and 733xx = TX); unknown → NON-TEXAS with the blank
+   left visible.
+5. Writes `Green Gold Grey Biz Fiber Biz` into EACH book, coloured by Disposition
+   (BLUE sold, GREEN CB, RED NI/DNC, GREY no fiber), then a **`LEGEND` tab** — colours,
+   tabs, columns, the grey-never-ships / address-first / no-flat-price rules, in plain
+   words, no commission figures. A rep can read it cold.
+6. Publishes `_feed/_ghl_status.json` (per-book, per-tab counts) and
+   `_feed/gold_unenriched.json` (addresses only) as before.
+
+**TESTED** (`patches/state-books/test_state_books.py`, exec's the real helper source):
+routing incl. blank-state ZIP fallback; seed → overlay replaces not duplicates;
+per-book split; LEGEND has both states, all required words, no `$140`/`$500`.
+`py_compile` clean. **NOT yet run on a real PC** — that needs the scraper relaunched
+with `ghl_token.txt` next to it.
+
+**WHAT STILL NEEDS A HUMAN, and only these:**
+- `ghl_token.txt` (a GHL Private Integration token, `contacts.readonly`) next to the
+  scraper on the PC that runs it. Without it the code prints one line and writes nothing.
+- Close and relaunch the Maps Scraper on LAPTOP-RS9EHSLO (stopped since 12:33 CT anyway).
+- Archive the main workbook — separate and unchanged; the state books are not affected
+  by it.

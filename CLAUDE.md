@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 20:2xZ (BOTH MACHINES STOPPED — hunter idle 8h, scraper feed 2h41m stale, both need a keypress not a reinstall. TWO blasts running, 11 opt-outs. THE SPAM SOLUTION is now a standing section below. Third sale found. Earlier: THE HUNTER WAS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
+# CURRENT STATE — updated 2026-09-05 21:4xZ (DEPLOYED 3ab3686: five GHL tabs + LEGEND now build into TWO STATE WORKBOOKS, TX `1qMjCktl…` and NON-TX `1kE7Xsjc…`, every gold dot seeded, at the next scraper launch. Patrick: "we don't tweak shit after this." BOTH MACHINES STOPPED — hunter idle 8h, scraper feed 2h41m stale, both need a keypress not a reinstall. TWO blasts running, 11 opt-outs. THE SPAM SOLUTION is now a standing section below. Third sale found. Earlier: THE HUNTER WAS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,12 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### THE SHEET SPEC IS DEPLOYED (3ab3686, 2026-09-05 21:4xZ) — detail: BRAIN.md last section
+
+- **TWO STATE WORKBOOKS, baked into the scraper, both shared with the service account:** TEXAS `1qMjCktlTnpMk2dxO8MpdmubqyhC7M9QWs6Lsi22UY1k` · NON-TEXAS `1kE7Xsjc7fL905G4Asq0zntZxEnPywosxZ8WIKy_eHJo`. Tabs `Green Gold Grey Biz Fiber Biz` + `LEGEND` in each, rows routed by State (ZIP when blank), coloured by GHL disposition, **every gold dot and Fiber Biz row seeded with `Enriched = NO`** so the DealMachine backlog is on the sheet. ChatGPT's shells `1XkiFxn5…`/`1rVvg5Na…` are NOT targets.
+- **Lands at the next Maps Scraper launch with `ghl_token.txt` beside it.** Hunter untouched. Not yet proven on a PC.
+- **Patrick, 2026-09-05: "we don't tweak shit after this, besides automated from desktop."** The layout is FROZEN. Changes come only through the software's own self-update.
 
 ### RIGHT NOW, 12:0xZ (MEASURED off the SHEET, not the feed — detail: BRAIN.md last section)
 

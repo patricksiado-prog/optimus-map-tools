@@ -259,3 +259,8 @@ zero until the deploy (order 1) lands.
   to every 3 hours** — both machines are confirmed stopped, only a human changes that, and
   hourly re-confirmation was burning tokens Patrick flagged. Back to hourly once either
   machine moves.
+- 2026-09-05 21:4xZ — **DEPLOYED `3ab3686` to the scraper: the two state workbooks.** At its
+  next launch the Maps Scraper builds `Green Gold Grey Biz Fiber Biz` + `LEGEND` into
+  TEXAS `1qMjCktl…` and NON-TEXAS `1kE7Xsjc…`. **Needs `ghl_token.txt` next to the scraper.**
+  Order for LAPTOP-RS9EHSLO: put the token file beside the scraper, close it, double-click
+  the icon, paste the `GHL STATUS` lines from the console into `REPORTS/`.

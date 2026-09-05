@@ -125,6 +125,19 @@ CODE_CLAIMS = [
      "Grey Fiber Customers is in the scraper's dedupe job list (patches/dedupe-gold-grey)"),
     (SCRAPER, r"^def sync_ghl_status\(sh\):", True,
      "the five GHL tabs Green/Gold/Grey/Biz/Fiber Biz are built by the scraper at launch (patches/ghl-status; needs ghl_token.txt on the PC)"),
+    # 2026-09-05 (3ab3686): the five tabs go into TWO STATE WORKBOOKS, TX and NON-TX,
+    # routed by State (ZIP when blank), every gold dot + Fiber Biz row seeded unenriched,
+    # plus a LEGEND tab a rep can read with no AI. patches/state-books. Hunter untouched.
+    (SCRAPER, r'^TX_SHEET_ID = "1qMjCktlTnpMk2dxO8MpdmubqyhC7M9QWs6Lsi22UY1k"', True,
+     "TX workbook id is baked into the scraper (OPTIMUS LEADS - TEXAS, shared with the service account 2026-09-05)"),
+    (SCRAPER, r'^NONTX_SHEET_ID = "1kE7Xsjc7fL905G4Asq0zntZxEnPywosxZ8WIKy_eHJo"', True,
+     "NON-TX workbook id is baked into the scraper (OPTIMUS LEADS - NON-TEXAS, shared 2026-09-05)"),
+    (SCRAPER, r"^def _route_state\(row\):", True,
+     "every GHL-tab row is routed TX / NON-TX by State, ZIP when blank (patches/state-books)"),
+    (SCRAPER, r"^def _write_legend\(book, state, stamp\):", True,
+     "a LEGEND tab is written into each state workbook so a rep can read it with no AI"),
+    (SCRAPER, r'if tab not in \(GOLD_TAB, ORANGE_BIZ_TAB, GREEN_BIZ_TAB\):', True,
+     "every gold dot and every Fiber Biz row is SEEDED unenriched (Enriched = NO is the DealMachine backlog, on the sheet)"),
     # 2026-09-04: RUN_HUNTER.bat / INSTALL_OPTIMUS.bat refuse any hunter download that
     # lacks the literal "GOLD CAPTURE ON" (findstr). The banner carrying it was cut on
     # 08-25 (67bf57b); 25 pushes since then never reached a launcher-updated PC.
