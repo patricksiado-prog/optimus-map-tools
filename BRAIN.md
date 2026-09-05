@@ -12625,3 +12625,58 @@ What is still unproven is RUNTIME: no scraper has launched on 3ab3686 yet. Proof
 `_feed/_ghl_status.json` carrying a `books` key with both `opened: true`, and `fileSize` moving on
 `1qMjCktl…` / `1kE7Xsjc…`. The remaining DRIFT line at session start (four protected tabs missing)
 is the 09-02/03 deletion, already recorded — ask Patrick, not a code fault.
+
+**2026-09-05 21:5xZ — "PUT THE CORRECT INSTALL LINK IN THE DRIVE THE OLD ONE."
+ANSWERED WITHOUT WRITING A SINGLE BYTE OF NEW CODE, because the old file was never
+the broken thing.**
+
+Patrick wanted to click the link he already has and have it install the correct copy
+with Desktop icons. Two facts settled it:
+
+1. **The Drive connector cannot replace a file's contents** — `update_file` takes
+   `fileId`, `title`, `parentId` and nothing else (schema re-read this turn, not
+   assumed). So the 08-23 bytes at `1IRnfbeQ…` are frozen forever. A new .bat is
+   always a new link. That is why the 09-04 session created v2 instead.
+2. **The installer downloads everything at run time from the public repo** — hunter,
+   scraper, `RUN_HUNTER.bat`, `RUN_SCRAPER.bat`, both icons, `build_codes.json`, and
+   the Google key. Its bytes are a bootstrapper, not the product. **So fixing the
+   REPO fixes every installer copy already in circulation, including the stale ones.**
+
+**MEASURED against the live raw CDN this turn (cache-buster on every URL):**
+
+| what the old installer fetches | result |
+|---|---|
+| `precise_fiber_hunter.py` | 400,142 bytes, `BUILD_DATE = "2026-09-04"`, **3 hits on `GOLD CAPTURE ON`** incl. `LAUNCHER_SENTINEL` (line 355) |
+| `install/RUN_HUNTER.bat` | 200, 4,350 bytes, gates on **`findstr /C:"BUILD_DATE = "`** — the FIXED launcher |
+| `install/RUN_SCRAPER.bat` | 200, 504 bytes |
+| `install/icons/hunter.ico` / `scraper.ico` | 200, 43,104 / 40,301 bytes |
+| `standalone/maps_scraper_standalone.py` | 200, **149,349 bytes, 5 state-book markers = 3ab3686** |
+| dot_detect / api_capture / hunter_fixes / backend_classifier / build_codes.json | all 200 |
+
+**Therefore all three reasons the file was renamed "OLD-BROKEN" on 09-04 are gone:**
+- its `findstr /C:"GOLD CAPTURE ON"` gate now PASSES (a995b27 put the sentinel back),
+  so no more false *"WARNING: still got OLD hunter code"*;
+- it overwrites `RUN_HUNTER.bat` with the repo's fixed copy every run, so v2's
+  PowerShell string-swap repair is redundant — **re-running the installer has always
+  been the way to un-pin a launcher, because launchers never self-update**;
+- unpinned `pip install gspread` (→ gspread 6) is safe now that `_gc()` is deployed.
+
+**DONE:** `1IRnfbeQ…` renamed **back to `INSTALL_OPTIMUS.bat`**; v2 `1xAdxVme…`
+renamed `BACKUP-do-not-use_INSTALL_OPTIMUS_v2_sep04.bat` so only one file in Drive
+looks current. Bytes of both untouched.
+
+**WHAT I COULD NOT DO, AND HE SHOULD KNOW WHICH IS WHICH:** he asked to "make it
+launch into the folder u have access to." **This cloud session has NO filesystem
+access to any PC** — the bridge is disconnected, and a .bat cannot grant it. The
+install paths stay `%USERPROFILE%\optimus_hunter`, `%USERPROFILE%\maps_scraper`,
+launchers in `%USERPROFILE%\optimus\launchers`, two icons on the Desktop. **The
+DESKTOP Claude app runs on his machine and can read those folders directly — that is
+the one with the access he is describing, not this session.** What THIS session can
+already see without any change: `_feed/*.json` on GitHub (heartbeat, `_ghl_status`,
+`sheet/tabs.json`) and the Drive feed folder. Nothing new needed to be built for
+visibility; it is already published.
+
+**GENERAL LESSON, worth more than this fix:** before rewriting a bootstrapper, check
+whether the defect is in the thing it downloads. Three sessions treated a stale PC as
+an installer problem; it was a repo problem every time.
+

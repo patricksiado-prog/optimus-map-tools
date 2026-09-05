@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 22:0xZ (DEPLOYED 3ab3686, CDN-VERIFIED 21:37Z, brain-verify passes: five GHL tabs + LEGEND now build into TWO STATE WORKBOOKS, TX `1qMjCktl…` and NON-TX `1kE7Xsjc…`, every gold dot seeded, at the next scraper launch. Patrick: "we don't tweak shit after this." BOTH MACHINES STOPPED — hunter idle 8h, scraper feed 2h41m stale, both need a keypress not a reinstall. TWO blasts running, 11 opt-outs. THE SPAM SOLUTION is now a standing section below. Third sale found. Earlier: THE HUNTER WAS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
+# CURRENT STATE — updated 2026-09-05 21:5xZ (THE OLD DRIVE INSTALL LINK IS CORRECT AGAIN — renamed back to INSTALL_OPTIMUS.bat, every URL it fetches VERIFIED 200 + current. DEPLOYED 3ab3686, CDN-VERIFIED 21:37Z, brain-verify passes: five GHL tabs + LEGEND now build into TWO STATE WORKBOOKS, TX `1qMjCktl…` and NON-TX `1kE7Xsjc…`, every gold dot seeded, at the next scraper launch. Patrick: "we don't tweak shit after this." BOTH MACHINES STOPPED — hunter idle 8h, scraper feed 2h41m stale, both need a keypress not a reinstall. TWO blasts running, 11 opt-outs. THE SPAM SOLUTION is now a standing section below. Third sale found. Earlier: THE HUNTER WAS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -60,7 +60,7 @@ beta" survive four sessions unchecked.
 
 ### THE SIX-TIMES ASK — STATE AT 21:5xZ (detail: BRAIN.md, last section)
 
-- **INSTALL LINK — CORRECTED 22:3xZ off SENT mail:** the link everyone was emailed (08-20/21/26/29) is the **GitHub Release** `releases/download/installer/INSTALL_OPTIMUS.bat`, NOT Drive. It still serves the 08-18 file. Only the repo owner / the desktop Claude with `gh release upload installer INSTALL_OPTIMUS.bat --clobber` can replace it; this session is blocked by the proxy. Drive `1IRnfbeQ…` is a second copy nobody was sent.
+- **INSTALL LINK — RESOLVED 2026-09-05 21:5xZ: THE OLD DRIVE LINK IS THE CORRECT LINK AGAIN.** `1IRnfbeQ…` is renamed back to `INSTALL_OPTIMUS.bat` (7,204 bytes, 08-23 bytes UNCHANGED — the Drive connector's `update_file` can only change TITLE and FOLDER, never contents). **It was never the file that was broken; it was the repo it downloads, and that is fixed.** MEASURED off the raw CDN the same turn: the hunter carries `LAUNCHER_SENTINEL = "GOLD CAPTURE ON"` again (a995b27) so the installer's own gate PASSES instead of false-warning; the repo's `install/RUN_HUNTER.bat` (4,350 bytes) already checks `BUILD_DATE = `, so the installer overwrites every PC's pinned launcher with the fixed one; `RUN_SCRAPER.bat`, both .ico files and all five core hunter files return 200; the scraper it pulls is 149,349 bytes carrying all five state-book markers = **3ab3686**; unpinned gspread 6 is safe now that `_gc()` is deployed. **v2 `1xAdxVme…` is renamed `BACKUP-do-not-use_…` — every fix it carried is now in the repo, so it is redundant, not wrong.** The **GitHub Release** asset behind the emailed link is still the 08-18 file and only the repo owner / desktop Claude can `gh release upload installer INSTALL_OPTIMUS.bat --clobber`; the old installer heals a PC anyway, so this is no longer blocking.
 - **DEPLOY PUSHED 2026-09-05 08:2xZ — hunter branch commit `a995b27`, CDN-VERIFIED** (`add_repo` attached the repo on the 3rd try and the commit was allowed): hunter sentinel + BUILD_DATE 2026-09-04, launcher + installer BUILD_DATE gate, scraper dedupe gold/grey + gspread-6 client + five GHL tabs. Every PC un-pins at its next hunter launch; the scraper self-updates at its next launch. **PROOF still pending on a PC: a console printing `BUILD_DATE : 2026-09-04` and a heartbeat whose `build_fingerprint` is not 3d2a6779.** The five tabs also need `ghl_token.txt` next to the scraper. **Release asset behind the emailed link is STILL the 08-18 file** (this session is refused release edits); the old installer now pulls the fixed launcher + hunter anyway.
 - **FIVE TABS `Green` `Gold` `Grey` `Biz` `Fiber Biz` in the SPLIT workbook** (Patrick: multiple sheets are fine): built as `sync_ghl_status` in the scraper, needs `ghl_token.txt` (contacts.readonly) next to the scraper on the PC; rows coloured SOLD/NI/CB/NO FIBER; publishes `_feed/gold_unenriched.json`. Tested with fakes only. `patches/ghl-status/`.
 - **GOLD DOTS IS LIVE AND LOADED (MEASURED 2026-09-04 ~22:0xZ):** workflow `c2e8d47c…` renamed to `Gold Dots`, published; **500 of the 505 `leads_gold` contacts enrolled, 500/500 OK, 0 errors** (5 skipped = tagged Not Interested). Every one of the 500 has a phone AND an address. Caveat the tags: 168 of the 500 ALSO carry `type-green`, 212 carry `gold-attnet-confirmed`, 20 `status-unverified` — the `Gold` tab will say which are on a real gold dot. `service not available` tag = 0 contacts → **no "no fiber" marker exists in GHL; nothing was stripped.** Tag them and it is one bulk remove.
@@ -76,7 +76,7 @@ dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
 
-### INSTALLER v2 IS BUILT AND IN DRIVE — IT UNPINS BOTH PCs WITH NO REPO PUSH (2026-09-04 20:1xZ)
+### (SUPERSEDED 2026-09-05 — the old Drive link works again; v2 is a renamed backup. Kept for the mechanism.) INSTALLER v2 IS BUILT AND IN DRIVE (2026-09-04 20:1xZ)
 
 Patrick: *"fix the install link for both and drop in drive"* then *"same link as
 before but fix it"*. **THE SAME LINK WAS NOT POSSIBLE and he must be told: the
@@ -1257,9 +1257,19 @@ needs no Drive access of its own.
 | GitHub Release (no Google login) | https://github.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/releases/download/installer/INSTALL_OPTIMUS.bat |
 | Release page | https://github.com/patricksiado-prog/Go-High-Level-MCP-2026-Complete/releases/tag/installer |
 
-All three are the SAME file, verified 2026-08-23: **7,204 bytes**, sha256
-`0f9295b82aba2ef2b6cf47a55a8e7c700cae91afa614657bb1f1c95ac8b95252`. If a copy
-does not match that, it is not the current installer.
+**Drive `1IRnfbeQ…` is the live one — 7,204 bytes, sha256
+`0f9295b82aba2ef2b6cf47a55a8e7c700cae91afa614657bb1f1c95ac8b95252`, RE-VERIFIED
+WORKING 2026-09-05 21:5xZ** (every URL it fetches returns 200 and current code —
+see the CURRENT STATE install-link line). **The GitHub Release asset is NOT the
+same file any more** — it still serves the 08-18 copy and needs a desktop
+`gh release upload installer INSTALL_OPTIMUS.bat --clobber` to catch up.
+
+**The installer's bytes almost never need to change, and this is why:** it
+downloads the hunter, the scraper, BOTH launchers and the icons from the public
+repo at every run. Fix the repo and every existing copy of the installer heals
+itself. Rewriting the .bat is the last resort, not the first — and the Drive
+connector cannot do it anyway (title/folder only), so a new .bat always means a
+new link.
 
 **Three stale installers are still sitting in Drive** and will strand a new PC on
 old code — `install_optimus.bat` (4,838 bytes, May 26), `install_optimus.py`
