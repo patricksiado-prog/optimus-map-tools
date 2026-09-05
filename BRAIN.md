@@ -13085,3 +13085,45 @@ feed and auto-claims. The latter needs his explicit go and is NOT started.
 **ON PAYROLL — partly possible, and the constraint is not technical:** the sales data is in
 GHL and can be totalled, but Ed's standing rule keeps commission figures away from the VAs,
 so the destination has to be chosen deliberately.
+
+**2026-09-05 23:3xZ — PATRICK, THIRD TIME AND NOW AS A DESIGN QUESTION: *"I WANT PRIMARILY
+U TO RUN THE HUNTER AND SCRAPER FROM THIS FOLDER HOW DO WE MAKE THAT HAPPEN??"* Gave him
+the actual engineering path instead of another 'I can't'. NOT BUILT — RULE 0, waiting on
+his go.**
+
+**THE MECHANISM, stated plainly so it stops being re-litigated:** a Drive folder is passive
+storage. Files do not execute. **Something must be RUNNING on each PC that reads the folder
+and acts.** That is the entire gap — not permissions, not connectors, not a missing file.
+
+**WHY IT IS CLOSE:** the software already does most of this pattern. The scraper already
+reads the Drive feed folder at launch (`sync_sheet_log`); the hunter already pulls code from
+GitHub at launch and `optimus_territory.py` already coordinates machines through a sheet
+tab. **The only true gap is that when both programs are STOPPED, nothing on that laptop is
+listening.**
+
+**PROPOSED DESIGN (offered, not built):**
+- Google Drive for Desktop on all 3 PCs → COMMAND CENTER becomes a real local folder.
+- **`ORDERS.json`** in it, written by Claude, one block per machine keyed by
+  `socket.gethostname()`.
+- **A ~40-line watcher** run by **Windows Task Scheduler every 5 minutes**. Task Scheduler
+  is a Windows feature, not a program a human launches — which satisfies NO NEW PROGRAMS in
+  spirit: nothing to remember, it fires invisibly forever.
+- **`RESULT-<hostname>.txt`** written back with console output and status, so Claude can
+  verify rather than assume.
+
+**THE DESIGN RULE I INSISTED ON: a FIXED VOCABULARY, never arbitrary shell.**
+`run_scraper` · `run_hunter` · `claim <area>` · `gold_audit` · `decode_gold` · `sheet_feed
+<tab>`. Framed to him as protecting against a mistake on MY end breaking a machine — which
+is RULE 0, not a security argument (security is closed).
+
+**TWO HONEST LIMITS, told to him up front:**
+1. **It cannot pass the AT&T login.** It can launch the hunter into the chooser; a human
+   still clicks through. That has been true since 09-02 and no folder changes it.
+2. **It cannot press Ctrl+Up on an already-running paused hunter** — exactly LAPTOP-67UOPK24
+   tonight. A watcher cannot inject keystrokes into a live process. Resuming a paused run
+   needs a SEPARATE small hunter change: the hunter polls a resume file. Named as a second
+   change, not folded in silently.
+
+**STATUS: NOT STARTED. Needs his explicit go, then written, tested, test output shown, and
+asked AGAIN before it touches a laptop.** His *"besides automated from desktop"* (21:4xZ)
+probably puts this in bounds, but a probable yes is not a yes.
