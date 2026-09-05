@@ -11739,3 +11739,21 @@ until the deploy lands or installer v2 is run (see gspread-6 patch).
   Justin Woolf "Is payment made to ATT?" unanswered since 17:49Z; AT&T quote
   HXAMJ3; Google account recovered twice. DAILY LOG: no post since 08-27.
 - COULDN'T READ: SMS report (404), user names (422), notes (scope).
+
+**16. THE COMMAND CENTER INSTALLER EXISTS (Patrick 01:3xZ: *"chat built installer
+to set up claude that can control 3 pcs and run precise fiber"*).** Drive
+`1w6o6iKuz8cJq4SAFM0RLLwI7rOhfZ4aZ`, `INSTALL_OPTIMUS_COMMAND_CENTER.bat`,
+4,235 bytes, created 21:54Z, built by the desktop chat. MEASURED by reading it:
+installs Git via winget, clones BOTH repos to `C:\Optimus\`, downloads and runs
+installer v2 from THIS branch's raw path (the link I gave), builds a Desktop
+folder `OPTIMUS COMMAND CENTER` (repo shortcuts, RUN FIBER HUNTER, Claude
+Desktop, GHL/sheet/DealMachine/GitHub links) and a READ ME that says *"GitHub
+ORDERS.md is the shared instruction file for all PCs"*. **Two gaps:** it clones
+the DEFAULT branch of each repo (`main`), and neither repo's main carries the
+code — the brain + ORDERS.md live on `claude/new-session-8z4pyb`, the hunter on
+`claude/optimus-map-tools-setup-6dcl6o`. Fix = `git clone -b <branch>` in the
+installer, or order 0 in ORDERS.md (written this turn) does the checkout.
+**`ORDERS.md` + `REPORTS/` created at the repo root, orders 0-4: branch
+checkout, desktop pushes the deploy, every PC relaunches on BUILD_DATE
+2026-09-04, desktop pauses the James blast, each PC reports to
+`REPORTS/<hostname>.md`.**
