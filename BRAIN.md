@@ -12312,3 +12312,35 @@ variants, all verified at ONE SEGMENT, 45 total** in `templates/SMS_VARIANTS.md`
 what batch 1 missed: **second touch, third touch, business (speed tier, never a
 residential figure), the 24-name replied-yes backlog, and after-a-missed-call.**
 Checker: `templates/sms_variants_check_batch2.py`.
+
+## 2026-09-05 18:3xZ — THE SCRIPTS ARE IN HIS GOOGLE DRIVE. AND WHAT "THE FOLDER ON MY PC" ACTUALLY MEANS.
+
+Patrick: *"and this stuff to brain can u add something to that folder u have access to on my pc"*.
+
+**CORRECTION TO A LIKELY ASSUMPTION, stated to him plainly: I have NO direct filesystem
+access to any of his PCs.** The bridge session `session_01NUT7XFkFbHxtMj8Veig5j5` has read
+`connection_status: disconnected` / `computer_unreachable` since 2026-09-04 16:47Z, and
+`ListAgents` shows no peer. **The only folder I can write that appears on his PC is GOOGLE
+DRIVE**, which syncs down. The three write paths I actually have, in order of usefulness:
+1. **Google Drive** (`create_file`) — lands in My Drive, syncs to the PC. Used here.
+2. **The hunter repo** — any file in `_CORE_FILES` auto-deploys to every hunter PC at next
+   launch. That is a DEPLOY, needs RULE 0, and is for code, not documents.
+3. **This repo** (`ORDERS.md`, `REPORTS/`) — only reaches a PC if someone clones it.
+
+**CREATED IN MY DRIVE:** `OPTIMUS — TEXT SCRIPTS for Rodelio + Dave (45 variants, all 1
+segment) — 2026-09-05`, id **`1TukAcyh66RedAJ1mUvCQvWFnksjky33CBap7bGdct40`**,
+https://docs.google.com/document/d/1TukAcyh66RedAJ1mUvCQvWFnksjky33CBap7bGdct40/edit
+Not shared with anyone yet — it is in his My Drive only. **It contains no PII, no contact
+names or numbers, and NO commission figures**, so it is safe to hand to Rodelio, Dave,
+Churchie or Ara as-is. Customer-facing pricing guidance only ("$20s to $30s for the first
+year"), which Ed's rule permits.
+
+Contents: all 45 variants by list (green 1st/2nd/3rd touch, gold 1st/2nd, business,
+replied-yes backlog, missed-call), the rules in plain language for a VA, the segment
+explanation, the rotation instructions, the STOP-vs-do-not-call distinction, and a closing
+section naming the two live leads lost to channel-mismatch (Barnes asked for email 3× and
+got "I can't send emails"; Jacobs wrote "No calls thanks" and was dialled 4×).
+
+**Source of truth stays `templates/SMS_VARIANTS.md` in this repo, with its two checkers.**
+The Drive doc is a copy for humans. If the variants change, regenerate the Drive doc — it
+will drift otherwise, and a drifted script doc is how "$30/month" survived for weeks.
