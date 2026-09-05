@@ -98,3 +98,21 @@ zero until the deploy (order 1) lands.
 ## STATUS (the remote Claude updates this block; newest line last)
 
 - 2026-09-05 08:2xZ — DEPLOY PUSHED: hunter branch commit a995b27. CDN verified serving BUILD_DATE 2026-09-04 + LAUNCHER_SENTINEL, scraper with dedupe gold/grey + gspread-6 client + five GHL tabs, launcher BUILD_DATE gate, installer v2 (8,704). Every PC un-pins at its next hunter launch; the scraper picks up its changes at its next launch. Feed at 08:13Z: heartbeat 14:51 LOGGED_OUT (LAPTOP-FJEEPATI, 08-24 build), scraper LAPTOP-RS9EHSLO 02:51 with 877 parked, sheet FULL. Release asset still 7,204 (desktop: the gh line in order 1). Next: order 2 (relaunch, confirm BUILD_DATE 2026-09-04), order 5a (measure the login), order 3 (pause the James blast).
+- 2026-09-05 11:2xZ (HUNTER WATCH) — **THE MAPS SCRAPER IS RUNNING RIGHT NOW** on
+  `LAPTOP-RS9EHSLO`: `LIVE_COUNTS_scraper.txt` updated **2026-09-05 06:06:40 CT**
+  (~8 min before this check), ZIP **77070**, 1,115 businesses pulled this run,
+  **0 added to the sheet, 1,078 parked — `*** SHEET FULL ***`.** It is on the
+  **PRE-DEPLOY build**: its `tabs.json` is stamped 2026-09-04 14:26:48, which is when
+  this run launched, so it carries none of a995b27 (no gold/grey dedupe, no gspread-6
+  `_gc()`, no five GHL tabs). **To get them it must be CLOSED AND RELAUNCHED** — the
+  scraper only self-updates at launch. Hunter unchanged: heartbeat 2026-09-04 14:51:49
+  `LOGGED_OUT`, LAPTOP-FJEEPATI, fingerprint 3d2a6779 (old build); `latest.json` run
+  20260904-121609 all counts 0, `failed_writes` 5,815. Live hunter file on the CDN is
+  `BUILD_DATE = "2026-09-04"` + `LAUNCHER_SENTINEL` — order 1's deploy half is done and
+  serving. Release asset size **COULDN'T READ** from this session (proxy returns 401 on
+  the release CDN); the `gh release upload` line in order 1 is still assumed open.
+  No PC has written to `REPORTS/`.
+- **HUMAN NEEDED — the hunter has captured nothing since 2026-09-02 (69+ hours).**
+  Order 5a (a human clicks through the AT&T access chooser, then report
+  `LOGIN: auto | needs-typing | needs-code`) is the only thing that unblocks capture.
+  Second, smaller: relaunch the Maps Scraper on LAPTOP-RS9EHSLO so it picks up a995b27.
