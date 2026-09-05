@@ -147,3 +147,20 @@ zero until the deploy (order 1) lands.
   only. It also carries the five-PC list and the "release size returns 401, say
   COULDN'T READ" rule. The old prompt's claim that the firing has no connectors was
   wrong — it is self-bound, so it has this session's Drive and GHL.
+- 2026-09-05 13:1xZ (HUNTER WATCH) — **THE 67UOPK24 PROCESS IS ALIVE BUT NOT CAPTURING,
+  AND THAT IS A DIFFERENT FAULT FROM A CLOSED WINDOW.** Split workbook `modifiedTime`
+  moved `12:01:29Z → 13:01:35Z` while `fileSize` stayed **flat at 38,633**. A 60-minute
+  cadence with no byte growth is the `_Dedupe Lock` heartbeat refreshing (the lock row
+  read `1788609692.9|LAPTOP-67UOPK24` at 12:01:32Z), **not capture**. So the hunter
+  process on that PC is still running and holding its lock — it just has not written a
+  row since **06:56:49 CT, about 1h15m ago**. That points at a PAUSE (Ctrl+Down) or the
+  sweep sitting at a prompt, **not** a dead window. **Action on that PC: press Ctrl+Up
+  (GO) to resume the sweep from the current view; only relaunch if Ctrl+Up does nothing.**
+  Main workbook is the same signature and the same meaning as before: `modifiedTime
+  13:10:07Z` moving, `fileSize 8,484,584` flat = full, archive is the action.
+  Scraper LAPTOP-RS9EHSLO 07:53:03 CT, now on ZIP **77005**: 1,233 pulled, 0 added,
+  **1,184 parked** (was 1,143 at 07:11, 1,078 at 06:06) — climbing ~50/hour, all parked.
+  Feed unchanged (`20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI`), `tabs.json` still
+  09-04 14:26:48, CDN BUILD_DATE `2026-09-04`. Release asset: COULDN'T READ (401).
+  No PC has written to `REPORTS/`. Not yet a `HUMAN NEEDED` line — under the 6-hour bar
+  and the process is alive.

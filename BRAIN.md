@@ -12008,3 +12008,17 @@ Scraper LAPTOP-RS9EHSLO at 07:11:50 CT: 1,168 pulled, **1,143 parked** (up from
 so step 1 is the split workbook's `modifiedTime`+`fileSize` and the feed is corroboration
 only — the fix for the mistake made at 11:2xZ, written into the machine rather than left
 as a resolution.
+
+**2026-09-05 13:1xZ (MEASURED, HUNTER WATCH) — a new signature worth knowing: MOVING
+mtime + FLAT fileSize ON THE SPLIT WORKBOOK MEANS THE HUNTER IS ALIVE AND PAUSED, NOT
+DEAD.** The split workbook went `12:01:29Z → 13:01:35Z` with `fileSize` unchanged at
+**38,633**. That hourly cadence with zero byte growth is the `_Dedupe Lock` row
+refreshing (`1788609692.9|LAPTOP-67UOPK24`), which only a **running** hunter writes. So
+LAPTOP-67UOPK24 still holds its lock and has captured nothing since **06:56:49 CT**.
+**Diagnosis: paused or sitting at a prompt, not a closed window — so the fix is Ctrl+Up
+(GO), not a relaunch.** This is the third distinct meaning of "moving mtime, flat size"
+now recorded: on the MAIN workbook it means the sheet is full; on the split workbook it
+means the hunter is alive but idle; on either, it never means "working".
+Scraper LAPTOP-RS9EHSLO 07:53:03 CT, ZIP 77005: 1,233 pulled, 0 added, **1,184 parked**
+— up from 1,078 at 06:06 and 1,143 at 07:11, so roughly **50 parked rows an hour** are
+piling up behind the full workbook.
