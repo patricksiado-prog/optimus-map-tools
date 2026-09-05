@@ -21,7 +21,7 @@ Orders are numbered and dated. A struck-through order is done. Newest at the bot
    (launch the hunter, click AT&T Employee at the chooser, sign in, Remember me).
    No Claude can do this step. Never record the credentials anywhere.
 
-## 1. DESKTOP ONLY — push the deploy (2026-09-05, the one that fixes every PC)
+## 1. ~~DESKTOP ONLY — push the deploy~~ DONE 2026-09-05 08:2xZ by the remote Claude (hunter commit a995b27). ONE PIECE LEFT FOR THE DESKTOP: `gh release upload installer patches/DEPLOY-2026-09-04/optimus/install/INSTALL_OPTIMUS.bat --clobber` so the emailed release link serves v2 (this session is refused release edits). Report the asset size (must be 8,704).
 
 Follow `patches/DEPLOY-2026-09-04/README.md` in this repo exactly: copy the four files
 into the hunter repo (on its claude branch), commit, push, then
@@ -94,3 +94,7 @@ zero until the deploy (order 1) lands.
 
 **5e. Report every hour** to `REPORTS/<hostname>.md`:
 `2026-09-05 04:00 CT — order 5 — phase <x> — raw <n> — written <n> — LOGIN: <auto|needs-typing|needs-code>`.
+
+## STATUS (the remote Claude updates this block; newest line last)
+
+- 2026-09-05 08:2xZ — DEPLOY PUSHED: hunter branch commit a995b27. CDN verified serving BUILD_DATE 2026-09-04 + LAUNCHER_SENTINEL, scraper with dedupe gold/grey + gspread-6 client + five GHL tabs, launcher BUILD_DATE gate, installer v2 (8,704). Every PC un-pins at its next hunter launch; the scraper picks up its changes at its next launch. Feed at 08:13Z: heartbeat 14:51 LOGGED_OUT (LAPTOP-FJEEPATI, 08-24 build), scraper LAPTOP-RS9EHSLO 02:51 with 877 parked, sheet FULL. Release asset still 7,204 (desktop: the gh line in order 1). Next: order 2 (relaunch, confirm BUILD_DATE 2026-09-04), order 5a (measure the login), order 3 (pause the James blast).

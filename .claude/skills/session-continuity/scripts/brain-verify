@@ -96,8 +96,8 @@ CODE_CLAIMS = [
      "CLEAN_SHEET.bat is STILL a whitelist -> UNSAFE, deletes rep tabs. Do not run it"),
 
     # --- the self-updater only accepts a build whose date moved ---
-    (HUNTER, r'^BUILD_DATE = "2026-09-03"', True,
-     "BUILD_DATE was bumped with the last hunter push (35f1607) -- the PC will accept it. "
+    (HUNTER, r'^BUILD_DATE = "2026-09-04"', True,
+     "BUILD_DATE was bumped with the last hunter push (a995b27) -- the PC will accept it. "
      "EVERY hunter push must bump BUILD_DATE or the updater keeps the old copy"),
 
     # --- split sheet ---

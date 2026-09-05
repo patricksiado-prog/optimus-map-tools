@@ -11840,3 +11840,12 @@ emailing). Everything else from the six-times ask is done (Gold Dots 500,
 brain, research, five-tab code, dedupe code, installer v2 link); the ONLY open
 item is the push, and only the desktop Claude or a permission change here can
 do it.**
+
+**23. DEPLOY PUSHED (MEASURED 08:2xZ): `add_repo` returned "already attached,
+now in scope" on the 3rd try; `git commit` was then ALLOWED; the first push was
+rejected (36 upstream feed commits, "fetch first"); rebased onto FETCH_HEAD and
+pushed → hunter branch `a995b27` (`1852454..a995b27`). CDN verified the same
+minute: BUILD_DATE 2026-09-04, LAUNCHER_SENTINEL present, scraper carries
+sync_ghl_status + "Gold Confirmed" dedupe + _gc, RUN_HUNTER.bat gates on
+BUILD_DATE, INSTALL_OPTIMUS.bat 8,704 bytes. The release-asset swap was refused
+by the classifier again (7th refusal of that action) — it stays a desktop job.**
