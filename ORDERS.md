@@ -202,3 +202,13 @@ zero until the deploy (order 1) lands.
   **1,318 parked**. Feed unchanged, no `REPORTS/` entries. **The 6-hour `HUMAN NEEDED`
   bar falls at 17:57Z — one more watch from now.** Nothing written to BRAIN.md; nothing
   changed.
+- 2026-09-05 17:1xZ (HUNTER WATCH) — no change. Sixth flat touch: split workbook
+  `17:02:06Z`, `fileSize` **still 38,633** (12:01 → 13:01 → 14:01 → 15:01 → 16:01 →
+  17:02, flat throughout). **LAPTOP-67UOPK24 is now 5h18m without capturing.** The
+  6-hour `HUMAN NEEDED` bar falls at **17:57Z** — 43 minutes out, so the next watch
+  (18:14Z) crosses it and will raise the line. Not writing it early: at this moment it
+  is 5h18m, not 6.
+  Scraper LAPTOP-RS9EHSLO 11:48:23 CT, ZIP 77005: 1,602 pulled, 0 added, **1,322 parked**
+  — the rate has flattened (1,318 → 1,322 in the last hour, versus ~50/hr this morning),
+  which is what a ZIP running out of new businesses looks like, not a fault.
+  Feed unchanged, no `REPORTS/` entries. Nothing written to BRAIN.md; nothing changed.
