@@ -13021,3 +13021,9 @@ it has to sit in that exact folder to work — which is mechanics, not advice.
 **Two habits stay and are done SILENTLY, never narrated:** customer names and phones stay
 out of the public repo (the publish scripts already refuse them, so it costs nothing), and
 his AT&T Global Logon is never recorded.
+
+**Same turn, he closed it himself:** *"IM OK SHARING MY STUFF FOR NOW BUT I DOUBT ANYONE IS
+LOOKING"* / *"I MAY TIGHTEN UP LATER BUT FOR NOW ITS OK."* **Recorded as a FOR-NOW call, not
+a permanent one.** A future session should not treat it as settled forever, should not be
+surprised if he asks to tighten — and must never prompt him toward it. He raises it, or a
+real event does.

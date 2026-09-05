@@ -792,6 +792,11 @@ not in files, not in the daily editions.** He has an open public repo on purpose
 concrete thing actually happens — a leaked credential being used, an account locked, a
 carrier or AT&T asking — raise THAT, once, as the event it is. Nothing pre-emptive.
 
+**It is a FOR-NOW call and he said so himself in the same breath:** *"IM OK SHARING MY
+STUFF FOR NOW BUT I DOUBT ANYONE IS LOOKING"* and *"I MAY TIGHTEN UP LATER BUT FOR NOW ITS
+OK."* So do not treat it as permanent, and do not be surprised when he asks to tighten —
+but **never prompt him toward it.** He raises it, or a real event raises it. Not you.
+
 The two habits that stay, because they are plumbing and not advice: keep customer names
 and phone numbers out of the PUBLIC repo (the scripts already refuse them, so this costs
 nobody anything), and never record his AT&T Global Logon. Do these silently. Do not
