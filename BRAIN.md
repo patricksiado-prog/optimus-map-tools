@@ -12605,3 +12605,14 @@ with `ghl_token.txt` next to it.
 - Close and relaunch the Maps Scraper on LAPTOP-RS9EHSLO (stopped since 12:33 CT anyway).
 - Archive the main workbook — separate and unchanged; the state books are not affected
   by it.
+
+**2026-09-05 21:5xZ — close-out of the state-workbook deploy.** Remote branch head =
+`3ab3686` (confirmed by `git ls-remote`). **Raw CDN was still serving the previous copy at
+21:5xZ** — raw.githubusercontent.com lag; it served a stale copy for 15+ minutes earlier
+today. A background poll is watching for all three markers (`TX_SHEET_ID`, `_route_state`,
+`_write_legend`); the verdict is appended below when it lands. **brain-verify's 5 new claims
+read DRIFT until then — expected, not a fault.**
+Notified: Patrick `1a0737fed75e50f1` (what, where, the two human steps, the frozen-layout
+rule); team — Dave, Churchie, Angel, Christian — `1a07380f6648fb86` (links, LEGEND-first,
+colour meanings, Enriched YES/NO, grey never ships, hand-edits get overwritten; no dollar
+figures). Jay not included — not a sheet user.
