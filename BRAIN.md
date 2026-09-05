@@ -12453,3 +12453,46 @@ remediating a Spam Likely caller ID** — relevant because the account is on LC 
   chat and are DELIBERATELY NOT RECORDED HERE; this repo is public.**
 - Group has been trimmed: Churchie, Speedy, Nicole, Melvin, Ricky Nolan Jr., Hazel Joy and
   joshua sagot were all removed 09-02 17:33.
+
+## 2026-09-05 20:0xZ — A SECOND, WORSE BLAST WENT LIVE AT 14:18 CT AND DREW A STOP IN 53 SECONDS
+
+**MEASURED off the conversation, not inferred.** Outbound `2026-09-05T19:18:59Z` (14:18 CT)
+from **`+18502035831`** — a LIVE number, title "1" — via marketplace app
+`6a25617c1d5fcb2f6e8b826b`, to Scott E Savage `+17133013677`:
+
+> 🚀 Exclusive Offer from AT&T! Get 4 MONTHS of FREE premium fiber internet + FREE
+> professional installation. Zero upfront costs, zero contracts, zero hidden fees.
+> Experience blazing-fast speeds risk-free. Limited time only! Reply YES or call
+> **346-492-2635** to claim your offer today!
+> Reply STOP to unsubscribe.
+
+**He replied "Stop" at 19:19:52 — 53 SECONDS later — then "STOP" again at 19:19:59, and DND
+went on for SMS and RCS.** That is about the fastest opt-out possible.
+
+**THREE NEW STOPs THIS HOUR, ALL TEXAS, ALL SINCE THE 17:0xZ SWEEP:** Syed K Riaz
+`+18325630246`, Scott E Savage `+17133013677`, Patricia Wooley `+18329282553`.
+**Today's earlier eight were FLORIDA 772/561 from the "James"/Rodelio campaign. These are
+HOUSTON, from a different number.** So there are **at least TWO separate blasts running**,
+and the opt-out count in the 30 newest threads has gone **8 → 11 in three hours**.
+
+**MEASURED DEFECTS (python, this turn): 306 characters, and the ROCKET EMOJI is the ONLY
+non-GSM character — that one glyph forces UCS-2 at 67 chars/segment and makes it FIVE
+SEGMENTS.** Also 32 capitals, 3 exclamation marks, "Limited time only!", "claim your offer
+today!", three absolute promises ("Zero upfront costs, zero contracts, zero hidden fees"),
+a hand-written STOP line doubling GHL's, signs as **"AT&T"** itself, and **"4 MONTHS of
+FREE" — the same unverifiable claim as the James template, now in capitals** (that one says
+2 months; this says 4; WebSearch finds no AT&T free-months offer).
+
+**A NEW NUMBER IS BEING ADVERTISED THAT IS NOT ON THE ACCOUNT: `346-492-2635`.** Not among
+the 11 live. That is now a THIRD off-book number alongside `+13464893489` (places calls) and
+`+13465906578` (fails SMS). **Anyone who dials 346-492-2635 reaches something this session
+cannot see.**
+
+**Told Patrick: text `LSgaHKE746S87M5QD10c`, email `1a0732f06957aa0f`.** Recommendation in
+priority order: stop the send; find who fired it (Rodelio owns FLORIDA, this is TEXAS, so
+likely a second person or workflow); swap in the 45 verified variants; register all 11
+numbers at `freecallerregistry.com`. **Not acted on — RULE 0 and the chaser's own "never
+pause or edit a GHL workflow".**
+
+**Still owed and untouched 21 hours on:** Barnes (EMAIL), Sandefur (household already CLOSED
+— opportunity still at "Contacted"), Jacobs (TEXT). Phone numbers 11, unchanged.
