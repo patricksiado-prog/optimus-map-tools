@@ -12783,3 +12783,86 @@ fetched it, and brand #3 cannot be submitted at all without a site. Spec given: 
 contact page; privacy policy stating mobile numbers and consent are NOT sold or shared for
 marketing; terms with message frequency, rates, STOP and HELP; consent checkbox visible
 and UNTICKED by default.
+
+**2026-09-05 22:4xZ — EVENING EDITION SENT. THE BIGGEST FIND OF THE DAY: THE BLAST IS
+TEXTING PEOPLE OUTSIDE THE AT&T FOOTPRINT ENTIRELY.**
+
+Three emails away: Patrick `1a073bcb46672120`, Dave `1a073bcf9206bd05`, Churchie
+`1a073bd381a44053`. No dollar figures in Dave's or Churchie's; no personal content
+outside Patrick's.
+
+**1. WE TEXTED NEW YORK AND WASHINGTON STATE (MEASURED off the live conversations).**
+- **Karen Duff `+15165324602` — area code 516 is LONG ISLAND, NEW YORK.** Not an AT&T
+  ILEC state; legacy Bell Atlantic/Verizon. Texted TWICE today from `+18502035831`
+  (a LIVE number, title "1") at **19:15:43Z** and **19:17:35Z**; she replied **STOP at
+  21:28:33Z** and GHL flagged `contact_dnd_enabled` on RCS+SMS one second later.
+- **Jessica Stump `+12537542436` — area code 253 is WASHINGTON STATE.** WA is one of the
+  eleven **LUMEN states Patrick explicitly closed on 2026-08-26** (*"ignore Lumen deal
+  that doesn't matter"*). We cannot sell there at all.
+- These are 1,500-2,000 miles outside the footprint. **Every such send is a pure spam
+  complaint against a number we still need, with zero chance of revenue.** New rule for
+  every list build/scrub, sent to Churchie tonight: drop any area code outside the 21
+  AT&T states, and drop AZ CO IA ID MN MT NE NM OR UT WA by name.
+
+**2. A BROKEN MERGE FIELD IS GOING OUT AS A TEXT MESSAGE.** Duff's 19:15:43Z message,
+verbatim and complete: `3464922635\nReply STOP to unsubscribe.\nThanks, AT&T`. That is
+a bare phone number with an opt-out stapled to it. Two minutes later she got the
+rocket-emoji "4 MONTHS of FREE" blast advertising **346-492-2635**.
+
+**3. THE BLAST IS AN INSTALLED MARKETPLACE APP, NOT NATIVE GHL — THIS IS WHERE TO SWITCH
+IT OFF.** Both outbound messages carry `meta.marketplace.appId
+**6a25617c1d5fcb2f6e8b826b**`. That explains why the from-number and the copy match
+nothing in the account's own workflows, and why pausing workflows would not have stopped
+it. **First place to look, next time this is worked.**
+
+**4. LIVE NUMBERS RE-READ 22:4xZ — 11, and the advertised one is NOT among them.**
+850s: 809-6942, 203-5831, 695-1985, 789-6934, 446-8236, 318-4119.
+346s: 585-7098, 585-2672, 639-3567, 659-2865, 663-1038.
+**346-492-2635 is absent — confirmed off-book, and it is being advertised inside blast
+copy.** So is **832-247-4060**, which the AI auto-responder quotes as the callback number
+in ~8 threads tonight (Howell, Pomeroy, Starrine, Law, Knoblock, Nolan, Pratt, Glovera,
+Cooper). **That makes FOUR off-book numbers: 346-492-2635, 832-247-4060, 346-489-3489,
+346-590-6578.**
+
+**5. OPT-OUTS 8 → 12 IN THE 30 NEWEST THREADS IN ONE DAY.** Duff (516 NY), Riaz (832),
+Savage (713), Wooley (832), Heysquierdo (772), Louis (561), Morris (772), Yanni (561),
+Simpson (561), Stump (253 WA), Sanchez (832), Ashley (850). **Nephterline Louis did not
+just opt out, she complained: *"I agree Stop this getting out of hand"*.** Note the mix
+of 772/561 (Rodelio's FL blast) and 832/713 (the TX one) — both are still running.
+
+**6. THE OLD TEMPLATE IS ALSO STILL SENDING.** Thomas Grasso and Razzle Dazzle
+Housekeeping both received the *"$30/month … 2 free months"* copy today — the one whose
+flat price sits below our own bundled floor, and whose "2 months" contradicts the other
+blast's "4 months".
+
+**CAPTURE, MEASURED 22:3xZ — BOTH MACHINES STILL STOPPED:**
+- Split workbook `1DXu-nuQ…`: `modifiedTime` **2026-09-05T22:32:45Z**, `fileSize`
+  **38,633 — FLAT since 12:01Z**. Lock still refreshing = hunter alive and holding.
+  **15h39m with no capture** since 06:56:49 CT. Fix is still Ctrl+Up, not a relaunch.
+- Main workbook: `modifiedTime` **22:35:34Z**, `fileSize` **8,484,584 — FLAT**. Full and
+  write-dead, still on the pre-deploy build.
+- **`_feed/_ghl_status.json` = HTTP 404** — the state-book code has **not run on any PC
+  yet**. Correct and expected; it is the pending runtime proof.
+- Heartbeat still 09-04 `LOGGED_OUT` / LAPTOP-FJEEPATI. tabs.json stamped 09-04 14:26:48.
+
+**SCOREBOARD:** won **2**, lost **0** (Majeed 8/31, Dumas 8/29). **The third sale is
+STILL not recorded** — opportunity `7LY88e6tw8wGmWyiDAB8` remains at "Contacted".
+DealMachine **20,848 of 30,000**, 9,152 used (4,273 properties, 4,879 people), cycle
+Sep 2 - Oct 2, **nothing spent by this session today**.
+
+**FOUR REPLIES STILL WAITING, UNCHANGED SINCE THIS MORNING** — Barnes (EMAIL, 6 unread),
+Sandefur (CALL 267-243-3439, 3 unread, already sold), Pope (CALL, she rang us), Jacobs
+(TEXT ONLY, 6 unread). Told Dave plainly that only two of the four are phone calls.
+
+**ENDS-WITH-THE-SHEET step done:** status feed **4 rows** →
+`_feed/status/20260905-224121-pm-2026-09-05.json`; sales feed **1 row** →
+`_feed/sales/20260905-224125-pm-2026-09-05.json`. Both land at the next Maps Scraper
+launch; verify with `publish-enriched --check`.
+
+**OUTAGES:** a large Xfinity Houston outage from cut fiber (suspected vandalism) hit Port
+Houston's Bayport and Barbours Cut terminals and NWS radar comms, but the coverage says
+service was restored and I could NOT confirm it is live now — so it did NOT go at the top
+of the call list. No aimable new-build announcement in 24h.
+
+**PERSONAL:** nothing posted in the DAILY LOG today; the GOALS block is still empty
+bullets. Said so in one line, no nag, no Bible passage (morning's is the day's).
