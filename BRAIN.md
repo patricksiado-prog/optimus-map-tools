@@ -11757,3 +11757,19 @@ installer, or order 0 in ORDERS.md (written this turn) does the checkout.
 checkout, desktop pushes the deploy, every PC relaunches on BUILD_DATE
 2026-09-04, desktop pauses the James blast, each PC reports to
 `REPORTS/<hostname>.md`.**
+
+**17. Patrick 01:4xZ: *"u adding polluted info to the dialer destroyed the
+profit wanna try to get me paid back??"* — the charge is the RULE 0b history
+(colour tags shipped as facts: 21 grey of 84 on the board, 974 of 2,000
+unverifiable, 85% of the queue with no colour, gold-by-default rows). Taken.
+PAYBACK PLAN GIVEN, evidence-bearing leads only, no colour claims: tonight's 3
+uncalled replies; `alpha-t1-warm` = **33** (MEASURED 01:4xZ); `call back` tag
+= **15**; Antonio 713-474-3899 ("come replace", never called back since
+08-29); Janell Dumas (sold 08-29, still needs the Spectrum port-out PIN or the
+order falls out); the 219 `gold-attnet-confirmed` (AT&T-family email = real
+AT&T customer, upgrade conversation, no dot needed). Grey can only be stripped
+for good by the deploy (five tabs join).**
+
+**18. WEEKLY EXPENSES (from the desktop chat's screenshot, 01:4xZ — it got a
+403 writing here): Aug 31–Sep 4 2026: Wise $438.00 · GHL/HighLevel $190.63 ·
+total $628.63.** Money section, Patrick's copy only.
