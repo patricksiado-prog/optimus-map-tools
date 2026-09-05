@@ -11773,3 +11773,7 @@ for good by the deploy (five tabs join).**
 **18. WEEKLY EXPENSES (from the desktop chat's screenshot, 01:4xZ — it got a
 403 writing here): Aug 31–Sep 4 2026: Wise $438.00 · GHL/HighLevel $190.63 ·
 total $628.63.** Money section, Patrick's copy only.
+
+**19. Patrick 01:5xZ: *"another from this PC. Do not change anything yet."*
+HOLD: no changes to GHL, the sheet, the repos or the PCs until he says so. He
+is sending something more from the PC he is on.**
