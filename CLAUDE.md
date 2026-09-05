@@ -25,6 +25,13 @@ beta" survive four sessions unchecked.
 - **CDN-VERIFIED 21:37:47Z (MEASURED: raw.githubusercontent.com served all three markers; brain-verify's 5 state-book claims read `pass` at session start).** Every PC pulls it at its next scraper launch. **Lands only with `ghl_token.txt` beside the scraper** — without the token the five tabs are skipped and the console says so. Hunter untouched. Not yet proven on a PC: proof = `_feed/_ghl_status.json` carrying `books` and the two workbooks' `fileSize` moving.
 - **Patrick, 2026-09-05: "we don't tweak shit after this, besides automated from desktop."** The layout is FROZEN. Changes come only through the software's own self-update.
 
+### THE 3-LAPTOP COORDINATION IS ALREADY BUILT AND HAS NEVER BEEN USED (MEASURED 2026-09-05 22:2xZ)
+
+- **`optimus_territory.py` (7,704 bytes) is in `_CORE_FILES` — it self-deploys to EVERY hunter PC at launch.** Claims live in the **`Territory Claims` tab**; `_Dedupe Lock` stops two machines writing the same rows; a machine is `socket.gethostname()`, an operator is initials. `_print_dispatch()` already prints *"WHERE TO SCAN NEXT — these are yours to take"* at every launch, CABLE OUT before NEW FIBER, LOCAL first.
+- **`Territory Claims` = 0 ROWS** (tabs.json 09-04). **Built, deployed, never typed.** The fix is one command per laptop, once: `py precise_fiber_hunter.py --claim "Angleton, TX"` / `"Beaumont, TX"` / `"Milton, FL"`. Also `--release` and `--territory`.
+- **I CANNOT CLAIM FROM A CLAUDE SESSION** — it is a sheet tab and this session cannot write cells. I can READ it via `py sheet_feed.py --tab "Territory Claims"`. **Making it hands-off (hunter auto-claims from the feed) is a CODE CHANGE — offered, not done, RULE 0.**
+- **SURFACE SPLIT:** cloud session = GHL/DealMachine/Drive/Gmail/GitHub/feed, **no filesystem on any PC**. **Desktop Claude = the only one that can run `py` on a laptop** — four jobs wait on it: `gold_audit.py`, `decode_gold.py`, `sheet_feed.py --tab "Territory Claims"`, `gh release upload installer`. Fable = faster model for mechanical passes; Opus for diagnosis and deploys. **ChatGPT = no connectors; its assigned job is the THIRD A2P BRAND'S WEBSITE** (contact page, privacy policy saying mobile numbers/consent are not sold or shared, terms with frequency+rates+STOP+HELP, consent box unticked) — that is what actually unblocks A2P and therefore the spam problem.
+
 ### RIGHT NOW, 12:0xZ (MEASURED off the SHEET, not the feed — detail: BRAIN.md last section)
 
 - **THE HUNTER IS CAPTURING.** A **fifth PC, `LAPTOP-67UOPK24`**, run `20260905-062448`, swept **ANGLETON TX 77515** from **06:25:00 to 06:56:49 CT** and wrote **551 rows**: **GREEN 137 · GREY 146 · GOLD 4 (= 2 unique addresses, 321 E Cedar St Apt 2 and Apt 4)**. Penetration 51.6%.

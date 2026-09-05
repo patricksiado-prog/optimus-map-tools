@@ -12723,3 +12723,63 @@ Same photo, two other things worth having:
   2026-09-04 hunter + the 3ab3686 scraper + the fixed `RUN_HUNTER.bat`.
 
 Told him one step only, per his 09-04 standing instruction: run the file, report back.
+
+**2026-09-05 22:2xZ — PATRICK: *"we're using 3 laptops i want it to connect to the folder
+u can work from to automate the search process in all 3 / tell me when to go fable and
+what can chat do."* THE THREE-LAPTOP COORDINATION IS ALREADY BUILT, ALREADY DEPLOYED, AND
+HAS NEVER BEEN USED ONCE.**
+
+MEASURED off the live raw CDN this turn, not assumed:
+
+- **`optimus_territory.py` — 7,704 bytes, HTTP 200, and it is in `_CORE_FILES`** (hunter
+  line 6052), so it **self-deploys to every hunter PC at launch**. Nothing to install.
+- **Claims live in the `Territory Claims` TAB** (`TAB = "Territory Claims"`, module line
+  33). API: `load(sh)`, `claim(sh, area, state, zipc, operator, machine, source)`,
+  `release(sh, area, state, operator)`, `dispatch(candidates, claims, me, limit=6)`.
+  The ledger is created on demand at 2000 rows if absent.
+- **`_Dedupe Lock`** (hunter line 7182, `_DEDUPE_LOCK_TAB`) is the cross-machine write
+  lock — the same hourly refresh that proved 67UOPK24 was alive-but-paused on 09-05.
+- **A machine is identified by `socket.gethostname()`**; the operator by `OPERATOR()`
+  (initials, e.g. PS).
+- **`_print_dispatch()` runs at every launch** (hunter 7883) and prints *"WHERE TO SCAN
+  NEXT -- <me>, these are yours to take"*, ranked CABLE OUT (perishable) before NEW FIBER,
+  LOCAL before distant, with `claim one:  --claim "<area>"` underneath.
+- **CLI already exists:** `--claim "Beaumont, TX"`, `--release`, `--territory`.
+
+**`Territory Claims` = 0 rows** (tabs.json stamped 2026-09-04, the last scraper launch).
+**So the feature Patrick is asking to have built has been shipping to his laptops for
+weeks and nobody has ever typed the command.** Told him: one `--claim` per laptop, typed
+once — Angleton TX / Beaumont TX / Milton FL — and the three stop overlapping.
+
+**WHAT I CANNOT DO AND SAID SO:** `Territory Claims` is a SHEET TAB, and this session
+cannot write sheet cells (Drive connector is file-level; Autosheet balance is empty). So
+**I cannot claim on his behalf today.** I can READ the board via
+`py sheet_feed.py --tab "Territory Claims"` → GitHub feed → plain curl, and I can write
+ORDERS.md and the Drive feed folder.
+
+**OFFERED, NOT DONE (RULE 0):** to make it hands-off — I assign, the laptops auto-claim
+with nobody typing — the hunter must read an assignment from the feed at launch and claim
+itself. That is a hunter code change. His *"besides automated from desktop"* may put it in
+bounds; **waiting on an explicit go, and will ask again before pushing.**
+
+**THE SURFACE SPLIT, written down so it stops being re-asked:**
+
+| Surface | Has | Does NOT have |
+|---|---|---|
+| **This cloud session** | GHL, DealMachine, Drive, Gmail, GitHub push/deploy, the feed, the brain | **NO filesystem on any laptop**; no `gh release upload` (proxy 401) |
+| **Desktop Claude** | **filesystem on the PC** — the only surface that can run `py` there | — |
+| **Fable** | faster model, good for long mechanical passes | keep Opus for diagnosis + anything touching a deploy |
+| **ChatGPT** | drafting from pasted text | no GHL, no DealMachine, no service-account sheet |
+
+**FOUR JOBS ARE STUCK WAITING ON THE DESKTOP** and were named to him again: `py
+gold_audit.py` (unique gold ADDRESS count, never once taken), `py decode_gold.py` (which
+gold dots are real upgrade customers — Dave's complaint), `py sheet_feed.py --tab
+"Territory Claims"`, and `gh release upload installer INSTALL_OPTIMUS.bat --clobber`.
+
+**CHATGPT'S JOB, assigned: build the website for the THIRD A2P BRAND.** It is
+self-contained, needs no connector, and it is the actual root of the spam problem —
+Frontline's registration FAILED because ATTFIBERHOUSTON.COM was down when the carrier
+fetched it, and brand #3 cannot be submitted at all without a site. Spec given: real
+contact page; privacy policy stating mobile numbers and consent are NOT sold or shared for
+marketing; terms with message frequency, rates, STOP and HELP; consent checkbox visible
+and UNTICKED by default.
