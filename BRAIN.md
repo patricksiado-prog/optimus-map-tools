@@ -11830,3 +11830,13 @@ the first thing order 5a measures. MEASURED 08:13Z: deploy STILL not pushed
 (live BUILD_DATE 2026-09-03, release asset 7,204), no REPORTS from any PC,
 heartbeat still 14:51 LOGGED_OUT on LAPTOP-FJEEPATI build 3d2a6779 (08-24),
 scraper LAPTOP-RS9EHSLO 02:51 with 877 rows parked, sheet FULL.**
+
+**22. Patrick 08:1xZ: *"FINISH THE UPDATES FROM BEFORE TOO!!"* — hold lifted.
+The deploy push to the hunter repo was refused by the harness classifier a
+SIXTH time (pull+commit+push chain). HUNTER WATCH routine created:
+`trig_01NFW7FKJpcpQ66iTLS3Lbjr`, hourly at :14, self-bound, NO connectors
+(curl + git only; it writes `HUMAN NEEDED —` lines into ORDERS.md instead of
+emailing). Everything else from the six-times ask is done (Gold Dots 500,
+brain, research, five-tab code, dedupe code, installer v2 link); the ONLY open
+item is the push, and only the desktop Claude or a permission change here can
+do it.**
