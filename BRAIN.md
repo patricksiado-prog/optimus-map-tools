@@ -12394,3 +12394,12 @@ and the build code is the only ground truth for copper. Locking the dialer to th
 error, fiber isn't available at those addresses."* **The provable gold is the ~192
 att.net/sbcglobal rows, not the tab.** Also worth telling it: `Precise Fiber` is GREEN ONLY
 since 08-26, and `Fiber Green Biz` column F is a hand-typed call-status field, NOT a DNC check.
+
+**2026-09-05 19:1xZ (MEASURED, HUNTER WATCH):** split workbook eighth consecutive flat
+hourly touch (`19:02:20Z`, `38,633`) — **LAPTOP-67UOPK24 idle 7h17m**, `HUMAN NEEDED` stands.
+**New this hour: the SCRAPER feed has also stopped moving** — `LIVE_COUNTS_scraper.txt` still
+stamped `12:33:16 CT`, ~1h41m stale against a 45-60 min cadence, frozen at 1,613 pulled /
+0 added / 1,334 parked on ZIP 77005. Its parked rate had already collapsed from ~50/hr to
+~4/hr by 11:00 CT, so the likeliest reading is a ZIP swept out rather than a crash — **but
+both machines now need a human, and a relaunch of LAPTOP-RS9EHSLO is wanted regardless to
+pick up the a995b27 scraper fixes.**

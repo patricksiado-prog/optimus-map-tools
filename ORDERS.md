@@ -227,3 +227,15 @@ zero until the deploy (order 1) lands.
   **Every hour it stays paused is a lost hour on the only machine that can see the map.**
   Scraper LAPTOP-RS9EHSLO 12:33:16 CT, ZIP 77005: 1,613 pulled, 0 added, **1,334 parked**.
   Feed unchanged (`LAPTOP-FJEEPATI / LOGGED_OUT / 2026-09-04 14:51:49`). No `REPORTS/`.
+- 2026-09-05 19:1xZ (HUNTER WATCH) — **HUMAN NEEDED still stands, now 7h17m.** Eighth flat
+  touch on the split workbook: `19:02:20Z`, `fileSize` **38,633** (12:01 → 19:02, flat every
+  hour). LAPTOP-67UOPK24 last captured `11:56:49Z`. Order unchanged: **Ctrl+Up (GO)** on that
+  PC first, Ctrl+Down then Ctrl+Up second, force-quit and relaunch only if neither moves it.
+- **NEW: THE SCRAPER FEED HAS ALSO GONE QUIET.** `LIVE_COUNTS_scraper.txt` still reads
+  `12:33:16 CT` — unchanged since the 18:1xZ check, so **~1h41m with no update**, against a
+  45-60 minute cadence all day. Counts frozen at 1,613 pulled / 0 added / **1,334 parked**,
+  ZIP 77005. Could be the run finishing a swept ZIP (the parked rate had already flattened
+  from ~50/hr to ~4/hr by 11:00 CT), or the window closed. **Not yet an order** — but if it
+  is still 12:33 at the next watch, LAPTOP-RS9EHSLO needs a relaunch too, which is wanted
+  anyway to pick up the a995b27 fixes.
+  Feed otherwise unchanged, no `REPORTS/` entries, release asset COULDN'T READ (401).
