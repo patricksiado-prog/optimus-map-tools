@@ -29,7 +29,8 @@ beta" survive four sessions unchecked.
 - **PIPELINE IS NO LONGER WRITE-ONLY: 2 WON, 0 LOST.** Shahrukh Majeed (211 Carey Ridge Ct, Fiber 1 GIG, 08-31) and Janell Dumas (Fiber 300, 08-29). The live alarm is now **0 lost** — a close rate needs a recorded loss.
 - **BACKLOG: 24 `replied-yes` not closed, oldest 67 days** (2026-06-30). 3 of the 24 are texting opt-outs — call, never text.
 - **THE "JAMES" BLAST IS STILL RUNNING** from `+18506951985` — 8 STOPs in the 30 newest threads, five 772/561. **Second defect: its auto-replies quote a flat `$30/month`** under an AT&T signature.
-- **CORRECTION: Joseph Sandefur is `+1 267-303-6475`,** not 267-243-3439.
+- **3 REPLIES OWED, each a DIFFERENT channel (14:0xZ):** **James Barnes 850-313-0943 wants the offer EMAILED to jsbarnes1992@att.net and says he'll install** — a bot told him "I can't send emails" twice and closed him out; **Joseph Sandefur — CALL 267-243-3439** (he has BOTH numbers; 303-6475 is the CRM primary, 243-3439 is the one he texts from — my 12:0xZ correction was half wrong); **Daniel Jacobs 925-765-8999 wants a TEXT** — he wrote "No calls thanks" and we dialled him 4× anyway.
+- **A DEAD NUMBER IS STILL DIALLING: `+13464893489`** — two calls to Jacobs last night, not in the 11 live numbers.
 - **DealMachine 20,848 of 30,000, 9,152 used this cycle** (Sep 2 → Oct 2).
 - **Release asset size: COULDN'T READ** (proxy 401). `gh release upload` stays a desktop job.
 - **HUNTER WATCH now reads the SHEET first** (`trig_01NFW7FKJpcpQ66iTLS3Lbjr` rewritten 12:1xZ): split-workbook `modifiedTime`+`fileSize` is step 1, the feed is corroboration only.

@@ -12022,3 +12022,63 @@ means the hunter is alive but idle; on either, it never means "working".
 Scraper LAPTOP-RS9EHSLO 07:53:03 CT, ZIP 77005: 1,233 pulled, 0 added, **1,184 parked**
 — up from 1,078 at 06:06 and 1,143 at 07:11, so roughly **50 parked rows an hour** are
 piling up behind the full workbook.
+
+## 2026-09-05 14:0xZ — THE FOLLOW-UP SWEEP FOUND THREE LIVE LEADS AND THREE DIFFERENT WAYS THE MACHINE MISHANDLED THEM (MEASURED off GHL conversation history)
+
+**FIRST, THE SWEEP'S OWN TEST IS BROKEN AND WOULD HAVE REPORTED "NOTHING OWED".**
+The chaser routine says: find conversations whose most recent INBOUND has no outbound
+after it. **Run literally that returns ZERO, every time, because the AI auto-responder
+answers every inbound within ~20 seconds.** The test that works, and that is now in the
+routine: **an inbound that asked for a HUMAN action, with no human action after it.**
+Generalise this — any "did anyone respond?" check on a location with an autoresponder
+must ask *who* responded, not *whether*.
+
+**1. JAMES L BARNES — `+18503130943` · `jsbarnes1992@att.net` — THE HOTTEST LEAD IN THE
+CRM AND A BOT CLOSED HIM OUT.** Verbatim, 2026-09-04:
+- 22:32 *"Send me your offer for this new hookup. I will have it installed if the plan is
+  good including free months with us paying on line our selves rather than your office
+  deduction each month"*
+- 22:38 *"Please email me at jsbarnes1992@att.net. My wife and I will look over it and we
+  will then call you guys"*
+- 22:39 *"Daniel with your office said we would get an email with all the information but
+  I just haven't received it yet"*
+- 22:41 *"I said I am not talking to AI on the phone. I'll wait till Daniel calls me or
+  sends Email"*
+**The autoresponder said "I can't send emails" TWICE, pushed 832-247-4060 four times, and
+signed off "Got it! … Take care!"** He is owed **an EMAIL from Daniel**, not a call — he
+refused a call in writing. **His objection is autopay**, the same one that stalled the
+Janell Dumas order; the email must say he can pay online himself.
+
+**2. JOSEPH SANDEFUR — CORRECTION TO THIS MORNING'S CORRECTION. HE HAS BOTH NUMBERS.**
+`phone: +12673036475` (CRM primary) AND `additionalPhones: [+12672433439]`. **He TEXTS
+from 267-243-3439 and both dials went there — that is the number to call.** I told Patrick
+at 12:0xZ it was "303-6475, not 243-3439"; that was half wrong and is now fixed in the
+email and here. Address **2349 SE Hallahan St, Port Saint Lucie, FL 34952**,
+`bigjoe4767@aol.com`, custom field **current provider = T-Mobile** (so a SWITCH, not an
+upgrade), tag `fl_rodel_resi` — he came in off the James blast. Said *"Yes"*, gave the
+address unprompted, said *"Home"*. Opportunity `7LY88e6tw8wGmWyiDAB8` created and moved
+Lead → Contacted. Two calls 22:07 and 22:09 from `+18506951985`, both "completed" with
+**5 seconds / null duration** — neither was a real conversation.
+
+**3. DANIEL K JACOBS — `+19257658999`, 5673 Zinnia Ave — WE CALLED HIM FOUR TIMES AFTER HE
+WROTE "No calls thanks".** 17:47 *"Just internet"* → 17:48 **"No calls thanks"** → 17:53
+*"Sure"* (to an offer of details). We sent one generic fiber blurb, then dialled
+**18:24 (4s), 18:28 (4s), 21:36 (failed), 21:37** from three different numbers. **He is
+owed a TEXT, not a call.** This is the mechanism that manufactures STOPs.
+
+**A DEAD NUMBER IS STILL DIALLING: `+13464893489`** placed two of those calls to Jacobs
+and is **not** in the 11 live numbers. Something holds a stale from-number.
+
+**PHONE NUMBERS MEASURED 14:0xZ — 11, UNCHANGED since 12:0xZ** (no sixth swap today):
+850s `8096942 2035831 6951985 7896934 4468236 3184119`; 346s `5857098 5852672 6393567
+6592865 6631038`. `+18506951985` (title "4") is still on the account and still the blast
+number.
+
+**RECOMMENDATION GIVEN, NOT ACTED ON: send NO new cadence texts today.** 8 STOPs sitting
+in the 30 newest threads, a customer called 4× against his written wish, and an
+autoresponder quoting a flat `$30/month` — adding 60 more sends to that is pouring water
+into a holed bucket. Offered to build the 60 on his word.
+
+**Nothing was sent to any customer.** One SMS went to **Patrick's own** contact
+`pTf15HQ88QisY5RuCbf1` (msg `NlyX0yWm2Mip8kUcth0a`) — `success: true` means GHL accepted
+it, not that it arrived. Email to Patrick `1a071e6f86ebc56b`.
