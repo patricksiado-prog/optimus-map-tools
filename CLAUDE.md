@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 08:2xZ (DEPLOY PUSHED a995b27 and CDN-verified: every PC un-pins at next launch, scraper gets dedupe + gspread-6 + five GHL tabs; HUNTER WATCH hourly; release asset still old; James blast; 3 uncalled replies)
+# CURRENT STATE — updated 2026-09-05 11:2xZ (SCRAPER IS RUNNING RIGHT NOW on LAPTOP-RS9EHSLO but on the PRE-DEPLOY build — restart it to get dedupe/gspread-6/five tabs; hunter blind 69h, needs a human at the AT&T chooser; deploy a995b27 serving; James blast; 3 uncalled replies)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,14 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### RIGHT NOW, 11:2xZ (MEASURED off the live feed, no cache)
+
+- **THE MAPS SCRAPER IS RUNNING** on `LAPTOP-RS9EHSLO` — `06:06:40 CT`, ZIP **77070**, 1,115 businesses pulled, **0 to the sheet, 1,078 parked, SHEET FULL**. It is on the **pre-deploy build** (`tabs.json` stamped 09-04 14:26:48 = its launch). **Close it and relaunch to get dedupe + gspread-6 + the five GHL tabs.** A running scraper never self-updates.
+- **THE HUNTER HAS BEEN BLIND 69+ HOURS** — heartbeat 09-04 14:51:49 `LOGGED_OUT`, LAPTOP-FJEEPATI, fingerprint 3d2a6779 (08-24 build). Only a human clicking through the AT&T access chooser unblocks it.
+- **The deploy is serving:** CDN hunter reads `BUILD_DATE = "2026-09-04"` + `LAUNCHER_SENTINEL`. Every PC un-pins at its next hunter launch.
+- **Release asset size is now COULDN'T READ** (proxy 401 on the release CDN) — "still 7,204" is ASSUMED. `gh release upload` stays a desktop job.
+- **The desktop's Claude Code is open but its bridge is `disconnected`** (`computer_unreachable` since 09-04 16:47Z). One command in that window fixes it: **`/remote-control`**.
 
 ### TONIGHT, 01:2xZ — what the evening edition found (detail: BRAIN.md last section)
 

@@ -11869,3 +11869,40 @@ claude_code_cli, tag remote-control-sdk, environment bridge), DISCONNECTED,
 last error `computer_unreachable` 2026-09-04 16:47Z. While it is disconnected
 no session here can run anything on a PC. When Claude Code on that PC is open
 with Remote Control on, this session can message it the launch order.**
+
+## 2026-09-05 11:2xZ — THE SCRAPER IS ALIVE AND I CAN WATCH IT, BUT IT IS ON THE OLD BUILD (MEASURED)
+
+Patrick asked to see the Maps Scraper launched from here. It cannot be launched from
+here (Maps is egress-blocked and the Google key cannot be placed — 09-05 entry above).
+But it **is already running on a PC and this session can read it live**, which answers
+the underlying question:
+
+**MEASURED off `_live/LIVE_COUNTS_scraper.txt`, no cache, 11:2xZ:**
+`updated: 2026-09-05 06:06:40 CT · host LAPTOP-RS9EHSLO · ZIP now: 77070 ·
+STATUS: *** SHEET FULL -- NOTHING IS REACHING THE SHEET *** · 1078 row(s) parked ·
+BUSINESSES pulled this run 1115 · added to sheet (Maps Biz) 0`. That file was ~8
+minutes old at read time, so the run is live right now.
+
+**IT IS THE PRE-DEPLOY BUILD.** `_feed/sheet/tabs.json` is stamped **2026-09-04
+14:26:48**, and the scraper publishes that file at LAUNCH — so this run started
+14:26 yesterday and predates a995b27 (08:2xZ today). **A running scraper never
+self-updates; it only picks up new code at launch.** So on this PC there is still no
+gold/grey dedupe, no `_gc()` gspread-6 fix, and no `Green/Gold/Grey/Biz/Fiber Biz`
+tabs. **The action is to close it and double-click the icon again** — one restart, no
+push, and the three fixes land.
+
+**Hunter unchanged and still blind:** heartbeat `2026-09-04 14:51:49`, `LOGGED_OUT`,
+LAPTOP-FJEEPATI, fingerprint `3d2a6779` (the 08-24 build); `latest.json` run
+20260904-121609 with every count 0 and `failed_writes: 5815`. **Nothing has been
+captured since 2026-09-02 — 69+ hours.** The live hunter file on the CDN reads
+`BUILD_DATE = "2026-09-04"` and carries `LAUNCHER_SENTINEL`, so the deploy half of
+order 1 is done and serving; the pin breaks at the next hunter launch on each PC.
+
+**COULDN'T READ, do not guess:** the release asset size. The proxy returns `401` on
+`releases/download/...` from this session, so "still 7,204 bytes" is now ASSUMED, not
+measured. The `gh release upload installer ... --clobber` line stays open on the desktop.
+
+**The desktop's Claude Code is open but unreachable from here:** bridge session
+`session_01NUT7XFkFbHxtMj8Veig5j5` still `connection_status: disconnected`,
+`last_init_error computer_unreachable` at 2026-09-04 16:47Z. `ListAgents` shows no peer.
+One command in that window fixes it: **`/remote-control`**.
