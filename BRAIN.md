@@ -11692,3 +11692,7 @@ pulls it at every check); the PCs already answer through the hunter repo
 `_feed/` (heartbeat.json, latest.json, _ghl_status.json) which this session
 reads with plain curl. First order for the desktop: run
 `patches/DEPLOY-2026-09-04/README.md`.**
+
+**15. Session dropped ~23:00Z-01:09Z; the PM routine `trig_01RjAUBz…` fired
+22:37Z into the dead session and queued. Patrick 01:09Z: *"back??"* Running the
+evening edition 2.5 h late (8:09pm CT). Nothing else new.**
