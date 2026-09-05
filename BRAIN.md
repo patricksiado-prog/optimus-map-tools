@@ -12880,3 +12880,42 @@ double-click **Optimus Maps Scraper** (not the hunter — the scraper needs no A
 is the one carrying 3ab3686). Watch for the new-build confirmation, and for either the five
 GHL tabs building or the line saying they were skipped because `ghl_token.txt` is not
 beside the scraper.
+
+**2026-09-05 23:0xZ — PATRICK: *"WHY DONT U DROP AN INSTALLER THAT CREATES THE FOLDER
+YOUR LOOKING FOR ... WE CAN LOOP THEM TOGETHER W ONEDRIVE CHAT SUGGEESTED?"* then the path
+`C:\Users\patri\OneDrive\Desktop\OPTIMUS COMMAND CENTER`. HIS IDEA IS RIGHT IN SHAPE
+AND WRONG IN PLUMBING — AND I BUILT THE RIGHT VERSION THE SAME TURN.**
+
+**ONEDRIVE CANNOT WORK, RE-VERIFIED LIVE 23:0xZ via `ListConnectors`.** Eight connectors
+are connected: **Autosheet, command connector (GHL), dealmachine, FRONTLINE CONNECTOR,
+Gmail, Google Calendar, Google Drive, Railway.** (Indeed is `unknown`/disabled.) **NONE is
+Microsoft.** So a OneDrive folder loops his three PCs to EACH OTHER and leaves Claude
+outside — the exact opposite of what he is asking for. The 09-04 note said the same thing;
+this is now measured twice.
+
+**GOOGLE DRIVE IS THE SAME IDEA AND IT ACTUALLY WORKS**, because that connector is live.
+**CREATED THE SAME TURN — no code change, no new program, no RULE 0 issue:**
+- Folder **`OPTIMUS COMMAND CENTER` = `1fjb51opWuWJ761cUpcdbpv2tziZT8Ely`**
+  (https://drive.google.com/drive/folders/1fjb51opWuWJ761cUpcdbpv2tziZT8Ely)
+- `START HERE.txt` `153v6_MnYvA5W2dPNnojmVeTMKXRWbKk5` — why Google Drive not OneDrive,
+  how to get it on all 3 PCs (Google Drive for Desktop), and the one hard rule.
+- `THE 3 LAPTOPS - one command each.txt` `1JXui3K-vCuhWOauTgMaawiQTx2y7Eq5y` — the three
+  `--claim` commands, the dispatch board, and the two stopped machines with their fixes.
+
+**NO NEW INSTALLER WAS BUILT AND THAT WAS DELIBERATE.** He killed second products an hour
+earlier (*"I DONT LIKE THAT VESRION 2 SHIT"*); dropping a second installer to create a
+folder would be exactly that. Google Drive for Desktop is Google's own installer — one
+sign-in, no Optimus code involved.
+
+**THE HARD RULE WRITTEN INTO THE FOLDER: NEVER put the hunter or scraper code in a synced
+folder.** Both hold files open while running and a sync client fighting a running program
+corrupts state. Code stays at `%USERPROFILE%\optimus_hunter`, `%USERPROFILE%\maps_scraper`,
+`%USERPROFILE%\optimus\launchers`. The synced folder carries ORDERS, LISTS and STATUS only.
+This restates the earlier "do not put the live code itself inside OneDrive" note and
+generalises it to any sync client.
+
+**AND THE THING HE ALREADY HAS:** the three laptops are ALREADY looped and already
+reporting — `optimus/_feed/` on GitHub (every PC pushes, Claude reads with no auth), the
+Drive feed folder (Claude writes, the scraper reads at launch), and the `Territory Claims`
+tab (deployed to every PC, still 0 rows). COMMAND CENTER is the human-readable front door
+to a loop that already exists, not a new pipe.

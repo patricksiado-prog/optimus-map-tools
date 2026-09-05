@@ -25,6 +25,13 @@ beta" survive four sessions unchecked.
 - **CDN-VERIFIED 21:37:47Z (MEASURED: raw.githubusercontent.com served all three markers; brain-verify's 5 state-book claims read `pass` at session start).** Every PC pulls it at its next scraper launch. **Lands only with `ghl_token.txt` beside the scraper** — without the token the five tabs are skipped and the console says so. Hunter untouched. Not yet proven on a PC: proof = `_feed/_ghl_status.json` carrying `books` and the two workbooks' `fileSize` moving.
 - **Patrick, 2026-09-05: "we don't tweak shit after this, besides automated from desktop."** The layout is FROZEN. Changes come only through the software's own self-update.
 
+### THE SHARED FOLDER: GOOGLE DRIVE, NEVER ONEDRIVE (BUILT 2026-09-05 23:0xZ)
+
+- **`OPTIMUS COMMAND CENTER` = `1fjb51opWuWJ761cUpcdbpv2tziZT8Ely`** in Patrick's Drive — `START HERE.txt` (`153v6_Mn…`) and `THE 3 LAPTOPS - one command each.txt` (`1JXui3K-…`). Claude reads AND writes it; it reaches all 3 PCs once Google Drive for Desktop is installed on each.
+- **ONEDRIVE IS BLIND TO CLAUDE — MEASURED TWICE (09-04, and live via `ListConnectors` 09-05 23:0xZ).** The 8 live connectors are Autosheet · command connector (GHL) · dealmachine · FRONTLINE CONNECTOR · Gmail · Google Calendar · Google Drive · Railway. **None is Microsoft.** `C:\Users\patri\OneDrive\Desktop\OPTIMUS COMMAND CENTER` loops his PCs to each other and leaves Claude out. Do not re-propose OneDrive.
+- **NEVER put the hunter or scraper code in ANY synced folder** — they hold files open while running and sync corrupts state. Code stays in `%USERPROFILE%\optimus_hunter` / `maps_scraper` / `optimus\launchers`. The synced folder is ORDERS, LISTS, STATUS only.
+- **No new installer was built on purpose** — that would be the "version 2" pattern he killed the same night. Google Drive for Desktop is Google's own installer.
+
 ### THE 3-LAPTOP COORDINATION IS ALREADY BUILT AND HAS NEVER BEEN USED (MEASURED 2026-09-05 22:2xZ)
 
 - **`optimus_territory.py` (7,704 bytes) is in `_CORE_FILES` — it self-deploys to EVERY hunter PC at launch.** Claims live in the **`Territory Claims` tab**; `_Dedupe Lock` stops two machines writing the same rows; a machine is `socket.gethostname()`, an operator is initials. `_print_dispatch()` already prints *"WHERE TO SCAN NEXT — these are yours to take"* at every launch, CABLE OUT before NEW FIBER, LOCAL first.
