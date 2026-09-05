@@ -60,7 +60,7 @@ beta" survive four sessions unchecked.
 
 ### THE SIX-TIMES ASK — STATE AT 21:5xZ (detail: BRAIN.md, last section)
 
-- **INSTALL LINK — RESOLVED 2026-09-05 21:5xZ: THE OLD DRIVE LINK IS THE CORRECT LINK AGAIN.** `1IRnfbeQ…` is renamed back to `INSTALL_OPTIMUS.bat` (7,204 bytes, 08-23 bytes UNCHANGED — the Drive connector's `update_file` can only change TITLE and FOLDER, never contents). **It was never the file that was broken; it was the repo it downloads, and that is fixed.** MEASURED off the raw CDN the same turn: the hunter carries `LAUNCHER_SENTINEL = "GOLD CAPTURE ON"` again (a995b27) so the installer's own gate PASSES instead of false-warning; the repo's `install/RUN_HUNTER.bat` (4,350 bytes) already checks `BUILD_DATE = `, so the installer overwrites every PC's pinned launcher with the fixed one; `RUN_SCRAPER.bat`, both .ico files and all five core hunter files return 200; the scraper it pulls is 149,349 bytes carrying all five state-book markers = **3ab3686**; unpinned gspread 6 is safe now that `_gc()` is deployed. **v2 `1xAdxVme…` is renamed `BACKUP-do-not-use_…` — every fix it carried is now in the repo, so it is redundant, not wrong.** The **GitHub Release** asset behind the emailed link is still the 08-18 file and only the repo owner / desktop Claude can `gh release upload installer INSTALL_OPTIMUS.bat --clobber`; the old installer heals a PC anyway, so this is no longer blocking.
+- **INSTALL LINK — RESOLVED 2026-09-05 21:5xZ: THE OLD DRIVE LINK IS THE CORRECT LINK AGAIN.** `1IRnfbeQ…` is renamed back to `INSTALL_OPTIMUS.bat` (7,204 bytes, 08-23 bytes UNCHANGED — the Drive connector's `update_file` can only change TITLE and FOLDER, never contents). **It was never the file that was broken; it was the repo it downloads, and that is fixed.** MEASURED off the raw CDN the same turn: the hunter carries `LAUNCHER_SENTINEL = "GOLD CAPTURE ON"` again (a995b27) so the installer's own gate PASSES instead of false-warning; the repo's `install/RUN_HUNTER.bat` (4,350 bytes) already checks `BUILD_DATE = `, so the installer overwrites every PC's pinned launcher with the fixed one; `RUN_SCRAPER.bat`, both .ico files and all five core hunter files return 200; the scraper it pulls is 149,349 bytes carrying all five state-book markers = **3ab3686**; unpinned gspread 6 is safe now that `_gc()` is deployed. **The second installer file `1xAdxVme…` is TRASHED — every fix it carried is now in the repo, so there is ONE installer and ONE link again.** The **GitHub Release** asset behind the emailed link is still the 08-18 file and only the repo owner / desktop Claude can `gh release upload installer INSTALL_OPTIMUS.bat --clobber`; the old installer heals a PC anyway, so this is no longer blocking.
 - **DEPLOY PUSHED 2026-09-05 08:2xZ — hunter branch commit `a995b27`, CDN-VERIFIED** (`add_repo` attached the repo on the 3rd try and the commit was allowed): hunter sentinel + BUILD_DATE 2026-09-04, launcher + installer BUILD_DATE gate, scraper dedupe gold/grey + gspread-6 client + five GHL tabs. Every PC un-pins at its next hunter launch; the scraper self-updates at its next launch. **PROOF still pending on a PC: a console printing `BUILD_DATE : 2026-09-04` and a heartbeat whose `build_fingerprint` is not 3d2a6779.** The five tabs also need `ghl_token.txt` next to the scraper. **Release asset behind the emailed link is STILL the 08-18 file** (this session is refused release edits); the old installer now pulls the fixed launcher + hunter anyway.
 - **FIVE TABS `Green` `Gold` `Grey` `Biz` `Fiber Biz` in the SPLIT workbook** (Patrick: multiple sheets are fine): built as `sync_ghl_status` in the scraper, needs `ghl_token.txt` (contacts.readonly) next to the scraper on the PC; rows coloured SOLD/NI/CB/NO FIBER; publishes `_feed/gold_unenriched.json`. Tested with fakes only. `patches/ghl-status/`.
 - **GOLD DOTS IS LIVE AND LOADED (MEASURED 2026-09-04 ~22:0xZ):** workflow `c2e8d47c…` renamed to `Gold Dots`, published; **500 of the 505 `leads_gold` contacts enrolled, 500/500 OK, 0 errors** (5 skipped = tagged Not Interested). Every one of the 500 has a phone AND an address. Caveat the tags: 168 of the 500 ALSO carry `type-green`, 212 carry `gold-attnet-confirmed`, 20 `status-unverified` — the `Gold` tab will say which are on a real gold dot. `service not available` tag = 0 contacts → **no "no fiber" marker exists in GHL; nothing was stripped.** Tag them and it is one bulk remove.
@@ -76,7 +76,7 @@ dedupe fix (needs his "go" by name) → **4** archive the full main workbook →
 **5** the four missing hand-built tabs. His bare "yes" is NOT a go on a push —
 RULE 0 — each push gets its own yes.
 
-### (SUPERSEDED 2026-09-05 — the old Drive link works again; v2 is a renamed backup. Kept for the mechanism.) INSTALLER v2 IS BUILT AND IN DRIVE (2026-09-04 20:1xZ)
+### (HISTORY — the second file is gone; the one installer works again. Kept for the mechanism only.) THE 2026-09-04 INSTALLER REBUILD
 
 Patrick: *"fix the install link for both and drop in drive"* then *"same link as
 before but fix it"*. **THE SAME LINK WAS NOT POSSIBLE and he must be told: the
@@ -94,7 +94,7 @@ repo:**
 2. **It REPAIRS `RUN_HUNTER.bat` after downloading it** — one PowerShell string swap of the same dead sentinel. Launchers never self-update, so this is the only way to un-pin a PC. Prints `launcher repaired` or `launcher already OK`.
 3. **`pip install "gspread<6"`** (was unpinned) — gspread 6 is what made `Spreadsheet.client` an `HTTPClient` and killed the scraper's split-workbook redirect AND the Enriched Leads board. **This alone should get the second sheet working again at the next scraper launch, without deploying the `_gc()` helper.**
 
-Copy kept at `patches/installer-v2/`. Written CRLF, 115 lines, byte-verified by
+Copy kept at `patches/installer-v2/` (folder name is history; there is no v2 product). Written CRLF, 115 lines, byte-verified by
 sha256 before upload. **The `patches/launcher-sentinel/` hunter fix is still the
 permanent fleet-wide answer and is still UNPUSHED (RULE 0).**
 
@@ -1193,6 +1193,14 @@ and move, don't over-apologize.
 
 - Don't tell him to stop working or rest. Ever.
 - Don't add hard rules to the brain that he then has to deprogram. Record facts.
+- **He likes CONTINUITY OF PRODUCT. One name, one link, one icon.** Patrick,
+  2026-09-05: *"I DONT LIKE THAT VESRION 2 SHIT STOP THAT ITS JUST AN UPDATE."*
+  An update is an update — it does not get a "v2" in its name, a second Drive
+  file, a parallel link or a new icon. The software already self-updates from
+  the repo at every launch, so ship the change there and the one product he
+  already has picks it up. **He flagged this as a PREFERENCE, not a rule** —
+  his words, same turn: *"NOT RULE SUGGESTION PREFERANCE."* Treat it as taste
+  to work with, not a gate to enforce.
 - Ask before modifying his data or config.
 - Don't pile on security warnings; that isn't his concern at this stage.
 - Dave is the only one who dials — don't invent rep assignments.

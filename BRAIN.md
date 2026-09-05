@@ -12680,3 +12680,27 @@ visibility; it is already published.
 whether the defect is in the thing it downloads. Three sessions treated a stale PC as
 an installer problem; it was a repo problem every time.
 
+**2026-09-05 22:0xZ — PATRICK: *"I DONT LIKE THAT VESRION 2 SHIT STOP THAT ITS JUST AN
+UPDATE ADD TO THE BRAIN THAT I LIKE CONTINUETY OF PRODUCT"*, then, when I started
+writing it up: *"NOT RULE SUGGESTION PREFERANCE."***
+
+Recorded as a preference in "How Patrick wants to be worked with", NOT as a numbered
+rule — he has said before not to add hard rules he then has to deprogram, and he said
+it again explicitly this turn.
+
+**What it means in practice:** one name, one link, one icon, forever. `INSTALL_OPTIMUS.bat`
+is the product; an improvement to it is an update, not a new thing with a version in
+its name. The 09-04 session shipped a second Drive file called "installer v2" because
+the connector cannot rewrite a file's bytes — that was a workaround presented as a
+product, and it is exactly what he is objecting to.
+
+**DONE the same turn:** the second file `1xAdxVme…` is **trashed** (Drive trash,
+recoverable). `1IRnfbeQ…` is back to `INSTALL_OPTIMUS.bat` and verified working. The
+"v2" wording is stripped from CLAUDE.md and ORDERS.md; `patches/installer-v2/` keeps
+its folder name as history only. **There is one installer and one link again.**
+
+**The general shape of the mistake, worth carrying:** when a tool cannot edit a thing
+in place, the instinct is to make a second thing beside it. For Patrick that is worse
+than the bug — his team clicks links from old emails and old chats, and a parallel file
+splits the fleet. Fix the thing the old copy DOWNLOADS instead; the bootstrapper never
+has to change.

@@ -21,7 +21,7 @@ Orders are numbered and dated. A struck-through order is done. Newest at the bot
    (launch the hunter, click AT&T Employee at the chooser, sign in, Remember me).
    No Claude can do this step. Never record the credentials anywhere.
 
-## 1. ~~DESKTOP ONLY — push the deploy~~ DONE 2026-09-05 08:2xZ by the remote Claude (hunter commit a995b27). ONE PIECE LEFT FOR THE DESKTOP: `gh release upload installer patches/DEPLOY-2026-09-04/optimus/install/INSTALL_OPTIMUS.bat --clobber` so the emailed release link serves v2 (this session is refused release edits). Report the asset size (must be 8,704).
+## 1. ~~DESKTOP ONLY — push the deploy~~ DONE 2026-09-05 08:2xZ by the remote Claude (hunter commit a995b27). ONE PIECE LEFT FOR THE DESKTOP: `gh release upload installer patches/DEPLOY-2026-09-04/optimus/install/INSTALL_OPTIMUS.bat --clobber` so the emailed release link serves the current installer (this session is refused release edits).
 
 Follow `patches/DEPLOY-2026-09-04/README.md` in this repo exactly: copy the four files
 into the hunter repo (on its claude branch), commit, push, then
@@ -32,7 +32,7 @@ is 8,704 bytes. Report both numbers.
 ## 2. EVERY PC — after order 1 lands (2026-09-05)
 
 Relaunch the hunter from its Desktop icon. The console must print
-`BUILD_DATE : 2026-09-04`. If it prints an older date, run the v2 installer again
+`BUILD_DATE : 2026-09-04`. If it prints an older date, run the installer again
 (`INSTALL_OPTIMUS.bat` from `patches/DEPLOY-2026-09-04/optimus/install/`) and relaunch.
 Then leave the hunter running. Aim: the desktop stays on Milton, FL (it is logged in
 there). Laptops: aim targets come in the next order once your heartbeat shows up —
@@ -78,7 +78,7 @@ Report that word in REPORTS. It decides how autonomous this loop can ever be.
     logged in even if `auth_ok` is true (that is Google). Do 5a.
   - heartbeat older than 2 hours while the window is open → Ctrl+Shift+K, relaunch
     from the icon (answer N to "Terminate batch job?" so the launcher loop relaunches).
-  - console prints `Update looked stale/partial` → run installer v2 once, relaunch.
+  - console prints `Update looked stale/partial` → run the installer once, relaunch.
   - Never press Enter on an old-build prompt ("STEP 2 -> press Enter to scan"). That
     is the 08-18 build; reinstall instead.
   - Never touch `PAUSED.flag`, never press bare Enter in the console (a stray Enter
@@ -97,7 +97,7 @@ zero until the deploy (order 1) lands.
 
 ## STATUS (the remote Claude updates this block; newest line last)
 
-- 2026-09-05 08:2xZ — DEPLOY PUSHED: hunter branch commit a995b27. CDN verified serving BUILD_DATE 2026-09-04 + LAUNCHER_SENTINEL, scraper with dedupe gold/grey + gspread-6 client + five GHL tabs, launcher BUILD_DATE gate, installer v2 (8,704). Every PC un-pins at its next hunter launch; the scraper picks up its changes at its next launch. Feed at 08:13Z: heartbeat 14:51 LOGGED_OUT (LAPTOP-FJEEPATI, 08-24 build), scraper LAPTOP-RS9EHSLO 02:51 with 877 parked, sheet FULL. Release asset still 7,204 (desktop: the gh line in order 1). Next: order 2 (relaunch, confirm BUILD_DATE 2026-09-04), order 5a (measure the login), order 3 (pause the James blast).
+- 2026-09-05 08:2xZ — DEPLOY PUSHED: hunter branch commit a995b27. CDN verified serving BUILD_DATE 2026-09-04 + LAUNCHER_SENTINEL, scraper with dedupe gold/grey + gspread-6 client + five GHL tabs, launcher BUILD_DATE gate, installer rebuild. Every PC un-pins at its next hunter launch; the scraper picks up its changes at its next launch. Feed at 08:13Z: heartbeat 14:51 LOGGED_OUT (LAPTOP-FJEEPATI, 08-24 build), scraper LAPTOP-RS9EHSLO 02:51 with 877 parked, sheet FULL. Release asset still 7,204 (desktop: the gh line in order 1). Next: order 2 (relaunch, confirm BUILD_DATE 2026-09-04), order 5a (measure the login), order 3 (pause the James blast).
 - 2026-09-05 11:2xZ (HUNTER WATCH) — **THE MAPS SCRAPER IS RUNNING RIGHT NOW** on
   `LAPTOP-RS9EHSLO`: `LIVE_COUNTS_scraper.txt` updated **2026-09-05 06:06:40 CT**
   (~8 min before this check), ZIP **77070**, 1,115 businesses pulled this run,
