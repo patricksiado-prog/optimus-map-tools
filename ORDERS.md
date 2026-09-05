@@ -186,3 +186,12 @@ zero until the deploy (order 1) lands.
   (1,078 → 1,143 → 1,184 → 1,233 across four checks). Main workbook `14:14:10Z` moving,
   `8,484,584` flat — full, archive is the action. Feed unchanged. No `REPORTS/` entries.
   Not a `HUMAN NEEDED` line yet — that bar is 6 hours and we are at 2h19m.
+- 2026-09-05 15:1xZ (HUNTER WATCH) — no change, the clock is the only thing moving.
+  Fourth consecutive hourly lock touch on the split workbook: `15:01:50Z`, `fileSize`
+  **still 38,633** (12:01:29 → 13:01:35 → 14:01:43 → 15:01:50, flat throughout).
+  **LAPTOP-67UOPK24 has now gone 3h18m without capturing** (last row 11:56:49Z). The
+  3-step restart order from 14:1xZ stands unchanged and unactioned — **Ctrl+Up first.**
+  Scraper LAPTOP-RS9EHSLO 10:10:45 CT, ZIP 77005: 1,515 pulled, 0 added, **1,279 parked**
+  (1,078 → 1,143 → 1,184 → 1,233 → 1,279). Feed unchanged, no `REPORTS/` entries.
+  Still short of the 6-hour `HUMAN NEEDED` bar; it is crossed at **17:57Z** if nobody
+  touches that PC. Nothing written to BRAIN.md this hour — nothing changed.
