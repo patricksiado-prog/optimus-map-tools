@@ -1062,6 +1062,34 @@ not from this repo. Hunter code pushed here reaches nobody. Worse, any file in
 `_CORE_FILES` in `precise_fiber_hunter.py` **auto-deploys to every hunter PC** on
 next launch, so a push there is a deploy, not a commit.
 
+## CALL TRANSCRIPTS ARE AVAILABLE — PROVEN 2026-09-05
+
+**`get_message_transcription(messageId)` returns a real speaker-diarized, timestamped
+transcript.** Tested on `RHrs7nHwKJVIOGBJQv9Z` (outbound call to Carolyn Pope, 09-04
+23:15Z). **So reviewing and refining actual sales pitches is possible TODAY, no code
+change.** But the BULK endpoints **404 on this location** — `ghl_list_call_recordings`
+(`/phone-system/recordings`) and `get_call_reports` (`/reporting/calls`). **Transcripts
+come one call at a time**, found by walking conversations for `TYPE_CALL` messages.
+Never claim "I can pull yesterday's calls" as one action — it is a list-walk.
+
+## THE PROCESS AUDIT — the one finding (2026-09-05, full text in Drive `1IO_84MO…`)
+
+**The machine captures beautifully and sends beautifully, and has almost no way to record
+what came back.** 2 won / 0 lost means close rate is UNCOMPUTABLE, not low. 24 replied-yes
+uncontacted (oldest 67 days). 4 replies today, none actioned. A 9/4 sale still at
+"Contacted". `fiber-sms-sent` on contacts whose only text failed. `Territory Claims` at 0.
+**Every leak is the same shape. Fixing the loop outranks adding capability** — more leads
+into a system that records no outcomes just grows the backlog.
+
+**MEMORY, RESEARCHED (2026 practice):** three kinds — SEMANTIC (CLAUDE.md, works),
+**EPISODIC (the GAP — only prose, not queryable)**, PROCEDURAL (skills, work). The fix is
+structured events, `date | machine | event | number | source`, so a question becomes a
+lookup instead of a 12,000-line read. **A writing change, not a deploy.** Two rules from
+the same research that indict this file: keep the always-loaded file **under ~200 lines**
+(adherence degrades as it grows), and **only write a permanent rule on the SECOND
+occurrence** of a mistake — writing one per one-off is exactly how this file filled with
+rules Patrick never made.
+
 ## READING THE SHEET — LOAD THE `optimus-sheet` SKILL FIRST, EVERY TIME
 
 **Patrick, 2026-09-03: *"every fuking time I ask for data from the sheet u read it

@@ -13027,3 +13027,61 @@ LOOKING"* / *"I MAY TIGHTEN UP LATER BUT FOR NOW ITS OK."* **Recorded as a FOR-N
 a permanent one.** A future session should not treat it as settled forever, should not be
 surprised if he asks to tighten — and must never prompt him toward it. He raises it, or a
 real event does.
+
+**2026-09-05 23:2xZ — THE BIG ASK: *"AUTOMATE MY PROCESS ... RUN THE HUNTER RUN THE SCRAPER
+DEAL MACHINE GHL LISTEN TO SALES PITCHES REFINE THEM INCREASE TEXT EFFICNIENT ANALZE THE
+DATA MAYBE EVEN HELP W PAYROLL ... RESEACH AND MAKE AN INSTALLER."* Researched, audited,
+and one genuinely new capability PROVEN.**
+
+**CALL TRANSCRIPTS WORK. MEASURED, NOT ASSUMED (23:2xZ).**
+`get_message_transcription(messageId)` returned a real speaker-diarized, timestamped
+transcript for message `RHrs7nHwKJVIOGBJQv9Z` — an outbound call to Carolyn Pope
+2026-09-04 23:15:24Z, `source: workflow`, `userId AwpYRyCFnHx8IewqRM1z` — reading
+*"Hi. You've reached Caroline. I'm not available to take your call..."* (her voicemail).
+**So "listen to sales pitches and refine them" is available TODAY with zero code change.**
+CAVEAT, also measured: **the BULK endpoints 404 on this location** —
+`ghl_list_call_recordings` → `Cannot GET /phone-system/recordings`, and `get_call_reports`
+→ `Cannot GET /reporting/calls`. So transcripts come **one call at a time**, found by
+walking conversations for `TYPE_CALL` messages. Workable; just not one button.
+**Also spotted in that thread: Pope's missed inbound call went to `+18506951985` — Rodelio's
+Frontline number — not a TX number.**
+
+**THE AUDIT'S ONE REAL FINDING, written to Drive as
+`PROCESS AUDIT + WHAT AUTOMATION IS ACTUALLY POSSIBLE.txt`
+`1IO_84MONpl3YjTjtHn0u-EXnGrcLaVPS`:** *the machine captures beautifully and sends
+beautifully, and has almost no way to record what came back.* Every leak measured today is
+that same shape — 2 won / 0 lost so close rate is not merely low but UNCOMPUTABLE; 24
+replied-yes uncontacted, oldest 67 days; 4 replies today, none actioned; a sale from 9/4
+still sitting at "Contacted"; `fiber-sms-sent` on contacts whose only text failed;
+Territory Claims at 0 rows. **Fixing the loop outranks adding capability.**
+
+**RESEARCH (WebSearch, 2026 sources).** Agent memory splits three ways and Optimus has
+only one working: **SEMANTIC** (CLAUDE.md — works), **EPISODIC** (what happened when — this
+is the GAP; it exists only as prose in BRAIN.md and is not queryable), **PROCEDURAL**
+(skills — works). Standard loop is read-before-reasoning / write-after-acting, which the
+session hooks and the brain counter already do. **The missing piece is episodic events in
+STRUCTURED form** — `date | machine | event | number | source` — so "how many rows a day
+this week" or "when did opt-outs start climbing" is a lookup, not a 12,000-line read.
+**That is a WRITING change, not a software change** — the highest-value memory improvement
+available and it needs no deploy.
+
+**TWO GUIDANCE POINTS THAT INDICT THE CURRENT FILE:** (1) keep the always-loaded memory
+file **under ~200 lines** because instruction-following measurably degrades as it grows —
+CLAUDE.md is far over and regrows after every archive; (2) **only write a permanent rule on
+the SECOND occurrence** of a mistake, because the first may be a fluke — writing one per
+one-off is precisely how the file drowned in rules Patrick never made, which is what he
+caught an hour earlier.
+
+**ON THE INSTALLER ASK — answered no, consistent with his own earlier call.** An installer
+is not the gap. `INSTALL_OPTIMUS.bat` already deploys everything and self-updates at every
+launch (re-verified 23:17Z). The three real gaps are `ghl_token.txt` beside the scraper,
+one `--claim` per laptop, and somebody recording outcomes.
+
+**ON RUNNING THE HUNTER/SCRAPER — restated with the two and only two ways past it:** the
+**desktop Claude app** (runs on the laptop, only surface that can execute there — four jobs
+already queued for it), or **a code change** so the hunter reads its assignment from the
+feed and auto-claims. The latter needs his explicit go and is NOT started.
+
+**ON PAYROLL — partly possible, and the constraint is not technical:** the sales data is in
+GHL and can be totalled, but Ed's standing rule keeps commission figures away from the VAs,
+so the destination has to be chosen deliberately.
