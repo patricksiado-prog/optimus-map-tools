@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 11:2xZ (SCRAPER IS RUNNING RIGHT NOW on LAPTOP-RS9EHSLO but on the PRE-DEPLOY build — restart it to get dedupe/gspread-6/five tabs; hunter blind 69h, needs a human at the AT&T chooser; deploy a995b27 serving; James blast; 3 uncalled replies)
+# CURRENT STATE — updated 2026-09-05 12:0xZ (THE HUNTER IS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -19,13 +19,19 @@ Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
 
-### RIGHT NOW, 11:2xZ (MEASURED off the live feed, no cache)
+### RIGHT NOW, 12:0xZ (MEASURED off the SHEET, not the feed — detail: BRAIN.md last section)
 
-- **THE MAPS SCRAPER IS RUNNING** on `LAPTOP-RS9EHSLO` — `06:06:40 CT`, ZIP **77070**, 1,115 businesses pulled, **0 to the sheet, 1,078 parked, SHEET FULL**. It is on the **pre-deploy build** (`tabs.json` stamped 09-04 14:26:48 = its launch). **Close it and relaunch to get dedupe + gspread-6 + the five GHL tabs.** A running scraper never self-updates.
-- **THE HUNTER HAS BEEN BLIND 69+ HOURS** — heartbeat 09-04 14:51:49 `LOGGED_OUT`, LAPTOP-FJEEPATI, fingerprint 3d2a6779 (08-24 build). Only a human clicking through the AT&T access chooser unblocks it.
-- **The deploy is serving:** CDN hunter reads `BUILD_DATE = "2026-09-04"` + `LAUNCHER_SENTINEL`. Every PC un-pins at its next hunter launch.
-- **Release asset size is now COULDN'T READ** (proxy 401 on the release CDN) — "still 7,204" is ASSUMED. `gh release upload` stays a desktop job.
-- **The desktop's Claude Code is open but its bridge is `disconnected`** (`computer_unreachable` since 09-04 16:47Z). One command in that window fixes it: **`/remote-control`**.
+- **THE HUNTER IS CAPTURING.** A **fifth PC, `LAPTOP-67UOPK24`**, run `20260905-062448`, swept **ANGLETON TX 77515** from **06:25:00 to 06:56:49 CT** and wrote **551 rows**: **GREEN 137 · GREY 146 · GOLD 4 (= 2 unique addresses, 321 E Cedar St Apt 2 and Apt 4)**. Penetration 51.6%.
+- **THE SPLIT WORKBOOK IS TAKING HUNTER ROWS FOR THE FIRST TIME** — `1DXu-nuQ…` went `fileSize` **20,328 → 38,633**, `modifiedTime 2026-09-05T12:01:29Z`. The 09-03 split design works.
+- **THE FEED UNDER-REPORTS; THE SHEET IS THE TRUTH.** `heartbeat.json` still says `20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI` — a different, stale machine. **Never declare the hunter blind from the heartbeat alone.** I did exactly that at 11:2xZ and was wrong.
+- **MAIN WORKBOOK CONFIRMED FULL AND WRITE-DEAD:** `modifiedTime 2026-09-05T11:45:22Z` moving, `fileSize 8,484,584` **flat**. Scraper on LAPTOP-RS9EHSLO 06:06:40 CT: 1,115 businesses pulled, 0 added, **1,078 parked**. It is on the **pre-deploy build** — close and relaunch to get dedupe + gspread-6 + the five GHL tabs.
+- **PIPELINE IS NO LONGER WRITE-ONLY: 2 WON, 0 LOST.** Shahrukh Majeed (211 Carey Ridge Ct, Fiber 1 GIG, 08-31) and Janell Dumas (Fiber 300, 08-29). The live alarm is now **0 lost** — a close rate needs a recorded loss.
+- **BACKLOG: 24 `replied-yes` not closed, oldest 67 days** (2026-06-30). 3 of the 24 are texting opt-outs — call, never text.
+- **THE "JAMES" BLAST IS STILL RUNNING** from `+18506951985` — 8 STOPs in the 30 newest threads, five 772/561. **Second defect: its auto-replies quote a flat `$30/month`** under an AT&T signature.
+- **CORRECTION: Joseph Sandefur is `+1 267-303-6475`,** not 267-243-3439.
+- **DealMachine 20,848 of 30,000, 9,152 used this cycle** (Sep 2 → Oct 2).
+- **Release asset size: COULDN'T READ** (proxy 401). `gh release upload` stays a desktop job.
+- **Patrick has at least FIVE hunter/scraper PCs** — RS9EHSLO, FJEEPATI, VCRE1E8, **67UOPK24**, plus the HP. **Ask which PC before reasoning about any console.**
 
 ### TONIGHT, 01:2xZ — what the evening edition found (detail: BRAIN.md last section)
 

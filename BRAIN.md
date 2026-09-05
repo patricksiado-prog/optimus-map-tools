@@ -11906,3 +11906,93 @@ measured. The `gh release upload installer ... --clobber` line stays open on the
 `session_01NUT7XFkFbHxtMj8Veig5j5` still `connection_status: disconnected`,
 `last_init_error computer_unreachable` at 2026-09-04 16:47Z. `ListAgents` shows no peer.
 One command in that window fixes it: **`/remote-control`**.
+
+## 2026-09-05 12:0xZ — A FOURTH HUNTER PC IS CAPTURING AND THE FEED NEVER SAW IT. THE SPLIT WORKBOOK IS TAKING ROWS. (MEASURED — morning edition)
+
+**This corrects, in the same day, what I told Patrick at 11:2xZ: "the hunter has
+been blind 69 hours." That was true OF THE FEED and false OF THE SHEET, and the
+sheet wins.** Read via the Drive connector on the split workbook
+`1DXu-nuQ…` at 12:01Z (path 1 of the five — a bounded content export, parsed
+locally):
+
+| MEASURED | value |
+|---|---|
+| Machine | **`LAPTOP-67UOPK24`** — a FIFTH hostname, never seen in this brain before |
+| Run id | `20260905-062448` |
+| Capture window | **06:25:00 → 06:56:49 CT today**, still running at read time |
+| Rows written today | **551**, every one in ZIP **77515** — ANGLETON (280) + HOLIDAY LAKES (7) by explicit city, rest sharing the ZIP |
+| Colours (rows whose Status survived the export) | **GREEN 137 · GREY 146 · GOLD 4** |
+| Gold detail | 4 rows = **2 unique addresses**: `321 E CEDAR ST APT 2` and `APT 4`, Angleton, each written twice |
+| Penetration | grey ÷ (green+grey) = **51.6%** |
+| Split workbook | `fileSize` **20,328 → 38,633**, `modifiedTime 2026-09-05T12:01:29Z` |
+
+**WHAT THIS PROVES, and none of it was provable yesterday:**
+1. **A PC IS LOGGED INTO THE AT&T MAP RIGHT NOW.** It is classifying dots into
+   three colours with lat/lng — that is not a login page. The 09-04 rule still
+   holds (`raw_features > 0` proves AT&T) and this is the sheet-side equivalent.
+2. **GOLD CAPTURE WORKS** — 4 rows carry `Upgrade Customer - On Copper, Fiber
+   Available`, written today.
+3. **THE SPLIT WORKBOOK IS RECEIVING HUNTER ROWS FOR THE FIRST TIME.** It held
+   two tabs and 84 enriched rows on 09-04; it now carries 652 table rows across
+   at least three formats (28-col enriched, 14-col gold w/ Tier+Build Code, 11-col
+   grey). The 09-03 split design is live and working.
+
+**THE LESSON, and it is a rule now: THE FEED UNDER-REPORTS. THE SHEET IS THE
+TRUTH.** `_feed/heartbeat.json` still reads run `20260904-145042` / `LOGGED_OUT`
+/ `LAPTOP-FJEEPATI`. That is a *different, stale machine* and it says nothing
+about the fleet. **Never again declare the hunter blind from the heartbeat alone
+— check the split workbook's `modifiedTime` + `fileSize` first.** A PC without
+git, or one that never pushes the feed, is invisible to `_feed/` and fully
+visible in the sheet.
+
+**PATRICK HAS AT LEAST FIVE HUNTER/SCRAPER PCs:** LAPTOP-RS9EHSLO,
+LAPTOP-FJEEPATI, DESKTOP-VCRE1E8, LAPTOP-67UOPK24, plus the HP. **Ask which PC
+before reasoning about any console, and never generalise one machine's build to
+the fleet.**
+
+**THE MAIN WORKBOOK IS CONFIRMED FULL AND WRITE-DEAD:** `modifiedTime
+2026-09-05T11:45:22Z` (moving) with `fileSize 8,484,584` (flat). Moving mtime +
+flat size = touched, nothing landing. Scraper on LAPTOP-RS9EHSLO at 06:06:40 CT:
+1,115 businesses pulled, 0 added, 1,078 parked.
+
+**PIPELINE IS NO LONGER WRITE-ONLY — 2 WON, 0 LOST (MEASURED).** `Shahrukh
+Majeed | 211 Carey Ridge Ct | Fiber 1 GIG` won 2026-08-31, and `Janell Dumas —
+Fiber 300 — order 99-615780212210199` won 2026-08-29. The standing "0 won" alarm
+is retired; the live one is **0 lost** — a close rate needs a recorded loss.
+
+**BACKLOG, live:** 29 contacts tagged `replied-yes`, **24 not closed, 3 of those
+opted out of texting**. Oldest **2026-06-30 — 67 days** (Gigi Huang
+832-256-5673, Hair & Beauty by Nikki 281-736-6652). Trend 22/7 (08-22) → 25/8
+(08-27) → **29/3 today** — the unreachable share fell for the first time.
+
+**THE "JAMES" BLAST IS STILL RUNNING:** 8 of the 30 newest conversations end in
+STOP; five are 772/561 Port St. Lucie (Heysquierdo, Morris, Yanni, Simpson,
+Louis — *"I agree Stop this getting out of hand"*). Number `+18506951985`.
+**Second defect found today: the auto-replies quote a FLAT `$30/month, 10x
+faster, 2 free months, no install fees` under an AT&T signature** — that breaks
+the never-quote-a-flat-price rule and is exactly what earns a 30007.
+
+**CORRECTION — Joseph Sandefur is `+1 267-303-6475`, not 267-243-3439.** The old
+number in this brain was wrong.
+
+**DealMachine MEASURED 12:0xZ: 20,848 of 30,000 left, 9,152 used this cycle**
+(properties 4,273 / people 4,879), cycle Sep 2 → Oct 2. Yesterday's read was
+20,985, so ~137 since — small, and no longer the unexplained burn.
+
+**GHL health:** provider healthy — every message in the 30 newest conversations
+is `TYPE_SMS`/`TYPE_CALL` with a real number, zero `TYPE_CUSTOM_SMS`. 11 numbers
+live (six 850, five 346).
+
+**COULDN'T READ:** release asset size (proxy 401 on the release CDN — so "still
+the old installer" is UNVERIFIED, not "broken"); any same-day competitor outage
+(the Houston Xfinity vandalism story carries no date pinnable to today); any
+aimable new-build news (corporate totals only, plus one Minnesota/Lumen item).
+
+**INBOX, actionable:** RSI marked Patrick's **Background Authorization / FCRA
+form MISSING** (09-04 19:52) — the other three forms are `Processing`; that one
+blocks a rep. Two Google account recoveries + two verification codes on his
+account 09-04 19:56 and 22:03 — probably the factory-reset PC, worth confirming.
+
+Morning edition sent as three separate colour-coded emails (Patrick `1a0717e2f07b009b`,
+Dave `1a0717ac6b0ae068`, Churchie `1a0717bc7ce263b9`). VA copies verified free of
+commission figures and of every line of the personal block.

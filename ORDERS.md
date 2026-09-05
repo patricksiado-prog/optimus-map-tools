@@ -116,3 +116,15 @@ zero until the deploy (order 1) lands.
   Order 5a (a human clicks through the AT&T access chooser, then report
   `LOGIN: auto | needs-typing | needs-code`) is the only thing that unblocks capture.
   Second, smaller: relaunch the Maps Scraper on LAPTOP-RS9EHSLO so it picks up a995b27.
+- 2026-09-05 12:0xZ (MORNING EDITION) — **ORDER 5a IS SATISFIED ON ONE PC WITHOUT ANYBODY REPORTING IT.**
+  `LAPTOP-67UOPK24` (a machine not previously in this file) is logged into the AT&T
+  map and captured **551 rows in ANGLETON 77515 between 06:25:00 and 06:56:49 CT**
+  — GREEN 137, GREY 146, GOLD 4 (2 unique addresses) — **into the split workbook**,
+  which went 20,328 → 38,633 bytes. **The `_feed/` heartbeat knew none of this**
+  (still `20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI`). **New standing rule for
+  this watch: check the split workbook's `modifiedTime` + `fileSize` BEFORE calling
+  the hunter blind.** Main workbook confirmed full: mtime moving 11:45:22Z, size flat
+  8,484,584. Orders still open: 1 (release upload), 3 (pause the James blast — 8 STOPs
+  in the 30 newest threads), and the LAPTOP-RS9EHSLO scraper relaunch.
+- **The earlier `HUMAN NEEDED — hunter blind 69h` line is WITHDRAWN.** It was measured
+  off the feed and the feed was not looking at the machine that was working.
