@@ -12704,3 +12704,22 @@ in place, the instinct is to make a second thing beside it. For Patrick that is 
 than the bug — his team clicks links from old emails and old chats, and a parallel file
 splits the fleet. Fix the thing the old copy DOWNLOADS instead; the bootstrapper never
 has to change.
+
+**2026-09-05 22:1xZ — PHOTO CONFIRMS THE RENAME LANDED ON THE HP LAPTOP.** Patrick's
+Drive `/drive/recent`, `INSTALL_OPTIMUS.bat` selected, browser download bar reading
+**7.0 KB** — that is 7,204 bytes, so the file he pulled is the corrected 08-23 copy at
+`1IRnfbeQ…` and NOT the 8,704-byte second file (now trashed). **The rename is proven
+from his side, not just from the connector's response.**
+
+Same photo, two other things worth having:
+- **BOTH state workbooks are visible in his Drive Recent** — two `OPTIMUS LEADS — …`
+  rows alongside two `ATT FIBER LEADS` rows. Independent confirmation that
+  `1qMjCktl…` (TX) and `1kE7Xsjc…` (NON-TX) exist on HIS account, not only in the
+  connector's reply.
+- **It is the HP laptop** (HP logo on the bezel). Per the 09-04 record that is the PC
+  on the **08-24 build** whose `self_update()` prints *"SELF-UPDATE FAILED -- git said:
+  fatal: not a git repository"* — it has no git, so it can NEVER self-heal. **Running
+  this installer is the only thing that moves it**, and it now pulls BUILD_DATE
+  2026-09-04 hunter + the 3ab3686 scraper + the fixed `RUN_HUNTER.bat`.
+
+Told him one step only, per his 09-04 standing instruction: run the file, report back.
