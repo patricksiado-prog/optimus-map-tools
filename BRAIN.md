@@ -12141,3 +12141,52 @@ the process is alive and holding the AT&T session a human had to log in by hand.
 Scraper LAPTOP-RS9EHSLO 12:33:16 CT: 1,613 pulled, 0 added, **1,334 parked** (1,078 →
 1,143 → 1,184 → 1,233 → 1,279 → 1,318 → 1,322 → 1,334 across the day — the rate flattened
 after 11:00 CT, which is ZIP 77005 running out of new businesses, not a fault).
+
+## 2026-09-05 — THE "JAMES" TEMPLATE, CAPTURED VERBATIM AND MEASURED. IT IS NINE SEGMENTS.
+
+Pasted into the session. First time the full body has been seen rather than inferred from
+`lastMessageBody`. Recorded here so it can never be re-derived:
+
+> Hi, this is James from a local business fiber installation team. Fiber is now available
+> at 1730 Ne 23rd Ter, Jensen Beach, Fl 34957, and many businesses or homeowners in your
+> area are upgrading to faster internet at the same or even lower monthly cost.
+> For a limited time, qualifying plans may include:
+> • No installation cost • No annual contract • **Up to 4 months of service at no
+> additional charge**
+> Would you like me to send you the available plans for your address?
+> Reply STOP to unsubscribe.
+> Thanks, AT&T
+
+**MEASURED (python, this turn): body = 510 characters, and the `•` bullets are non-GSM-7,
+which forces UCS-2 encoding at 67 chars/segment. That is EIGHT segments — NINE once GHL
+appends its own 27-character STOP line.** The standing rule is ONE segment / ~130 body
+characters. **So every send costs 9× and presents 9× the surface a carrier filters on.**
+The bullets alone are the difference between 4 segments and 8: one emoji-class character
+doubles the bill on the whole message.
+
+**SIX DEFECTS, all in one template:**
+1. **"James"** — not a name on the team (Dave, Ed, Zack, Ara, Daniel, Valmore, Patrick).
+2. **"a local business fiber installation team"** — we are an authorized dealer, not an
+   installer, and this goes to homeowners as well.
+3. **"Thanks, AT&T"** — signs as the carrier. The sanctioned identification is *"Patrick
+   with AT&T Fiber"*, which is a dealer representing AT&T, not AT&T itself.
+4. **Hand-written `Reply STOP to unsubscribe.`** — GHL appends its own → doubled STOP.
+5. **NINE SEGMENTS** (above).
+6. **"Up to 4 months of service at no additional charge" — UNVERIFIED AND ESCALATING.**
+   The other live template says **2** free months; this one says **4**. A promo number
+   that drifts between templates is copy nobody is checking. WebSearch this turn found no
+   AT&T offer of free months: current AT&T Business fiber promos are **monthly discounts**
+   ($40/mo off 1 GIG, $20/mo off Managed Internet Backup, +$30/mo for adding wireless) and
+   **free installation** — not free service months. **Treat "4 months free" as a promise
+   we cannot keep until AT&T documentation says otherwise.**
+
+**Jensen Beach FL 34957 is Martin County, Treasure Coast** — adjacent to the Port St.
+Lucie 772/561 numbers that produced five of today's eight STOPs, so this is the same
+blast still working the same region. FL is a legacy ILEC state, so the TERRITORY is fine;
+the copy and the volume are the problem, not the geography.
+**`search_contacts` returns 0 for both "Jensen Beach" and "1730 Ne 23rd Ter" — but that
+tool matches tags and source, not `address1`, so ZERO IS NOT PROOF the recipient is not
+ours.** Do not record it as an outside number.
+
+**NOT ACTED ON — RULE 0 and the chaser routine's own "never pause or edit a GHL
+workflow".** The recommendation stands: pause `+18506951985`, then replace the copy.
