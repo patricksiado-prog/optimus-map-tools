@@ -12190,3 +12190,38 @@ ours.** Do not record it as an outside number.
 
 **NOT ACTED ON — RULE 0 and the chaser routine's own "never pause or edit a GHL
 workflow".** The recommendation stands: pause `+18506951985`, then replace the copy.
+
+## 2026-09-05 18:2xZ — "I WANT THE ADDRESS IN NOTES WHEN I CALL." THE RULE EXISTED; IT WAS NOT BEING EXECUTED. FOUR NOTES WRITTEN.
+
+Patrick, again: *"and i want address in notes when I call"*. **The rule has been in
+CLAUDE.md since 2026-09-03 ("THE ADDRESS GOES IN THE NOTE. ALWAYS"). He is not asking for
+a policy — he is telling me it is not happening on the records he is about to dial.**
+So the fix was to write them, not to re-record the rule. Four notes created in GHL, each
+opening AND closing with the full street address, in the recorded shape:
+
+| Contact | Address written into the note | Note id |
+|---|---|---|
+| **James L Barnes** `mddEhEgmmNqGV5Cxg810` | **5717 Marigold Ave, Milton, FL 32570** | `ZBJAAiNHBM6zJ1N8LhQk` |
+| **Joseph Sandefur** `NBswtmWDlO6V33Wu89hb` | **2349 SE Hallahan St, Port Saint Lucie, FL 34952** | `iH4MgOQi2rNPJbqMBb4G` |
+| **Carolyn D Pope** `u4hV2MO5YihOjgqHmMiU` | **8410 Fairbrook Ln, La Porte, TX 77571** | `vvJqITbh7FUIxlAXnSpo` |
+| **Daniel K Jacobs** `ZDZWq3wOC4ABH9MphxTL` | **5673 Zinnia Ave, Milton, FL 32570** | `Z2V23r8DSvqA0ZdmQOcT` |
+
+**NEW AND IMPORTANT — BARNES IS GOLD, AND HE IS THE BEST LEAD WE OWN.** His record carries
+`gold`, `gold-attnet-confirmed`, `leads_gold` and **`gold upgrade - never dialed`**, and
+his email is `jsbarnes1992@att.net`. That puts him in the 192-row att.net pool — **the
+only gold we own with evidence attached** — and he has said in writing he will have it
+installed. A copper-upgrade customer who has already agreed to buy is the single
+highest-value record in the CRM, and an auto-responder closed him out.
+**His dot is `status-unverified`, so never quote him a colour; the att.net address is the
+proof, not the dot.**
+
+**BARNES AND JACOBS ARE BOTH MILTON / EVERGREEN ESTATES** (`5717 Marigold Ave` and
+`5673 Zinnia Ave`, both 32570, both `evergreen-estates-milton`, `seq2-t1-milton`,
+`milton_b1`). That is the 117-door pocket where we hold 141 records. **Two of the four
+live leads in the whole business today came out of one Milton pocket** — which is an
+argument for working it, not for spreading wider.
+
+**Both also carry `dnc-flagged` — REGISTRY DNC, which we contact anyway.** The note says
+so explicitly on each, because a rep who sees `dnc` and stops has thrown the lead away for
+the wrong reason. Jacobs is call-blocked for a completely different reason — **he wrote
+"No calls thanks"** — and the note separates the two so they can never be confused.
