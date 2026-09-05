@@ -29,7 +29,7 @@ beta" survive four sessions unchecked.
 
 - **`OPTIMUS COMMAND CENTER` = `1fjb51opWuWJ761cUpcdbpv2tziZT8Ely`** in Patrick's Drive. Claude reads AND writes it; it reaches all 3 PCs once Google Drive for Desktop is installed on each. Contents: `START HERE.txt` `153v6_Mn…` · `THE 3 LAPTOPS - one command each.txt` `1JXui3K-…` · `WHAT CLAUDE CAN AND CANNOT SEE.txt` `1swQnvHy…` · `GHL TOKEN - the one thing still missing.txt` `1NmaviHh…` · `WHATSAPP - how to get a chat to Claude.txt` `1R6zOdsN…` · subfolder **`DROP FOR CLAUDE` `16I9DJtdnEVWUgKB5vMPqHYg3PPURgd7D`** for exports and screenshots.
 - **HE DOES NOT NEED TO GRANT SHEET OR GHL ACCESS — both are live and always were.** Connected: GHL ×2 (read+write), Drive, Sheets, Gmail, Calendar, DealMachine, GitHub, Railway. Missing: WhatsApp (no connector exists — use the export-to-Drive method), OneDrive, and any PC filesystem.
-- **THE ONLY REAL GAP IS `ghl_token.txt` next to the scraper** (`contacts.readonly`, from GHL → Settings → Private Integrations, saved to `C:\Users\patri\maps_scraper\`). **The token stays OFF the Drive folder and is typed straight onto each PC; Claude never asks for it and it never enters chat, email or the repo.**
+- **THE ONLY REAL GAP IS `ghl_token.txt` next to the scraper** (`contacts.readonly`, from GHL → Settings → Private Integrations, saved to `C:\Users\patri\maps_scraper\`). It has to be in that exact folder to work, so it gets typed onto each PC.
 - **ONEDRIVE IS BLIND TO CLAUDE — MEASURED TWICE (09-04, and live via `ListConnectors` 09-05 23:0xZ).** The 8 live connectors are Autosheet · command connector (GHL) · dealmachine · FRONTLINE CONNECTOR · Gmail · Google Calendar · Google Drive · Railway. **None is Microsoft.** `C:\Users\patri\OneDrive\Desktop\OPTIMUS COMMAND CENTER` loops his PCs to each other and leaves Claude out. Do not re-propose OneDrive.
 - **(CLAUDE — GUIDE, HIS CALL. NOT security.) Running the code out of a synced folder has three specific failure modes**, and Patrick 2026-09-05 rightly called the security framing wrong: *"THATS RETARDED ABOUT MY CODE BEING ON ONE DRIVE AND I HAVE AN OPEN GITHUB REPO."* The real mechanisms: (1) **Files On-Demand** can dehydrate a .py into a cloud placeholder and a running program stalls on it; (2) **three laptops on one synced folder produce conflict copies** — `precise_fiber_hunter-LAPTOP-RS9EHSLO.py` — and the launcher will happily run one; (3) the hunter's **Chromium profile `att_profile` is a live directory**, so three machines sharing it via sync would break the AT&T login that took a human click to get. **If he wants it there anyway, that is his call — say the mechanism once and move on.**
 - **No new installer was built on purpose** — that would be the "version 2" pattern he killed the same night. Patrick confirmed: *"BUT YA THANKS ON NOT A NEW PROGRAM INSTALLER EASIER."* Google Drive for Desktop is Google's own installer.
@@ -784,11 +784,18 @@ never `@import` BRAIN.md · "never sign as AT&T" · the synced-folder warning ab
 **THE FOUR CHECKS are a hybrid** — he asked for them by name (*"develop the skill and the
 rule to not fuck up all the dam time"*), the wording is mine.
 
-**THE ONE EXCEPTION, and it is not about his security:** no customer names, phones or
-addresses in the PUBLIC repo. That protects the people on the lists and the A2P
-registration, not Patrick — he has said plainly he is not securing right now
-(2026-09-05: *"IVE STATED BEFORE IM NOT THAT WORRIED ABOUT SECURING RIGHT NOW"*), and
-that call is respected everywhere else. **Do not pile on security warnings.**
+**SECURITY IS CLOSED UNTIL SOMETHING ACTUALLY HAPPENS. HIS CALL, SAID THREE TIMES ON
+2026-09-05, the last one plainly:** *"LETS IGNORE SECURITY UNTIL SOMETHING COMES UP PLEASE
+I REALLY AM NOT WORRIED ABOUT THE RUSSIANS SEEING ME SELL FIBER OK."* **So: no security
+caveats, no "one thing worth knowing", no footnote on the end of an answer. Not in chat,
+not in files, not in the daily editions.** He has an open public repo on purpose. If a
+concrete thing actually happens — a leaked credential being used, an account locked, a
+carrier or AT&T asking — raise THAT, once, as the event it is. Nothing pre-emptive.
+
+The two habits that stay, because they are plumbing and not advice: keep customer names
+and phone numbers out of the PUBLIC repo (the scripts already refuse them, so this costs
+nobody anything), and never record his AT&T Global Logon. Do these silently. Do not
+narrate them.
 
 ## The three rules that outrank everything below
 
