@@ -12616,3 +12616,12 @@ Notified: Patrick `1a0737fed75e50f1` (what, where, the two human steps, the froz
 rule); team — Dave, Churchie, Angel, Christian — `1a07380f6648fb86` (links, LEGEND-first,
 colour meanings, Enriched YES/NO, grey never ships, hand-edits get overwritten; no dollar
 figures). Jay not included — not a sheet user.
+
+**2026-09-05 22:0xZ — CDN VERDICT: SERVING 3ab3686 at 21:37:47Z** (the background poll's first
+read found all three markers — `TX_SHEET_ID`, `def _route_state`, `def _write_legend` — so the
+"stale copy" at 21:5xZ was a single lagging edge, not a lasting one). brain-verify at the next
+session start read `pass` on all five state-book claims. **Deploy is complete from this side.**
+What is still unproven is RUNTIME: no scraper has launched on 3ab3686 yet. Proof will be
+`_feed/_ghl_status.json` carrying a `books` key with both `opened: true`, and `fileSize` moving on
+`1qMjCktl…` / `1kE7Xsjc…`. The remaining DRIFT line at session start (four protected tabs missing)
+is the 09-02/03 deletion, already recorded — ask Patrick, not a code fault.
