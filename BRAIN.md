@@ -12505,3 +12505,46 @@ cadence, which is the second static reading I said at 19:1xZ would settle it. So
 capture fleet is down and neither machine needs a reinstall: the hunter needs **Ctrl+Up**,
 the scraper needs a **close-and-relaunch** (which also lands the a995b27 fixes it has been
 missing all day).
+
+## 2026-09-05 21:2xZ — THE SHEET SPEC, IN PATRICK'S WORDS. THIS IS THE CONTRACT.
+
+Restated tonight, twice, and now the one everything gets built against:
+
+> **2 sheets: TX and NON-TEXAS. Tabs: Green, Gold, Grey, Biz, Fiber Biz. Columns: Address,
+> Name, Cell. Color coded. GHL + DealMachine enrichment. Hunter and scraper both write to
+> it, in sync. The brain knows the layout and Claude knows it. Installer link works, the
+> software still self-updates. Notify everyone when finished.**
+>
+> **WHY: "ghl data in the sheet so we see what enriched / color code the sale so someone
+> can read the sheet and use it w no ai / we don't enrich the same stuff / and better
+> analysis."**
+
+**The four purposes, because they decide design choices:**
+1. **See what is enriched** → every row carries `Enriched` (yes/no) + `GHL Contact ID` +
+   `Name` + `Cell`. Blank = not yet enriched. That is the DealMachine spend guard.
+2. **Readable by a human with NO AI** → colour = sale state, and **the legend must be ON
+   the sheet** (a header note or a `LEGEND` tab), not in this brain. A rep opening the tab
+   cold must understand it in ten seconds.
+3. **Never enrich the same thing twice** → address + `Enriched` is the dedupe key; the
+   scraper's gold/grey dedupe (deployed a995b27) handles the row side.
+4. **Better analysis** → same five tabs, same columns, in both workbooks, so TX and NON-TX
+   can be compared like-for-like.
+
+**WHAT ALREADY MATCHES THIS (deployed a995b27, never yet run on a PC):** `sync_ghl_status`
+builds `Green Gold Grey Biz Fiber Biz` with `Name Cell Email GHL Contact ID Disposition DND
+Last Updated Synced At` + `Enriched`, colours SOLD / NI / CB / NO FIBER, needs
+`ghl_token.txt` next to the scraper. **It targets the SPLIT workbook.**
+
+**WHAT DOES NOT YET:**
+- **TX / NON-TX routing.** Shells exist — `OPTIMUS LEADS — TEXAS`
+  `1XkiFxn5E6AugHl7EAn02ivGwix0Mus1XiY1mM-g0_ls` and `OPTIMUS LEADS — NON-TEXAS`
+  `1rVvg5NaF1exOvnP9F4PPmD8_AEgsDo9DLxRdA3dDb48`, both created 2026-09-05 09:26Z, 1,024
+  bytes (ChatGPT's). Neither program routes to them. Route by `State` in both programs:
+  `TX` → TEXAS, everything else → NON-TEXAS.
+- **Legend on the sheet** — small, not built.
+- **Direct DealMachine column** — today DealMachine data reaches the sheet only via GHL.
+- **Proof on a real PC** — nothing has launched since the deploy; both machines stopped.
+
+**Division of labour, stated to Patrick:** Claude owns the two programs and the brain;
+ChatGPT owns the GHL scrub and the dialer lock. Patrick flagged token spend — keep turns
+short, no re-reading what is already measured.
