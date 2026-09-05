@@ -11696,3 +11696,46 @@ reads with plain curl. First order for the desktop: run
 **15. Session dropped ~23:00Z-01:09Z; the PM routine `trig_01RjAUBz…` fired
 22:37Z into the dead session and queued. Patrick 01:09Z: *"back??"* Running the
 evening edition 2.5 h late (8:09pm CT). Nothing else new.**
+
+### EVENING EDITION SEP 4 — SENT 01:1xZ (8:1xpm CT, 2.5 h late), ALL LIVE READS
+
+Three emails sent: Patrick `1a06f21324515374`, Dave `1a06f21609ae97f1`,
+Churchie `1a06f21e3687c6bc`. Status feed `OPTIMUS FEED status 2026-09-04
+evening` (9 rows, Drive `1rG03Uk7…`) created in the feed folder — lands at the
+next scraper launch, BUT the scraper's feed-folder read is dead on gspread 6
+until the deploy lands or installer v2 is run (see gspread-6 patch).
+
+**MEASURED:**
+- **A NEW BLAST IS RUNNING TONIGHT** from `+18506951985` (number "4") by GHL
+  user id `epWlnB5BMcpeUpMOMH5E` (get_users → 422, name unknown), template
+  *"Hi, this is James from a local business fiber installation team. Fiber is
+  now available at <address>… Up to 4 months of service at no additional
+  charge… Thanks, AT&T"*, to Port St. Lucie / Jensen Beach / Palm Beach (772,
+  561). Sends 22:54Z-00:46Z; STOPs within minutes (Heysquierdo 01:02Z, Morris,
+  Yanni, Simpson) + Nephterline Louis *"how you got my number and my address I
+  don't have AT&T… Stop this getting out of hand"*. "James" is nobody on the
+  team; identification rule broken. Told Patrick and Churchie to pause it.
+- **11 STOPs visible in the last 40 conversations** (5 James blast, 4 Milton
+  re-text: Ashley/Lunsford/Livingston/Sharp, Stump 253, Nolan ×2, Sanchez).
+- **3 replies today not called back:** Joseph Sandefur ("Home" 22:07Z, 2 dials
+  no connect), James L Barnes (att.net, *"I'll wait till Daniel calls me or
+  sends Email"* 22:41Z — WAITING ON DANIEL), Daniel K Jacobs ("Sure" 17:53Z,
+  4 dials, 2 FAILED from the released `+13464893489`). Knoblock: *"We have Wed
+  tech coming"*.
+- **Marchlewski `WCsztGZyQAJQ7hiqpyel` asked "put me on your do not contact
+  list" 17:34Z → tagged `not-interested` + `do not call` 01:1xZ.** Absolute.
+- **SIXTH NUMBER SWAP:** 11 numbers now — 850: 809-6942, 203-5831, 695-1985,
+  789-6934, 446-8236, 318-4119; 346: 585-7098, 585-2672, 639-3567, 659-2865,
+  663-1038. Yesterday's 346s (534-4972, 679-7668, 589-8086, 684-0331,
+  489-3489) are GONE.
+- **DealMachine 20,985 of 30,000; 9,015 used this cycle** (4,879 people +
+  4,136 properties). Was 27,072 last night → **~6,087 credits spent today by
+  something other than this session.** Unexplained; asked Patrick.
+- Hunter LOGGED_OUT (heartbeat 14:51 run 145042); last run PARSE_ERROR,
+  raw_features 0, failed_writes 5,815, auth_expired 7. Sheet modified
+  00:51Z, fileSize 8,484,584 FLAT. Scraper LAPTOP-RS9EHSLO 19:57 ZIP 77070:
+  412 biz pulled, 0 added, 307 parked. Won 2 total (none today), lost 0.
+- Inbox: RSI dealer paperwork FCRA form MISSING (prospect 33553 / rep 11722);
+  Justin Woolf "Is payment made to ATT?" unanswered since 17:49Z; AT&T quote
+  HXAMJ3; Google account recovered twice. DAILY LOG: no post since 08-27.
+- COULDN'T READ: SMS report (404), user names (422), notes (scope).

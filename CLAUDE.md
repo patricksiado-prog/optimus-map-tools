@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-04 22:4xZ (FULL DEPLOY READY in patches/DEPLOY-2026-09-04 incl. hunter sentinel; this session cannot commit to the hunter repo — the desktop Claude pushes it; Gold Dots live with 500)
+# CURRENT STATE — updated 2026-09-05 01:2xZ (EVENING EDITION SENT; a "James" FL blast is drawing STOPs tonight — pause it; 3 replies uncalled; 6th number swap; ~6,087 DealMachine credits spent today unexplained; deploy still unpushed)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -18,6 +18,14 @@ detail in a dated section below and point at it from here.
 Mark every line **MEASURED** (with how and when) or **ASSUMED**. Never let the
 two share a voice — that is the mistake that let "register for the 20M-cell
 beta" survive four sessions unchecked.
+
+### TONIGHT, 01:2xZ — what the evening edition found (detail: BRAIN.md last section)
+
+- **PAUSE THE "JAMES" BLAST:** running from `+18506951985` by GHL user `epWlnB5B…` to 772/561 (Port St. Lucie) since 22:54Z, template *"James from a local business fiber installation team… Thanks, AT&T"*; 5 STOPs + 1 complaint in 2 hours. Not our identification, not a name on the team.
+- **3 replies waiting on a human:** Sandefur 267-243-3439 ("Home"), Barnes 850-313-0943 (waiting on DANIEL's email), Jacobs 925-765-8999 ("Sure", 2 dials failed from a released number).
+- **NUMBERS SWAPPED A SIXTH TIME** — 11 live (six 850s, five 346s); every 346 from yesterday is dead. Read `ghl_list_phone_numbers` every time.
+- **DealMachine 20,985 left; ~6,087 credits spent today by something other than this session.** Ask the desktop Claude before spending more.
+- **Marchlewski tagged do-not-contact** (his written request). Status feed `1rG03Uk7…` (9 rows) waits in the Drive feed folder for a scraper launch that can read it.
 
 ### THE SIX-TIMES ASK — STATE AT 21:5xZ (detail: BRAIN.md, last section)
 
