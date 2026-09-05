@@ -11996,3 +11996,15 @@ account 09-04 19:56 and 22:03 — probably the factory-reset PC, worth confirmin
 Morning edition sent as three separate colour-coded emails (Patrick `1a0717e2f07b009b`,
 Dave `1a0717ac6b0ae068`, Churchie `1a0717bc7ce263b9`). VA copies verified free of
 commission figures and of every line of the personal block.
+
+**2026-09-05 12:1xZ (MEASURED, HUNTER WATCH):** the Angleton run has **stopped** —
+split workbook still `38,633` / `12:01:29Z`, no growth in 16 minutes. LAPTOP-67UOPK24
+ran **06:25:00 → 06:56:49 CT, ~36 minutes**, last sheet write 07:01 CT. **That breaks
+the hunter's "never stop until the PC dies" contract** (2026-08-27), so something closed
+it — window, browser, or the sweep's edge. Action: relaunch that PC and leave it up.
+Scraper LAPTOP-RS9EHSLO at 07:11:50 CT: 1,168 pulled, **1,143 parked** (up from
+1,115/1,078 at 06:06) — still climbing, still landing nothing, because the sheet is full.
+**The HUNTER WATCH routine `trig_01NFW7FKJpcpQ66iTLS3Lbjr` was rewritten the same turn**
+so step 1 is the split workbook's `modifiedTime`+`fileSize` and the feed is corroboration
+only — the fix for the mistake made at 11:2xZ, written into the machine rather than left
+as a resolution.

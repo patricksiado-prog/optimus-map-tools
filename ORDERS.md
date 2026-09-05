@@ -128,3 +128,22 @@ zero until the deploy (order 1) lands.
   in the 30 newest threads), and the LAPTOP-RS9EHSLO scraper relaunch.
 - **The earlier `HUMAN NEEDED — hunter blind 69h` line is WITHDRAWN.** It was measured
   off the feed and the feed was not looking at the machine that was working.
+- 2026-09-05 12:1xZ (HUNTER WATCH) — **THE ANGLETON RUN HAS STOPPED.** Split workbook
+  `1DXu-nuQ…` is **still `fileSize 38,633`, `modifiedTime 2026-09-05T12:01:29Z`** — no
+  growth in the 16 minutes since the last check. LAPTOP-67UOPK24 captured 06:25:00 →
+  06:56:49 CT and its last sheet write was 07:01 CT, so that run lasted ~36 minutes and
+  ended. **That breaks the hunter's own contract — "aim, start, forever, we never stop
+  until the PC dies."** A 36-minute run means the window was closed, the browser died,
+  or the sweep hit its edge. **Next action on that PC: relaunch and leave it running.**
+  Scraper on LAPTOP-RS9EHSLO still going and still parking: 07:11:50 CT, 1,168 pulled,
+  **1,143 parked** (was 1,115/1,078 at 06:06) — the sheet is full, so archiving is the
+  action there, not a relaunch. Feed unchanged and still reporting the wrong machine
+  (`20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI`). BUILD_DATE on the CDN is
+  `2026-09-04` — the deploy half of order 1 stands. `tabs.json` still stamped 09-04
+  14:26:48, confirming the running scraper is pre-deploy. Release asset: COULDN'T READ
+  (401). No PC has written to `REPORTS/`.
+- **HUNTER WATCH routine rewritten this turn** (`trig_01NFW7FKJpcpQ66iTLS3Lbjr`): step 1
+  is now the SPLIT WORKBOOK's `modifiedTime`+`fileSize`, and the feed is corroboration
+  only. It also carries the five-PC list and the "release size returns 401, say
+  COULDN'T READ" rule. The old prompt's claim that the firing has no connectors was
+  wrong — it is self-bound, so it has this session's Drive and GHL.

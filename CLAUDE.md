@@ -22,6 +22,7 @@ beta" survive four sessions unchecked.
 ### RIGHT NOW, 12:0xZ (MEASURED off the SHEET, not the feed — detail: BRAIN.md last section)
 
 - **THE HUNTER IS CAPTURING.** A **fifth PC, `LAPTOP-67UOPK24`**, run `20260905-062448`, swept **ANGLETON TX 77515** from **06:25:00 to 06:56:49 CT** and wrote **551 rows**: **GREEN 137 · GREY 146 · GOLD 4 (= 2 unique addresses, 321 E Cedar St Apt 2 and Apt 4)**. Penetration 51.6%.
+- **BUT THAT RUN HAS STOPPED (12:1xZ):** split workbook static at `38,633` / `12:01:29Z`. It ran ~36 minutes and ended, which **breaks the hunter's "never stop until the PC dies" contract** — relaunch that PC and leave it up.
 - **THE SPLIT WORKBOOK IS TAKING HUNTER ROWS FOR THE FIRST TIME** — `1DXu-nuQ…` went `fileSize` **20,328 → 38,633**, `modifiedTime 2026-09-05T12:01:29Z`. The 09-03 split design works.
 - **THE FEED UNDER-REPORTS; THE SHEET IS THE TRUTH.** `heartbeat.json` still says `20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI` — a different, stale machine. **Never declare the hunter blind from the heartbeat alone.** I did exactly that at 11:2xZ and was wrong.
 - **MAIN WORKBOOK CONFIRMED FULL AND WRITE-DEAD:** `modifiedTime 2026-09-05T11:45:22Z` moving, `fileSize 8,484,584` **flat**. Scraper on LAPTOP-RS9EHSLO 06:06:40 CT: 1,115 businesses pulled, 0 added, **1,078 parked**. It is on the **pre-deploy build** — close and relaunch to get dedupe + gspread-6 + the five GHL tabs.
@@ -31,6 +32,7 @@ beta" survive four sessions unchecked.
 - **CORRECTION: Joseph Sandefur is `+1 267-303-6475`,** not 267-243-3439.
 - **DealMachine 20,848 of 30,000, 9,152 used this cycle** (Sep 2 → Oct 2).
 - **Release asset size: COULDN'T READ** (proxy 401). `gh release upload` stays a desktop job.
+- **HUNTER WATCH now reads the SHEET first** (`trig_01NFW7FKJpcpQ66iTLS3Lbjr` rewritten 12:1xZ): split-workbook `modifiedTime`+`fileSize` is step 1, the feed is corroboration only.
 - **Patrick has at least FIVE hunter/scraper PCs** — RS9EHSLO, FJEEPATI, VCRE1E8, **67UOPK24**, plus the HP. **Ask which PC before reasoning about any console.**
 
 ### TONIGHT, 01:2xZ — what the evening edition found (detail: BRAIN.md last section)
