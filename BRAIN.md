@@ -11777,3 +11777,34 @@ total $628.63.** Money section, Patrick's copy only.
 **19. Patrick 01:5xZ: *"another from this PC. Do not change anything yet."*
 HOLD: no changes to GHL, the sheet, the repos or the PCs until he says so. He
 is sending something more from the PC he is on.**
+
+**20. Patrick 02:0xZ: *"read both repos, find the precise fiber hunter and go
+high level integration files, tell me the safest way to run them together from
+this PC. Do not change anything yet."* READ-ONLY SURVEY (MEASURED off both
+clones):**
+- Hunter repo (branch `claude/optimus-map-tools-setup-6dcl6o`, folder
+  `optimus/`): `precise_fiber_hunter.py` (the hunter; needs `google_creds.json`,
+  optional `github_token.txt`; runs from `%USERPROFILE%\optimus_hunter` via
+  `install/RUN_HUNTER.bat`) · `ghl_loader.py` (businesses → GHL contacts +
+  opportunities in AT&T Commercial `trc5dwodtc1LBYHikmiK` + enrol in the biz
+  power-dialer workflow; DRY by default, `--commit` needs `GHL_PIT_TOKEN`;
+  never texts/calls; state `ghl_loaded_keys.json`, `~/Optimus/dial_queue.json`)
+  · `dialer_loader.py` (reads `Fiber Green Biz` + `Upgrade Orange Biz`, scores,
+  calls ghl_loader; PREVIEW then y/N; token from `GHL_PIT_TOKEN` or
+  `~/optimus/ghl_token.txt`, prompts once) · `install/START DIALER.bat` (clones
+  the branch to `%USERPROFILE%\optimus\repo`, runs dialer_loader; its busybee
+  token URL is a placeholder) · `ghl_to_sheet.py` + `GHL_TO_SHEET.bat` (GHL →
+  `GHL Worked Leads` tab; dry then `--yes`) · `standalone/maps_scraper_standalone.py`
+  (scraper; its GHL block is only in my staged copy). Repo ROOT = the GHL MCP
+  server itself (TypeScript `src/`, package.json).
+- optimus-map-tools: `ghl/backups/dialer2_9d3c7d0c_v21_BEFORE.json`,
+  `ghl/fixes/dialer2_corrected_actions.json` (workflow JSON for Optimus Dialer 2);
+  `optimus_server.py` = OLD local port-5050 control server pointing at Desktop
+  scripts — legacy, superseded, do not run.
+- **No token, creds or .env file is committed in either repo (grep clean).
+  Both repos are PUBLIC — keep it that way.**
+- ANSWER GIVEN: hunter only from the installed copy via its Desktop icon;
+  GHL token in `%USERPROFILE%\optimus\ghl_token.txt` or the env var, never in a
+  repo; loaders on demand, dry/preview first; `ghl_to_sheet` cannot write until
+  the full sheet has room; on a fresh PC the loader has no state file, so read
+  the preview count before `y`.
