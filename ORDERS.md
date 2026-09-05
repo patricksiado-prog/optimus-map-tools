@@ -239,3 +239,17 @@ zero until the deploy (order 1) lands.
   is still 12:33 at the next watch, LAPTOP-RS9EHSLO needs a relaunch too, which is wanted
   anyway to pick up the a995b27 fixes.
   Feed otherwise unchanged, no `REPORTS/` entries, release asset COULDN'T READ (401).
+- 2026-09-05 20:1xZ (HUNTER WATCH) — **BOTH MACHINES ARE NOW CONFIRMED STOPPED. The
+  `HUMAN NEEDED` line now covers two PCs, not one.**
+  1. **LAPTOP-67UOPK24 (hunter): idle 8h05m.** Ninth flat hourly touch on the split
+     workbook — `20:02:27Z`, `fileSize` **38,633** (12:01 → 20:02, flat every time). Last
+     captured row `11:56:49Z`. **Ctrl+Up (GO) first**, Ctrl+Down then Ctrl+Up second,
+     Ctrl+Shift+K and relaunch (answer **N**) only if neither moves it.
+  2. **LAPTOP-RS9EHSLO (scraper): CONFIRMED STOPPED.** `LIVE_COUNTS_scraper.txt` still
+     stamped `12:33:16 CT` — **2h41m stale** against a 45-60 min cadence all day. At the
+     19:1xZ check I said one more static reading would settle it; this is that reading.
+     Frozen at 1,613 pulled / 0 added / **1,334 parked**, ZIP 77005. **Close it and
+     double-click the icon** — that also finally gives it the a995b27 fixes (gold/grey
+     dedupe, the gspread-6 `_gc()` client, and the five Green/Gold/Grey/Biz/Fiber Biz tabs).
+     The 1,334 parked rows still will not land until the main workbook is archived.
+  Feed otherwise unchanged, no `REPORTS/` entries, release asset COULDN'T READ (401).

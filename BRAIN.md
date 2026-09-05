@@ -12496,3 +12496,12 @@ pause or edit a GHL workflow".**
 
 **Still owed and untouched 21 hours on:** Barnes (EMAIL), Sandefur (household already CLOSED
 — opportunity still at "Contacted"), Jacobs (TEXT). Phone numbers 11, unchanged.
+
+**2026-09-05 20:1xZ (MEASURED, HUNTER WATCH) — BOTH MACHINES CONFIRMED STOPPED.** Split
+workbook ninth consecutive flat hourly touch (`20:02:27Z`, `38,633`): **LAPTOP-67UOPK24 idle
+8h05m**. And **LAPTOP-RS9EHSLO's scraper is now confirmed stopped, not merely idle** —
+`LIVE_COUNTS_scraper.txt` still `12:33:16 CT`, **2h41m stale** against its 45-60 minute
+cadence, which is the second static reading I said at 19:1xZ would settle it. So the whole
+capture fleet is down and neither machine needs a reinstall: the hunter needs **Ctrl+Up**,
+the scraper needs a **close-and-relaunch** (which also lands the a995b27 fixes it has been
+missing all day).
