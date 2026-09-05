@@ -12268,3 +12268,47 @@ offer but address and name are working so do it."* Built and pushed the same tur
 **10 GREEN + 10 GOLD, every one verified at ONE SEGMENT** with worst-case merge values
 (10-char name, 36-char address1) plus GHL's 27-char appended STOP, GSM-7 only.
 `templates/sms_variants_check.py` re-runs the proof.
+
+## 2026-09-05 — A THIRD SALE, AND IT IS THE LEAD I FLAGGED THIS MORNING AS "OWED A CALL"
+
+Patrick sent his WhatsApp thread with Rodelio. It contains an **AT&T order confirmation**:
+
+| Field | Value |
+|---|---|
+| Customer | **KATHLEEN WALSH** |
+| Address | **2349 SE HALLAHAN ST, PORT SAINT LUCIE FL 34952-7239** |
+| Phone | **267-243-3439** (primary AND alternate) |
+| Email | **bigkandjoe@aol.com** |
+| Package | **Internet 1000 (Fiber 1 GIG)** |
+| Account / Order | `346449744` / `99-715950342717844` |
+| **Install** | **9/9/2026, tech 12PM-2PM** |
+| Paid today | $20.00, MasterCard, zip 77027 |
+
+**THAT IS JOSEPH SANDEFUR'S ADDRESS AND JOSEPH SANDEFUR'S TEXTING NUMBER.** `bigkandjoe`
+= "big K and Joe" = Kathleen and Joe, one household. **The lead I named at 09:06 today as
+"said Yes, still owed a call" CLOSED — inside 24 hours of his reply, off Rodelio's
+`fl_rodel_resi` campaign.** So the blast I spent the morning recommending we pause has
+produced a 1 GIG fiber sale.
+
+**IT IS NOT IN THE CRM. `search_opportunities` for "Walsh" returns only Zackary B Walsh
+(a different, Houston, open lead). Sandefur's opportunity `7LY88e6tw8wGmWyiDAB8` is still
+`open` at stage "Contacted".** So the pipeline still reads 2 won when the true count is 3.
+**This is exactly why Rodelio asked Patrick "how can I have an access to this to see my
+appointment if its installed" and Patrick answered "No real way except to call a
+customer." There IS no way — because the sale never entered the system.** Moving that
+opportunity to won with the order number and install date is the whole fix, and it is one
+edit. **OFFERED, NOT DONE — CLAUDE.md says ask before modifying his data.**
+Order detail written to the contact as a note instead (`CfB0ahG8Q5rpuWZjN8s4`), which is
+additive and safe, flagging the 9/9 12-2PM window.
+
+**PATRICK'S OWN FIX FOR THE SPAM FLAGGING, to Rodelio 12:45 PM:** *"We're getting flagged
+allot for spam if u text change the number so it doesn't get flagged for spam."*
+**Rotating numbers treats the symptom; the template is the cause** — 510 characters with
+non-GSM bullets = 9 segments, a doubled STOP, and an unverifiable "4 months free". Rotating
+numbers under bad copy just burns numbers more slowly. Both matter; the copy is upstream.
+
+**Patrick: *"it worked more of that."*** Batch 2 built and pushed the same turn — **25 more
+variants, all verified at ONE SEGMENT, 45 total** in `templates/SMS_VARIANTS.md`, covering
+what batch 1 missed: **second touch, third touch, business (speed tier, never a
+residential figure), the 24-name replied-yes backlog, and after-a-missed-call.**
+Checker: `templates/sms_variants_check_batch2.py`.

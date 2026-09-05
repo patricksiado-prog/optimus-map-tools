@@ -63,3 +63,56 @@ python3 templates/sms_variants_check.py
 ```
 Re-run it after ANY edit. A single em dash or curly quote turns a 1-segment message into
 a 3-segment one and nothing warns you.
+
+---
+
+# BATCH 2 — 2026-09-05, added after Patrick: *"it worked more of that"*
+
+25 more, same rules, all verified at ONE SEGMENT by `templates/sms_variants_check_batch2.py`.
+**45 variants total now.** Batch 2 covers the sequences batch 1 did not: second and third
+touches (the brain's rule is text 2-3x, each written fresh), business, the replied-yes
+backlog, and the case where THEY rang US.
+
+
+## GREEN - second touch (3-5 days after touch 1, no reply)
+
+- `{{contact.first_name}}, Patrick again - AT&T Fiber. Still able to get {{contact.address1}} on fiber. Worth a look?`
+- `Circling back on {{contact.address1}}. Patrick with AT&T Fiber. Want me to check what's open there?`
+- `{{contact.first_name}} - Patrick, AT&T Fiber. Fiber's still available at {{contact.address1}}. Want the speeds?`
+- `Following up on the fiber at {{contact.address1}}. Patrick with AT&T. Bad time, or want details?`
+- `{{contact.first_name}}, checking back. {{contact.address1}} can still get fiber. Patrick with AT&T Fiber.`
+
+## GREEN - third touch (a week later, last one)
+
+- `{{contact.first_name}} - last note from me. Fiber is open at {{contact.address1}} if you want it. Patrick, AT&T.`
+- `Patrick with AT&T Fiber. I'll leave it here - {{contact.address1}} has fiber when you're ready. Want details?`
+- `{{contact.first_name}}, closing this out. Fiber at {{contact.address1}} whenever you want it. Patrick, AT&T.`
+
+## GOLD - second touch
+
+- `{{contact.first_name}}, Patrick again. Your copper line at {{contact.address1}} can still move to fiber. Interested?`
+- `Following up - {{contact.address1}} is still eligible to upgrade off copper. Patrick with AT&T Fiber.`
+- `{{contact.first_name}} - AT&T Fiber. The upgrade at {{contact.address1}} is still open. Want me to check it?`
+- `Patrick, AT&T Fiber. Copper retires by 2029 and {{contact.address1}} has fiber now. Want to move?`
+- `{{contact.first_name}}, circling back on the fiber upgrade for {{contact.address1}}. Worth 2 minutes?`
+
+## BUSINESS - speed tier, never a residential figure
+
+- `{{contact.first_name}}, Patrick with AT&T Business Fiber. Fiber is live at {{contact.address1}}. What's your upload now?`
+- `Patrick, AT&T Business Fiber. {{contact.address1}} can get fiber. How many lines do you run there?`
+- `{{contact.first_name}} - AT&T Business Fiber reached {{contact.address1}}. Want the tiers for your business?`
+- `Patrick with AT&T Business Fiber. {{contact.address1}} is fiber-ready. Does your upload slow you down?`
+- `{{contact.first_name}}, Patrick, AT&T Business Fiber. Fiber at {{contact.address1}} now. Want options for the shop?`
+
+## REPLIED YES but never called - the 24-name backlog
+
+- `{{contact.first_name}}, Patrick with AT&T Fiber. You asked about fiber at {{contact.address1}} - still want it?`
+- `Patrick, AT&T Fiber. You said yes on fiber for {{contact.address1}} a while back. Still interested?`
+- `{{contact.first_name}} - my fault for the delay. Fiber at {{contact.address1}} is still open. Want it?`
+- `Patrick with AT&T Fiber. Picking up where we left off on {{contact.address1}}. Good time to talk?`
+
+## AFTER A MISSED CALL - they rang us
+
+- `{{contact.first_name}}, Patrick with AT&T Fiber returning your call about {{contact.address1}}. Good time now?`
+- `Sorry I missed you - Patrick, AT&T Fiber. Calling about fiber at {{contact.address1}}. When suits?`
+- `{{contact.first_name}} - Patrick, AT&T Fiber. Missed your call on {{contact.address1}}. Want me to try again?`
