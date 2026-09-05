@@ -12954,3 +12954,44 @@ once, no piling on — he has told me before not to stack security warnings.
 **Also confirmed by him:** not building a second installer was the right call
 (*"THANKS ON NOT A NEW PROGRAM INSTALLER EASIER"*) — consistent with the continuity-of-
 product preference recorded two hours earlier.
+
+**2026-09-05 23:1xZ — COMMAND CENTER FILLED OUT. Patrick: *"CAN U ADD EVERYTHING IN THERE
+U MIGHT NEED LIKE SHEETS GHL ACCESS OR ANY OTHER THING WE NEED TO GET U RUNNING MY BISS
+OHH YAAA WHATS APP."* THE ANSWER TO MOST OF IT IS: ALREADY CONNECTED.**
+
+Folder `1fjb51opWuWJ761cUpcdbpv2tziZT8Ely` now holds five things:
+- `START HERE.txt` `153v6_Mn…`
+- `THE 3 LAPTOPS - one command each.txt` `1JXui3K-…`
+- **`WHAT CLAUDE CAN AND CANNOT SEE.txt` `1swQnvHyZjDrwR5CSgPx6pUkiMnbEmWpY`**
+- **`GHL TOKEN - the one thing still missing.txt` `1NmaviHhMikPf_hNU_0ur2ZhEsfH4wH6h`**
+- **`WHATSAPP - how to get a chat to Claude.txt` `1R6zOdsN9qsYqAm-TqMAm55Vdz0Zw3HiE`**
+- **subfolder `DROP FOR CLAUDE` `16I9DJtdnEVWUgKB5vMPqHYg3PPURgd7D`** — where he drops
+  exports and screenshots.
+
+**HE DOES NOT NEED TO GRANT SHEET OR GHL ACCESS — both have been live all along.** The
+inventory file says so plainly so this stops being re-asked: GHL (both locations, read AND
+write), Google Drive, Sheets (read here, written by the service account on the PC), Gmail,
+Calendar, DealMachine, GitHub, Railway. Missing: WhatsApp (no connector exists), OneDrive
+(no Microsoft connector), and any filesystem on any PC.
+
+**THE ONLY REAL GAP IS `ghl_token.txt` ON THE SCRAPER PCs.** Wrote the how-to: GHL →
+Settings → Private Integrations → scope `contacts.readonly` → plain file containing only
+the token → `C:\Users\patri\maps_scraper\`. **Told him to keep the token OUT of the Drive
+folder and typed straight onto each PC** — one line on why (it reads every contact, and a
+shared folder would hand it to a VA), framed as his customers' data and A2P standing, not
+as locking him down, then dropped. **Claude never asks for it and it never goes in chat,
+email or the repo.**
+
+**WHATSAPP METHOD RECORDED** (it is the one that already worked on the Att training group):
+phone → chat → group name → Export chat → **WITHOUT MEDIA** → Share → Google Drive → the
+`DROP FOR CLAUDE` folder. Arrives as a .zip with `_chat.txt`; the Drive connector opens the
+zip directly, no unzipping. For one or two messages a screenshot in chat is faster. Also
+carried forward the credential warning: a login was pasted in the last export and was
+deliberately NOT written to the brain because the repo is public.
+
+**INSTALLER RE-VERIFIED 23:17:02Z, READY ON ALL THREE PCs:** hunter 400,142 bytes with
+`BUILD_DATE = "2026-09-04"` and 3 hits on the sentinel; scraper 149,349 bytes with all five
+state-book markers (3ab3686); `install/RUN_HUNTER.bat` 200/4,350 (the fixed launcher);
+`RUN_SCRAPER.bat` 200/504; `hunter.ico` 200/43,104; `scraper.ico` 200/40,301;
+`build_codes.json` 200/505; `optimus_territory.py` 200/7,704. Drive file still
+`INSTALL_OPTIMUS.bat`, 7,204 bytes.
