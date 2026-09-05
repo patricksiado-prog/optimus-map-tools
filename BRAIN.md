@@ -12225,3 +12225,46 @@ argument for working it, not for spreading wider.
 so explicitly on each, because a rep who sees `dnc` and stops has thrown the lead away for
 the wrong reason. Jacobs is call-blocked for a completely different reason — **he wrote
 "No calls thanks"** — and the note separates the two so they can never be confused.
+
+## 2026-09-05 — THE "JAMES" BLAST HAS A NAME: RODELIO DELA CRUZ LEONIN. IT IS A PERSON, NOT A ROGUE AUTOMATION.
+
+Patrick sent a phone screenshot of the message in the recipient's thread. The sender line
+reads **`Rodelio Dela Cruz Leonin • SMS • 7:54 PM`**, Sep 4 2026, footer
+*"Using +1 850-695-1985 to send SMS to +1 772-353-1775"* (contact **Jenna Gorski**).
+Template body identical to the one captured earlier today.
+
+**CONFIRMED via `get_user` on `epWlnB5BMcpeUpMOMH5E`** — the id the brain had been carrying
+as "GHL user epWlnB5B…" since the 09-04 evening edition:
+
+| | |
+|---|---|
+| Name | **Rodelio Dela Cruz Leonin** |
+| Email | `sakalamvillasis@gmail.com` |
+| Phone | **+63 928 438 7029 — Philippines** (overseas VA) |
+| Role | **`admin`**, `restrictSubAccount: false` |
+| Locations | **BOTH** — `xZj500PjsflIQg2j9f9D` (T-OPTIMUS) **and** `TXw28sw0Z2rI6tcCDhJY` (Frontline Direct) |
+| His LC number on Frontline | **`+17726771674`** — a 772 Treasure Coast number |
+
+**THIS RESOLVES THREE OPEN THREADS AT ONCE:**
+1. **The blast is a human running a campaign, so the fix is a conversation, not a workflow
+   pause.** Nothing needs disabling. Give him better copy.
+2. **`fl_rodel_resi`** — the tag on Joseph Sandefur's record — is **Rodel**'s FL residential
+   campaign. So Sandefur, who replied "Yes" and gave his address, **came off this blast.**
+   The campaign is producing real replies; the COPY is the defect, not the effort or the
+   person.
+3. **His own 772 LC number explains the Treasure Coast targeting** (Port St. Lucie, Jensen
+   Beach, Stuart) that produced five of today's eight STOPs.
+
+**FACT, recorded once and not editorialised: he holds `admin` with `settingsEnabled`,
+`workflowsEnabled`, `triggersEnabled`, `bulkRequestsEnabled` and
+`users/team-management.write` across BOTH sub-accounts** — the widest permission set in
+the account. Relevant because Ed's standing no-commission-numbers rule assumes VAs cannot
+see everything, and an admin can.
+
+**THE ACTION IS TO HAND RODELIO THE 20 MEASURED VARIANTS** in `templates/SMS_VARIANTS.md`
+— he is the one who will actually send them. Patrick: *"worked"* (the merge fields for
+address and name resolve correctly in his sends), and *"I still want it randomized w the
+offer but address and name are working so do it."* Built and pushed the same turn:
+**10 GREEN + 10 GOLD, every one verified at ONE SEGMENT** with worst-case merge values
+(10-char name, 36-char address1) plus GHL's 27-char appended STOP, GSM-7 only.
+`templates/sms_variants_check.py` re-runs the proof.
