@@ -11861,3 +11861,11 @@ session; it runs on a PC (ORDERS.md order 2). From here I verify its results
 in `_feed/sheet/tabs.json` (generated_at), `_feed/_landed.json`,
 `_feed/_ghl_status.json` and the split workbook after a PC launches it. The
 partial key file in ~/maps_scraper was deleted.**
+
+**25. Patrick 08:4xZ: *"IM WANNA SEE U DO IT!!"* — the only hands I can reach
+are a Remote Control bridge session on one of his PCs:
+`session_01NUT7XFkFbHxtMj8Veig5j5` "Optimus Map Tools review" (origin
+claude_code_cli, tag remote-control-sdk, environment bridge), DISCONNECTED,
+last error `computer_unreachable` 2026-09-04 16:47Z. While it is disconnected
+no session here can run anything on a PC. When Claude Code on that PC is open
+with Remote Control on, this session can message it the launch order.**
