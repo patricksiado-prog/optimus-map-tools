@@ -12094,3 +12094,40 @@ relaunch would risk the AT&T login that took a human to get.
 Scraper LAPTOP-RS9EHSLO 09:09:19 CT, ZIP 77005: 1,342 pulled, 0 added, **1,233 parked** —
 the four readings today are 1,078 (06:06) → 1,143 (07:11) → 1,184 (07:53) → 1,233 (09:09),
 so **~50 rows an hour are queueing behind the full workbook** and that rate is steady.
+
+## 2026-09-05 17:0xZ — A PROSPECT CALLED US AND WE MISSED IT, AND HER TEXT NEVER SENT. SECOND GHOST NUMBER FOUND. (MEASURED)
+
+**CAROLYN D POPE — `+13306184022` — 8410 Fairbrook Ln, La Porte, TX 77571 —
+`CDPOPE12@GMAIL.COM`, contact `u4hV2MO5YihOjgqHmMiU`.**
+**INBOUND CALL 2026-09-05 13:55:43Z (08:55 CT) to `+18506951985`, status `no-answer`.**
+She dialled us and nobody picked up. An inbound call is the strongest signal in the CRM.
+
+**AND SHE WAS NEVER ACTUALLY TEXTED.** Her outbound SMS FAILED 2026-09-04 16:20:53Z:
+`error: "Failed: Invalid from number. Number not available in account."`, `from:
++13465906578`, sent via marketplace app `6a25617c1d5fcb2f6e8b826b`. **She still carries
+`fiber-sms-sent` and `sms-sept4`** — so every list and every rep skips her as worked.
+**This is the ghost-sent class made concrete: the tag is written on request, not on
+delivery.** She called anyway, off the voicemail.
+
+**A SECOND GHOST FROM-NUMBER — and it behaves differently from the first.**
+`+13464893489` (found 14:0xZ) placed CALLS silently. **`+13465906578` FAILS LOUDLY on SMS
+with the "Number not available in account" error.** Neither is among the 11 live numbers.
+**So this is not one bad record — something in the send path is holding released
+from-numbers.** THE AUDIT WORTH RUNNING, not yet run: how many contacts carry
+`fiber-sms-sent` whose only outbound text failed? Offered to Patrick, awaiting his word.
+
+**THE `sms-v-r1` TEMPLATE CARRIES BOTH KNOWN DEFECTS IN ONE MESSAGE.** Body as stored:
+*"Carolyn - Patrick w/ AT&T Fiber. Fiber just went live at Fairbrook Ln. **$30/mo the 1st
+yr w/ wireless.** Want the details?\n**Reply STOP to unsubscribe.**"*
+1. **A flat `$30/mo`** — against the standing rule, and BELOW our own recorded floor
+   (~$35 bundled before taxes), so it under-quotes as well as over-promises.
+2. **A hand-written opt-out line** — GHL appends its own, so this ships a DOUBLED STOP.
+Everything else about it is right (first name, correct identification, street, one
+question, one segment). **Fix those two lines and it is the best copy in the account.**
+
+**Still owed and untouched 3 hours on:** Barnes (EMAIL), Sandefur (CALL 267-243-3439),
+Jacobs (TEXT). **No new STOPs since 09:06 — still 8, the first six-hour stretch today
+without one.** Phone numbers 11, unchanged, no swap today.
+Text to Patrick `CF8soo5JsakEfyyta76m`; email `1a0728a5336bdff7`. **I deliberately did NOT
+re-send the 09:06 list** — three hours is not new information, and a report that arrives
+every time is a report nobody opens.

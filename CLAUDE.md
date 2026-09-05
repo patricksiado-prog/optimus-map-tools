@@ -30,7 +30,9 @@ beta" survive four sessions unchecked.
 - **BACKLOG: 24 `replied-yes` not closed, oldest 67 days** (2026-06-30). 3 of the 24 are texting opt-outs — call, never text.
 - **THE "JAMES" BLAST IS STILL RUNNING** from `+18506951985` — 8 STOPs in the 30 newest threads, five 772/561. **Second defect: its auto-replies quote a flat `$30/month`** under an AT&T signature.
 - **3 REPLIES OWED, each a DIFFERENT channel (14:0xZ):** **James Barnes 850-313-0943 wants the offer EMAILED to jsbarnes1992@att.net and says he'll install** — a bot told him "I can't send emails" twice and closed him out; **Joseph Sandefur — CALL 267-243-3439** (he has BOTH numbers; 303-6475 is the CRM primary, 243-3439 is the one he texts from — my 12:0xZ correction was half wrong); **Daniel Jacobs 925-765-8999 wants a TEXT** — he wrote "No calls thanks" and we dialled him 4× anyway.
-- **A DEAD NUMBER IS STILL DIALLING: `+13464893489`** — two calls to Jacobs last night, not in the 11 live numbers.
+- **CAROLYN POPE `+13306184022` (8410 Fairbrook Ln, La Porte 77571) CALLED US 08:55 CT 09-05 AND WE MISSED IT** (`no-answer`) — and **her text never sent**: it failed with `Invalid from number` while she still carries `fiber-sms-sent`. Call her.
+- **TWO GHOST FROM-NUMBERS, neither in the 11 live:** `+13464893489` (places calls silently) and `+13465906578` (fails SMS loudly, "Number not available in account"). **Something in the send path holds released numbers and tags contacts as texted anyway.** The audit — how many `fiber-sms-sent` contacts' only text failed — is offered and NOT yet run.
+- **The `sms-v-r1` template carries BOTH known defects:** a flat `$30/mo` (below our own ~$35 bundled floor) AND a hand-written `Reply STOP to unsubscribe` that doubles GHL's. The rest of that copy is the best in the account.
 - **DealMachine 20,848 of 30,000, 9,152 used this cycle** (Sep 2 → Oct 2).
 - **Release asset size: COULDN'T READ** (proxy 401). `gh release upload` stays a desktop job.
 - **HUNTER WATCH now reads the SHEET first** (`trig_01NFW7FKJpcpQ66iTLS3Lbjr` rewritten 12:1xZ): split-workbook `modifiedTime`+`fileSize` is step 1, the feed is corroboration only.
