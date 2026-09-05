@@ -12344,3 +12344,53 @@ got "I can't send emails"; Jacobs wrote "No calls thanks" and was dialled 4×).
 **Source of truth stays `templates/SMS_VARIANTS.md` in this repo, with its two checkers.**
 The Drive doc is a copy for humans. If the variants change, regenerate the Drive doc — it
 will drift otherwise, and a drifted script doc is how "$30/month" survived for weeks.
+
+## 2026-09-05 18:4xZ — WHO IS WHO (VERIFIED FROM SENT MAIL), A BOUNDARY, AND CHATGPT IS LOCKING THE DIALER
+
+**BOUNDARY — RECORD IT AND HONOUR IT. Patrick: *"stay out of my ... personal stuff pless."***
+He drew a line around his personal and relationship life. **Do not search his mail or chats
+for it, do not surface it, do not comment on it, do not ask about it.** This does NOT cancel
+the morning edition's personal block — the reflection, the NLT passage and his goals are
+things he set up deliberately and asked for by name (2026-08-27, 2026-08-29). It does mean:
+nothing about his relationships, no inferences from personal threads, and if personal
+content turns up while searching for something else, leave it where it is.
+
+**RECIPIENTS, VERIFIED from his own SENT mail rather than guessed:**
+
+| Person | Address | Evidence |
+|---|---|---|
+| **Angel** | `aldions446267@gmail.com` | 3 emails from Patrick 2026-09-05 07:4x-07:5x on GoDaddy / ATTFIBERHOUSTON.COM / Frontline / "2 more texting approvals" |
+| **Christian** (the tech guy) | `cdpulifreelancer@gmail.com` | "Christian — Patrick's Claude" dialer + data-analysis emails, 09-01 |
+| **Jay** | `jay@primenation.com` | "Representative AT&T outreach activity — SMS consent flow", 09-02 — he is the compliance/carrier contact |
+| Churchie | `churchiieoperationsva@gmail.com` | **CUT from this send by Patrick: "cut off churchie".** |
+
+**"her" was never resolved** — Patrick said "email her and aldions446267@gmail.com", then cut
+Churchie. Sent to the named address only. **Do not guess a second female recipient.**
+
+**THE A2P PICTURE, now joined up.** "atp approvals" = **A2P 10DLC**. The domain is
+**ATTFIBERHOUSTON.COM**. Patrick already told Angel: *"The Frontline/GHL connection issue was
+caused by ATTFIBERHOUSTON.COM being down."* Carriers pull the website during brand/campaign
+review, so a dead domain fails the registration outright. **He needs 2 more approvals and the
+THIRD brand has no website at all.** That is the real root of the spam flagging — unregistered
+traffic plus nine-segment copy.
+
+**SENT:** Angel, `1a072eb33739bcd5` — A2P + what the carrier review wants on the site
+(privacy policy naming SMS, terms with frequency/rates/STOP/HELP, unticked consent box), the
+spam fix in priority order (copy first, registration second, number rotation last), the
+no-junk-leads rules, the two-programs constraint, and the connector-matching ask.
+
+**BLOCKED, NOT SENT:** the Christian + Jay email (lead-sheet links + software direction +
+A2P evidence). **The harness classifier refused `send_message` on it.** Told Patrick; his
+call. The content is ready to resend or paste.
+
+**CHATGPT IS ALREADY DOING THE DIALER SCRUB — DO NOT DUPLICATE IT.** Screenshot of its
+session: *"I hit the sheet-size limit, but I have the correct source-of-truth tabs now. I'm
+finishing the scrub against **Precise Fiber / Gold Confirmed / Fiber Green Biz**, then
+locking the dialers so only those three classes can enter."*
+**ONE FLAW TO RELAY, because it recreates the exact problem Dave complained about:**
+**`Gold Confirmed` cannot prove it is gold — `Build Code` is EMPTY on every readable row**,
+and the build code is the only ground truth for copper. Locking the dialer to that tab admits
+4,707 unproven rows. Dave's words were *"it looks like you sent a lot of leads with the same
+error, fiber isn't available at those addresses."* **The provable gold is the ~192
+att.net/sbcglobal rows, not the tab.** Also worth telling it: `Precise Fiber` is GREEN ONLY
+since 08-26, and `Fiber Green Biz` column F is a hand-typed call-status field, NOT a DNC check.

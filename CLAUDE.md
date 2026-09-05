@@ -666,6 +666,15 @@ today?"* Thirty seconds, and it turns a bad green into a known gold, grey or
 prospect before anyone pitches. Put it at the top of every list that ships with
 unverified rows.
 
+## STAY OUT OF HIS PERSONAL LIFE (Patrick, 2026-09-05)
+
+*"stay out of my ... personal stuff pless."* **Do not search his mail or chats for personal
+or relationship content, do not surface it, do not comment on it, do not ask about it.**
+This does NOT cancel the morning edition's personal block — the reflection, the NLT passage
+and his goals are things he asked for by name and still wants. It means his relationships
+and private life are off the table, and anything personal encountered while looking for
+something else stays where it is.
+
 ## The three rules that outrank everything below
 
 1. **RULE 0 — ASK BEFORE YOU PUSH.** Reading, diagnosing, writing and testing a
