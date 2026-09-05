@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 14:1xZ (THE HUNTER IS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
+# CURRENT STATE — updated 2026-09-05 20:2xZ (BOTH MACHINES STOPPED — hunter idle 8h, scraper feed 2h41m stale, both need a keypress not a reinstall. TWO blasts running, 11 opt-outs. THE SPAM SOLUTION is now a standing section below. Third sale found. Earlier: THE HUNTER WAS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -675,6 +675,68 @@ This does NOT cancel the morning edition's personal block — the reflection, th
 and his goals are things he asked for by name and still wants. It means his relationships
 and private life are off the table, and anything personal encountered while looking for
 something else stays where it is.
+
+## THE SPAM SOLUTION — HE ASKED 2026-08-28, IT WAS NEVER BUILT, HERE IT IS (2026-09-05)
+
+Patrick, 2026-08-28 7:46 PM in the Att training group, verbatim: ***"A separate way to tell
+if the number is spam / And not use it"*** — alongside *"Need ai to analyze what were doing
+/ Help w this I can pay for r."* **Eight days later nothing existed.** What existed was
+Dave, 09-02: *"I'll call you using all the numbers every morning and check with you to see
+if any of them have been flagged as spam."* A human dialling a colleague from eleven numbers
+is not a system. Angel said plainly she did not know how to spot or delete a spam number.
+**This section is the answer. Do not let it get lost again.**
+
+**THE CAUSE IS NOT THE NUMBERS. IT IS THE COPY, THE REGISTRATION, AND THE BEHAVIOUR — in
+that order.** Rotating numbers under bad copy just burns numbers more slowly, and burning
+them is what leaves eleven.
+
+### 1. FIX THE COPY FIRST — it is the biggest single lever and it is free
+- **ONE SEGMENT. 130 body characters or fewer** (GHL appends 27; the limit is 160).
+- **NEVER a non-GSM-7 character.** ONE emoji, curly quote, em dash or bullet forces UCS-2 at
+  **67 chars/segment** and multiplies the whole message. MEASURED 2026-09-05: the "James"
+  template = 510 chars with bullets = **9 SEGMENTS**; the rocket-emoji blast = 306 chars =
+  **5 SEGMENTS** because of one glyph.
+- **NEVER write an opt-out line.** GHL appends its own; a doubled STOP is the clearest tell
+  no human wrote it. Both live templates do this.
+- **NEVER sign as "AT&T".** We are an authorized dealer: *"Patrick with AT&T Fiber."*
+- **NEVER an unverifiable promo.** "Up to 4 months free" matches no AT&T offer WebSearch can
+  find (real ones are monthly discounts + free install); one template says 2, another says
+  4. A drifting number is copy nobody checks.
+- **NEVER identical bulk copy** — that is the single strongest thing carrier filters key on.
+  Rotate; never one line to a whole list.
+- **45 verified variants exist:** `templates/SMS_VARIANTS.md` + two checkers, and a
+  hand-out copy in Drive `1TukAcyh66RedAJ1mUvCQvWFnksjky33CBap7bGdct40`.
+
+### 2. REGISTER — free, and it is the actual remediation channel
+- **`freecallerregistry.com`** — ONE free form registers a number with **all three analytics
+  engines that label US calls: Hiya (AT&T), TNS (Verizon), First Orion (T-Mobile)**, ~200M+
+  subscribers. Each reviews separately, confirmation typically ~2 business days. **It reduces
+  the risk of labelling; it does not guarantee.** Do all 11 numbers, and every new number
+  BEFORE its first dial.
+- **LeadConnector has a "Voice Integrity" feature to remediate a Spam Likely caller ID** —
+  the account is on LC Phone, so that is the in-platform path for numbers already burned.
+- **A2P 10DLC brand/campaign registration.** Unregistered traffic is throttled and flagged
+  whatever the copy says. **Frontline's registration FAILED because ATTFIBERHOUSTON.COM was
+  DOWN when the carrier pulled it** — carriers fetch the website during review and a dead
+  domain fails on the spot. The third brand has NO site and cannot be submitted until it has
+  one. The site needs: real contact page, a **privacy policy stating mobile numbers/consent
+  are not sold or shared for marketing**, terms covering message frequency + rates + STOP +
+  HELP, and any phone-collecting form's consent box visible and UNTICKED by default.
+
+### 3. BEHAVIOUR — what actually earns the score
+Short average call duration, high volume per number, low answer rate, repeat-dialling one
+person in a short window, and many numbers hitting one area fast. **The six-attempt widening
+gap (day 1, 3, 7, 14, 30, 60) is load-bearing protection, not decoration.** Christian's
+Agent #1-10 claim-a-dialer protocol is the right instinct — it stops duplicate dials — but
+it is scheduling, not number health.
+
+### 4. WATCH FOR OFF-BOOK NUMBERS — three found on 2026-09-05 alone
+`+13464893489` (placed calls silently), `+13465906578` (fails SMS loudly with *"Invalid from
+number. Number not available in account"*), and `346-492-2635` (advertised inside blast
+copy). **None are among the 11 live.** Something in the send path holds released numbers
+**and tags contacts `fiber-sms-sent` anyway** — Carolyn Pope was never actually texted and
+still carries the tag. **The audit — how many `fiber-sms-sent` contacts' only outbound text
+FAILED — is offered and not yet run.**
 
 ## The three rules that outrank everything below
 
