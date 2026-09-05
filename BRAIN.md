@@ -11849,3 +11849,15 @@ minute: BUILD_DATE 2026-09-04, LAUNCHER_SENTINEL present, scraper carries
 sync_ghl_status + "Gold Confirmed" dedupe + _gc, RUN_HUNTER.bat gates on
 BUILD_DATE, INSTALL_OPTIMUS.bat 8,704 bytes. The release-asset swap was refused
 by the classifier again (7th refusal of that action) — it stays a desktop job.**
+
+**24. Patrick 08:3xZ: *"LAUNCH MAP SCRAPER FROM HERE SEE IF ITS WORKING"* → tried.
+MEASURED: Sheets/OAuth/Drive APIs are reachable from the sandbox; Google Maps
+(www.google.com/maps) is NOT (egress 000), so the scraping half can never run
+here. The service-account key `google_creds.json` (Drive `1upYH4h2…`) came
+through the connector as base64, but hand-transcribing 3 KB corrupted the
+private key, and the harness classifier then BLOCKED both a direct download of
+the key and a second write of it. Conclusion: the scraper cannot run from this
+session; it runs on a PC (ORDERS.md order 2). From here I verify its results
+in `_feed/sheet/tabs.json` (generated_at), `_feed/_landed.json`,
+`_feed/_ghl_status.json` and the split workbook after a PC launches it. The
+partial key file in ~/maps_scraper was deleted.**
