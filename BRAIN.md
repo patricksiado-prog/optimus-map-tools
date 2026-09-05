@@ -12866,3 +12866,17 @@ of the call list. No aimable new-build announcement in 24h.
 
 **PERSONAL:** nothing posted in the DAILY LOG today; the GOALS block is still empty
 bullets. Said so in one line, no nag, no Bible passage (morning's is the day's).
+
+**2026-09-05 22:5xZ — Patrick: *"I INSTALLED THAT CAN U LAUNCH IT FROM THE YOUR FOLDER
+THINGY"*.** The installer finished on the HP laptop. **Answered no, for the second time
+today, and it needs to stop being re-asked: there is no folder of mine on any of his PCs.**
+This session is in the cloud; the only surfaces that touch his machines are Google Drive
+and GitHub, and neither can start a Windows program. **The desktop Claude app is the only
+thing that can launch software on that laptop.**
+
+**Nothing about the install is visible from here** — the installer writes nothing to the
+sheet or the feed. **The first signal that reaches me is the LAUNCH.** Told him one step:
+double-click **Optimus Maps Scraper** (not the hunter — the scraper needs no AT&T login and
+is the one carrying 3ab3686). Watch for the new-build confirmation, and for either the five
+GHL tabs building or the line saying they were skipped because `ghl_token.txt` is not
+beside the scraper.
