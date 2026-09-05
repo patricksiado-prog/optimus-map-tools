@@ -253,3 +253,9 @@ zero until the deploy (order 1) lands.
      dedupe, the gspread-6 `_gc()` client, and the five Green/Gold/Grey/Biz/Fiber Biz tabs).
      The 1,334 parked rows still will not land until the main workbook is archived.
   Feed otherwise unchanged, no `REPORTS/` entries, release asset COULDN'T READ (401).
+- 2026-09-05 21:1xZ (HUNTER WATCH) — no change. Split workbook tenth flat touch (`21:02:34Z`,
+  `38,633`): hunter idle **9h05m**. Scraper feed still `12:33:16 CT` (3h41m stale). No
+  `REPORTS/`. Both `HUMAN NEEDED` items stand as written at 20:1xZ. **Watch cadence dropped
+  to every 3 hours** — both machines are confirmed stopped, only a human changes that, and
+  hourly re-confirmation was burning tokens Patrick flagged. Back to hourly once either
+  machine moves.
