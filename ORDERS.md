@@ -195,3 +195,10 @@ zero until the deploy (order 1) lands.
   (1,078 → 1,143 → 1,184 → 1,233 → 1,279). Feed unchanged, no `REPORTS/` entries.
   Still short of the 6-hour `HUMAN NEEDED` bar; it is crossed at **17:57Z** if nobody
   touches that PC. Nothing written to BRAIN.md this hour — nothing changed.
+- 2026-09-05 16:1xZ (HUNTER WATCH) — no change. Fifth hourly lock touch: split workbook
+  `16:01:58Z`, `fileSize` **still 38,633** (12:01 → 13:01 → 14:01 → 15:01 → 16:01, flat
+  throughout). **LAPTOP-67UOPK24 is now 4h18m without capturing.** The 3-step order stands
+  — Ctrl+Up first. Scraper LAPTOP-RS9EHSLO 10:56:52 CT, ZIP 77005: 1,598 pulled, 0 added,
+  **1,318 parked**. Feed unchanged, no `REPORTS/` entries. **The 6-hour `HUMAN NEEDED`
+  bar falls at 17:57Z — one more watch from now.** Nothing written to BRAIN.md; nothing
+  changed.
