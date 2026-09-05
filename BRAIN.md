@@ -11808,3 +11808,25 @@ clones):**
   repo; loaders on demand, dry/preview first; `ghl_to_sheet` cannot write until
   the full sheet has room; on a fresh PC the loader has no state file, so read
   the preview count before `y`.
+
+**21. ChatGPT PUBLISHED PATRICK'S WISHES (MEASURED 08:1xZ): Drive doc `OPTIMUS
+BRAIN — Part 20` (`1LGc8_5yqyhhLnCIfZnM9Xu7v1c8uoR-USjCy1ZtlCRI`) gained
+sections 127 (weekly Gmail expense review → BRAIN, Wise $438 + GHL $190.63 =
+$628.63 for Aug 31–Sep 4) and 128 "Patrick's current operating wishes". THE ROLE
+SPLIT, in his words via ChatGPT: Claude = the local-PC operator (C:\Optimus,
+launchers, monitor the hunter, detect stalls, restart, report, GHL tooling on
+the PC); ChatGPT = connected business systems (Gmail, Drive/Sheets, GHL
+connectors, shared reporting); BRAIN / ORDERS.md / GitHub = the handoff channel.
+"Do not let Claude blindly run old loaders or overwrite newer builds; verify
+branch/build/paths first." Green = primary target; gold = freshness + upgrade;
+grey never in a dialer; VERIFIED vs UNVERIFIED on every row; address + colour
+in GHL notes. Nothing landed in either git repo from ChatGPT (no new commits).
+Patrick 08:1xZ: *"can we start by u controlling precise hunter from here,
+learning to log in and restart scan etc autonomously"* → ORDERS.md order 5
+(HUNTER WATCH) written; an hourly self-bound routine now reads the feed and
+refreshes the orders. THE LOGIN IS THE LIMIT: the hunter's `--login` opens a
+browser and waits for a human; whether Remember-me re-auths without a code is
+the first thing order 5a measures. MEASURED 08:13Z: deploy STILL not pushed
+(live BUILD_DATE 2026-09-03, release asset 7,204), no REPORTS from any PC,
+heartbeat still 14:51 LOGGED_OUT on LAPTOP-FJEEPATI build 3d2a6779 (08-24),
+scraper LAPTOP-RS9EHSLO 02:51 with 877 rows parked, sheet FULL.**

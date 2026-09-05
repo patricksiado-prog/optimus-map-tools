@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 01:2xZ (EVENING EDITION SENT; a "James" FL blast is drawing STOPs tonight — pause it; 3 replies uncalled; 6th number swap; ~6,087 DealMachine credits spent today unexplained; deploy still unpushed)
+# CURRENT STATE — updated 2026-09-05 08:2xZ (HUNTER WATCH is a standing order + hourly routine; role split per ChatGPT doc: Claude = PC operator, ChatGPT = business systems; deploy STILL unpushed; James blast; 3 uncalled replies)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This

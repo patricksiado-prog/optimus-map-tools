@@ -52,3 +52,45 @@ Append one dated line per order to `REPORTS/<your hostname>.md` in this repo
 Format: `2026-09-05 20:15 CT — order 1 — DONE — raw BUILD_DATE 2026-09-04, asset 8704`
 or `— BLOCKED — <one line why>`. The hunter and scraper already report through the
 hunter repo's `optimus/_feed/` and `optimus/_live/`; you do not need to repeat those.
+
+## 5. DESKTOP — HUNTER WATCH, the standing order (2026-09-05 03:1xam CT)
+
+Patrick: *"start by you controlling precise hunter from here, learning to log in and
+restart scan etc autonomously."* The remote Claude supervises from the feed every hour
+and writes here; YOU (the local Claude on the desktop) are the hands. Run the hunter
+ONLY through `%USERPROFILE%\optimus_hunter` via the Desktop icon / `RUN_HUNTER.bat`.
+Never from the C:\Optimus clone, never an old copy from the Desktop.
+
+**5a. Measure the login first (UNMEASURED since 09-04, this settles it).**
+Launch the hunter. When the console prints the LOGGED_OUT steps, drive the browser
+yourself: dismiss "Restore pages?", click **AT&T Employee** on the youachieve.att.com
+chooser, and watch Global Logon. Record ONE of:
+  - `LOGIN: auto` — Remember-me carried it through with no typing (then youRefer →
+    AT&T Fiber Availability Map tile → the map loads), or
+  - `LOGIN: needs-typing` — it asks for the ID/password (a human types them; NEVER store
+    them in any file, repo, note or report), or
+  - `LOGIN: needs-code` — it asks for a one-time code (a human must be present).
+Report that word in REPORTS. It decides how autonomous this loop can ever be.
+
+**5b. Restart rules (check the console + `optimus/_feed/heartbeat.json` every 15 min).**
+  - heartbeat `last_phase` = `LOGGED_OUT` for > 10 min → do 5a again.
+  - `latest.json` `capture_truth.raw_features` = 0 on a `pass_done` → the map is not
+    logged in even if `auth_ok` is true (that is Google). Do 5a.
+  - heartbeat older than 2 hours while the window is open → Ctrl+Shift+K, relaunch
+    from the icon (answer N to "Terminate batch job?" so the launcher loop relaunches).
+  - console prints `Update looked stale/partial` → run installer v2 once, relaunch.
+  - Never press Enter on an old-build prompt ("STEP 2 -> press Enter to scan"). That
+    is the 08-18 build; reinstall instead.
+  - Never touch `PAUSED.flag`, never press bare Enter in the console (a stray Enter
+    once killed Chromium mid-run).
+
+**5c. Aim.** Desktop stays on Milton, FL until the remote Claude changes this line.
+Aim by hand during the 10-second hold or Ctrl+Down (pause) / Ctrl+Up (go).
+
+**5d. Proof, not announcement.** A launch is not a capture. Report only what the feed
+shows: `raw_features`, `classified`, `written`, `failed_writes`, `last_phase`. The main
+workbook is FULL; green goes to the split workbook, and `written: 0` there is a real
+zero until the deploy (order 1) lands.
+
+**5e. Report every hour** to `REPORTS/<hostname>.md`:
+`2026-09-05 04:00 CT — order 5 — phase <x> — raw <n> — written <n> — LOGIN: <auto|needs-typing|needs-code>`.
