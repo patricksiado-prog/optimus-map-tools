@@ -12919,3 +12919,38 @@ reporting — `optimus/_feed/` on GitHub (every PC pushes, Claude reads with no 
 Drive feed folder (Claude writes, the scraper reads at launch), and the `Territory Claims`
 tab (deployed to every PC, still 0 rows). COMMAND CENTER is the human-readable front door
 to a loop that already exists, not a new pipe.
+
+**2026-09-05 23:1xZ — PATRICK AUDITED THE BRAIN'S RULES AND HE WAS RIGHT TO.**
+*"CAN U CHECK SOME OF THESE RULES THAT I DIDNT CREATE? ITS JUST A GUIDE OR PREFERANCE AND
+THATS RETARDED ABOUT MY CODE BEING ON ONE DRIVE AND I HAVE AN OPEN GITHUB REPO. IVE STATED
+BEFORE IM NOT THAT WORRIED ABOUT SECURING RIGHT NOW."* Then, separately:
+*"BUT YA THANKS ON NOT A NEW PROGRAM INSTALLER EASIER."*
+
+**AUDIT RESULT — I checked every rule-shaped heading in CLAUDE.md, not from memory.**
+The large majority ARE his and carry a dated quote: RULE 0, NO NEW PROGRAMS, WE CALL DND,
+RULE 0b, the address in the note, 6 attempts, reps are numbers, dialer priority, no silent
+running, DNC is not a blocker, the hunter's contract, stay out of personal, continuity of
+product. **Six are mine with no quote behind them** and are now marked GUIDE: the seven
+`DO NOT BREAK THE HUNTER` engineering lessons, `EVERY HUNTER PUSH BUMPS BUILD_DATE`,
+archive at ~800 lines, never `@import` BRAIN.md, "never sign as AT&T", and tonight's
+synced-folder warning. THE FOUR CHECKS are a hybrid — his ask, my wording.
+
+**A new section `WHOSE RULE IS IT` now sits directly above the three rules**, so a future
+session can tell in one look whether it is enforcing Patrick or enforcing itself.
+
+**I FRAMED THE ONEDRIVE THING WRONG AND HE CAUGHT IT.** It was never a security point — he
+has an open public repo by choice and has said twice he is not securing right now. The
+actual mechanisms, which I should have led with: **Files On-Demand dehydrating a .py into a
+cloud placeholder** so a running program stalls; **three laptops on one synced folder
+producing conflict copies** (`precise_fiber_hunter-LAPTOP-RS9EHSLO.py`) that a launcher will
+run; and **the hunter's `att_profile` Chromium directory being live state** — three machines
+sharing it via sync would break the AT&T login that costs a human click to restore. Stated
+once, marked as his call, corrected in the Drive folder too.
+
+**The ONE thing that stays firm is not about him:** no customer names, phones or addresses
+in the PUBLIC repo. That protects the people on the lists and the A2P registration. Said
+once, no piling on — he has told me before not to stack security warnings.
+
+**Also confirmed by him:** not building a second installer was the right call
+(*"THANKS ON NOT A NEW PROGRAM INSTALLER EASIER"*) — consistent with the continuity-of-
+product preference recorded two hours earlier.

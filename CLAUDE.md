@@ -29,8 +29,8 @@ beta" survive four sessions unchecked.
 
 - **`OPTIMUS COMMAND CENTER` = `1fjb51opWuWJ761cUpcdbpv2tziZT8Ely`** in Patrick's Drive — `START HERE.txt` (`153v6_Mn…`) and `THE 3 LAPTOPS - one command each.txt` (`1JXui3K-…`). Claude reads AND writes it; it reaches all 3 PCs once Google Drive for Desktop is installed on each.
 - **ONEDRIVE IS BLIND TO CLAUDE — MEASURED TWICE (09-04, and live via `ListConnectors` 09-05 23:0xZ).** The 8 live connectors are Autosheet · command connector (GHL) · dealmachine · FRONTLINE CONNECTOR · Gmail · Google Calendar · Google Drive · Railway. **None is Microsoft.** `C:\Users\patri\OneDrive\Desktop\OPTIMUS COMMAND CENTER` loops his PCs to each other and leaves Claude out. Do not re-propose OneDrive.
-- **NEVER put the hunter or scraper code in ANY synced folder** — they hold files open while running and sync corrupts state. Code stays in `%USERPROFILE%\optimus_hunter` / `maps_scraper` / `optimus\launchers`. The synced folder is ORDERS, LISTS, STATUS only.
-- **No new installer was built on purpose** — that would be the "version 2" pattern he killed the same night. Google Drive for Desktop is Google's own installer.
+- **(CLAUDE — GUIDE, HIS CALL. NOT security.) Running the code out of a synced folder has three specific failure modes**, and Patrick 2026-09-05 rightly called the security framing wrong: *"THATS RETARDED ABOUT MY CODE BEING ON ONE DRIVE AND I HAVE AN OPEN GITHUB REPO."* The real mechanisms: (1) **Files On-Demand** can dehydrate a .py into a cloud placeholder and a running program stalls on it; (2) **three laptops on one synced folder produce conflict copies** — `precise_fiber_hunter-LAPTOP-RS9EHSLO.py` — and the launcher will happily run one; (3) the hunter's **Chromium profile `att_profile` is a live directory**, so three machines sharing it via sync would break the AT&T login that took a human click to get. **If he wants it there anyway, that is his call — say the mechanism once and move on.**
+- **No new installer was built on purpose** — that would be the "version 2" pattern he killed the same night. Patrick confirmed: *"BUT YA THANKS ON NOT A NEW PROGRAM INSTALLER EASIER."* Google Drive for Desktop is Google's own installer.
 
 ### THE 3-LAPTOP COORDINATION IS ALREADY BUILT AND HAS NEVER BEEN USED (MEASURED 2026-09-05 22:2xZ)
 
@@ -762,6 +762,31 @@ copy). **None are among the 11 live.** Something in the send path holds released
 **and tags contacts `fiber-sms-sent` anyway** — Carolyn Pope was never actually texted and
 still carries the tag. **The audit — how many `fiber-sms-sent` contacts' only outbound text
 FAILED — is offered and not yet run.**
+
+## WHOSE RULE IS IT — check this before enforcing anything (2026-09-05)
+
+Patrick, 2026-09-05: *"CAN U CHECK SOME OF THESE RULES THAT I DIDNT CREATE? ITS JUST A
+GUIDE OR PREFERANCE."* He is right to ask, and the audit is below.
+
+**A rule with a DATED QUOTE FROM HIM is his and it holds.** Nearly all of them are:
+RULE 0, NO NEW PROGRAMS, WE CALL DND, RULE 0b (never ship grey), the address in the note,
+6 attempts, reps are numbers, no silent running, DNC is not a blocker, aim/start/forever,
+stay out of personal, continuity of product.
+
+**A rule with NO quote is CLAUDE'S and it is a GUIDE, not a gate.** State the mechanism
+once, let him decide, do not re-litigate. These are the ones:
+`DO NOT BREAK THE HUNTER`'s seven engineering lessons · `EVERY HUNTER PUSH BUMPS
+BUILD_DATE` (mechanical — the updater reads that literal string) · archive at ~800 lines ·
+never `@import` BRAIN.md · "never sign as AT&T" · the synced-folder warning above.
+
+**THE FOUR CHECKS are a hybrid** — he asked for them by name (*"develop the skill and the
+rule to not fuck up all the dam time"*), the wording is mine.
+
+**THE ONE EXCEPTION, and it is not about his security:** no customer names, phones or
+addresses in the PUBLIC repo. That protects the people on the lists and the A2P
+registration, not Patrick — he has said plainly he is not securing right now
+(2026-09-05: *"IVE STATED BEFORE IM NOT THAT WORRIED ABOUT SECURING RIGHT NOW"*), and
+that call is respected everywhere else. **Do not pile on security warnings.**
 
 ## The three rules that outrank everything below
 
