@@ -164,3 +164,25 @@ zero until the deploy (order 1) lands.
   09-04 14:26:48, CDN BUILD_DATE `2026-09-04`. Release asset: COULDN'T READ (401).
   No PC has written to `REPORTS/`. Not yet a `HUMAN NEEDED` line — under the 6-hour bar
   and the process is alive.
+- 2026-09-05 14:1xZ (HUNTER WATCH) — **THE 2-HOUR THRESHOLD IS CROSSED. THE RESTART ORDER
+  IS NOW DUE ON LAPTOP-67UOPK24.** Split workbook `modifiedTime` has now stepped
+  `12:01:29Z → 13:01:35Z → 14:01:43Z` — a clean hourly cadence — with `fileSize` **flat
+  at 38,633 through all three**. That confirms the `_Dedupe Lock` reading: the hunter
+  process is ALIVE and holding its lock, and has captured nothing since **11:56:49Z
+  (06:56:49 CT), 2h19m ago**. Per order 5b as rewritten, static over 2 daylight hours =
+  restart order.
+  **THE ORDER, in sequence — do not skip to the relaunch:**
+  1. **Ctrl+Up (GO)** on that PC. The process is alive, so this resumes the sweep from
+     the current view with no relaunch and no lost login. If the console starts printing
+     cells again, stop here.
+  2. If Ctrl+Up does nothing, **Ctrl+Down first** (it is the same key for pause AND
+     resume — if it was paused twice it is running, if it was left paused this frees it),
+     then Ctrl+Up.
+  3. Only if neither moves it: **Ctrl+Shift+K** to force-quit, then relaunch from the
+     icon and answer **N** to "Terminate batch job?" so the launcher loop restarts it on
+     the 09-04 build.
+  Do NOT press bare Enter in that console and do NOT delete `PAUSED.flag`.
+  Scraper LAPTOP-RS9EHSLO 09:09:19 CT, ZIP 77005: 1,342 pulled, 0 added, **1,233 parked**
+  (1,078 → 1,143 → 1,184 → 1,233 across four checks). Main workbook `14:14:10Z` moving,
+  `8,484,584` flat — full, archive is the action. Feed unchanged. No `REPORTS/` entries.
+  Not a `HUMAN NEEDED` line yet — that bar is 6 hours and we are at 2h19m.

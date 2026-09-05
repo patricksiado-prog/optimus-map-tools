@@ -12082,3 +12082,15 @@ into a holed bucket. Offered to build the 60 on his word.
 **Nothing was sent to any customer.** One SMS went to **Patrick's own** contact
 `pTf15HQ88QisY5RuCbf1` (msg `NlyX0yWm2Mip8kUcth0a`) — `success: true` means GHL accepted
 it, not that it arrived. Email to Patrick `1a071e6f86ebc56b`.
+
+**2026-09-05 14:1xZ (MEASURED, HUNTER WATCH):** split workbook `modifiedTime` has now
+stepped **12:01:29Z → 13:01:35Z → 14:01:43Z** with `fileSize` **flat at 38,633 through
+all three** — a clean hourly cadence, which settles it: that is the `_Dedupe Lock`
+refresh and **not** capture. LAPTOP-67UOPK24's hunter is alive, holding its lock, and has
+written nothing since **11:56:49Z / 06:56:49 CT — 2h19m**. The 2-daylight-hour threshold
+in the rewritten watch is crossed, so the restart order is formally due, **and its first
+step is Ctrl+Up (GO), not a relaunch** — a live process does not need reinstalling and a
+relaunch would risk the AT&T login that took a human to get.
+Scraper LAPTOP-RS9EHSLO 09:09:19 CT, ZIP 77005: 1,342 pulled, 0 added, **1,233 parked** —
+the four readings today are 1,078 (06:06) → 1,143 (07:11) → 1,184 (07:53) → 1,233 (09:09),
+so **~50 rows an hour are queueing behind the full workbook** and that rate is steady.

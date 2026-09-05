@@ -8,7 +8,7 @@ and you say so out loud. Long-form detail lives in `BRAIN.md`.
 
 ---
 
-# CURRENT STATE — updated 2026-09-05 12:0xZ (THE HUNTER IS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
+# CURRENT STATE — updated 2026-09-05 14:1xZ (THE HUNTER IS CAPTURING — a 5th PC, LAPTOP-67UOPK24, swept Angleton 77515 06:25-06:57 CT and the SPLIT WORKBOOK TOOK THE ROWS; the feed never saw it. Main workbook confirmed full. 2 WON in the pipeline. James blast still running. AM edition sent.)
 
 **Update this block whenever any line in it changes, in the same turn.** A
 finding buried 2,000 lines down in the log is a finding nobody will read. This
@@ -22,7 +22,7 @@ beta" survive four sessions unchecked.
 ### RIGHT NOW, 12:0xZ (MEASURED off the SHEET, not the feed — detail: BRAIN.md last section)
 
 - **THE HUNTER IS CAPTURING.** A **fifth PC, `LAPTOP-67UOPK24`**, run `20260905-062448`, swept **ANGLETON TX 77515** from **06:25:00 to 06:56:49 CT** and wrote **551 rows**: **GREEN 137 · GREY 146 · GOLD 4 (= 2 unique addresses, 321 E Cedar St Apt 2 and Apt 4)**. Penetration 51.6%.
-- **THAT RUN IS PAUSED, NOT DEAD (13:1xZ):** split workbook `modifiedTime` moved `12:01:29Z → 13:01:35Z` with `fileSize` **flat at 38,633** — that hourly touch is the `_Dedupe Lock` refreshing, which only a RUNNING hunter writes. So 67UOPK24 holds its lock and has captured nothing since 06:56:49 CT. **Fix is Ctrl+Up (GO) on that PC, not a relaunch.**
+- **THAT RUN IS PAUSED, NOT DEAD (13:1xZ):** split workbook `modifiedTime` moved `12:01:29Z → 13:01:35Z` with `fileSize` **flat at 38,633** — that hourly touch is the `_Dedupe Lock` refreshing, which only a RUNNING hunter writes. So 67UOPK24 holds its lock and has captured nothing since 06:56:49 CT. **Fix is Ctrl+Up (GO) on that PC, not a relaunch.** Confirmed 14:1xZ by a third flat-size touch at 14:01:43Z — 2h19m with no capture, so the restart order is due (ORDERS.md has the 3-step sequence).
 - **THE SPLIT WORKBOOK IS TAKING HUNTER ROWS FOR THE FIRST TIME** — `1DXu-nuQ…` went `fileSize` **20,328 → 38,633**, `modifiedTime 2026-09-05T12:01:29Z`. The 09-03 split design works.
 - **THE FEED UNDER-REPORTS; THE SHEET IS THE TRUTH.** `heartbeat.json` still says `20260904-145042 / LOGGED_OUT / LAPTOP-FJEEPATI` — a different, stale machine. **Never declare the hunter blind from the heartbeat alone.** I did exactly that at 11:2xZ and was wrong.
 - **MAIN WORKBOOK CONFIRMED FULL AND WRITE-DEAD:** `modifiedTime 2026-09-05T11:45:22Z` moving, `fileSize 8,484,584` **flat**. Scraper on LAPTOP-RS9EHSLO 06:06:40 CT: 1,115 businesses pulled, 0 added, **1,078 parked**. It is on the **pre-deploy build** — close and relaunch to get dedupe + gspread-6 + the five GHL tabs.
