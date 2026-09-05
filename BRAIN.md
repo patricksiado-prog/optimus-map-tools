@@ -12403,3 +12403,53 @@ stamped `12:33:16 CT`, ~1h41m stale against a 45-60 min cadence, frozen at 1,613
 ~4/hr by 11:00 CT, so the likeliest reading is a ZIP swept out rather than a crash — **but
 both machines now need a human, and a relaunch of LAPTOP-RS9EHSLO is wanted regardless to
 pick up the a995b27 scraper fixes.**
+
+## 2026-09-05 — READ THE "Att training" WHATSAPP EXPORT. HE ASKED FOR THE SPAM FIX ON AUG 28 AND IT WAS NEVER BUILT.
+
+**THERE IS NO RECENT UPLOAD.** Newest WhatsApp exports in Drive are both **2026-09-03
+04:56** — `WhatsApp Chat with Att training` (`1hyp2Hm6Zt_rsiFspyBh73i0Q2iw3mIs_`) and
+`WhatsApp Chat with Christian Dan Puli` (`1uvVjgmp9VyB7udbfQE1kzHQVEabUunlB`). Nothing from
+09-04 or 09-05. **If he thinks he uploaded one today, it did not land.** Read the training
+one by base64-downloading the zip and unpacking it locally — `read_file_content` cannot open
+a zip, `download_file_content` + python can. **That is now a known read path for WhatsApp
+exports.**
+
+**PATRICK ASKED FOR THE SPAM SOLUTION ON 2026-08-28 7:46 PM, VERBATIM:** *"A separate way to
+tell if the number is spam / And not use it"*, in the same breath as *"Need ai to analyze
+what were doing / Help w this I can pay for r"*. **Eight days later it does not exist.**
+What exists instead, from the chat:
+- **A MANUAL MORNING RITUAL.** Dave, 09-02: *"I'll call you using all the numbers every
+  morning and check with you to see if any of them have been flagged as spam."* That is the
+  entire spam-detection system: a human dialling a colleague from each number to see which
+  ones ring as "Spam Likely".
+- Patrick repeatedly: *"Check your number for spam this one csnr up as spam"* · *"Delete it
+  use a different one"* · *"It'll ruin your production"* · *"Delete spam #s. Don't dial from
+  a spam #. Plzzz"*.
+- **Angel Leah (the VA) said outright she does not know how:** *"not so sure on how to
+  identify a spam number and how to delete it."*
+- Christian built an **Agent #1-10 dialer-allocation protocol** (claim a dialer in the group
+  chat before calling) specifically to *"avoid duplicate calls to the same leads and
+  unnecessary spam issues"* — good, and it is a scheduling fix, not a number-health fix.
+
+**THE ACTUAL REMEDIATION CHANNEL, VERIFIED BY SEARCH THIS TURN AND NOT PREVIOUSLY IN THIS
+BRAIN: `freecallerregistry.com`.** One free form registers a number with **all three
+analytics engines that label calls for the US carriers — Hiya (AT&T), TNS (Verizon) and
+First Orion (T-Mobile)** — covering 200M+ mobile subscribers. Each reviews separately;
+confirmation typically within 2 business days. **It reduces the risk of labelling; it does
+not guarantee it.** Separately, **LeadConnector has a "Voice Integrity" feature for
+remediating a Spam Likely caller ID** — relevant because the account is on LC Phone.
+**Nothing here costs money.**
+
+**ALSO CAPTURED FROM THE CHAT, useful and not previously recorded:**
+- **B2B PRICING as Patrick gave it 08-30:** 300 Mb **$70** + $300 Visa/bill credit ·
+  500 Mb **$110** + $400 Visa · 1000 Mb **$160** + $500 Visa · **$50 off with cell**.
+  Customer-facing, so reps may use it. Business is by SPEED TIER — never a residential figure.
+- **Patrick's own commission-secrecy instruction to the VAs, 08-29:** *"Guys don't repeat the
+  commission to other peeps. They make less then u. Say I'm not supposed to discuss."*
+  Corroborates Ed's rule from his side. It is not just about Ara.
+- **He says it himself, 09-02: *"Then the prob is junk leads and junk data. Gold new fiber
+  good. Old biss kinda weak."*** and ***"I had 7000 bad gold dots in he sheet."***
+- The AT&T MST quote tool is at `mst.att.com` — **login credentials were posted in that group
+  chat and are DELIBERATELY NOT RECORDED HERE; this repo is public.**
+- Group has been trimmed: Churchie, Speedy, Nicole, Melvin, Ricky Nolan Jr., Hazel Joy and
+  joshua sagot were all removed 09-02 17:33.
