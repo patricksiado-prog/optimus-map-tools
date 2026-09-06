@@ -34,6 +34,11 @@ beta" survive four sessions unchecked.
 - **(CLAUDE — GUIDE, HIS CALL. NOT security.) Running the code out of a synced folder has three specific failure modes**, and Patrick 2026-09-05 rightly called the security framing wrong: *"THATS RETARDED ABOUT MY CODE BEING ON ONE DRIVE AND I HAVE AN OPEN GITHUB REPO."* The real mechanisms: (1) **Files On-Demand** can dehydrate a .py into a cloud placeholder and a running program stalls on it; (2) **three laptops on one synced folder produce conflict copies** — `precise_fiber_hunter-LAPTOP-RS9EHSLO.py` — and the launcher will happily run one; (3) the hunter's **Chromium profile `att_profile` is a live directory**, so three machines sharing it via sync would break the AT&T login that took a human click to get. **If he wants it there anyway, that is his call — say the mechanism once and move on.**
 - **No new installer was built on purpose** — that would be the "version 2" pattern he killed the same night. Patrick confirmed: *"BUT YA THANKS ON NOT A NEW PROGRAM INSTALLER EASIER."* Google Drive for Desktop is Google's own installer.
 
+### THE AT&T LOGIN IS A ONE-TIME COST PER MACHINE — STORED CREDENTIALS ARE NEVER NEEDED (VERIFIED IN SOURCE 2026-09-05)
+
+- **`PROFILE_DIR = <hunter dir>/att_profile`** (hunter line 112) + **`launch_persistent_context(PROFILE_DIR, headless=False)`** (line 8247). The AT&T session persists on disk across every launch and survives code updates. **`LOGIN_WAIT_SECS = 600`** — the hunter waits ten minutes for a human sign-in, then resumes the sweep where it left off.
+- **So: a human clicks through the chooser ONCE per machine and the profile carries it.** That is why 67UOPK24 captured at 06:25 CT off the 09-04 hand-login. **Never ask Patrick for his AT&T Global Logon and never record it** — it does not unlock anything a Claude session can use.
+
 ### THE 3-LAPTOP COORDINATION IS ALREADY BUILT AND HAS NEVER BEEN USED (MEASURED 2026-09-05 22:2xZ)
 
 - **`optimus_territory.py` (7,704 bytes) is in `_CORE_FILES` — it self-deploys to EVERY hunter PC at launch.** Claims live in the **`Territory Claims` tab**; `_Dedupe Lock` stops two machines writing the same rows; a machine is `socket.gethostname()`, an operator is initials. `_print_dispatch()` already prints *"WHERE TO SCAN NEXT — these are yours to take"* at every launch, CABLE OUT before NEW FIBER, LOCAL first.

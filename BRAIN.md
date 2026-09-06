@@ -13127,3 +13127,30 @@ is RULE 0, not a security argument (security is closed).
 **STATUS: NOT STARTED. Needs his explicit go, then written, tested, test output shown, and
 asked AGAIN before it touches a laptop.** His *"besides automated from desktop"* (21:4xZ)
 probably puts this in bounds, but a probable yes is not a yes.
+
+**2026-09-05 23:4xZ — PATRICK PASTED AT&T LOGIN CREDENTIALS IN CHAT. DELIBERATELY NOT
+RECORDED, AND THEY ARE NOT NEEDED.** He offered them (*"U CAN TYPE THEM AND THEY ARE SAVED
+IN MY CHROME AUTUFILL I CAN GET 10 OF THEM"*) in response to my note that a folder-watcher
+cannot get past the AT&T login. **The values are NOT written here — this repo is public and
+the standing habit is to never record his AT&T Global Logon.** Told him once, factually, no
+lecture: I have no browser and no keyboard on his PC, so there is nothing to type them into.
+
+**THE REAL ANSWER, VERIFIED IN THE LIVE HUNTER SOURCE THIS TURN — the login is a ONE-TIME
+cost per machine, not a repeating one:**
+- **`PROFILE_DIR = <hunter dir>/att_profile`** (line 112) and
+  **`pw.chromium.launch_persistent_context(PROFILE_DIR, headless=False)`** (line 8247).
+  A **persistent** Chromium profile: the AT&T session is written to disk and survives every
+  future launch. Pinned next to the hunter, so updates never wipe it.
+- **`LOGIN_WAIT_SECS = 600`** — the hunter WAITS TEN MINUTES for a human to sign in, then
+  logs *"Signed in -- resuming the sweep where it left off."*
+- **That is why LAPTOP-67UOPK24 was capturing at 06:25 CT today off the 09-04 hand-login.**
+  So automation never needs stored credentials; it needs the profile to stay valid.
+
+**HE GAVE THE GO ON THE FOLDER PLAN:** *"let me click the link to install the shit u need we
+can start w launching the scraper and then start on precise hunter."* Sent him
+**https://www.google.com/drive/download/** (Google Drive for Desktop, all 3 PCs, signed in
+as patricksiado@gmail.com). **Told him plainly that the install ALONE does not let Claude
+launch anything — the watcher is what does that.** Building and testing the watcher is
+authorised and safe; **deployment to a laptop asks again (RULE 0).**
+
+**Sequence he set: scraper first, then the precise hunter.**
