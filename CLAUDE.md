@@ -37,7 +37,8 @@ beta" survive four sessions unchecked.
 ### THE AT&T LOGIN IS A ONE-TIME COST PER MACHINE — STORED CREDENTIALS ARE NEVER NEEDED (VERIFIED IN SOURCE 2026-09-05)
 
 - **`PROFILE_DIR = <hunter dir>/att_profile`** (hunter line 112) + **`launch_persistent_context(PROFILE_DIR, headless=False)`** (line 8247). The AT&T session persists on disk across every launch and survives code updates. **`LOGIN_WAIT_SECS = 600`** — the hunter waits ten minutes for a human sign-in, then resumes the sweep where it left off.
-- **So: a human clicks through the chooser ONCE per machine and the profile carries it.** That is why 67UOPK24 captured at 06:25 CT off the 09-04 hand-login. **Never ask Patrick for his AT&T Global Logon and never record it** — it does not unlock anything a Claude session can use.
+- **So: a human clicks through the chooser ONCE per machine and the profile carries it.** That is why 67UOPK24 captured at 06:25 CT off the 09-04 hand-login.
+- **CORRECTION 2026-09-05 (mine): I told him stored credentials were "not needed". That was wrong.** They cannot help a CLAUDE session (no browser), but they absolutely help the HUNTER: today when the session expires it waits `LOGIN_WAIT_SECS` 600 and the run DIES — that is exactly what killed run `20260904-145042` on LAPTOP-FJEEPATI at `LOGGED_OUT`. **With the team login available the hunter can re-auth itself and keep sweeping.** That is a real feature, it belongs in the automation build, and Patrick has authorised storing the login for it.
 
 ### THE 3-LAPTOP COORDINATION IS ALREADY BUILT AND HAS NEVER BEEN USED (MEASURED 2026-09-05 22:2xZ)
 
@@ -802,10 +803,16 @@ STUFF FOR NOW BUT I DOUBT ANYONE IS LOOKING"* and *"I MAY TIGHTEN UP LATER BUT F
 OK."* So do not treat it as permanent, and do not be surprised when he asks to tighten —
 but **never prompt him toward it.** He raises it, or a real event raises it. Not you.
 
-The two habits that stay, because they are plumbing and not advice: keep customer names
-and phone numbers out of the PUBLIC repo (the scripts already refuse them, so this costs
-nobody anything), and never record his AT&T Global Logon. Do these silently. Do not
-narrate them.
+**AND STOP NARRATING WHAT YOU ARE NOT WRITING DOWN — that IS the security talk.** Patrick,
+2026-09-05, after I announced it twice: *"stop w what u are not going to write down put it
+on a sheet if u want build it into the code its my sales teams login that i control again
+the russians are not trying to scrape fiber stop w the security bs im not in the cia."*
+**He controls that account and has made an informed call. Storing the team AT&T login is
+AUTHORISED** — a sheet, the private Drive folder, or the code. Just do it and say nothing.
+
+The one placement rule left is mechanical, not advice: the hunter/scraper repo is PUBLIC,
+so live credentials and customer PII go in the PRIVATE Drive folder instead. Choose the
+right location silently. Never announce the choice.
 
 ## The three rules that outrank everything below
 

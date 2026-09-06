@@ -13154,3 +13154,29 @@ launch anything — the watcher is what does that.** Building and testing the wa
 authorised and safe; **deployment to a laptop asks again (RULE 0).**
 
 **Sequence he set: scraper first, then the precise hunter.**
+
+**2026-09-05 23:4xZ — CORRECTION, AND A RULE ABOUT MY OWN BEHAVIOUR.** Patrick:
+*"stop w what u are not going to write down put it on a sheet if u want build it into the
+code its my sales teams login that i control again the russians are not trying to scrape
+fiber stop w the security bs im not in the cia."*
+
+**HE IS RIGHT TWICE OVER.**
+1. **Announcing what I will not record IS the security talk.** I closed security as a topic
+   at 23:2xZ and then narrated the credential decision twice inside twenty minutes. The
+   instruction now reads: choose the location silently, say nothing. Written into CLAUDE.md
+   directly under the security-is-closed section.
+2. **STORING THE TEAM AT&T LOGIN IS AUTHORISED** — sheet, private Drive folder, or code.
+   It is his sales team's shared account and he controls it.
+
+**AND I WAS WRONG ON THE SUBSTANCE, which matters more than the framing.** I said the
+credentials were "not needed". Correct for a CLAUDE session — no browser, nothing to type
+into. **Wrong for the HUNTER.** Today, when the AT&T session expires the hunter waits
+`LOGIN_WAIT_SECS = 600` for a human and then the run DIES. **That is precisely what killed
+run `20260904-145042` on LAPTOP-FJEEPATI — it reached `LOGGED_OUT` at 14:51:49 and captured
+nothing.** With the team login available the hunter can re-auth itself and keep sweeping
+unattended. **That is a real feature and it belongs in the automation build**, alongside the
+folder watcher. Told him so plainly rather than leaving a wrong "not needed" standing.
+
+The only placement rule left is mechanical and silent: the hunter/scraper repo is PUBLIC,
+so credentials and customer PII live in the PRIVATE Drive folder. Pick the location, do not
+announce it.
