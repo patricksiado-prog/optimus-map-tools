@@ -13180,3 +13180,36 @@ folder watcher. Told him so plainly rather than leaving a wrong "not needed" sta
 The only placement rule left is mechanical and silent: the hunter/scraper repo is PUBLIC,
 so credentials and customer PII live in the PRIVATE Drive folder. Pick the location, do not
 announce it.
+
+**2026-09-05 23:5xZ — THE SCRAPER LAUNCHED ON THE HP. THREE FINDINGS, ONE OF THEM SOLVES A
+STANDING MYSTERY.**
+
+**1. THE PRINTED VERSION BANNER IS A LIE AND IT IS THE SAME TRAP AS THE HUNTER'S
+BUILD_DATE.** Console reads `GOOGLE MAPS BUSINESS SCRAPER v2.1 (2026-06-18)`. That is
+**`VERSION = "2.1 (2026-06-18)"` hard-coded at scraper line 15**, with the comment *"bump
+this when the scraper changes; printed on start"* — and nobody ever has. **The code IS
+current (3ab3686).** Proof from the same console, not from assumption: the startup clean
+printed *"gold purge: nothing to remove -- all 4707 rows are post-fix"* and *"junk tabs:
+none present"*, both of which only the post-09-03 named-junk-list build can say.
+**OFFERED, NOT PUSHED (RULE 0): bump VERSION on every scraper push, exactly as the hunter
+now does with BUILD_DATE.** Until then a console can never prove the scraper's version.
+
+**2. `github_token.txt` IS MISSING, AND THAT IS WHY `tabs.json` HAS BEEN STUCK AT
+2026-09-04.** Console: *"(GitHub push OFF: no github_token.txt found. Put it at
+C:\Users\patri\github_token.txt ...)"* and *"TAB COUNTS: 8 tabs -> NOT published -- no
+github_token.txt, counts stay stale on GitHub"*. **This was never a bug in the feed; the PC
+simply could not push.** Scraper lines 42-46 search FIVE locations, so it is forgiving:
+`~/Downloads/`, `~/Desktop/`, `~/`, `~/optimus/`, next to the script, and cwd. **Whichever
+PC published tabs.json on 09-04 already has one** — it can be copied rather than reissued.
+
+**3. `ghl_token.txt` still absent**, so the five GHL tabs and both state workbooks are
+skipped on this machine. Scraper line 1983 `GHL_TOKEN_FILE = "ghl_token.txt"` next to the
+script, or the `GHL_PIT_TOKEN` env var (line 2019-2020; the token is never printed).
+
+**WHAT THE RUN IS DOING:** ZIP **32504 — PENSACOLA, FL**, depth **3 = Deep (~155
+categories)**, auto-advancing outward through 32503/32505/32506/32502/32501/32507/32500/
+32508/32499 **+51 more**. **Florida = NON-TEXAS, so this run is the natural first test of
+the NON-TX workbook `1kE7Xsjc…`** once the GHL token is in place.
+
+**ALSO CONFIRMED HEALTHY:** gold purge found nothing to remove (all 4,707 rows post-fix) and
+no junk tabs present — the 09-02/09-03 cleanup held.
