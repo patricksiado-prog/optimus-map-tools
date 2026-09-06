@@ -264,3 +264,32 @@ zero until the deploy (order 1) lands.
   TEXAS `1qMjCktl…` and NON-TEXAS `1kE7Xsjc…`. **Needs `ghl_token.txt` next to the scraper.**
   Order for LAPTOP-RS9EHSLO: put the token file beside the scraper, close it, double-click
   the icon, paste the `GHL STATUS` lines from the console into `REPORTS/`.
+
+### STATUS 2026-09-06 00:1xZ (19:1x CT) — HUNTER WATCH
+
+**THE SHEET (authority):**
+- **MAIN workbook is SHRINKING — `fileSize` 8,484,584 → 8,261,881, a DROP of 222,703 bytes,
+  `modifiedTime` 2026-09-06T00:13:07Z.** A workbook only shrinks when rows or cells are
+  REMOVED, and the only thing that removes them is the scraper's startup clean. The HP is
+  running the Pensacola sweep right now. **This is the first evidence that 3ab3686 is
+  actually EXECUTING on a PC** — consistent with the gold/grey dedupe, which had never run.
+  Watch whether it drops further; the workbook has been at the 10M-cell ceiling since 08-26.
+- **SPLIT workbook `fileSize` 38,633 — FLAT since 12:01Z yesterday**, `modifiedTime`
+  2026-09-06T00:02:53Z. The hourly touch is the `_Dedupe Lock` refresh, so LAPTOP-67UOPK24
+  is alive and holding its lock. **12h17m with no capture** (last row 11:56:49Z).
+
+**THE FEED (corroboration only):** `LIVE_COUNTS_scraper.txt` still 2026-09-05 12:33:16,
+host LAPTOP-RS9EHSLO, ZIP 77005, SHEET FULL, 1,334 parked. Heartbeat still
+`20260904-145042 / LAPTOP-FJEEPATI / LOGGED_OUT`. `tabs.json` still stamped 2026-09-04
+14:26:48. `_feed/_ghl_status.json` still HTTP 404. **None of this contradicts the sheet —
+the HP cannot push the feed at all because it has no `github_token.txt`.**
+
+**HUMAN NEEDED — LAPTOP-67UOPK24: press Ctrl+Up (GO).** Capture stopped 11:56:49Z and
+nobody has acted in 12h17m. It is NOT a relaunch and NOT a reinstall — the process is
+running and holding its lock.
+
+**HUMAN NEEDED — the HP: two token files.** `github_token.txt` in `C:\Users\patri\` (also
+accepted in Downloads, Desktop, optimus\, or beside the scraper) so tab counts publish and
+stop being 2 days stale; `ghl_token.txt` in `C:\Users\patri\maps_scraper\` so the five GHL
+tabs and both state workbooks build.
+
